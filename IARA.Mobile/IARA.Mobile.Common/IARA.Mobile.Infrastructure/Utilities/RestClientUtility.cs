@@ -1,4 +1,10 @@
-﻿using System;
+﻿using IARA.Mobile.Application;
+using IARA.Mobile.Application.Interfaces.Factories;
+using IARA.Mobile.Application.Interfaces.Utilities;
+using IARA.Mobile.Domain.Enums;
+using IARA.Mobile.Domain.Models;
+using Newtonsoft.Json;
+using System;
 using System.Diagnostics;
 using System.Net;
 using System.Net.Http;
@@ -6,12 +12,6 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using IARA.Mobile.Application;
-using IARA.Mobile.Application.Interfaces.Factories;
-using IARA.Mobile.Application.Interfaces.Utilities;
-using IARA.Mobile.Domain.Enums;
-using IARA.Mobile.Domain.Models;
-using Newtonsoft.Json;
 
 namespace IARA.Mobile.Infrastructure.Utilities
 {
@@ -176,9 +176,12 @@ namespace IARA.Mobile.Infrastructure.Utilities
         {
             try
             {
-                if (await BeforeSendChecks())
+                if (!needsAuthentication)
                 {
-                    return new HttpResult<TResult>(HttpStatusCode.BadRequest);
+                    if (await BeforeSendChecks())
+                    {
+                        return new HttpResult<TResult>(HttpStatusCode.BadRequest);
+                    }
                 }
 
                 HttpContent httpContent;
@@ -223,62 +226,63 @@ namespace IARA.Mobile.Infrastructure.Utilities
                         Content = httpContent,
                     });
                 }
-                
+
 
                 httpContent?.Dispose();
 
                 Debug.WriteLine($"{requestUri} | Status Code={response.StatusCode}");
+                Console.WriteLine($"{requestUri} | Status Code={response.StatusCode}");
 
                 switch (response.StatusCode)
                 {
                     case HttpStatusCode.Unauthorized:
-                    {
-                        response.Dispose();
-                        throw new UnauthorizedAccessException();
-                    }
-                    case (HttpStatusCode)422:
-                    {
-                        string errorJson = await response.Content.ReadAsStringAsync();
-                        response.Dispose();
-                        ErrorModel errorResponseContent = JsonConvert.DeserializeObject<ErrorModel>(errorJson);
-
-                        if (alertOnException)
                         {
-                            Exception ex = new Exception(errorJson + $"\n{requestUri} Status={response.StatusCode}, in {nameof(RestClientUtility)}.{nameof(HandleRequest)}")
-                            {
-                                Source = "MOBILE",
-                            };
-                            await _exceptionHandler.HandleException(ex);
-                            _popup.AlertUnsuccessfulRequest();
+                            response.Dispose();
+                            throw new UnauthorizedAccessException();
                         }
-
-                        return new HttpResult<TResult>(response.StatusCode, errorResponseContent);
-                    }
-                    case HttpStatusCode.InternalServerError:
-                    case HttpStatusCode.BadRequest:
-                    {
-                        string errorJson = await response.Content.ReadAsStringAsync();
-                        response.Dispose();
-                        Debug.WriteLine($"ERROR JSON: {errorJson}");
-                        if (!string.IsNullOrEmpty(errorJson))
+                    case (HttpStatusCode)422:
                         {
+                            string errorJson = await response.Content.ReadAsStringAsync();
+                            response.Dispose();
                             ErrorModel errorResponseContent = JsonConvert.DeserializeObject<ErrorModel>(errorJson);
+
+                            if (alertOnException)
+                            {
+                                Exception ex = new Exception(errorJson + $"\n{requestUri} Status={response.StatusCode}, in {nameof(RestClientUtility)}.{nameof(HandleRequest)}")
+                                {
+                                    Source = "MOBILE",
+                                };
+                                await _exceptionHandler.HandleException(ex);
+                                _popup.AlertUnsuccessfulRequest();
+                            }
+
                             return new HttpResult<TResult>(response.StatusCode, errorResponseContent);
                         }
+                    case HttpStatusCode.InternalServerError:
+                    case HttpStatusCode.BadRequest:
+                        {
+                            string errorJson = await response.Content.ReadAsStringAsync();
+                            response.Dispose();
+                            Debug.WriteLine($"ERROR JSON: {errorJson}");
+                            if (!string.IsNullOrEmpty(errorJson))
+                            {
+                                ErrorModel errorResponseContent = JsonConvert.DeserializeObject<ErrorModel>(errorJson);
+                                return new HttpResult<TResult>(response.StatusCode, errorResponseContent);
+                            }
 
-                        return new HttpResult<TResult>(response.StatusCode);
-                    }
+                            return new HttpResult<TResult>(response.StatusCode);
+                        }
                     case HttpStatusCode.RequestEntityTooLarge:
-                    {
-                        _popup.AlertRequestEntityTooLarge();
-                        response.Dispose();
-                        return new HttpResult<TResult>(response.StatusCode);
-                    }
+                        {
+                            _popup.AlertRequestEntityTooLarge();
+                            response.Dispose();
+                            return new HttpResult<TResult>(response.StatusCode);
+                        }
                     case HttpStatusCode.NoContent:
-                    {
-                        response.Dispose();
-                        return new HttpResult<TResult>(response.StatusCode);
-                    }
+                        {
+                            response.Dispose();
+                            return new HttpResult<TResult>(response.StatusCode);
+                        }
                 }
 
                 if (!response.IsSuccessStatusCode)

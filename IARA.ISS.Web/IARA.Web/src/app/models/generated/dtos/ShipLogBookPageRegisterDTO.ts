@@ -27,6 +27,9 @@ export class ShipLogBookPageRegisterDTO {
     @StrictlyTyped(Date)
     public outingStartDate?: Date;
 
+    @StrictlyTyped(Date)
+    public pageFillDate?: Date;
+
     @StrictlyTyped(String)
     public fishingGear?: string;
 

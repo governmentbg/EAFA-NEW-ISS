@@ -104,7 +104,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.InWaterOnBoard
         public override async Task Initialize(object sender)
         {
             InspectionHelper.Initialize(this, Edit);
-            InspectionHelper.InitShip(InspectedShip, ShipChecks, ShipFishingGears.FishingGears);
+            InspectionHelper.InitShip(InspectedShip, ShipChecks, fishingGears: ShipFishingGears.FishingGears);
 
             INomenclatureTransaction nomTransaction = NomenclaturesTransaction;
 

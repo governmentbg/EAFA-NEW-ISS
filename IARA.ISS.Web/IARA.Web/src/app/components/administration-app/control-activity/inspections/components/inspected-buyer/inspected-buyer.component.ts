@@ -159,7 +159,7 @@ export class InspectedBuyerComponent extends CustomFormControl<InspectionSubject
             legalControl: new FormControl(),
             personControl: new FormControl(),
             addressControl: new FormControl({ value: undefined, disabled: true }),
-            countryControl: new FormControl({ value: undefined, disabled: true }),
+            countryControl: new FormControl({ value: undefined, disabled: true })
         });
 
         form.get('personRegisteredControl')!.valueChanges.subscribe({
@@ -173,6 +173,16 @@ export class InspectedBuyerComponent extends CustomFormControl<InspectionSubject
         form.get('isLegalControl')!.valueChanges.subscribe({
             next: (value) => {
                 this.isLegal = value;
+
+                if (value) {
+                    this.form.get('personControl')!.clearValidators();
+                }
+                else {
+                    this.form.get('legalControl')!.clearValidators();
+                }
+
+                this.form.get('personControl')!.updateValueAndValidity({ emitEvent: false });
+                this.form.get('legalControl')!.updateValueAndValidity({ emitEvent: false });
             }
         })
 
@@ -264,7 +274,6 @@ export class InspectedBuyerComponent extends CustomFormControl<InspectionSubject
             this.form.get('addressControl')!.enable();
             this.form.get('countryControl')!.enable();
 
-            this.form.get('buyerControl')!.markAsPending();
             this.form.get('addressControl')!.markAsPending();
             this.form.get('countryControl')!.markAsPending();
         }

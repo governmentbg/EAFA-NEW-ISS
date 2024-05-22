@@ -12,10 +12,11 @@ import { RequestProperties } from '@app/shared/services/request-properties';
 import { RequestService } from '@app/shared/services/request.service';
 import { RecreationalFishingAddTicketsResultDTO } from '@app/models/generated/dtos/RecreationalFishingAddTicketsResultDTO';
 import { RecreationalFishingTicketDuplicateDTO } from '@app/models/generated/dtos/RecreationalFishingTicketDuplicateDTO';
-import { FuseTranslationLoaderService } from '../../../@fuse/services/translation-loader.service';
-import { TicketTypeEnum } from '../../enums/ticket-type.enum';
+import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
+import { TicketTypeEnum } from '@app/enums/ticket-type.enum';
 import { map } from 'rxjs/operators';
-import { TicketPeriodEnum } from '../../enums/ticket-period.enum';
+import { TicketPeriodEnum } from '@app/enums/ticket-period.enum';
+import { TerritoryUnitNomenclatureDTO } from '@app/models/generated/dtos/TerritoryUnitNomenclatureDTO';
 
 @Injectable({
     providedIn: 'root'
@@ -101,5 +102,34 @@ export class RecreationalFishingCommonService {
 
     public getAllFishingAssociations(area: AreaTypes, controller: string): Observable<NomenclatureDTO<number>[]> {
         return this.http.get(area, controller, 'GetAllFishingAssociations', { responseTypeCtr: NomenclatureDTO });
+    }
+
+    public getTicketTerritoryUnits(area: AreaTypes, controller: string): Observable<TerritoryUnitNomenclatureDTO[]> {
+        const deliveryMsg1: string = this.translate.getValue('recreational-fishing.delivery-territory-unit-msg-1');
+        const deliveryMsg2: string = this.translate.getValue('recreational-fishing.delivery-territory-unit-msg-2');
+        const deliveryMsg3: string = this.translate.getValue('recreational-fishing.delivery-territory-unit-msg-3');
+        const deliveryMsg4: string = this.translate.getValue('recreational-fishing.delivery-territory-unit-msg-4');
+
+        return this.http.get<TerritoryUnitNomenclatureDTO[]>(area, controller, 'GetTicketTerritoryUnits', {
+            responseTypeCtr: TerritoryUnitNomenclatureDTO
+        }).pipe(map((territoryUnits: TerritoryUnitNomenclatureDTO[]) => {
+            for (const territoryUnit of territoryUnits) {
+                territoryUnit.deliveryTerritoryUniitMessage = `${deliveryMsg1}`;
+
+                if (territoryUnit.address !== undefined && territoryUnit.address !== null && territoryUnit.address !== '') {
+                    territoryUnit.deliveryTerritoryUniitMessage += ` - ${deliveryMsg2}: ${territoryUnit.address}`;
+                }
+
+                if (territoryUnit.phone !== undefined && territoryUnit.phone !== null && territoryUnit.phone !== '') {
+                    territoryUnit.deliveryTerritoryUniitMessage += `, ${deliveryMsg3}: ${territoryUnit.phone}`;
+                }
+
+                if (territoryUnit.workingTime !== undefined && territoryUnit.workingTime !== null && territoryUnit.workingTime !== '') {
+                    territoryUnit.deliveryTerritoryUniitMessage += `, ${deliveryMsg4}: ${territoryUnit.workingTime}`;
+                }
+            }
+
+            return territoryUnits;
+        }));
     }
 }

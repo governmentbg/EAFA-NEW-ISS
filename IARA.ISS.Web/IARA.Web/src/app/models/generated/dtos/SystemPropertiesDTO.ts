@@ -90,4 +90,7 @@ export class SystemPropertiesDTO {
 
     @StrictlyTyped(Number)
     public lockAuanAfterHours?: number;
+
+    @StrictlyTyped(String)
+    public approveNewInstallations?: string;
 }

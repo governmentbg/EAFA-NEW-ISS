@@ -1096,6 +1096,11 @@
 
         'view-and-confirm-declaration-info': 'Съгласно чл.22, ал.2 от Закона за рибарство и аквакултури лицата декларират, че познават изискванията на нормативната уредба, приложима за любителския риболов. Съгласно чл.22, ал.4 не се издава билет за любителски риболов, без да има попълнена декларация по чл. 2.',
 
+        'delivery-territory-unit-msg-1': 'Заявеният и платен електронно билет за любителски риболов трябва да получите в посоченото от Вас териториално звено на получаване',
+        'delivery-territory-unit-msg-2': 'адрес',
+        'delivery-territory-unit-msg-3': 'телефон',
+        'delivery-territory-unit-msg-4': 'работно време',
+
         'no-person-found-snackbar-err': 'Не е открито лице с тези данни',
 
         'offline-tickets': 'Хартиени билети',
@@ -4018,6 +4023,7 @@
         'ship-page': 'Страница',
         'ship-status': 'Статус',
         'ship-outing-start-date': 'Начална дата на излет',
+        'ship-declaration-of-origin-date': 'Дата на декларация за произход',
         'ship-fishing-gear': 'Риболовен уред',
         'ship-port-of-unloading': 'Пристанище на разтоварване',
         'ship-unloading-information': 'Информация за разтоварване',
@@ -4551,7 +4557,16 @@
         'edit-page-number-generate-missing-pages-permission-forth-message': 'страници със статус Липсваща',
         'edit-page-number-generate-missing-pages-permission-fifth-message': 'Моля, потвърдете дали одобрявате добавяне на',
         'edit-page-number-generate-missing-pages-permission-sixth-message': 'страници със статус Липсваща',
+        'edit-page-number-generate-missing-pages-permission-one-third-message': 'ще трябва да бъдат изгенерирана',
+        'edit-page-number-generate-missing-pages-permission-one-forth-message': 'страница със статус Липсваща',
         'edit-page-number-generate-missing-pages-permission-no-pages-first-message': 'За текущия дневник няма въведени страници в системата. Началната му страница е',
+
+        'edit-page-number-missing-page-with-old-number-dialog-title': 'Потвърждение за генериране на липсваща страница',
+        'edit-page-number-missing-page-with-old-number-dialog-ok-button':'Добави липсваща страница',
+        'edit-page-number-missing-page-with-old-number-first-part': 'За да смените номера на текущата страница с номер',
+        'edit-page-number-missing-page-with-old-number-second-part': 'ще трябва да бъде изгенерирана страница на нейно място с номер',
+        'edit-page-number-missing-page-with-old-number-third-part': 'със статус Липсваща.',
+        'edit-page-number-missing-page-with-old-number-forth-part': 'Моля, потвърдете дали одобрявате добавяне на страница със статус Липсваща',
 
         'add-aquaculture-log-book-page-dialog-title': 'Добавяне на страница от дневник за аквакултурно стопанство',
         'edit-aquaculture-log-book-page-dialog-title': 'Редакция на страница от дневник за аквакултурно стопанство',

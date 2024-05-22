@@ -30,6 +30,7 @@ import { EgnLncDTO } from '@app/models/generated/dtos/EgnLncDTO';
 import { RecreationalFishingAddTicketsResultDTO } from '@app/models/generated/dtos/RecreationalFishingAddTicketsResultDTO';
 import { RecreationalFishingTicketDuplicateDTO } from '@app/models/generated/dtos/RecreationalFishingTicketDuplicateDTO';
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
+import { TerritoryUnitNomenclatureDTO } from '@app/models/generated/dtos/TerritoryUnitNomenclatureDTO';
 
 @Injectable({
     providedIn: 'root'
@@ -213,6 +214,10 @@ export class RecreationalFishingPublicService extends BaseAuditService implement
 
     public getAllFishingAssociations(): Observable<NomenclatureDTO<number>[]> {
         return this.commonService.getAllFishingAssociations(this.area, this.controller);
+    }
+
+    public getTicketTerritoryUnits(): Observable<TerritoryUnitNomenclatureDTO[]> {
+        return this.commonService.getTicketTerritoryUnits(this.area, this.controller);
     }
 
     // applications

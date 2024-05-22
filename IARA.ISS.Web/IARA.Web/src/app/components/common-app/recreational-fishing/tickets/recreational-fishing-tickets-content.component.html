@@ -230,6 +230,8 @@
                 {{ ticketPeriodsOverlapComment }}
             </mat-error>
 
+            <span *ngIf="isPublicApp && !isAssociation && !showPaymentStep && totalPrice <= 0" class="italic-text">{{ deliveryTerritoryUnitText }}</span>
+
             <span class="italic-text">* {{ 'recreational-fishing.view-and-confirm-declaration-info' | tlTranslate }}</span>
         </div>
     </mat-step>
@@ -248,9 +250,11 @@
                                  [applicationId]="paidTicketApplicationId"
                                  [paymentRequestNum]="paidTicketPaymentRequestNum">
             </online-payment-data>
+
+            <span class="italic-text">{{ deliveryTerritoryUnitText }}</span>
         </div>
 
-        <ng-template #notPublicAppOrAssociation>    
+        <ng-template #notPublicAppOrAssociation>
             <payment-data [formControl]="paymentDataControl"
                           [paymentDateMax]="currentDate"
                           [defaultDate]="currentDate">

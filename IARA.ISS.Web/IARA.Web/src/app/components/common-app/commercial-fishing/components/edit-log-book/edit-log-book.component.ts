@@ -39,6 +39,7 @@ import { SystemParametersService } from '@app/services/common-app/system-paramet
 import { SystemPropertiesDTO } from '@app/models/generated/dtos/SystemPropertiesDTO';
 import { GetControlErrorLabelTextCallback } from '@app/shared/components/input-controls/base-tl-control';
 import { TLError } from '@app/shared/components/input-controls/models/tl-error.model';
+import { DatePipe } from '@angular/common';
 
 
 @Component({
@@ -79,7 +80,7 @@ export class EditLogBookComponent implements OnInit, IDialogComponent {
     public ownerType: LogBookPagePersonTypesEnum | undefined;
     public selectedLogBookType: LogBookTypesEnum | undefined;
 
-    public endPageNumberErrorLabelTextMethod: GetControlErrorLabelTextCallback = this.endPageNumberErrorLabelText.bind(this);
+    public getControlErrorLabelTextMethod: GetControlErrorLabelTextCallback = this.getControlErrorLabelText.bind(this);
 
     private model!: LogBookEditDTO | CommercialFishingLogBookEditDTO;
     private registerId: number | undefined;
@@ -91,6 +92,7 @@ export class EditLogBookComponent implements OnInit, IDialogComponent {
     private readonly systemParametersService: SystemParametersService;
     private readonly overlappingLogBooksDialog: TLMatDialog<OverlappingLogBooksComponent>;
     private readonly snackbar: MatSnackBar;
+    private readonly datePipe: DatePipe;
 
     private service: ILogBookService | undefined;
     private postOnSave: boolean = false;
@@ -103,6 +105,7 @@ export class EditLogBookComponent implements OnInit, IDialogComponent {
         translate: FuseTranslationLoaderService,
         overlappingLogBooksDialog: TLMatDialog<OverlappingLogBooksComponent>,
         snackbar: MatSnackBar,
+        datePipe: DatePipe,
         systemParametersService: SystemParametersService
     ) {
         this.nomenclaturesService = nomenclaturesService;
@@ -110,6 +113,7 @@ export class EditLogBookComponent implements OnInit, IDialogComponent {
         this.systemParametersService = systemParametersService;
         this.overlappingLogBooksDialog = overlappingLogBooksDialog;
         this.snackbar = snackbar;
+        this.datePipe = datePipe;
 
         this.pagesAndDeclarationsForLastPermitLicenseLabel = this.translate.getValue('catches-and-sales.log-book-pages-and-declarations-for-last-permit-license-panel');
         this.declarationsOfOriginInPermitLicenseLabel = this.translate.getValue('catches-and-sales.log-book-declarations-of-origin-in-permit-license-panel');
@@ -289,15 +293,37 @@ export class EditLogBookComponent implements OnInit, IDialogComponent {
             }
         }
 
+        this.fillForm();
+
         if (!this.readOnly) {
             this.form.get('finishDateControl')!.valueChanges.subscribe({
                 next: (value: Date | undefined) => {
+                    let logBookLicenseValidTo: Date | undefined = value;
+
                     if (value !== null && value !== undefined) {
                         this.form.get('statusControl')!.setValue(
                             this.allLogBookStatuses.find(x =>
                                 LogBookStatusesEnum[x.code as keyof typeof LogBookStatusesEnum] === LogBookStatusesEnum.Finished
                             )
                         );
+                    }
+                    else {
+                        logBookLicenseValidTo = new Date(9999, 0, 1);
+                    }
+
+                    if (!this.isAdd && this.model instanceof CommercialFishingLogBookEditDTO) {
+                        this.form.get('logBookLicenseValidToControl')!.setValue(logBookLicenseValidTo)
+                        this.form.get('logBookLicenseValidToControl')!.updateValueAndValidity({ emitEvent: false });
+                        this.form.get('logBookLicenseValidToControl')!.markAsTouched();
+                    }
+                }
+            });
+
+            this.form.get('issueDateControl')!.valueChanges.subscribe({
+                next: (value: Date | undefined) => {
+                    if (this.model instanceof CommercialFishingLogBookEditDTO) {
+                        this.form.get('logBookLicenseValidFormControl')!.updateValueAndValidity({ emitEvent: false });
+                        this.form.get('logBookLicenseValidFormControl')!.markAsTouched();
                     }
                 }
             });
@@ -356,8 +382,6 @@ export class EditLogBookComponent implements OnInit, IDialogComponent {
                 });
             }
         }
-
-        this.fillForm();
     }
 
     public setData(data: EditLogBookDialogParamsModel, buttons: DialogWrapperData): void {
@@ -406,6 +430,11 @@ export class EditLogBookComponent implements OnInit, IDialogComponent {
 
             if (this.model instanceof CommercialFishingLogBookEditDTO) {
                 this.isForRenewal = this.model.isForRenewal ?? false;
+
+                this.form.get('logBookLicenseValidToControl')!.setValidators([
+                    Validators.required,
+                    TLValidators.maxDate(this.form.get('finishDateControl')!)
+                ]);
             }
         }
     }
@@ -569,7 +598,7 @@ export class EditLogBookComponent implements OnInit, IDialogComponent {
         dialogClose();
     }
 
-    public endPageNumberErrorLabelText(controlName: string, error: unknown, errorCode: string): TLError | undefined {
+    public getControlErrorLabelText(controlName: string, error: unknown, errorCode: string): TLError | undefined {
         if (controlName === 'endPageNumberControl') {
             if (errorCode === 'maxNumberError' && error === true) {
                 return new TLError({
@@ -577,6 +606,25 @@ export class EditLogBookComponent implements OnInit, IDialogComponent {
                 });
             }
         }
+        else if (controlName === 'logBookLicenseValidFormControl') {
+            if (errorCode === 'mindate') {
+                if (this.form.get('issueDateControl')!.value !== null && this.form.get('issueDateControl')!.value !== undefined) {
+                    const minDate: Date = this.form.get('issueDateControl')!.value;
+                    const dateString: string = this.datePipe.transform(minDate, 'dd.MM.YYYY') ?? "";
+                    return new TLError({ text: `${this.translate.getValue('validation.min')}: ${dateString}` });
+                }
+            }
+        }
+        else if (controlName === 'logBookLicenseValidToControl') {
+            if (errorCode === 'maxdate') {
+                if (this.form.get('finishDateControl')!.value !== null && this.form.get('finishDateControl')!.value !== undefined) {
+                    const maxDate: Date = this.form.get('finishDateControl')!.value;
+                    const dateString: string = this.datePipe.transform(maxDate, 'dd.MM.YYYY') ?? "";
+                    return new TLError({ text: `${this.translate.getValue('validation.max')}: ${dateString}` });
+                }
+            }
+        }
+
         return undefined;
     }
 
@@ -604,7 +652,13 @@ export class EditLogBookComponent implements OnInit, IDialogComponent {
             this.form.addControl('permitLicenseEndPageNumberControl', new FormControl());
 
             this.form.addControl('permitLicenseRegistrationNumberControl', new FormControl(undefined));
-            this.form.addControl('logBookLicenseValidFormControl', new FormControl(undefined));
+
+            this.form.addControl('logBookLicenseValidFormControl', new FormControl(undefined, [
+                Validators.required,
+                TLValidators.minDate(this.form.get('issueDateControl')!),
+                TLValidators.maxDate(this.form.get('logBookLicenseValidToControl')!)
+            ]));
+
             this.form.addControl('logBookLicenseValidToControl', new FormControl(undefined));
 
             this.form.setValidators([
@@ -632,23 +686,6 @@ export class EditLogBookComponent implements OnInit, IDialogComponent {
         this.form.get('priceControl')!.setValue(this.model.price);
         this.form.get('notesControl')!.setValue(this.model.comment);
 
-        if (this.model instanceof CommercialFishingLogBookEditDTO) {
-            this.form.get('isOnlineControl')!.setValue(this.model.isOnline);
-            this.form.get('startPageControl')!.setValue(this.model.startPage);
-
-            if (this.model.permitLicenseStartPageNumber !== null && this.model.permitLicenseStartPageNumber !== undefined) {
-                this.form.get('permitLicenseStartPageNumberControl')!.setValue(this.model.permitLicenseStartPageNumber);
-            }
-
-            if (this.model.permitLicenseEndPageNumber !== null && this.model.permitLicenseEndPageNumber !== undefined) {
-                this.form.get('permitLicenseEndPageNumberControl')!.setValue(this.model.permitLicenseEndPageNumber);
-            }
-
-            this.form.get('permitLicenseRegistrationNumberControl')!.setValue(this.model.permitLicenseRegistrationNumber);
-            this.form.get('logBookLicenseValidFormControl')!.setValue(this.model.logBookLicenseValidForm);
-            this.form.get('logBookLicenseValidToControl')!.setValue(this.model.logBookLicenseValidTo);
-        }
-
         if (this.isAdd) {
             this.form.get('issueDateControl')!.setValue(new Date());
 
@@ -663,6 +700,29 @@ export class EditLogBookComponent implements OnInit, IDialogComponent {
 
         if (this.isAdd && this.model.isOnline && this.selectedLogBookType === LogBookTypesEnum.Ship) {
             this.form.get('isOnlineControl')!.setValue(true);
+        }
+
+        if (this.model instanceof CommercialFishingLogBookEditDTO) {
+            this.form.get('isOnlineControl')!.setValue(this.model.isOnline);
+            this.form.get('startPageControl')!.setValue(this.model.startPage);
+
+            if (this.model.permitLicenseStartPageNumber !== null && this.model.permitLicenseStartPageNumber !== undefined) {
+                this.form.get('permitLicenseStartPageNumberControl')!.setValue(this.model.permitLicenseStartPageNumber);
+            }
+
+            if (this.model.permitLicenseEndPageNumber !== null && this.model.permitLicenseEndPageNumber !== undefined) {
+                this.form.get('permitLicenseEndPageNumberControl')!.setValue(this.model.permitLicenseEndPageNumber);
+            }
+
+            this.form.get('permitLicenseRegistrationNumberControl')!.setValue(this.model.permitLicenseRegistrationNumber);
+            this.form.get('logBookLicenseValidToControl')!.setValue(this.model.logBookLicenseValidTo);
+
+            if (this.isAdd) {
+                this.form.get('logBookLicenseValidFormControl')!.setValue(new Date());
+            }
+            else {
+                this.form.get('logBookLicenseValidFormControl')!.setValue(this.model.logBookLicenseValidForm);
+            }
         }
     }
 
@@ -696,6 +756,8 @@ export class EditLogBookComponent implements OnInit, IDialogComponent {
             this.model.permitLicenseStartPageNumber = this.form.get('permitLicenseStartPageNumberControl')!.value;
             this.model.permitLicenseEndPageNumber = this.form.get('permitLicenseEndPageNumberControl')!.value;
             this.model.isOnline = this.form.get('isOnlineControl')!.value;
+            this.model.logBookLicenseValidForm = this.form.get('logBookLicenseValidFormControl')!.value;
+            this.model.logBookLicenseValidTo = this.form.get('logBookLicenseValidToControl')!.value;
 
             if (this.model.startPageNumber !== undefined && this.model.startPageNumber !== null
                 && this.model.permitLicenseStartPageNumber !== undefined && this.model.permitLicenseStartPageNumber !== null

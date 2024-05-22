@@ -1,13 +1,14 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Windows.Input;
-using IARA.Mobile.Application.Attributes;
+﻿using IARA.Mobile.Application.Attributes;
 using IARA.Mobile.Domain.Enums;
 using IARA.Mobile.Insp.Application.DTObjects.Inspections;
 using IARA.Mobile.Insp.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Insp.Attributes;
 using IARA.Mobile.Insp.Base;
+using IARA.Mobile.Insp.Controls.ViewModels;
 using IARA.Mobile.Insp.Helpers;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Windows.Input;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Helpers;
 using TechnoLogica.Xamarin.ResourceTranslator;
@@ -18,10 +19,12 @@ namespace IARA.Mobile.Insp.Models
     public class LogBookModel : ViewModel
     {
         private bool _addedByInspector;
-
-        public LogBookModel()
+        ShipCatchesViewModel _shipCatches;
+        public LogBookModel(ShipCatchesViewModel shipCatches)
         {
             AddPage = CommandBuilder.CreateFrom<string>(OnAddPage);
+            PageSelected = CommandBuilder.CreateFrom<LogBookPageDto>(OnPageSelected);
+            _shipCatches = shipCatches;
 
             Pages = new List<LogBookPageDto>();
 
@@ -77,6 +80,7 @@ namespace IARA.Mobile.Insp.Models
         public List<LogBookPageDto> Pages { get; set; }
 
         public ICommand AddPage { get; set; }
+        public ICommand PageSelected { get; set; }
 
         private void OnAddPage(string text)
         {
@@ -85,6 +89,10 @@ namespace IARA.Mobile.Insp.Models
                 Id = -1,
                 PageNum = text
             };
+        }
+        private void OnPageSelected(LogBookPageDto dto)
+        {
+            _shipCatches.Catches.AddCatches(dto);
         }
     }
 }

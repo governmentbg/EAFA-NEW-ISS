@@ -60,7 +60,7 @@
                 <tl-input *ngIf="selectedLogBookType !== logBookTypesEnum.Ship || !isOnline"
                           fxFlex="20"
                           formControlName="endPageNumberControl"
-                          [getControlErrorLabelText]="endPageNumberErrorLabelTextMethod"
+                          [getControlErrorLabelText]="getControlErrorLabelTextMethod"
                           label="{{ 'catches-and-sales.log-book-end-page-number' | tlTranslate }}"
                           tooltipResourceName="catches-and-sales.log-book-end-page-number-helper"
                           [readonly]="isForRenewal">
@@ -102,8 +102,9 @@
         <tl-card-title>{{ 'catches-and-sales.log-book-permit-license-pages-panel' | tlTranslate }}</tl-card-title>
         <tl-card-content>
             <div fxLayout="column" fxFlexFill fxLayoutGap="1em">
-                <div *ngIf="!isAdd" fxLayout="row" fxFlex="100" fxLayoutAlign="space-between center" fxLayoutGap="1em">
-                    <tl-input fxFlex="33"
+                <div fxLayout="row" fxFlex="100" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                    <tl-input *ngIf="!isAdd"
+                              fxFlex="33"
                               formControlName="permitLicenseRegistrationNumberControl"
                               label="{{ 'catches-and-sales.log-book-permit-license-register-number' | tlTranslate }}"
                               tooltipResourceName="catches-and-sales.log-book-permit-license-register-number-helper"
@@ -111,16 +112,18 @@
                     </tl-input>
                     <tl-date fxFlex="33"
                              formControlName="logBookLicenseValidFormControl"
+                             [getControlErrorLabelText]="getControlErrorLabelTextMethod"
                              label="{{ 'catches-and-sales.log-book-permit-license-valid-from' | tlTranslate }}"
-                             tooltipResourceName="catches-and-sales.log-book-permit-license-valid-from-helper"
-                             [readonly]="true">
+                             tooltipResourceName="catches-and-sales.log-book-permit-license-valid-from-helper">
                     </tl-date>
-                    <tl-date fxFlex="33"
+                    <tl-date *ngIf="!isAdd"
+                             fxFlex="33"
                              formControlName="logBookLicenseValidToControl"
+                             [getControlErrorLabelText]="getControlErrorLabelTextMethod"
                              label="{{ 'catches-and-sales.log-book-permit-license-valid-to' | tlTranslate }}"
-                             tooltipResourceName="catches-and-sales.log-book-permit-license-valid-to-helper"
-                             [readonly]="true">
+                             tooltipResourceName="catches-and-sales.log-book-permit-license-valid-to-helper">
                     </tl-date>
+                    <div *ngIf="isAdd" fxFlex="33"></div>
                 </div>
                 <div fxLayout="row" fxFlex="100" fxLayoutAlign="space-between center" fxLayoutGap="1em">
                     <tl-input fxFlex="33"

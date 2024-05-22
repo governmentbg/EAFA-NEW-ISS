@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using IARA.Mobile.Application.DTObjects.Nomenclatures;
+﻿using IARA.Mobile.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Application.Interfaces.Utilities;
 using IARA.Mobile.Domain.Interfaces;
 using IARA.Mobile.Domain.Models;
@@ -13,6 +9,10 @@ using IARA.Mobile.Insp.Application.Interfaces.Factories;
 using IARA.Mobile.Insp.Application.Interfaces.Utilities;
 using IARA.Mobile.Insp.Domain.Entities.Inspections;
 using IARA.Mobile.Insp.Domain.Enums;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace IARA.Mobile.Insp.Application.Helpers
 {
@@ -131,6 +131,9 @@ namespace IARA.Mobile.Insp.Application.Helpers
 
             switch (nomenclatureEnum)
             {
+                case NomenclatureEnum.Catch:
+                    pullData = PullCatches();
+                    break;
                 case NomenclatureEnum.Inspector:
                     pullData = PullInspectors();
                     break;
@@ -187,6 +190,28 @@ namespace IARA.Mobile.Insp.Application.Helpers
             }
 
             return pullData.Pull(restClient, nomenclatureDates, dateTime, contextBuilder);
+        }
+
+        private static IPullData PullCatches()
+        {
+            return new PullData<CatchDto, Catch>(
+                NomenclatureEnum.Catch,
+                "InspectionData/GetCatches",
+                f => new Catch
+                {
+                    Id = f.Id,
+                    ShipUid = f.ShipUid,
+                    LogBookId = f.LogBookId,
+                    PageNumber = f.PageNumber,
+                    FishId = f.FishId,
+                    CatchTypeId = f.CatchTypeId,
+                    Quantity = f.Quantity,
+                    UnloadedQuantity = f.UnloadedQuantity,
+                    TurbotSizeGroupId = f.TurbotSizeGroupId,
+                    CatchZoneId = f.CatchZoneId,
+                },
+                f => f.Id
+            );
         }
 
         private static IPullData PullInspectors()

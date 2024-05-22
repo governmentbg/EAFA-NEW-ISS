@@ -7,6 +7,7 @@ namespace IARA.Mobile.Insp.Application.Interfaces.Database
 {
     public interface IAppDbContext : IDbContext
     {
+        TLTableQuery<Catch> Catches { get; }
         TLTableQuery<Ship> Ships { get; }
         TLTableQuery<NPort> NPorts { get; }
         TLTableQuery<Legal> Legals { get; }

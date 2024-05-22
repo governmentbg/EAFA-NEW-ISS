@@ -78,5 +78,6 @@ export enum ErrorCode {
     InvalidPassword = 56,
     OldPasswordFound = 57,
     MoreThanOneActiveShipLogBook = 58,
-    CannotCancelAuanWithPenalDecrees = 59
+    CannotCancelAuanWithPenalDecrees = 59,
+    MissingPageWithOldNumber = 60
 }

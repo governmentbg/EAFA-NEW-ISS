@@ -34,6 +34,7 @@ import { RecreationalFishingAddTicketsResultDTO } from '@app/models/generated/dt
 import { RecreationalFishingTicketDuplicateDTO } from '@app/models/generated/dtos/RecreationalFishingTicketDuplicateDTO';
 import { ReasonDTO } from '@app/models/generated/dtos/ReasonDTO';
 import { TicketStatusEnum } from '@app/enums/ticket-status.enum';
+import { TerritoryUnitNomenclatureDTO } from '@app/models/generated/dtos/TerritoryUnitNomenclatureDTO';
 
 @Injectable({
     providedIn: 'root'
@@ -209,6 +210,10 @@ export class RecreationalFishingAdministrationService extends ApplicationsRegist
 
     public getAllFishingAssociations(): Observable<NomenclatureDTO<number>[]> {
         return this.commonService.getAllFishingAssociations(this.area, this.controller);
+    }
+
+    public getTicketTerritoryUnits(): Observable<TerritoryUnitNomenclatureDTO[]> {
+        return this.commonService.getTicketTerritoryUnits(this.area, this.controller);
     }
 
     // applications

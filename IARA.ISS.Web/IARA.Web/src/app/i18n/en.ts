@@ -1109,6 +1109,11 @@
 
         'view-and-confirm-declaration-info': '',
 
+        'delivery-territory-unit-msg-1': 'Ticket must be delivered in',
+        'delivery-territory-unit-msg-2': 'address',
+        'delivery-territory-unit-msg-3': 'phone',
+        'delivery-territory-unit-msg-4': 'working time',
+
         'no-person-found-snackbar-err': 'No person found for these parameters',
 
         'offline-tickets': 'Offline tickets',
@@ -3964,6 +3969,7 @@
         'ship-page': 'Page',
         'ship-status': 'Status',
         'ship-outing-start-date': 'Outing start date',
+        'ship-declaration-of-origin-date': 'Declaration of origin date',
         'ship-fishing-gear': 'Fishing gear',
         'ship-port-of-unloading': 'Port of unloading',
         'ship-unloading-information': 'Unloading information',
@@ -4497,6 +4503,13 @@
         'edit-page-number-generate-missing-pages-permission-fifth-message': 'Please confirm the generation of',
         'edit-page-number-generate-missing-pages-permission-sixth-message': 'pages for the current log book with status Missing',
         'edit-page-number-generate-missing-pages-permission-no-pages-first-message': 'There are no added pages for the current log book. The start page of this log book is',
+
+        'edit-page-number-missing-page-with-old-number-dialog-title': 'Потвърждение за генериране на липсваща страница',
+        'edit-page-number-missing-page-with-old-number-dialog-ok-button': 'Добави липсваща страница',
+        'edit-page-number-missing-page-with-old-number-first-part': 'За да смените номера на текущата страница с номер',
+        'edit-page-number-missing-page-with-old-number-second-part': 'ще трябва да бъде изгенерирана страница на нейно място със статус Липсваща.',
+        'edit-page-number-missing-page-with-old-number-third-part': 'със статус Липсваща.',
+        'edit-page-number-missing-page-with-old-number-forth-part': 'Моля, потвърдете дали одобрявате добавяне на страница със статус Липсваща',
 
         'add-aquaculture-log-book-page-dialog-title': 'Add aquaculture log book page',
         'edit-aquaculture-log-book-page-dialog-title': 'Edit aquaculture log book page',

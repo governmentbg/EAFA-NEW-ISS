@@ -215,9 +215,7 @@ export class InspectedShipSectionsComponent extends CustomFormControl<InspectedS
 
             if (membership !== null && membership !== undefined) {
                 this.form.get('opMembershipControl')!.setValue(membership);
-                this.form.get('opMembershipAssociationControl')!.setValue(
-                    this.associations.find(f => f.value === Number(membership.number))
-                );
+                this.form.get('opMembershipAssociationControl')!.setValue(this.associations.find(f => f.value === Number(membership.number)));
             }
 
             if (notice !== null && notice !== undefined) {

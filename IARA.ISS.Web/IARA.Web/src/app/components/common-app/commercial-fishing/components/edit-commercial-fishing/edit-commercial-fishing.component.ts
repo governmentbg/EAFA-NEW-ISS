@@ -831,12 +831,12 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
                             this.form.get('permitLicensePermitControl')!.reset();
                             this.form.get('permitLicensePermitControl')!.updateValueAndValidity();
                             this.noShipSelected = true;
-                            this.onlyOnlineLogBooks = undefined;
+                            this.onlyOnlineLogBooks = undefined; 
                         }
                     }
 
                     if (ship !== null && ship !== undefined && ship instanceof NomenclatureDTO && this.isPermitLicense && !this.isApplication) {
-                        this.onlyOnlineLogBooks = ship.totalLength! >= SHIP_WITH_ONLINE_LOG_BOOKS_LENGTH;
+                        this.onlyOnlineLogBooks = ShipsUtils.hasErs(ship); 
                     }
 
                     if ((ship instanceof NomenclatureDTO || ship === null || ship === undefined)
@@ -1974,7 +1974,7 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
             if (shipId !== undefined && shipId !== null) {
                 const selectedShip: ShipNomenclatureDTO = ShipsUtils.get(this.ships, shipId)
                 this.form.get('shipControl')!.setValue(selectedShip);
-                this.onlyOnlineLogBooks = selectedShip.totalLength! >= SHIP_WITH_ONLINE_LOG_BOOKS_LENGTH;
+                this.onlyOnlineLogBooks = ShipsUtils.hasErs(selectedShip); 
             }
 
             if (this.model instanceof CommercialFishingApplicationEditDTO && this.isPermitLicense) {

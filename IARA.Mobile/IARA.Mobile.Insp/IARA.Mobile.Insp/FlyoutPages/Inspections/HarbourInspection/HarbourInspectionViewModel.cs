@@ -36,7 +36,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.HarbourInspection
             InspectionGeneralInfo = new InspectionGeneralInfoViewModel(this);
             InspectionHarbour = new InspectionHarbourViewModel(this, hasDate: false);
             InspectedShip = new FishingShipViewModel(this, canPickLocation: false);
-            ShipChecks = new ShipChecksViewModel(this);
+            ShipChecks = new ShipChecksViewModel(this, ShipCatches);
             ShipCatches = new ShipCatchesViewModel(this);
             ShipFishingGears = new ShipFishingGearsViewModel(this);
             TransshippedShip = new InspectedShipDataViewModel(this, canPickLocation: false)
@@ -154,7 +154,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.HarbourInspection
         {
             await OnGetStartupData();
             InspectionHelper.Initialize(this, Edit);
-            InspectionHelper.InitShip(InspectedShip, ShipChecks, ShipFishingGears.FishingGears);
+            InspectionHelper.InitShip(InspectedShip, ShipChecks, ShipCatches, ShipFishingGears.FishingGears);
 
             INomenclatureTransaction nomTransaction = NomenclaturesTransaction;
 

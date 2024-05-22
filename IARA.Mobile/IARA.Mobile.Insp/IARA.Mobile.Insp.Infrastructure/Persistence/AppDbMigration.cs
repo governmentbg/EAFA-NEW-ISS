@@ -1,9 +1,9 @@
-﻿using System;
-using System.IO;
-using IARA.Mobile.Application;
+﻿using IARA.Mobile.Application;
 using IARA.Mobile.Application.Interfaces.Utilities;
 using IARA.Mobile.Insp.Infrastructure.Persistence.Migrations;
 using IARA.Mobile.Insp.Infrastructure.Persistence.Migrations.Interfaces;
+using System;
+using System.IO;
 
 /*
  * IMPORTANT! If you want to add new tables/columns (or remove some) and such in production here is what you need to do:
@@ -24,7 +24,7 @@ namespace IARA.Mobile.Insp.Infrastructure.Persistence
         /// <summary>
         /// Represents the current version of the migrations
         /// </summary>
-        private const int CURRENT_VERSION = 1;
+        private const int CURRENT_VERSION = 2;
 
         private readonly INomenclatureDatesClear nomenclatureDatesClear;
         private readonly IExceptionHandler exceptionHandler;
@@ -59,6 +59,7 @@ namespace IARA.Mobile.Insp.Infrastructure.Persistence
                     {
                         IVersion[] versions = new IVersion[]
                         {
+                            new Version2()
                         };
 
                         for (int i = lastVersion; i < CURRENT_VERSION; i++)

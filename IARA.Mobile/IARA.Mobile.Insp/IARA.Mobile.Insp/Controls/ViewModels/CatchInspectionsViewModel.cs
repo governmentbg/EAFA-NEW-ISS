@@ -21,6 +21,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
         private List<CatchZoneNomenclatureDto> _catchAreas;
         private List<SelectNomenclatureDto> _fishSexTypes;
         private List<SelectNomenclatureDto> _turbotSizeGroups;
+        private string _summary;
 
         public CatchInspectionsViewModel(
             InspectionPageViewModel inspection,
@@ -66,6 +67,12 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
 
         [DuplicateMarketCatches(ErrorMessageResourceName = "DuplicateCatches")]
         public ValidStateValidatableTable<CatchInspectionViewModel> Catches { get; set; }
+
+        public string Summary
+        {
+            get => _summary;
+            set => SetProperty(ref _summary, value);
+        }
 
         public List<SelectNomenclatureDto> FishTypes
         {
@@ -144,6 +151,11 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
             }));
         }
 
+        public void AddCatches(LogBookPageDto selectedPage)
+        {
+            OnEdit(InspectionsTransaction.GetCatchesFromLogBookPaheNumber(selectedPage.LogBookId, selectedPage.PageNum));
+        }
+
         private void OnAddCatch()
         {
             Catches.Value.Add(new CatchInspectionViewModel(Inspection, this));
@@ -152,6 +164,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
         private void OnRemoveCatch(CatchInspectionViewModel catchInspection)
         {
             Catches.Value.Remove(catchInspection);
+            SetSummary();
         }
 
         public static implicit operator List<InspectionCatchMeasureDto>(CatchInspectionsViewModel viewModel)
@@ -169,6 +182,32 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
 
                 return dto;
             }).ToList();
+        }
+
+        public void SetSummary()
+        {
+            Summary = Catches.Value.Count == 0 ?
+                "" :
+                string.Join("; ", Catches.Value.GroupBy(
+                    c => c.FishType,
+                    c => c,
+                    (fishType, catches) =>
+                    {
+                        if (fishType.Value == null)
+                        {
+                            return "";
+                        }
+                        var quantity = catches.Select(ci => ci.UnloadedQuantity)
+                            .Where(ci => !string.IsNullOrEmpty(ci.Value))
+                            .Where(ci => int.TryParse(ci.Value, out int tmp));
+
+                        if (quantity.Count() == 0)
+                        {
+                            return "";
+                        }
+                        return $"{fishType.Value.DisplayValue}: {quantity.Sum(x => int.Parse(x.Value)):f2} кг";
+                    }
+                ).Where(c => !string.IsNullOrEmpty(c)));
         }
     }
 }

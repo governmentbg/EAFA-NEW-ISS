@@ -208,6 +208,7 @@
                                 <tl:TLFlex GrowUnit="500">
                                     <tl:TLPicker Title="{rt:Translate Page, Group=ShipChecks}"
                                             ValidState="{Binding PageSelect}"
+                                            Command="{Binding PageSelected}"
                                             ItemsSource="{Binding Pages}"
                                             AllowEmptyDialog="True"
                                             DisplayValue="DisplayValue"

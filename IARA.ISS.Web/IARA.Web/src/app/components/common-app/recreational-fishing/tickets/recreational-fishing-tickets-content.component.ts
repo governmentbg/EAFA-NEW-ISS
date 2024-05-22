@@ -21,7 +21,6 @@ import { RecreationalFishingTicketValidationResultDTO } from '@app/models/genera
 import { RecreationalFishingTicketViewDTO } from '@app/models/generated/dtos/RecreationalFishingTicketViewDTO';
 import { RecreationalFishingUserTicketDataDTO } from '@app/models/generated/dtos/RecreationalFishingUserTicketDataDTO';
 import { SystemPropertiesDTO } from '@app/models/generated/dtos/SystemPropertiesDTO';
-import { CommonNomenclatures } from '@app/services/common-app/common-nomenclatures.service';
 import { SystemPropertiesService } from '@app/services/common-app/system-properties.service';
 import { RecreationalFishingPublicService } from '@app/services/public-app/recreational-fishing-public.service';
 import { GetControlErrorLabelTextCallback } from '@app/shared/components/input-controls/base-tl-control';
@@ -32,6 +31,7 @@ import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.
 import { forkJoin, Subscription } from 'rxjs';
 import { PermissionsEnum } from '@app/shared/enums/permissions.enum';
 import { PermissionsService } from '@app/shared/services/permissions.service';
+import { TerritoryUnitNomenclatureDTO } from '@app/models/generated/dtos/TerritoryUnitNomenclatureDTO';
 
 
 @Component({
@@ -63,7 +63,7 @@ export class RecreationalFishingTicketsContentComponent implements OnInit, After
 
     public ticketTypes!: NomenclatureDTO<number>[];
     public visibleTicketPeriods!: NomenclatureDTO<number>[];
-    public territoryUnits!: NomenclatureDTO<number>[];
+    public territoryUnits!: TerritoryUnitNomenclatureDTO[];
 
     public showValidityStep: boolean = false;
     public showPaymentStep: boolean = false;
@@ -97,6 +97,7 @@ export class RecreationalFishingTicketsContentComponent implements OnInit, After
 
     public paidTicketApplicationId: number | undefined;
     public paidTicketPaymentRequestNum: string | undefined;
+    public deliveryTerritoryUnitText: string | undefined;
 
     public adultTicketType: TicketTypeEnum = TicketTypeEnum.STANDARD;
 
@@ -146,7 +147,6 @@ export class RecreationalFishingTicketsContentComponent implements OnInit, After
     private router: Router;
     private systemPropertiesService: SystemPropertiesService;
     private systemProperties!: SystemPropertiesDTO;
-    private nomenclatures: CommonNomenclatures;
     private datePipe: DatePipe;
 
     private dataSubscriptions: Subscription[] = [];
@@ -156,7 +156,6 @@ export class RecreationalFishingTicketsContentComponent implements OnInit, After
     public constructor(
         translate: FuseTranslationLoaderService,
         systemPropertiesService: SystemPropertiesService,
-        nomenclatures: CommonNomenclatures,
         permissions: PermissionsService,
         datePipe: DatePipe,
         router: Router
@@ -166,7 +165,6 @@ export class RecreationalFishingTicketsContentComponent implements OnInit, After
         this.translate = translate;
         this.router = router;
         this.systemPropertiesService = systemPropertiesService;
-        this.nomenclatures = nomenclatures;
         this.datePipe = datePipe;
 
         this.canProcessOnlinePaymentData = permissions.has(PermissionsEnum.OnlineSubmittedApplicationsProcessPaymentData);
@@ -187,9 +185,9 @@ export class RecreationalFishingTicketsContentComponent implements OnInit, After
         forkJoin([
             NomenclatureStore.instance.getNomenclature(NomenclatureTypes.TicketPeriods, this.service.getTicketPeriods.bind(this.service), false),
             NomenclatureStore.instance.getNomenclature(NomenclatureTypes.TicketTypes, this.service.getTicketTypes.bind(this.service), false),
-            NomenclatureStore.instance.getNomenclature(NomenclatureTypes.TerritoryUnits, this.nomenclatures.getTerritoryUnits.bind(this.nomenclatures), false)
+            NomenclatureStore.instance.getNomenclature(NomenclatureTypes.TerritoryUnits, this.service.getTicketTerritoryUnits.bind(this.service), false)
         ]).subscribe({
-            next: ([periods, types, tus]: [NomenclatureDTO<number>[], NomenclatureDTO<number>[], NomenclatureDTO<number>[]]) => {
+            next: ([periods, types, tus]: [NomenclatureDTO<number>[], NomenclatureDTO<number>[], TerritoryUnitNomenclatureDTO[]]) => {
                 this.ticketTypes = types.filter(x => x.isActive);
                 this.ticketPeriods = periods.filter(x => x.isActive);
                 this.territoryUnits = tus;
@@ -460,6 +458,21 @@ export class RecreationalFishingTicketsContentComponent implements OnInit, After
                         this.childTickets[i - this.tickets.length].ticketNum = ticketNum;
                     }
                 }
+            }
+
+            if (this.isPublicApp && !this.isAssociation && this.deliveryTerritoryUnitControl) {
+                this.dataSubscriptions.push(
+                    this.deliveryTerritoryUnitControl.valueChanges.subscribe({
+                        next: (value: TerritoryUnitNomenclatureDTO | undefined) => {
+                            if (value !== undefined && value !== null) {
+                                this.deliveryTerritoryUnitText = value.deliveryTerritoryUniitMessage;
+                            }
+                            else {
+                                this.deliveryTerritoryUnitText = undefined;
+                            }
+                        }
+                    })
+                );
             }
 
             this.checkPurchaseAbility();

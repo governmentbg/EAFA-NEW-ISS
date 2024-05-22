@@ -15,29 +15,23 @@
         Title="{rt:Translate Title, Group=HarbourInspection}"
         BackgroundColor="{StaticResource BackgroundColor}">
     <lc:TLForwardSections x:Name="forwardSections">
-        <sv:SectionView Image="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Info}, Color=White, Size=100}"
-                Text="{rt:Translate GeneralInfo, Group=GeneralInfo}">
+        <sv:SectionView Image="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Info}, Color=White, Size=100}" Text="{rt:Translate GeneralInfo, Group=GeneralInfo}">
             <StackLayout Padding="10">
                 <lc:InspectionGeneralInfoView BindingContext="{Binding InspectionGeneralInfo}" />
-                <lc:InspectionHarbourView BindingContext="{Binding InspectionHarbour}"
-                        InRegisterLabel="{rt:Translate HarbourInRegister, Group=HarbourInspection}" />
+                <lc:InspectionHarbourView BindingContext="{Binding InspectionHarbour}" InRegisterLabel="{rt:Translate HarbourInRegister, Group=HarbourInspection}" />
             </StackLayout>
         </sv:SectionView>
         <lc:FishingShipView Text="{rt:Translate ShipData, Group=HarbourInspection}"
                 ShipInRegisterLabel="{rt:Translate InspectedShipInRegister, Group=HarbourInspection}"
                 BindingContext="{Binding InspectedShip}" />
-        <lc:ShipChecksView Text="{rt:Translate ShipChecksData, Group=HarbourInspection}"
-                BindingContext="{Binding ShipChecks}" />
-        <lc:ShipCatchesView Text="{rt:Translate ShipCatchesData, Group=HarbourInspection}"
-                BindingContext="{Binding ShipCatches}" />
-        <lc:ShipFishingGearsView Text="{rt:Translate ShipFishingGearsData, Group=HarbourInspection}"
-                BindingContext="{Binding ShipFishingGears}" />
+        <lc:ShipChecksView Text="{rt:Translate ShipChecksData, Group=HarbourInspection}" BindingContext="{Binding ShipChecks}" />
+        <lc:ShipCatchesView Text="{rt:Translate ShipCatchesData, Group=HarbourInspection}" BindingContext="{Binding ShipCatches}" />
+        <lc:ShipFishingGearsView Text="{rt:Translate ShipFishingGearsData, Group=HarbourInspection}" BindingContext="{Binding ShipFishingGears}" />
         <sv:SectionView Image="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Ship}, Color=White, Size=100}"
                 Text="{rt:Translate TranshipmentShip, Group=HarbourInspection}"
                 IsExpanded="False">
             <StackLayout Padding="10">
-                <tl:TLCheckView IsChecked="{Binding HasTranshipment}"
-                        Text="{rt:Translate HasTranshipment, Group=HarbourInspection}" />
+                <tl:TLCheckView IsChecked="{Binding HasTranshipment}" Text="{rt:Translate HasTranshipment, Group=HarbourInspection}" />
                 <lc:InspectedShipDataView BindingContext="{Binding TransshippedShip}"
                         ShipInRegisterLabel="{rt:Translate TranshipmentShipInRegister, Group=HarbourInspection}"
                         IsVisible="{Binding BindingContext.HasTranshipment, Source={Reference page}}"
