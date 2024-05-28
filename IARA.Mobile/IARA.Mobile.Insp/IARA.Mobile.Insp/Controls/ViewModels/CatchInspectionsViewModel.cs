@@ -125,7 +125,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
                 return;
             }
 
-            Catches.Value.AddRange(catchMeasures.ConvertAll(f =>
+            var a = catchMeasures.ConvertAll(f =>
             {
                 CatchInspectionViewModel viewModel = new CatchInspectionViewModel(Inspection, this);
 
@@ -148,7 +148,17 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
                 }
 
                 return viewModel;
-            }));
+            });
+            try
+            {
+
+                Catches.Value.Add(a[1]);
+                Catches.Value.Add(a[0]);
+            }
+            catch (System.Exception e)
+            {
+
+            }
         }
 
         public void AddCatches(LogBookPageDto selectedPage)
