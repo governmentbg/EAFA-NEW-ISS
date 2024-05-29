@@ -1,8 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using IARA.Mobile.Application.DTObjects.Nomenclatures;
+﻿using IARA.Mobile.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Domain.Enums;
 using IARA.Mobile.Insp.Application.DTObjects.Inspections;
 using IARA.Mobile.Insp.Application.DTObjects.Nomenclatures;
@@ -12,6 +8,10 @@ using IARA.Mobile.Insp.Base;
 using IARA.Mobile.Insp.Domain.Enums;
 using IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.DeclarationCatchDialog;
 using IARA.Mobile.Insp.Models;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows.Input;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Helpers;
 using TechnoLogica.Xamarin.ResourceTranslator;
@@ -21,6 +21,9 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
 {
     public class DeclarationCatchesViewModel : ViewModel
     {
+        private string _summary;
+        private List<SelectNomenclatureDto> _fishTypes;
+
         public DeclarationCatchesViewModel(InspectionPageViewModel inspection, bool hasCatchType = true, bool hasUndersizedCheck = false, bool hasUnloadedQuantity = true)
         {
             Inspection = inspection;
@@ -32,8 +35,15 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
             Add = CommandBuilder.CreateFrom(OnAdd);
             Edit = CommandBuilder.CreateFrom<DeclarationCatchModel>(OnEdit);
             Remove = CommandBuilder.CreateFrom<DeclarationCatchModel>(OnRemove);
+            _fishTypes = NomenclaturesTransaction.GetFishes();
 
             this.AddValidation();
+        }
+
+        public string Summary
+        {
+            get => _summary;
+            set => SetProperty(ref _summary, value);
         }
 
         public InspectionPageViewModel Inspection { get; }
@@ -86,7 +96,32 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
             if (result != null && result.Dto != null)
             {
                 Catches.Value.Add(result);
+                SetSummary();
             }
+        }
+
+        public void SetSummary()
+        {
+            Summary = Catches.Value.Count == 0 ?
+                "" :
+                string.Join("; ", Catches.Value.GroupBy(
+                    c => c.Dto.FishTypeId.Value,
+                    c => c.Dto,
+                    (fishType, catches) =>
+                    {
+                        if (fishType == null)
+                        {
+                            return "";
+                        }
+                        var quantity = catches.Select(ci => ci.UnloadedQuantity);
+
+                        if (quantity.Count() == 0)
+                        {
+                            return "";
+                        }
+                        return $"{_fishTypes.Where(f => f.Id == fishType).First().DisplayValue}: {quantity.Sum(x => x.HasValue ? x.Value : 0):f2} кг";
+                    }
+                ).Where(c => !string.IsNullOrEmpty(c)));
         }
 
         private async Task OnEdit(DeclarationCatchModel model)

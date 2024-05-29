@@ -1579,8 +1579,9 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
 
             if (originDeclarationQuantity !== null && originDeclarationQuantity !== undefined && catchRecord.quantity !== undefined && catchRecord.quantity !== null) {
                 const diff: number = ((originDeclarationQuantity / catchRecord.quantity) * 100) - 100; // percents less (-) or more (+) than the original fish quantity;
+                const isEqual: boolean = Math.abs(diff - PERCENT_TOLERANCE) < 0.001;
 
-                if (diff < -PERCENT_TOLERANCE || diff > PERCENT_TOLERANCE) {
+                if ((diff < -PERCENT_TOLERANCE || diff > PERCENT_TOLERANCE) && !isEqual) {
                     if (differences === null || differences === undefined) {
                         differences = new Map<number, { quantity: number, turbotSizeGroupId: number | undefined }>();
                     }
@@ -1806,6 +1807,7 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
                         && x.gearEntryTime !== null
                         && x.gearEntryTime !== undefined
                         && x.gearEntryTime?.getFullYear() === catchRecord.gearEntryTime?.getFullYear()
+                        && x.gearEntryTime?.getMonth() === catchRecord.gearEntryTime?.getMonth()
                         && x.gearEntryTime?.getDate() === catchRecord.gearEntryTime?.getDate()
                         && x.gearEntryTime?.getHours() === catchRecord.gearEntryTime?.getHours()
                         && x.gearEntryTime?.getMinutes() === catchRecord.gearEntryTime?.getMinutes()
@@ -1916,11 +1918,13 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
         for (const catchRecord of catchRecords) {
             if (catchRecord.gearEntryTime !== undefined && catchRecord.gearEntryTime !== null) {
                 if (result.findIndex(x => x.gearEntryTime?.getFullYear() === catchRecord.gearEntryTime?.getFullYear()
+                    && x.gearEntryTime?.getMonth() === catchRecord.gearEntryTime?.getMonth()
                     && x.gearEntryTime?.getDate() === catchRecord.gearEntryTime?.getDate()
                     && x.gearEntryTime?.getHours() === catchRecord.gearEntryTime?.getHours()
                     && x.gearEntryTime?.getMinutes() === catchRecord.gearEntryTime?.getMinutes()) === -1
                 ) {
                     const original = catchRecords.filter(x => x.gearEntryTime?.getFullYear() === catchRecord.gearEntryTime?.getFullYear()
+                        && x.gearEntryTime?.getMonth() === catchRecord.gearEntryTime?.getMonth()
                         && x.gearEntryTime?.getDate() === catchRecord.gearEntryTime?.getDate()
                         && x.gearEntryTime?.getHours() === catchRecord.gearEntryTime?.getHours()
                         && x.gearEntryTime?.getMinutes() === catchRecord.gearEntryTime?.getMinutes());

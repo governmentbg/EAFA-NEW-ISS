@@ -51,4 +51,5 @@ export interface IRecreationalFishingService extends IBaseAuditService {
 
     deleteApplication(id: number): Observable<void>;
     undoDeleteApplication(id: number): Observable<void>;
+    getOnlinePaidTicketsCount(): Observable<number | undefined>;
 }

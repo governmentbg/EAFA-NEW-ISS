@@ -286,4 +286,8 @@ export class RecreationalFishingAdministrationService extends ApplicationsRegist
             properties: new RequestProperties({ asFormData: true })
         });
     }
+
+    public getOnlinePaidTicketsCount(): Observable<number> {
+        return this.requestService.get(this.area, this.controller, 'GetOnlinePaidTicketsCount');
+    }
 }

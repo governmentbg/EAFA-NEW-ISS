@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using IARA.Mobile.Application;
+﻿using IARA.Mobile.Application;
 using IARA.Mobile.Application.Attributes;
 using IARA.Mobile.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Domain.Enums;
@@ -16,6 +11,11 @@ using IARA.Mobile.Insp.Domain.Enums;
 using IARA.Mobile.Insp.Helpers;
 using IARA.Mobile.Insp.Models;
 using IARA.Mobile.Insp.ViewModels.Models;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
+using System.Windows.Input;
 using TechnoLogica.Xamarin.Attributes;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Helpers;
@@ -80,7 +80,8 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.DeclarationCatchDialo
         [ValidGroup("IsNNN")]
         public ValidState CatchQuantity { get; set; }
 
-        [TLRange(1, 10000, true)]
+        [Required]
+        [TLRange(0, 10000, true)]
         public ValidState UnloadedQuantity { get; set; }
 
         [Required]
@@ -340,44 +341,44 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.DeclarationCatchDialo
                 case DeclarationLogBookType.TransportationLogBook:
                 case DeclarationLogBookType.AdmissionLogBook:
                 case DeclarationLogBookType.ShipLogBook:
-                {
-                    if (!ShipUid.HasValue)
                     {
+                        if (!ShipUid.HasValue)
+                        {
+                            break;
+                        }
+
+                        IInspectionsTransaction inspTransaction = DependencyService.Resolve<IInspectionsTransaction>();
+
+                        LogBookPages = await inspTransaction.GetDeclarationLogBookPages(SubjectType, ShipUid.Value)
+                            ?? new List<DeclarationLogBookPageDto>();
+
+                        OnlyUnregisteredDeclaration = false;
+                        IsDeclarationRegistered = LogBookPages.Count > 0;
                         break;
                     }
-
-                    IInspectionsTransaction inspTransaction = DependencyService.Resolve<IInspectionsTransaction>();
-
-                    LogBookPages = await inspTransaction.GetDeclarationLogBookPages(SubjectType, ShipUid.Value)
-                        ?? new List<DeclarationLogBookPageDto>();
-
-                    OnlyUnregisteredDeclaration = false;
-                    IsDeclarationRegistered = LogBookPages.Count > 0;
-                    break;
-                }
                 case DeclarationLogBookType.AquacultureLogBook:
-                {
-                    if (Aquaculture.Value == null)
                     {
+                        if (Aquaculture.Value == null)
+                        {
+                            break;
+                        }
+
+                        IInspectionsTransaction inspTransaction = DependencyService.Resolve<IInspectionsTransaction>();
+
+                        LogBookPages = await inspTransaction.GetDeclarationLogBookPages(SubjectType, Aquaculture.Value.Id)
+                            ?? new List<DeclarationLogBookPageDto>();
+
+                        OnlyUnregisteredDeclaration = false;
+                        IsDeclarationRegistered = LogBookPages.Count > 0;
                         break;
                     }
-
-                    IInspectionsTransaction inspTransaction = DependencyService.Resolve<IInspectionsTransaction>();
-
-                    LogBookPages = await inspTransaction.GetDeclarationLogBookPages(SubjectType, Aquaculture.Value.Id)
-                        ?? new List<DeclarationLogBookPageDto>();
-
-                    OnlyUnregisteredDeclaration = false;
-                    IsDeclarationRegistered = LogBookPages.Count > 0;
-                    break;
-                }
                 case DeclarationLogBookType.Invoice:
                 case DeclarationLogBookType.NNN:
-                {
-                    OnlyUnregisteredDeclaration = true;
-                    IsDeclarationRegistered = false;
-                    break;
-                }
+                    {
+                        OnlyUnregisteredDeclaration = true;
+                        IsDeclarationRegistered = false;
+                        break;
+                    }
             }
         }
 

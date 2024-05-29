@@ -266,4 +266,8 @@ export class RecreationalFishingPublicService extends BaseAuditService implement
         const params = new HttpParams().append('id', id.toString());
         return this.requestService.patch(this.area, this.controller, 'UndoDeleteApplication', null, { httpParams: params });
     }
+
+    public getOnlinePaidTicketsCount(): Observable<number> {
+        throw new Error('This method should not be called from the public app');
+    }
 }

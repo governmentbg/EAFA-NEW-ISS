@@ -12,19 +12,14 @@
         Title="{rt:Translate Catches, Group=DeclarationCatch}"
         ValidState="{Binding Catches}">
     <tl:TLResponsiveTable.TableColumns>
-        <tl:TLTableColumn Text="{rt:Translate Type, Group=DeclarationCatch}"
-                Width="*" />
+        <tl:TLTableColumn Text="{rt:Translate Type, Group=DeclarationCatch}" Width="*" />
         <tl:TLTableColumn Text="{rt:Translate CatchType, Group=DeclarationCatch}"
                 Width="150"
                 IsVisible="{Binding HasCatchType}" />
-        <tl:TLTableColumn Text="{rt:Translate CatchQuantity, Group=DeclarationCatch}"
-                Width="150" />
-        <tl:TLTableColumn Text="{rt:Translate UnloadedQuantity, Group=DeclarationCatch}"
-                Width="150" />
-        <tl:TLTableColumn Text="{rt:Translate Presentation, Group=DeclarationCatch}"
-                Width="150" />
-        <tl:TLTableColumn Text="{rt:Translate CatchZone, Group=DeclarationCatch}"
-                Width="150" />
+        <tl:TLTableColumn Text="{rt:Translate CatchQuantity, Group=CatchInspection}" Width="150" />
+        <tl:TLTableColumn Text="{rt:Translate UnloadedQuantity, Group=DeclarationCatch}" Width="150" />
+        <tl:TLTableColumn Text="{rt:Translate Presentation, Group=DeclarationCatch}" Width="150" />
+        <tl:TLTableColumn Text="{rt:Translate CatchZone, Group=DeclarationCatch}" Width="150" />
         <tl:TLTableColumn Width="{Binding BindingContext.Inspection.ActivityType, Converter={StaticResource ReviewDialogToWidth}, ConverterParameter=140, Source={Reference view}}" />
     </tl:TLResponsiveTable.TableColumns>
     <tl:TLResponsiveTable.DefaultItemTemplate>
@@ -49,8 +44,7 @@
                 <Label Text="{Binding CatchZone}"
                         LineBreakMode="WordWrap"
                         VerticalOptions="Center" />
-                <StackLayout Orientation="Horizontal"
-                        VerticalOptions="Start">
+                <StackLayout Orientation="Horizontal" VerticalOptions="Start">
                     <ImageButton Source="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Eye}, Size=20, Color=White}"
                             Padding="10"
                             Command="{Binding BindingContext.Review, Source={Reference view}}"
@@ -70,17 +64,17 @@
         </DataTemplate>
     </tl:TLResponsiveTable.DefaultItemTemplate>
     <tl:TLResponsivleTableChild TableLayout="Table" />
-    <tl:TLResponsivleTableChild TableLayout="Sections"
-            QueryWidth="900" />
+    <tl:TLResponsivleTableChild TableLayout="Sections" QueryWidth="900" />
     <tl:TLResponsiveTable.FooterView>
-        <Button Text="{rt:Translate AddCatch, Group=DeclarationCatch}"
-                Command="{Binding Add}"
-                ImageSource="{FontImage FontFamily=FA, Glyph={Static h:IconFont.CirclePlus}, Size=25, Color=White}"
-                HorizontalOptions="End"
-                IsVisible="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}" />
+        <StackLayout>
+            <Button Text="{rt:Translate AddCatch, Group=DeclarationCatch}"
+                    Command="{Binding Add}"
+                    ImageSource="{FontImage FontFamily=FA, Glyph={Static h:IconFont.CirclePlus}, Size=25, Color=White}"
+                    HorizontalOptions="End"
+                    IsVisible="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}" />
+        </StackLayout>
     </tl:TLResponsiveTable.FooterView>
     <tl:TLResponsiveTable.EmptyView>
-        <Label Text="{rt:Translate NoInformation, Group=Common}"
-                Margin="20,10" />
+        <Label Text="{rt:Translate NoInformation, Group=Common}" Margin="20,10" />
     </tl:TLResponsiveTable.EmptyView>
 </tl:TLResponsiveTable>

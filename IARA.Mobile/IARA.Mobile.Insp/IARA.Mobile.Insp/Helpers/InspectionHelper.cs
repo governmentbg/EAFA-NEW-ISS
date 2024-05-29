@@ -198,10 +198,17 @@ namespace IARA.Mobile.Insp.Helpers
 
                     List<ShipPersonnelDto> shipUsers = nomTransaction.GetShipPersonnel(uid);
 
-                    fishingShip.ShipOwner.Person.Value = null;
-                    fishingShip.ShipUser.Person.Value = null;
-                    fishingShip.ShipRepresentative.Person.Value = null;
-                    fishingShip.ShipCaptain.Person.Value = null;
+                    SelectNomenclatureDto defaultAction = new SelectNomenclatureDto
+                    {
+                        Id = 1,
+                        Code = nameof(SubjectType.Person),
+                        Name = TranslateExtension.Translator[nameof(GroupResourceEnum.Common) + "/Person"],
+                    };
+
+                    ResetPerson(fishingShip.ShipOwner, defaultAction);
+                    ResetPerson(fishingShip.ShipUser, defaultAction);
+                    ResetPerson(fishingShip.ShipRepresentative, defaultAction);
+                    ResetPerson(fishingShip.ShipCaptain, defaultAction);
 
                     fishingShip.ShipOwner.People = shipUsers
                         .FindAll(f => f.Type == InspectedPersonType.OwnerPers || f.Type == InspectedPersonType.OwnerLegal);
@@ -284,6 +291,19 @@ namespace IARA.Mobile.Insp.Helpers
                     await TLLoadingHelper.HideFullLoadingScreen();
                 }
             );
+        }
+
+        private static void ResetPerson(InspectedPersonViewModel person, SelectNomenclatureDto defaultAction)
+        {
+            person.Action = defaultAction;
+            person.FirstName.Value = null;
+            person.MiddleName.Value = null;
+            person.LastName.Value = null;
+            person.Egn.Value = null;
+            person.EIK.Value = null;
+            person.Address.Value = null;
+            person.Nationality.Value = null;
+            person.Person.Value = null;
         }
 
         public static void Dispose(InspectionPageViewModel inspectionPageModel)

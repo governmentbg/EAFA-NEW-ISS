@@ -65,7 +65,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
         public bool ShowUndersizedCheck { get; }
         public bool ShowTurbotSizeGroups { get; }
 
-        [DuplicateMarketCatches(ErrorMessageResourceName = "DuplicateCatches")]
+        [DuplicateMarketCatches]
         public ValidStateValidatableTable<CatchInspectionViewModel> Catches { get; set; }
 
         public string Summary
@@ -125,7 +125,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
                 return;
             }
 
-            var a = catchMeasures.ConvertAll(f =>
+            Catches.Value.AddRange(catchMeasures.ConvertAll(f =>
             {
                 CatchInspectionViewModel viewModel = new CatchInspectionViewModel(Inspection, this);
 
@@ -148,17 +148,10 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
                 }
 
                 return viewModel;
-            });
-            try
-            {
+            }));
+            Catches.First().CatchInspections.SetSummary();
 
-                Catches.Value.Add(a[1]);
-                Catches.Value.Add(a[0]);
-            }
-            catch (System.Exception e)
-            {
-
-            }
+            Catches.Validation.Force();
         }
 
         public void AddCatches(LogBookPageDto selectedPage)
@@ -173,6 +166,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
 
         private void OnRemoveCatch(CatchInspectionViewModel catchInspection)
         {
+            catchInspection.Unsubscribe();
             Catches.Value.Remove(catchInspection);
             SetSummary();
         }
@@ -199,11 +193,11 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
             Summary = Catches.Value.Count == 0 ?
                 "" :
                 string.Join("; ", Catches.Value.GroupBy(
-                    c => c.FishType,
+                    c => c.FishType.Value,
                     c => c,
                     (fishType, catches) =>
                     {
-                        if (fishType.Value == null)
+                        if (fishType == null)
                         {
                             return "";
                         }
@@ -215,7 +209,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
                         {
                             return "";
                         }
-                        return $"{fishType.Value.DisplayValue}: {quantity.Sum(x => int.Parse(x.Value)):f2} кг";
+                        return $"{fishType.DisplayValue}: {quantity.Sum(x => int.Parse(x.Value)):f2} кг";
                     }
                 ).Where(c => !string.IsNullOrEmpty(c)));
         }

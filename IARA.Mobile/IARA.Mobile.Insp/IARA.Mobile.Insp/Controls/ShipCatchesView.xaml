@@ -17,7 +17,9 @@
             <lc:CatchInspectionsView IsTitleVisible="False" BindingContext="{Binding Catches}" />
             <Label Text="{Binding Catches.Summary}"
                     FontSize="Small"
-                    Margin="8,-8,0,8" />
+                    Margin="8,-8,0,8"
+                    LineBreakMode="WordWrap"
+                    IsEnabled="{Binding Catches.Catches.IsValid}" />
             <lc:TLGeneratedToggles ValidState="{Binding Toggles}"
                     IsVisible="{Binding Toggles.Value.Count, Converter={StaticResource NotEqual}, ConverterParameter=0}"
                     IsEnabled="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}" />

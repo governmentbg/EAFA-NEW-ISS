@@ -43,6 +43,10 @@
                 IsExpanded="False">
             <StackLayout Padding="10">
                 <lc:DeclarationCatchesView BindingContext="{Binding Catches}" />
+                <Label Text="{Binding Catches.Summary}"
+                        FontSize="Small"
+                        LineBreakMode="WordWrap"
+                        Margin="0,0,0,15" />
                 <lc:TLGeneratedToggles ValidState="{Binding InspectionToggles}" IsEnabled="{Binding ActivityType, Converter={StaticResource IsNotReview}}" />
                 <tl:TLCheckView IsChecked="{Binding HasImporter}" Text="{rt:Translate HasImporter, Group=FirstSaleInspection}" />
                 <lc:LegalView BindingContext="{Binding Importer}"

@@ -134,12 +134,12 @@ export class SuspensionsComponent extends CustomFormControl<SuspensionDataDTO[]>
     }
 
     public saveBtnClicked(actionInfo: IActionInfo, dialogClose: DialogCloseCallback): void {
-        this.suspensions = this.suspensionsTable.rows;
+        this.suspensions = this.getSuspensionsFromTable();
 
         if (this.suspensions !== null && this.suspensions !== undefined && this.suspensions.length > 0) { // save data to DB
             this.service.addEditSuspensions(
                 this.recordId!,
-                this.suspensions.filter(x => x.isActive || (x.id !== null && x.id !== undefined)),
+                this.suspensions,
                 this.pageCode
             ).subscribe({
                 next: () => {
@@ -170,7 +170,7 @@ export class SuspensionsComponent extends CustomFormControl<SuspensionDataDTO[]>
     }
 
     protected getValue(): SuspensionDataDTO[] {
-        return (this.suspensions ?? []).filter(x => x.isActive || (x.id !== null && x.id !== undefined));
+        return this.getSuspensionsFromTable();
     }
 
     protected buildForm(): AbstractControl {
@@ -253,15 +253,11 @@ export class SuspensionsComponent extends CustomFormControl<SuspensionDataDTO[]>
         dialog.subscribe({
             next: (result: SuspensionDataDTO | undefined) => {
                 if (result !== null && result !== undefined) {
-                    //
-                    let isAdd: boolean = false;
-
                     if (suspension !== null && suspension !== undefined) { // edit
                         suspension = result;
                     }
                     else {
                         this.suspensions.push(result);
-                        isAdd = true;
                     }
 
                     this.suspensions = this.suspensions.slice();
@@ -314,6 +310,39 @@ export class SuspensionsComponent extends CustomFormControl<SuspensionDataDTO[]>
                 }
             }
         });
+    }
+
+    private getSuspensionsFromTable(): SuspensionDataDTO[] {
+        const result: SuspensionDataDTO[] = [];
+
+        if (this.suspensionsTable.rows !== undefined && this.suspensionsTable.rows !== null && this.suspensionsTable.rows.length > 0) {
+            const suspensions: SuspensionDataDTO[] = this.suspensionsTable.rows.filter(x => x.isActive === true || (x.id !== null && x.id !== undefined));
+
+            for (const suspension of suspensions) {
+                if (suspension.validTo !== undefined && suspension.validTo !== null) {
+                    if (result.findIndex(x => x.validTo?.getFullYear() === suspension.validTo?.getFullYear()
+                        && x.validTo?.getMonth() === suspension.validTo?.getMonth()
+                        && x.validTo?.getDate() === suspension.validTo?.getDate()) === -1
+                    ) {
+                        const original = suspensions.filter(x => x.validTo?.getFullYear() === suspension.validTo?.getFullYear()
+                            && x.validTo?.getMonth() === suspension.validTo?.getMonth()
+                            && x.validTo?.getDate() === suspension.validTo?.getDate());
+
+                        if (original.length === 1) {
+                            result.push(suspension);
+                        }
+                        else {
+                            result.push(original.find(x => x.isActive === true)!);
+                        }
+                    }
+                }
+                else {
+                    result.push(suspension);
+                }
+            }
+        }
+
+        return result;
     }
 
     private handleAddEditErrorResponse(errorResponse: HttpErrorResponse): void {

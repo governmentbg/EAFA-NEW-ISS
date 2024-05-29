@@ -185,14 +185,18 @@ export abstract class BaseSecurityService<TIdentifier, TUser extends User<TIdent
         const properties = this.loginRequestProperties;
         //properties.withCredentials = true;
 
-        this.requestService.post<JwtToken, AuthCredentials>(this.securityConfig.baseRoute, this.securityConfig.securityController, this.securityConfig.loginMethodName, credentials, properties).subscribe({
-            next: (token) => {
-                this.tokenSuccessHandler(token, credentials.rememberMe, subject, true);
-            },
-            error: (error: HttpErrorResponse) => {
-                this.tokenErrorHandler(error, subject);
-            }
-        });
+        this.requestService.post<JwtToken, AuthCredentials>(this.securityConfig.baseRoute,
+            this.securityConfig.securityController,
+            this.securityConfig.loginMethodName,
+            credentials,
+            properties).subscribe({
+                next: (token) => {
+                    this.tokenSuccessHandler(token, credentials.rememberMe, subject, true);
+                },
+                error: (error: HttpErrorResponse) => {
+                    this.tokenErrorHandler(error, subject);
+                }
+            });
 
         return subject.toPromise();
     }
@@ -210,11 +214,15 @@ export abstract class BaseSecurityService<TIdentifier, TUser extends User<TIdent
 
         properties.headers = headers;
 
-        this.requestService.get<JwtToken>(this.securityConfig.baseRoute, this.securityConfig.securityController, this.securityConfig.readTokenDataMethodName, properties).subscribe(token => {
-            this.tokenSuccessHandler(token, false, subject, shouldEmit);
-        }, (error: HttpErrorResponse) => {
-            this.tokenErrorHandler(error, subject);
-        });
+        this.requestService.get<JwtToken>(this.securityConfig.baseRoute,
+            this.securityConfig.securityController,
+            this.securityConfig.readTokenDataMethodName,
+            properties)
+            .subscribe(token => {
+                this.tokenSuccessHandler(token, false, subject, shouldEmit);
+            }, (error: HttpErrorResponse) => {
+                this.tokenErrorHandler(error, subject);
+            });
 
         return subject.toPromise();
     }
@@ -336,7 +344,11 @@ export abstract class BaseSecurityService<TIdentifier, TUser extends User<TIdent
         requestProperties.rethrowException = true;
         requestProperties.showException = false;
 
-        const requestParams = { httpParams: httpParams, properties: requestProperties, responseTypeCtr: JwtToken } as IRequestServiceParams;
+        const requestParams = {
+            httpParams: httpParams,
+            properties: requestProperties,
+            responseTypeCtr: JwtToken
+        } as IRequestServiceParams;
 
         return requestParams;
     }
