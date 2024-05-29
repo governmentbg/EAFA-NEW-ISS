@@ -146,7 +146,6 @@
                             IsEnabled="{Binding BindingContext.Inspection.ActivityType, Converter={StaticResource IsNotReview}, Source={Reference view}}" />
                     <tl:TLEntry Title="{rt:Translate UnloadedQuantity, Group=CatchInspection}"
                             ValidState="{Binding UnloadedQuantity}"
-                            Command="{Binding UnloadedQuantitySet}"
                             Keyboard="Numeric"
                             IsEnabled="{Binding BindingContext.Inspection.ActivityType, Converter={StaticResource IsNotReview}, Source={Reference view}}" />
                     <tl:TLEntry Title="{rt:Translate AllowedDeviation, Group=CatchInspection}"

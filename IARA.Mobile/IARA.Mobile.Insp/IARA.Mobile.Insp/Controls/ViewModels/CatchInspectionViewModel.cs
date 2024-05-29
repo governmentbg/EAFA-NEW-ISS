@@ -5,6 +5,7 @@ using IARA.Mobile.Insp.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Insp.Base;
 using IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.ShipPickerDialog;
 using IARA.Mobile.Insp.Helpers;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
@@ -17,16 +18,14 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
 {
     public class CatchInspectionViewModel : ViewModel
     {
-        private readonly CatchInspectionsViewModel _catchInspections;
         private string _shipText;
 
         public CatchInspectionViewModel(InspectionPageViewModel inspection, CatchInspectionsViewModel catchInspections)
         {
             Inspection = inspection;
-            _catchInspections = catchInspections;
+            CatchInspections = catchInspections;
 
             FishTypeChosen = CommandBuilder.CreateFrom<SelectNomenclatureDto>(OnFishTypeChosen);
-            UnloadedQuantitySet = CommandBuilder.CreateFrom<int>(OnUnloadedQuantitySet);
             OpenShipPicker = CommandBuilder.CreateFrom(OnOpenShipPicker);
 
             this.AddValidation();
@@ -35,8 +34,27 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
             {
                 CatchType.Validations.RemoveAt(CatchType.Validations.FindIndex(f => f.Name == nameof(RequiredAttribute)));
             }
+
+            UnloadedQuantity.PropertyChanged += OnUnloadedValueChanged;
+        }
+        public void Unsubscribe()
+        {
+            UnloadedQuantity.PropertyChanged -= OnUnloadedValueChanged;
+        }
+        ~CatchInspectionViewModel()
+        {
+            Unsubscribe();
         }
 
+        private void OnUnloadedValueChanged(object s, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(ValidState.Value))
+            {
+                CatchInspections.SetSummary();
+            }
+        }
+
+        public CatchInspectionsViewModel CatchInspections { get; set; }
 
         public InspectionPageViewModel Inspection { get; }
 
@@ -58,7 +76,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
         public ValidState CatchCount { get; set; }
 
         [Required]
-        [TLRange(1, 10000, true)]
+        [TLRange(0, 10000, true)]
         public ValidState UnloadedQuantity { get; set; }
 
         [TLRange(0, 100, true)]
@@ -80,21 +98,15 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
         }
 
         public ICommand FishTypeChosen { get; }
-        public ICommand UnloadedQuantitySet { get; set; }
         public ICommand OpenShipPicker { get; }
 
         private void OnFishTypeChosen(SelectNomenclatureDto dto)
         {
-            if (_catchInspections.Catches.Any(f => f != this && f.CatchType.Value?.Id == dto.Id))
+            if (CatchInspections.Catches.Any(f => f != this && f.CatchType.Value?.Id == dto.Id))
             {
                 FishType.Value = null;
             }
-            //_catchInspections.SetSummary();
-        }
-
-        private void OnUnloadedQuantitySet(int unloadedQuantity)
-        {
-            //_catchInspections.SetSummary();
+            CatchInspections.SetSummary();
         }
 
         private async Task OnOpenShipPicker()

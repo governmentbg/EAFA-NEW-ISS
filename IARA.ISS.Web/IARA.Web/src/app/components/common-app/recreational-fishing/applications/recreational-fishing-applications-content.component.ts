@@ -91,6 +91,7 @@ export class RecreationalFishingApplicationsContentComponent implements OnInit, 
     public canInspectAndCorrectRecords!: boolean;
 
     public currentUserId!: number;
+    public onlinePaidTicketsCount: number = 0;
 
     public readonly ticketStatusEnum: typeof TicketStatusEnum = TicketStatusEnum;
     public readonly applicationStatusEnum: typeof ApplicationStatusesEnum = ApplicationStatusesEnum;
@@ -204,6 +205,12 @@ export class RecreationalFishingApplicationsContentComponent implements OnInit, 
             service.getAllTicketStatuses().subscribe({
                 next: (statuses: NomenclatureDTO<number>[]) => {
                     this.statuses = statuses;
+                }
+            });
+
+            service.getOnlinePaidTicketsCount().subscribe({
+                next: (count: number) => {
+                    this.onlinePaidTicketsCount = count;
                 }
             });
         }

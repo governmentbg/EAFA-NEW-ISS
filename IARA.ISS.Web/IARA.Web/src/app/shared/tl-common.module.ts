@@ -3,6 +3,7 @@ import { CommonModule, CurrencyPipe, DecimalPipe } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatBadgeModule } from '@angular/material/badge';
 import { MatDividerModule } from '@angular/material/divider';
 import { RouterModule } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
@@ -131,6 +132,7 @@ import { TLPipesModule } from './pipes/tl-pipes.module';
         NgxTextDiffModule,
         QuillModule,
         TLDirectivesModule,
+        MatBadgeModule,
 
         CheckboxListComponent,
         TLIconButtonComponent,

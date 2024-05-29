@@ -409,7 +409,7 @@ export class CommercialFishingRegisterComponent implements OnInit, AfterViewInit
                     PageCodeEnum.RightToFishThirdCountry,
                     PageCodeEnum.RightToFishResource,
                     PageCodeEnum.PoundnetCommFishLic,
-                    PageCodeEnum.CatchQuataSpecies 
+                    PageCodeEnum.CatchQuataSpecies
                 ]
             }),
             disableDialogClose: true,
@@ -671,6 +671,7 @@ export class CommercialFishingRegisterComponent implements OnInit, AfterViewInit
             next: (result: SuspensionDataDTO[] | undefined) => {
                 if (result !== null && result !== undefined) {
                     this.gridManager.refreshData();
+                    this.cacheService.clearPermitLicenseLogBooksCache(); // clear all cache
                 }
             }
         });

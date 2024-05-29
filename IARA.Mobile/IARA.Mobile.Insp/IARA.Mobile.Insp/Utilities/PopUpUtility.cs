@@ -1,4 +1,5 @@
-﻿using IARA.Mobile.Application.Interfaces.Utilities;
+﻿using IARA.Mobile.Application;
+using IARA.Mobile.Application.Interfaces.Utilities;
 using IARA.Mobile.Domain.Enums;
 using TechnoLogica.Xamarin.ResourceTranslator;
 using Xamarin.Forms;
@@ -11,6 +12,10 @@ namespace IARA.Mobile.Insp.Utilities
 
         public void AlertException()
         {
+            if (CommonGlobalVariables.InternetStatus == InternetStatus.Disconnected)
+            {
+                return;
+            }
             if (_isPopupShowing)
             {
                 return;

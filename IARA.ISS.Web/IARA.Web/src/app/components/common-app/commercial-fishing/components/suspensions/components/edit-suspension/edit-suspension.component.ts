@@ -298,6 +298,7 @@ export class EditSuspensionComponent implements OnInit, AfterViewInit, IDialogCo
         const selectedSuspensionType: SuspensionTypeNomenclatureDTO = this.form.get('suspensionTypeControl')!.value;
         this.model.suspensionTypeId = selectedSuspensionType.value;
         this.model.suspensionTypeName = selectedSuspensionType.displayName;
+        this.model.isActive = true;
 
         const selectedReason: SuspensionReasonNomenclatureDTO = this.form.get('suspensionReasonControl')!.value;
         this.model.reasonId = selectedReason.value;
