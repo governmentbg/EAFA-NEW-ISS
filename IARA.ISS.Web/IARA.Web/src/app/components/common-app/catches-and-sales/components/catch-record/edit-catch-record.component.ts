@@ -64,6 +64,18 @@ export class EditCatchRecordComponent implements AfterViewInit, IDialogComponent
     }
 
     public ngAfterViewInit(): void {
+        this.form.get('gearEntryDateTimeControl')!.valueChanges.subscribe({
+            next: (entryDate: Moment | null | undefined) => {
+                this.onGearEntryDateTimeChanged(entryDate);
+            }
+        });
+
+        this.form.get('gearExitDateTimeControl')!.valueChanges.subscribe({
+            next: (exitDate: Moment | null | undefined) => {
+                this.onGearExitDateTimeChanged(exitDate);
+            }
+        });
+
         if (this.isAdd) {
             this.form.get('aquaticOrganismTypesControl')!.setValue([
                 new CatchRecordFishDTO({
@@ -85,18 +97,6 @@ export class EditCatchRecordComponent implements AfterViewInit, IDialogComponent
         else {
             this.fillForm();
         }
-
-        this.form.get('gearEntryDateTimeControl')!.valueChanges.subscribe({
-            next: (entryDate: Moment | null | undefined) => {
-                this.onGearEntryDateTimeChanged(entryDate);
-            }
-        });
-
-        this.form.get('gearExitDateTimeControl')!.valueChanges.subscribe({
-            next: (exitDate: Moment | null | undefined) => {
-                this.onGearExitDateTimeChanged(exitDate);
-            }
-        });
     }
 
     public setData(data: CatchRecordDialogParamsModel, buttons: DialogWrapperData): void {
@@ -228,7 +228,10 @@ export class EditCatchRecordComponent implements AfterViewInit, IDialogComponent
         if (this.model.gearEntryTime !== null && this.model.gearEntryTime !== undefined) {
             gearEntryDateTime = moment(this.model.gearEntryTime);
         }
-        this.form.get('gearEntryDateTimeControl')!.setValue(gearEntryDateTime);
+
+        if (this.model.hasGearEntry) {
+            this.form.get('gearEntryDateTimeControl')!.setValue(gearEntryDateTime);
+        }
 
         const hasNoGearEntry: boolean = !(this.model.hasGearEntry ?? false);
         this.form.get('hasNoGearEntryControl')!.setValue(hasNoGearEntry);
@@ -237,7 +240,10 @@ export class EditCatchRecordComponent implements AfterViewInit, IDialogComponent
         if (this.model.gearExitTime !== null && this.model.gearExitTime !== undefined) {
             gearExitDateTime = moment(this.model.gearExitTime);
         }
-        this.form.get('gearExitDateTimeControl')!.setValue(gearExitDateTime);
+
+        if (this.model.hasGearExit) {
+            this.form.get('gearExitDateTimeControl')!.setValue(gearExitDateTime);
+        }
 
         const hasNoGearExit: boolean = !(this.model.hasGearExit ?? false);
         this.form.get('hasNoGearExitControl')!.setValue(hasNoGearExit);
@@ -306,8 +312,9 @@ export class EditCatchRecordComponent implements AfterViewInit, IDialogComponent
     private onGearEntryDateTimeChanged(gearEntryDateTime: Moment | null | undefined): void {
         if (gearEntryDateTime !== null && gearEntryDateTime !== undefined) {
             const gearExitDateTime: Moment | null | undefined = this.form.get('gearExitDateTimeControl')!.value;
+            const hasNoGearExitTime: boolean = this.form.get('hasNoGearExitControl')!.value ?? false;
 
-            if (gearExitDateTime === null || gearExitDateTime === undefined) {
+            if ((gearExitDateTime === null || gearExitDateTime === undefined) && !hasNoGearExitTime) {
                 this.form.get('gearExitDateTimeControl')!.setValue(gearEntryDateTime);
             }
         }
@@ -321,8 +328,9 @@ export class EditCatchRecordComponent implements AfterViewInit, IDialogComponent
     private onGearExitDateTimeChanged(gearExitDateTime: Moment | null | undefined): void {
         if (gearExitDateTime !== null && gearExitDateTime !== undefined) {
             const gearEntryDateTime: Moment | null | undefined = this.form.get('gearEntryDateTimeControl')!.value;
+            const hasNoGearEntryTime: boolean = this.form.get('hasNoGearEntryControl')!.value ?? false;
 
-            if (gearEntryDateTime === null || gearEntryDateTime === undefined) {
+            if ((gearEntryDateTime === null || gearEntryDateTime === undefined) && !hasNoGearEntryTime) {
                 this.form.get('gearEntryDateTimeControl')!.setValue(gearExitDateTime);
             }
         }

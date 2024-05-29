@@ -41,6 +41,7 @@ import { FirstSaleLogBookPageRegisterDTO } from '@app/models/generated/dtos/Firs
 import { AdmissionLogBookPageRegisterDTO } from '@app/models/generated/dtos/AdmissionLogBookPageRegisterDTO';
 import { TransportationLogBookPageRegisterDTO } from '@app/models/generated/dtos/TransportationLogBookPageRegisterDTO';
 import { LogBookTypesEnum } from '@app/enums/log-book-types.enum';
+import { CatchesAndSalesCommonService } from '../common-app/catches-and-sales-common.service';
 
 @Injectable({
     providedIn: 'root'
@@ -50,16 +51,19 @@ export class BuyersAdministrationService extends ApplicationsRegisterAdministrat
     protected applicationsProcessingController: string = 'ApplicationsProcessing';
 
     private readonly permissions: PermissionsService;
+    private readonly catchesAndSalesCommonService: CatchesAndSalesCommonService;
 
 
     public constructor(
         requestService: RequestService,
         applicationsRegisterService: ApplicationsProcessingService,
-        permissions: PermissionsService
+        permissions: PermissionsService,
+        catchesAndSalesCommonService: CatchesAndSalesCommonService
     ) {
         super(requestService, applicationsRegisterService);
 
         this.permissions = permissions;
+        this.catchesAndSalesCommonService = catchesAndSalesCommonService;
     }
 
     public getAll(request: GridRequestModel<BuyersFilters>): Observable<GridResultModel<BuyerDTO>> {
@@ -192,10 +196,24 @@ export class BuyersAdministrationService extends ApplicationsRegisterAdministrat
     public getLogBook(logBookId: number): Observable<LogBookEditDTO> {
         const params: HttpParams = new HttpParams().append('logBookId', logBookId.toString());
 
-        return this.requestService.get(this.area, this.controller, 'GetLogBook', {
+        return this.requestService.get<LogBookEditDTO>(this.area, this.controller, 'GetLogBook', {
             httpParams: params,
             responseTypeCtr: LogBookEditDTO
-        });
+        }).pipe(map((logBook: LogBookEditDTO) => {
+            for (const firstSalePage of logBook.firstSalePages ?? []) {
+                firstSalePage.statusName = this.catchesAndSalesCommonService.getPageStatusTranslation(firstSalePage.status!);
+            }
+
+            for (const admissionPage of logBook.admissionPagesAndDeclarations ?? []) {
+                admissionPage.statusName = this.catchesAndSalesCommonService.getPageStatusTranslation(admissionPage.status!);
+            }
+
+            for (const transportationPage of logBook.transportationPagesAndDeclarations ?? []) {
+                transportationPage.statusName = this.catchesAndSalesCommonService.getPageStatusTranslation(transportationPage.status!);
+            }
+
+            return logBook;
+        }));;
     }
 
     public getPermitLicenseLogBook(logBookPermitLicenseId: number): Observable<CommercialFishingLogBookEditDTO> {
@@ -230,10 +248,31 @@ export class BuyersAdministrationService extends ApplicationsRegisterAdministrat
                 break;
         }
 
-        return this.requestService.get(this.area, this.controller, requestMethod, {
-            httpParams: params,
-            responseTypeCtr: responseTypeCtr
-        });
+        return this.requestService.get<
+            FirstSaleLogBookPageRegisterDTO[]
+            | AdmissionLogBookPageRegisterDTO[]
+            | TransportationLogBookPageRegisterDTO[]>(this.area, this.controller, requestMethod, {
+                httpParams: params,
+                responseTypeCtr: responseTypeCtr
+            }).pipe(map((entries: FirstSaleLogBookPageRegisterDTO[] | AdmissionLogBookPageRegisterDTO[] | TransportationLogBookPageRegisterDTO[]) => {
+                if (entries[0] instanceof FirstSaleLogBookPageRegisterDTO) {
+                    for (const firstSalePage of entries) {
+                        firstSalePage.statusName = this.catchesAndSalesCommonService.getPageStatusTranslation(firstSalePage.status!);
+                    }
+                }
+                else if (entries[0] instanceof AdmissionLogBookPageRegisterDTO) {
+                    for (const admissionPage of entries) {
+                        admissionPage.statusName = this.catchesAndSalesCommonService.getPageStatusTranslation(admissionPage.status!);
+                    }
+                }
+                else if (entries[0] instanceof TransportationLogBookPageRegisterDTO) {
+                    for (const transportationPage of entries) {
+                        transportationPage.statusName = this.catchesAndSalesCommonService.getPageStatusTranslation(transportationPage.status!);
+                    }
+                }
+
+                return entries;
+            }));
     }
 
     public addLogBook(model: LogBookEditDTO, registerId: number, ignoreLogBookConflicts: boolean): Observable<void> {

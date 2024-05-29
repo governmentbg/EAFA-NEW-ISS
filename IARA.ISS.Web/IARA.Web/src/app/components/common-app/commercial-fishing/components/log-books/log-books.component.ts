@@ -380,12 +380,15 @@ export class LogBooksComponent extends CustomFormControl<LogBookEditDTO[] | Comm
                                                 || error?.code === ErrorCode.InvalidLogBookPagesRange
                                             ) {
                                                 const logBookNumber: string = error!.messages[0];
-
+                                                
                                                 const logBook: CommercialFishingLogBookEditDTO = results.find(x => x.logbookNumber === logBookNumber)!;
                                                 this.handleInvalidLogBookLicensePagesRangeError(logBook, false, logBook, error.messages[0], results);
                                             }
                                             else if (error?.code === ErrorCode.MoreThanOneActiveOnlineLogBook) {
-                                                this.handleMoreThanOneActiveOnlineLogBookError(error?.messages);
+                                                this.handleMoreThanOneActiveOnlineLogBookError(false, error?.messages);
+                                            }
+                                            else if (error?.code === ErrorCode.MoreThanOneActiveShipLogBook) {
+                                                this.handleMoreThanOneActiveOnlineLogBookError(true, error?.messages);
                                             }
                                         }
                                     });
@@ -954,10 +957,17 @@ export class LogBooksComponent extends CustomFormControl<LogBookEditDTO[] | Comm
         });
     }
 
-    private handleMoreThanOneActiveOnlineLogBookError(messages: string[]): void {
-        let errorMsg: string = this.isForPermitLicense
-            ? this.translate.getValue('catches-and-sales.more-than-one-active-online-log-book-present-permit-license-error')
-            : this.translate.getValue('catches-and-sales.more-than-one-active-online-log-book-present-error');
+    private handleMoreThanOneActiveOnlineLogBookError(isShipLogBook: boolean = false, messages: string[]): void {
+        let errorMsg: string;
+
+        if (this.isForPermitLicense) {
+            errorMsg = isShipLogBook
+                ? this.translate.getValue('catches-and-sales.more-than-one-active-ship-log-book-present-permit-license-error')
+                : this.translate.getValue('catches-and-sales.more-than-one-active-online-log-book-present-permit-license-error');
+        }
+        else {
+            errorMsg = this.translate.getValue('catches-and-sales.more-than-one-active-online-log-book-present-error');
+        }
 
         if (messages !== null && messages !== undefined && messages.length > 0) {
             errorMsg += messages.join(', ');
@@ -1009,7 +1019,10 @@ export class LogBooksComponent extends CustomFormControl<LogBookEditDTO[] | Comm
                         this.handleInvalidLogBookLicensePagesRangeError(logBook, isEdit, model, error.messages[0], undefined);
                     }
                     else if (error?.code === ErrorCode.MoreThanOneActiveOnlineLogBook) {
-                        this.handleMoreThanOneActiveOnlineLogBookError(error?.messages);
+                        this.handleMoreThanOneActiveOnlineLogBookError(false, error?.messages);
+                    }
+                    else if (error?.code === ErrorCode.MoreThanOneActiveShipLogBook) {
+                        this.handleMoreThanOneActiveOnlineLogBookError(true, error?.messages);
                     }
                 }
             });

@@ -187,14 +187,14 @@ export class EditLogBookComponent implements OnInit, IDialogComponent {
 
         if (this.isAdd) {
             if (this.model instanceof CommercialFishingLogBookEditDTO) {
-                this.form.get('startPageNumberControl')!.setValidators([TLValidators.number(0), Validators.required]);
-                this.form.get('endPageNumberControl')!.setValidators([TLValidators.number(0), Validators.required]);
+                this.form.get('startPageNumberControl')!.setValidators([TLValidators.number(0, undefined, 0), Validators.required]);
+                this.form.get('endPageNumberControl')!.setValidators([TLValidators.number(0, undefined, 0), Validators.required]);
 
                 this.form.get('startPageNumberControl')!.markAsPending();
                 this.form.get('endPageNumberControl')!.markAsPending();
 
-                this.form.get('permitLicenseStartPageNumberControl')!.setValidators([TLValidators.number(0), Validators.required]);
-                this.form.get('permitLicenseEndPageNumberControl')!.setValidators([TLValidators.number(0), Validators.required]);
+                this.form.get('permitLicenseStartPageNumberControl')!.setValidators(Validators.required);
+                this.form.get('permitLicenseEndPageNumberControl')!.setValidators(Validators.required);
 
                 this.form.get('permitLicenseStartPageNumberControl')!.markAsPending();
                 this.form.get('permitLicenseEndPageNumberControl')!.markAsPending();
@@ -275,6 +275,18 @@ export class EditLogBookComponent implements OnInit, IDialogComponent {
                             else {
                                 this.form.get('startPageNumberControl')!.enable();
                                 this.form.get('endPageNumberControl')!.enable();
+
+                                if (this.isOnline) {
+                                    this.form.get('startPageNumberControl')!.setValidators([TLValidators.number(0, undefined, 0)]);
+                                    this.form.get('endPageNumberControl')!.setValidators([TLValidators.number(0, undefined, 0)]);
+                                }
+                                else {
+                                    this.form.get('startPageNumberControl')!.setValidators([TLValidators.number(0, undefined, 0), Validators.required]);
+                                    this.form.get('endPageNumberControl')!.setValidators([TLValidators.number(0, undefined, 0), Validators.required]);
+
+                                    this.form.get('startPageNumberControl')!.markAsPending();
+                                    this.form.get('endPageNumberControl')!.markAsPending();
+                                }
 
                                 if (this.model instanceof CommercialFishingLogBookEditDTO) {
                                     this.form.get('permitLicenseStartPageNumberControl')!.enable();

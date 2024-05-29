@@ -204,7 +204,8 @@
                                                          && form.errors?.noTransboardDataForTransboardedCatch !== true
                                                          && form.errors?.originDeclarationFishesRequired !== true
                                                          && form.errors?.originDeclarationFishesNotNeeded !== true
-                                                         && form.errors?.uniqueGearEntryTime !== true">
+                                                         && form.errors?.uniqueGearEntryTime !== true
+                                                         && form.errors?.catchRecordIncorrectTimeDifference !== true">
         <div fxLayout="column" fxLayoutGap="1em">
             <!-- Улов -->
             <tl-card fxLayout="row"
@@ -334,6 +335,9 @@
                         </div>
                         <mat-error *ngIf="form.touched && form.errors?.uniqueGearEntryTime">
                             * {{ 'catches-and-sales.ship-page-unique-catch-record-gear-entry-time' | tlTranslate }}
+                        </mat-error>
+                        <mat-error *ngIf="form.touched && form.errors?.catchRecordIncorrectTimeDifference">
+                            * {{ 'catches-and-sales.ship-page-catch-records-gear-entry-exit-difference-error' | tlTranslate }}
                         </mat-error>
                         <mat-error *ngIf="form.touched && form.errors?.needRelatedLogBookPage" class="warn-orange-color">
                             * {{ 'catches-and-sales.ship-page-need-related-log-book-page' | tlTranslate }}

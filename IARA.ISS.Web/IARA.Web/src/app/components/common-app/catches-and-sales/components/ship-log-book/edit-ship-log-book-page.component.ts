@@ -837,7 +837,8 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
             this.allOriginDeclarationFishTransboardedIfMarkedValidator(),
             this.requiredOriginDeclarationIfCatchOnBoard(),
             this.gearEntryTimeValidator(),
-            this.needRelatedLogBookPageValidator()
+            this.needRelatedLogBookPageValidator(),
+            this.catchRecordTimeDifferenceValidator()
         ]);
 
         // set validators
@@ -1870,6 +1871,35 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
                 if (tripHasRecordWithoutGearEntryTime) {
                     return { 'needRelatedLogBookPage': true };
                 }
+            }
+
+            return null;
+        }
+    }
+
+    private catchRecordTimeDifferenceValidator(): ValidatorFn {
+        return (control: AbstractControl): ValidationErrors | null => {
+            if (control === null || control === undefined) {
+                return null;
+            }
+
+            if (this.form === null || this.form === undefined) {
+                return null;
+            }
+
+            if (this.catchRecords === null || this.catchRecords === undefined || this.catchRecords.length === 0) {
+                return null;
+            }
+
+            const tripHasRecordWithoutTotalTime: boolean = this.catchRecords.some(x =>
+                x.isActive !== false
+                && (x.gearEntryTime !== undefined && x.gearEntryTime !== null)
+                && (x.gearExitTime !== undefined && x.gearExitTime !== null)
+                && (x.totalTime === undefined || x.totalTime === null || Number(x.totalTime) < 1)
+            );
+
+            if (tripHasRecordWithoutTotalTime) {
+                return { 'catchRecordIncorrectTimeDifference': true };
             }
 
             return null;
