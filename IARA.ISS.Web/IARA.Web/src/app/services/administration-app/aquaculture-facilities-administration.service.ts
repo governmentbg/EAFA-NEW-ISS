@@ -41,6 +41,7 @@ import { AquacultureLogBookPageRegisterDTO } from '@app/models/generated/dtos/Aq
 import { AdmissionLogBookPageRegisterDTO } from '@app/models/generated/dtos/AdmissionLogBookPageRegisterDTO';
 import { TransportationLogBookPageRegisterDTO } from '@app/models/generated/dtos/TransportationLogBookPageRegisterDTO';
 import { LogBookTypesEnum } from '@app/enums/log-book-types.enum';
+import { CatchesAndSalesCommonService } from '../common-app/catches-and-sales-common.service';
 
 @Injectable({
     providedIn: 'root'
@@ -48,14 +49,17 @@ import { LogBookTypesEnum } from '@app/enums/log-book-types.enum';
 export class AquacultureFacilitiesAdministrationService extends ApplicationsRegisterAdministrativeBaseService implements IAquacultureFacilitiesService, ILogBookService {
     protected controller: string = 'AquacultureFacilitiesAdministration';
     private readonly permissions: PermissionsService;
+    private readonly catchesAndSalesCommonService: CatchesAndSalesCommonService;
 
     public constructor(
         requestService: RequestService,
         applicationProcessingService: ApplicationsProcessingService,
-        permissions: PermissionsService
+        permissions: PermissionsService,
+        catchesAndSalesCommonService: CatchesAndSalesCommonService
     ) {
         super(requestService, applicationProcessingService);
         this.permissions = permissions;
+        this.catchesAndSalesCommonService = catchesAndSalesCommonService;
     }
 
     // register
@@ -219,10 +223,16 @@ export class AquacultureFacilitiesAdministrationService extends ApplicationsRegi
     public getLogBook(logBookId: number): Observable<LogBookEditDTO> {
         const params: HttpParams = new HttpParams().append('logBookId', logBookId.toString());
 
-        return this.requestService.get(this.area, this.controller, 'GetLogBook', {
+        return this.requestService.get<LogBookEditDTO>(this.area, this.controller, 'GetLogBook', {
             httpParams: params,
             responseTypeCtr: LogBookEditDTO
-        });
+        }).pipe(map((logBook: LogBookEditDTO) => {
+            for (const aquaculturePage of logBook.aquaculturePages ?? []) {
+                aquaculturePage.statusName = this.catchesAndSalesCommonService.getPageStatusTranslation(aquaculturePage.status!);
+            }
+
+            return logBook;
+        }));;
     }
 
     public getPermitLicenseLogBook(logBookPermitLicenseId: number): Observable<CommercialFishingLogBookEditDTO> {
@@ -235,11 +245,17 @@ export class AquacultureFacilitiesAdministrationService extends ApplicationsRegi
 
     public getLogBookPages(logBookId: number, logBookType: LogBookTypesEnum): Observable<AquacultureLogBookPageRegisterDTO[]> {
         const params: HttpParams = new HttpParams().append('logBookId', logBookId.toString());
-
-        return this.requestService.get(this.area, this.controller, 'GetLogBookPages', {
+    
+        return this.requestService.get<AquacultureLogBookPageRegisterDTO[]>(this.area, this.controller, 'GetLogBookPages', {
             httpParams: params,
             responseTypeCtr: AquacultureLogBookPageRegisterDTO
-        });
+        }).pipe(map((entries: AquacultureLogBookPageRegisterDTO[]) => {
+            for (const page of entries) {
+                page.statusName = this.catchesAndSalesCommonService.getPageStatusTranslation(page.status!);
+            }
+
+            return entries;
+        }));
     }
 
     public addLogBook(model: LogBookEditDTO, registerId: number, ignoreLogBookConflicts: boolean): Observable<void> {

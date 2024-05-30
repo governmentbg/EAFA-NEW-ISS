@@ -4327,6 +4327,7 @@
         'ship-page-declaration-of-origin-catch-record-add-from-external-catch': 'Добави улов от предишен рейс',
         'ship-page-unique-catch-record-gear-entry-time': 'Часовете на поставяне на уредите не трябва да се повтарят',
         'ship-page-need-related-log-book-page': 'Трябва да добавите свързана декларация, в която да е попълнен часът на поставяне на уреда',
+        'ship-page-catch-records-gear-entry-exit-difference-error': 'Разликата между времената на поставяне и изтегляне на уред трябва да бъде поне 1 минута',
         'ship-page-declaration-of-origin-panel': 'Декларация за произход',
         'ship-page-declaration-of-origin-catch-record-catch-zone': 'Зона на улов',
         'ship-page-declaration-of-origin-catch-record-quadrant': 'Квадрант',

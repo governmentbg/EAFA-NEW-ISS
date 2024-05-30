@@ -4268,6 +4268,7 @@
         'ship-page-declaration-of-origin-catch-record-add-from-external-catch': 'Add catch from previous trip',
         'ship-page-unique-catch-record-gear-entry-time': 'Cannot add catches with same gear entry times',
         'ship-page-need-related-log-book-page': 'You need to have a related log book page in order to add catch records without gear entry time',
+        'ship-page-catch-records-gear-entry-exit-difference-error': 'The difference between gear set and retrieval must be at least 1 minute',
         'ship-page-declaration-of-origin-panel': 'Declaration of origin',
         'ship-page-declaration-of-origin-catch-record-catch-zone': 'Catch zone',
         'ship-page-declaration-of-origin-catch-record-quadrant': 'Quadrant',
@@ -5250,7 +5251,7 @@
         'save-draft': 'Save draft',
         'cancel': 'Cancel',
         'activate': 'Activate',
-        'more-corrections-needed': 'Send for further corrections', 
+        'more-corrections-needed': 'Send for further corrections',
         'inspection-auans-title': 'AUANs',
 
         'cancel-auan-confirm-dialog-title': 'AUAN Cancellation',
