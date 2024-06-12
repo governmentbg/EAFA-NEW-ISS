@@ -62,6 +62,7 @@ import { LogBookPageEditExceptionDTO } from '@app/models/generated/dtos/LogBookP
 import { FishPreservationCodesEnum } from '@app/enums/fish-preservation-codes.enum';
 import { SecurityService } from '@app/services/common-app/security.service';
 import { FishGroupedQuantitiesModel } from '../../models/fish-grouped-quantities.model';
+import { WaterTypesEnum } from '@app/enums/water-types.enum';
 
 const PERCENT_TOLERANCE: number = 10;
 const QUALITY_DIFF_VALIDATOR_NAME: string = 'quantityDifferences';
@@ -838,7 +839,8 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
             this.requiredOriginDeclarationIfCatchOnBoard(),
             this.gearEntryTimeValidator(),
             this.needRelatedLogBookPageValidator(),
-            this.catchRecordTimeDifferenceValidator()
+            this.catchRecordTimeDifferenceValidator(),
+            this.catchRecordCatchQuadrantValidator()
         ]);
 
         // set validators
@@ -1900,6 +1902,40 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
 
             if (tripHasRecordWithoutTotalTime) {
                 return { 'catchRecordIncorrectTimeDifference': true };
+            }
+
+            return null;
+        }
+    }
+
+    private catchRecordCatchQuadrantValidator(): ValidatorFn {
+        return (control: AbstractControl): ValidationErrors | null => {
+            if (control === null || control === undefined) {
+                return null;
+            }
+
+            if (this.form === null || this.form === undefined) {
+                return null;
+            }
+
+            if (this.catchRecords === null || this.catchRecords === undefined || this.catchRecords.length === 0) {
+                return null;
+            }
+
+            const isDunabeWaters: boolean = this.model.permitLicenseWaterType === WaterTypesEnum.DANUBE;
+            const catchRecordFishes: CatchRecordFishDTO[][] = this.catchRecords.filter(x => x.isActive).map(x => x.catchRecordFishes) as CatchRecordFishDTO[][];
+            const catchRecordFishesFlattened: CatchRecordFishDTO[] = ([] as CatchRecordFishDTO[]).concat(...catchRecordFishes);
+
+            const hasCatchRecordsWithoutCatchLocation: boolean = catchRecordFishesFlattened.some(x =>
+                x.isActive !== false
+                && (x.catchQuadrantId === null || x.catchQuadrantId === undefined)
+                && (x.thirdCountryCatchZone === null || x.thirdCountryCatchZone === undefined || CommonUtils.isNullOrWhiteSpace(x.thirdCountryCatchZone))
+                && !x.isContinentalCatch
+                && !isDunabeWaters
+            );
+
+            if (hasCatchRecordsWithoutCatchLocation) {
+                return { 'catchRecordWithoutCatchLocation': true };
             }
 
             return null;

@@ -140,8 +140,10 @@ export class AddShipPageWizardComponent implements IDialogComponent, OnDestroy {
                 const cached: ShipLogBookPageEditDTO[] | undefined = this.dataCache.get(this.preliminaryDataFormGroup.get('pageNumberControl')!.value);
 
                 if (cached === undefined || cached === null) {
+                    const pageNumber: number | undefined = Number(this.preliminaryDataFormGroup.get('pageNumberControl')!.value);
+
                     this.subscriptions.push(
-                        this.service.getNewShipLogBookPages(this.preliminaryDataFormGroup.get('pageNumberControl')!.value, this.logBookId).subscribe({
+                        this.service.getNewShipLogBookPages(pageNumber, this.logBookId).subscribe({
                             next: (data: ShipLogBookPageEditDTO[]) => {
                                 this.dataCache.set(this.preliminaryDataFormGroup.get('pageNumberControl')!.value, data);
                                 this.setNewPageData(data);
@@ -198,10 +200,11 @@ export class AddShipPageWizardComponent implements IDialogComponent, OnDestroy {
 
     private setNewPageData(data: ShipLogBookPageEditDTO[]): void {
         this.fillPermitLicensesNomenclature(data);
+        const pageNumber: number | undefined = Number(this.preliminaryDataFormGroup.get('pageNumberControl')!.value);
 
         if (data.length === 1) {
             this.model = data[0];
-            this.model.pageNumber = this.preliminaryDataFormGroup.get('pageNumberControl')!.value;
+            this.model.pageNumber = pageNumber.toString();
         }
         else {
             this.model = new ShipLogBookPageEditDTO({
@@ -210,7 +213,7 @@ export class AddShipPageWizardComponent implements IDialogComponent, OnDestroy {
                 fillDate: data[0].fillDate,
                 shipId: data[0].shipId,
                 shipName: data[0].shipName,
-                pageNumber: this.preliminaryDataFormGroup.get('pageNumberControl')!.value
+                pageNumber: pageNumber.toString()
             });
         }
     }
@@ -335,7 +338,7 @@ export class AddShipPageWizardComponent implements IDialogComponent, OnDestroy {
 
             // confirmation message
 
-            let message: string = ''; 
+            let message: string = '';
 
             //генерира се липсваща страница и за страницата, чийто номер е променен
             if (this.isEditNumber) {

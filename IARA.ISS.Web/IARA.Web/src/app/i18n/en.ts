@@ -2935,10 +2935,10 @@
         'add-ifp-dialog-title': 'Add inspection of persons engaged in recreational fishing',
 
         'cwo': 'Inspection of a water body without inspection',
-        'cwo-type': 'Inspection of a water body',
-        'view-cwo-dialog-title': 'Review inspection of a water body without inspection',
-        'edit-cwo-dialog-title': 'Edit inspection of a water body without inspection',
-        'add-cwo-dialog-title': 'Add inspection of a water body without inspection',
+        'cwo-report': 'Inspection of a water body',
+        'view-cwo-report-dialog-title': 'Review inspection of a water body without inspection',
+        'edit-cwo-report-dialog-title': 'Edit inspection of a water body without inspection',
+        'add-cwo-report-dialog-title': 'Add inspection of a water body without inspection',
 
         'igm': 'Inspection and marking of fishing gear',
         'view-igm-dialog-title': 'Review inspection and marking of fishing gear',
@@ -4269,6 +4269,7 @@
         'ship-page-unique-catch-record-gear-entry-time': 'Cannot add catches with same gear entry times',
         'ship-page-need-related-log-book-page': 'You need to have a related log book page in order to add catch records without gear entry time',
         'ship-page-catch-records-gear-entry-exit-difference-error': 'The difference between gear set and retrieval must be at least 1 minute',
+        'ship-page-catch-records-no-catch-location-error': 'Catch zone is required if catch is not continental',
         'ship-page-declaration-of-origin-panel': 'Declaration of origin',
         'ship-page-declaration-of-origin-catch-record-catch-zone': 'Catch zone',
         'ship-page-declaration-of-origin-catch-record-quadrant': 'Quadrant',

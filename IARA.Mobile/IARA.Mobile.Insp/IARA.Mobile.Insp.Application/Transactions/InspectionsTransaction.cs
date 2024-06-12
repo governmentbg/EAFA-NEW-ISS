@@ -39,24 +39,34 @@ namespace IARA.Mobile.Insp.Application.Transactions
             _messagingCenter = messagingCenter;
         }
 
-        public List<InspectionCatchMeasureDto> GetCatchesFromLogBookPaheNumber(int logBookId, string pageNum)
+        public async Task<List<InspectionCatchMeasureDto>> GetCatchesFromLogBookPaheNumber(int logBookId, string pageNum)
         {
-            using (IAppDbContext context = ContextBuilder.CreateContext())
+            if (CommonGlobalVariables.InternetStatus == InternetStatus.Disconnected)
             {
-                return (
-                    from c in context.Catches
-                    where c.LogBookId == logBookId && c.PageNumber == pageNum
-                    select new InspectionCatchMeasureDto()
-                    {
-                        Id = c.Id,
-                        FishId = c.FishId,
-                        CatchInspectionTypeId = c.CatchTypeId,
-                        CatchQuantity = c.Quantity,
-                        UnloadedQuantity = c.UnloadedQuantity,
-                        TurbotSizeGroupId = c.TurbotSizeGroupId,
-                        CatchZoneId = c.CatchZoneId
-                    }).ToList();
+                using (IAppDbContext context = ContextBuilder.CreateContext())
+                {
+                    return (
+                        from c in context.Catches
+                        where c.LogBookId == logBookId && c.PageNumber == pageNum
+                        select new InspectionCatchMeasureDto()
+                        {
+                            Id = c.Id,
+                            FishId = c.FishId,
+                            CatchInspectionTypeId = c.CatchTypeId,
+                            CatchQuantity = c.Quantity,
+                            UnloadedQuantity = c.UnloadedQuantity,
+                            TurbotSizeGroupId = c.TurbotSizeGroupId,
+                            CatchZoneId = c.CatchZoneId
+                        }).ToList();
+                }
             }
+
+            HttpResult<List<InspectionCatchMeasureDto>> result = await RestClient.GetAsync<List<InspectionCatchMeasureDto>>(
+                "InspectionsData/GetCatchesFromLogBookPaheNumber",
+                new { logBookId, pageNum }
+            );
+
+            return result.Content;
         }
 
         public async Task<string> GetNextReportNumber(int userId = -1)

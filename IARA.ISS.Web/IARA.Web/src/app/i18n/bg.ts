@@ -2993,10 +2993,10 @@
         'add-ifp-dialog-title': 'Добавяне на доклад от инспекция на любителски риболов',
 
         'cwo': 'Проверка на воден обект',
-        'cwo-type': 'Проверка на воден обект',
-        'view-cwo-dialog-title': 'Преглед на доклад от проверка на воден обект',
-        'edit-cwo-dialog-title': 'Редакция на доклад от проверка на воден обект',
-        'add-cwo-dialog-title': 'Добавяне на доклад от проверка на воден обект',
+        'cwo-report': 'Проверка за наблюдение и контрол на воден обект',
+        'view-cwo-report-dialog-title': 'Преглед на доклад от проверка за наблюдение и контрол на воден обект',
+        'edit-cwo-report-dialog-title': 'Редакция на доклад от проверка за наблюдение и контрол на воден обект',
+        'add-cwo-report-dialog-title': 'Добавяне на доклад от проверка за наблюдение и контрол на воден обект',
 
         'igm': 'Проверка и маркировка на риболовен уред',
         'view-igm-dialog-title': 'Преглед на доклад от проверка и маркировка на риболовен уред',
@@ -4328,6 +4328,7 @@
         'ship-page-unique-catch-record-gear-entry-time': 'Часовете на поставяне на уредите не трябва да се повтарят',
         'ship-page-need-related-log-book-page': 'Трябва да добавите свързана декларация, в която да е попълнен часът на поставяне на уреда',
         'ship-page-catch-records-gear-entry-exit-difference-error': 'Разликата между времената на поставяне и изтегляне на уред трябва да бъде поне 1 минута',
+        'ship-page-catch-records-no-catch-location-error': 'За всеки улов трябва да бъде попълнена зона на улова, ако не е отбелязано, че е континентален',
         'ship-page-declaration-of-origin-panel': 'Декларация за произход',
         'ship-page-declaration-of-origin-catch-record-catch-zone': 'Зона на улов',
         'ship-page-declaration-of-origin-catch-record-quadrant': 'Квадрант',
@@ -4382,7 +4383,7 @@
         'edit-admission-log-book-page-number-title': 'Редактиране на номер на страница от дневник за приемане',
         'edit-first-sale-log-book-page-number-title': 'Редактиране на номер на страница от дневник за първа продажба',
         'edit-transportation-log-book-page-number-title': 'Редактиране на номер на страница от дневник за превоз',
-        'edit-page-number-save-btn':'Потвърди нов номер на страница',
+        'edit-page-number-save-btn': 'Потвърди нов номер на страница',
         'edit-ship-log-book-page-number': 'Редактиране на номер на страница от риболовен дневник',
         'edit-aquaculture-log-book-page-number': 'Редактиране на номер на страница от дневник за аквакултурни стопанства',
         'edit-admission-log-book-page-number': 'Редактиране на номер на страница от дневник за приемане',
@@ -4563,7 +4564,7 @@
         'edit-page-number-generate-missing-pages-permission-no-pages-first-message': 'За текущия дневник няма въведени страници в системата. Началната му страница е',
 
         'edit-page-number-missing-page-with-old-number-dialog-title': 'Потвърждение за генериране на липсваща страница',
-        'edit-page-number-missing-page-with-old-number-dialog-ok-button':'Добави липсваща страница',
+        'edit-page-number-missing-page-with-old-number-dialog-ok-button': 'Добави липсваща страница',
         'edit-page-number-missing-page-with-old-number-first-part': 'За да смените номера на текущата страница с номер',
         'edit-page-number-missing-page-with-old-number-second-part': 'ще трябва да бъде изгенерирана страница на нейно място с номер',
         'edit-page-number-missing-page-with-old-number-third-part': 'със статус Липсваща.',
@@ -4678,7 +4679,7 @@
         'log-book-page-range-number-greater-than-allowed': 'Диапазонът от страници на хартиените дневници трябва да не надвишава ',
         'log-book-page-range-pages': ' броя страници',
         'log-book-permit-license-page-range-invalid': 'Диапазонът от страници трябва да бъде в рамките на страниците на дневника',
-        'log-book-cannot-be-finished-or-reissued-error': 'Дневникът не трябва да липсващи/неприключени страници, за да бъде приключен/презаверен',
+        'log-book-cannot-be-finished-or-reissued-error': 'Дневникът не трябва да има липсващи/неприключени страници, за да бъде приключен/презаверен',
         'log-books-has-overlapping-ranges-error': 'Има дневници с невалидни/припокриващи се диапазони',
         'more-than-one-active-log-book-present-warn': 'Има повече от един активен хартиен дневник от еднакъв тип',
         'more-than-one-active-online-log-book-present-error': 'Към записа не може да има повече от един активен или презаверен онлайн дневник от еднакъв тип. Номера на дневнници: ',
@@ -5314,7 +5315,7 @@
         'draft': 'Чернова',
 
         'cancel-auan-confirm-dialog-title': 'Анулиране на АУАН',
-        'cancel-auan-confirm-dialog-message': 'Сигурни ли сте, че искате да анулирате този АУАН?', 
+        'cancel-auan-confirm-dialog-message': 'Сигурни ли сте, че искате да анулирате този АУАН?',
         'cancel-auan-confirm-dialog-ok-btn-label': 'Анулиране',
 
         'edit-auan-basic-data': 'Основна информация',

@@ -8,6 +8,7 @@ using IARA.Mobile.Insp.Controls.ViewModels;
 using IARA.Mobile.Insp.Helpers;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Helpers;
@@ -90,9 +91,9 @@ namespace IARA.Mobile.Insp.Models
                 PageNum = text
             };
         }
-        private void OnPageSelected(LogBookPageDto dto)
+        private async Task OnPageSelected(LogBookPageDto dto)
         {
-            _shipCatches.Catches.AddCatches(dto);
+            await _shipCatches.Catches.AddCatches(dto);
         }
     }
 }

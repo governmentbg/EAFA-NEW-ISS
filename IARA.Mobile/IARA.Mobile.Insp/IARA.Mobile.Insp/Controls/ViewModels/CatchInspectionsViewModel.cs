@@ -7,6 +7,7 @@ using IARA.Mobile.Insp.Domain.Enums;
 using IARA.Mobile.Insp.Helpers;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Helpers;
@@ -154,9 +155,11 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
             Catches.Validation.Force();
         }
 
-        public void AddCatches(LogBookPageDto selectedPage)
+        public async Task AddCatches(LogBookPageDto selectedPage)
         {
-            OnEdit(InspectionsTransaction.GetCatchesFromLogBookPaheNumber(selectedPage.LogBookId, selectedPage.PageNum));
+            await TLLoadingHelper.ShowFullLoadingScreen();
+            OnEdit(await InspectionsTransaction.GetCatchesFromLogBookPaheNumber(selectedPage.LogBookId, selectedPage.PageNum));
+            await TLLoadingHelper.HideFullLoadingScreen();
         }
 
         private void OnAddCatch()

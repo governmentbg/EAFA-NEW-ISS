@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using IARA.Mobile.Application.DTObjects.Nomenclatures;
+﻿using IARA.Mobile.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Domain.Enums;
 using IARA.Mobile.Insp.Application.DTObjects.Inspections;
 using IARA.Mobile.Insp.Application.Interfaces.Transactions;
@@ -11,6 +6,11 @@ using IARA.Mobile.Insp.Base;
 using IARA.Mobile.Insp.Domain.Enums;
 using IARA.Mobile.Insp.Helpers;
 using IARA.Mobile.Insp.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows.Input;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Helpers;
 using TechnoLogica.Xamarin.ViewModels.Base;
@@ -120,9 +120,17 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.FishingGearDialog
 
         private Task OnSave()
         {
-            Validation.Force();
+            bool isDialogValid;
+            if (Edit?.IsAddedByInspector != false)
+            {
+                isDialogValid = InspectedFishingGear.IsValid;
+            }
+            else
+            {
+                isDialogValid = InspectedFishingGear.IsValid && PermittedFishingGear.IsValid;
+            }
 
-            if (!Validation.IsValid)
+            if (!isDialogValid)
             {
                 return Task.CompletedTask;
             }
