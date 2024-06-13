@@ -51,6 +51,7 @@ import { IssueDuplicateTicketDialogParams } from '../../../applications/models/i
 import { RegixPersonDataDTO } from '@app/models/generated/dtos/RegixPersonDataDTO';
 import { AddressRegistrationDTO } from '@app/models/generated/dtos/AddressRegistrationDTO';
 import { TerritoryUnitNomenclatureDTO } from '@app/models/generated/dtos/TerritoryUnitNomenclatureDTO';
+import { PaymentTypesEnum } from '@app/enums/payment-types.enum';
 
 @Component({
     selector: 'recreational-fishing-ticket',
@@ -81,6 +82,7 @@ export class RecreationalFishingTicketComponent extends CustomFormControl<Recrea
     public isRegisterEntry: boolean = false;
     public isDuplicate: boolean = false;
     public isPaid: boolean = false;
+    public isOnlinePayment: boolean = false;
 
     public currentDate: Date = new Date();
     public validFrom: Date | undefined;
@@ -421,6 +423,15 @@ export class RecreationalFishingTicketComponent extends CustomFormControl<Recrea
                 if (this.hasProperty(value, 'paymentInformation')) {
                     this.form.get('paymentDataControl')?.setValue(value.paymentInformation);
                     this.form.get('paymentDataControl')?.disable();
+
+                    const paymentType: string = value.paymentInformation?.paymentType ?? '';
+
+                    if (paymentType === PaymentTypesEnum[PaymentTypesEnum.PayEGovBank]
+                        || paymentType === PaymentTypesEnum[PaymentTypesEnum.PayEGovePayBG]
+                        || paymentType === PaymentTypesEnum[PaymentTypesEnum.PayEGovePOS]
+                    ) {
+                        this.isOnlinePayment = true;
+                    }
                 }
             }
         }

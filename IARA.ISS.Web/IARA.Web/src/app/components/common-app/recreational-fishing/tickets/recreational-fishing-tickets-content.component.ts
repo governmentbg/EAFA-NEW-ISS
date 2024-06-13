@@ -317,11 +317,12 @@ export class RecreationalFishingTicketsContentComponent implements OnInit, After
             this.paymentDataControl.markAllAsTouched();
 
             if (this.paymentDataControl.valid) {
+                this.ticketsPayed = true;
+
                 return this.service.addTickets(this.buildTicketModels()).subscribe({
                     next: (result: RecreationalFishingAddTicketsResultDTO) => {
                         this.setAddTicketsResult(result);
 
-                        this.ticketsPayed = true;
                         this.paymentDataControl.disable();
                     }
                 });

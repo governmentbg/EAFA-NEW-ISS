@@ -12,7 +12,7 @@ namespace IARA.Mobile.Insp.Application.Interfaces.Transactions
 {
     public interface IInspectionsTransaction
     {
-        List<InspectionCatchMeasureDto> GetCatchesFromLogBookPaheNumber(int logBookId, string pageNum);
+        Task<List<InspectionCatchMeasureDto>> GetCatchesFromLogBookPaheNumber(int logBookId, string pageNum);
         Task<string> GetNextReportNumber(int userId = -1);
 
         Task<FileResponse> GetFile(int fileId);

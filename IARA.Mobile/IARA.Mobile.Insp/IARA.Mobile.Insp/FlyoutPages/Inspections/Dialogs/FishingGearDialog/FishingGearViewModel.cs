@@ -1,14 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Windows.Input;
-using IARA.Mobile.Application.Attributes;
+﻿using IARA.Mobile.Application.Attributes;
 using IARA.Mobile.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Insp.Application.DTObjects.Inspections;
 using IARA.Mobile.Insp.Base;
 using IARA.Mobile.Insp.Domain.Enums;
 using IARA.Mobile.Insp.Helpers;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Windows.Input;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Helpers;
 using TechnoLogica.Xamarin.ViewModels.Models;
@@ -48,22 +48,22 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.FishingGearDialog
         public ValidStateSelect<SelectNomenclatureDto> FishingGearType { get; set; }
 
         [Required]
-        [TLRange(1, 10000)]
+        [TLRange(0, 10000)]
         public ValidState Count { get; set; }
 
-        [TLRange(1, 10000, true)]
+        [TLRange(0, 10000, true)]
         public ValidState NetEyeSize { get; set; }
 
         [TLRange(0, 10000)]
         public ValidState HookCount { get; set; }
 
-        [TLRange(1, 10000, true)]
+        [TLRange(0, 10000, true)]
         public ValidState Length { get; set; }
 
-        [TLRange(1, 10000, true)]
+        [TLRange(0, 10000, true)]
         public ValidState Height { get; set; }
 
-        [TLRange(1, 10000, true)]
+        [TLRange(0, 10000, true)]
         public ValidState CordThickness { get; set; }
 
         public ValidStateValidatableTable<MarkViewModel> Marks { get; set; }
@@ -161,6 +161,15 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.FishingGearDialog
                     pingerViewModel.Status.Value = PingerStatuses.Find(f => f.Id == pinger.StatusId);
                     Pingers.Value.Add(pingerViewModel);
                 }
+            }
+        }
+
+        public bool IsValid
+        {
+            get
+            {
+                Validation.Force();
+                return Validation.IsValid;
             }
         }
 

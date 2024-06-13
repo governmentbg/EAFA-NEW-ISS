@@ -112,7 +112,8 @@ export class InspectedCatchesTableComponent extends CustomFormControl<Inspection
     private readonly translate: FuseTranslationLoaderService;
     private readonly editShipDialog: TLMatDialog<InspectedShipComponent>;
 
-    public constructor(@Self() ngControl: NgControl,
+    public constructor(
+        @Self() ngControl: NgControl,
         translate: FuseTranslationLoaderService,
         editShipDialog: TLMatDialog<InspectedShipComponent>
     ) {
@@ -133,6 +134,10 @@ export class InspectedCatchesTableComponent extends CustomFormControl<Inspection
         this.mapOptions.selectGridLayerStyle = this.createCustomSelectGridLayerStyle();
     }
 
+    public ngOnInit(): void {
+        this.initCustomFormControl();
+    }
+
     public ngOnChanges(changes: SimpleChanges): void {
         if ('requiresFish' in changes) {
             if (!this.requiresFish) {
@@ -150,13 +155,11 @@ export class InspectedCatchesTableComponent extends CustomFormControl<Inspection
         }
     }
 
-    public ngOnInit(): void {
-        this.initCustomFormControl();
-    }
-
     public writeValue(value: InspectionCatchMeasureDTO[]): void {
         if (value !== undefined && value !== null) {
             const catches: InspectedCatchTableModel[] = value.map(x => new InspectedCatchTableModel({
+                id: x.id,
+                fishId: x.fishId,
                 action: x.action,
                 allowedDeviation: x.allowedDeviation,
                 averageSize: x.averageSize,
@@ -164,9 +167,7 @@ export class InspectedCatchesTableComponent extends CustomFormControl<Inspection
                 catchInspectionTypeId: x.catchInspectionTypeId,
                 catchQuantity: x.catchQuantity,
                 catchZoneId: x.catchZoneId,
-                fishId: x.fishId,
                 fishSexId: x.fishSexId,
-                id: x.id,
                 shipLogBookPageId: x.shipLogBookPageId,
                 undersized: x.undersized,
                 originShip: x.originShip,
@@ -184,7 +185,8 @@ export class InspectedCatchesTableComponent extends CustomFormControl<Inspection
                 this.catches = catches;
                 this.recalculateCatchQuantitySums();
             });
-        } else {
+        }
+        else {
             setTimeout(() => {
                 this.catches = [];
                 this.recalculateCatchQuantitySums();
@@ -322,7 +324,11 @@ export class InspectedCatchesTableComponent extends CustomFormControl<Inspection
             undersizedControl: new FormControl(false)
         });
 
-        return new FormControl(undefined, [this.catchesValidator(), this.missingCatchInspectionTypeValidator(), this.missingUnloadedQuantityValidator()]);
+        return new FormControl(undefined, [
+            this.catchesValidator(),
+            this.missingCatchInspectionTypeValidator(),
+            this.missingUnloadedQuantityValidator()
+        ]);
     }
 
     protected getValue(): InspectionCatchMeasureDTO[] {
@@ -330,23 +336,21 @@ export class InspectedCatchesTableComponent extends CustomFormControl<Inspection
         const lsc = this.types.find(x => x.code === CatchSizeCodesEnum[CatchSizeCodesEnum.LSC])?.value;
 
         return this.catches.map(x => new InspectionCatchMeasureDTO({
+            id: x.id,
             action: x.action,
-            allowedDeviation: this.hasAllowedDeviation ? x.allowedDeviation : undefined,
-            averageSize: this.hasAverageSize ? x.averageSize : undefined,
+            fishId: x.fishId,
             catchCount: x.catchCount,
-            catchInspectionTypeId: this.hasUndersizedCheck
-                ? (x.undersized === true ? bms : lsc)
-                : x.catchInspectionTypeId,
             catchQuantity: x.catchQuantity,
             catchZoneId: x.catchZoneId,
-            fishId: x.fishId,
             fishSexId: x.fishSexId,
-            id: x.id,
-            shipLogBookPageId: x.shipLogBookPageId,
             originShip: x.originShip,
             storageLocation: x.storageLocation,
+            catchInspectionTypeId: this.hasUndersizedCheck ? (x.undersized === true ? bms : lsc) : x.catchInspectionTypeId,
+            allowedDeviation: this.hasAllowedDeviation ? x.allowedDeviation : undefined,
+            averageSize: this.hasAverageSize ? x.averageSize : undefined,
             unloadedQuantity: this.hasUnloadedQuantity ? x.unloadedQuantity : undefined,
-            turbotSizeGroupId: x.turbotSizeGroupId,
+            shipLogBookPageId: x.shipLogBookPageId ?? undefined,
+            turbotSizeGroupId: x.turbotSizeGroupId ?? undefined,
             hasMissingProperties: this.checkIfCatchHasMissingProperties(x)
         }));
     }
@@ -381,7 +385,7 @@ export class InspectedCatchesTableComponent extends CustomFormControl<Inspection
     }
 
     private catchesValidator(): ValidatorFn {
-        return (): ValidationErrors | null => {
+        return (control: AbstractControl): ValidationErrors | null => {
             if (this.catches !== undefined && this.catches !== null) {
                 const result = groupBy(this.catches, ((o: InspectedCatchTableModel) => ([o.fishId, o.catchInspectionTypeId, o.catchZoneId, o.turbotSizeGroupId])));
 
@@ -389,6 +393,7 @@ export class InspectedCatchesTableComponent extends CustomFormControl<Inspection
                     return { 'catchesMatch': true };
                 }
             }
+
             return null;
         };
     }

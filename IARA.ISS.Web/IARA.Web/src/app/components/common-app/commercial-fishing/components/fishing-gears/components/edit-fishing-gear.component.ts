@@ -463,6 +463,10 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
         this.form.get('descriptionControl')!.setValue(model.description);
         this.form.get('hasPingersControl')!.setValue(model.hasPingers);
 
+        if (this.isInspected && (model.count === undefined || model.count === null)) {
+            this.form.get('countControl')!.setValue(1);
+        }
+
         this.marks = this.copyMarks(model.marks?.slice() ?? []);
         this.pingers = this.copyPingers(model.pingers?.slice() ?? []);
     }

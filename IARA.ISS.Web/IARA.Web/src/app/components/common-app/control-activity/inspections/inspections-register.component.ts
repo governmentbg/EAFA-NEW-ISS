@@ -695,11 +695,11 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
                     dialog = new TLMatDialog<EditCheckWaterObjectComponent>(this.matDialog);
                     dialogTCtor = EditCheckWaterObjectComponent;
                     if (adding) {
-                        title = this.translate.getValue('inspections.add-cwo-dialog-title');
+                        title = this.translate.getValue('inspections.add-cwo-report-dialog-title');
                     } else if (readonly) {
-                        title = this.translate.getValue('inspections.view-cwo-dialog-title');
+                        title = this.translate.getValue('inspections.view-cwo-report-dialog-title');
                     } else {
-                        title = this.translate.getValue('inspections.edit-cwo-dialog-title');
+                        title = this.translate.getValue('inspections.edit-cwo-report-dialog-title');
                     }
                 }
                 break;
