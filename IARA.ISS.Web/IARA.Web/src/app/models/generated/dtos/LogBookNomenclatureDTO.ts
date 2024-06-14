@@ -2,7 +2,8 @@
 
 import { StrictlyTyped } from '@app/shared/decorators/strictly-typed.decorator';
 import { NomenclatureDTO } from './GenericNomenclatureDTO';
-import { LogBookPagePersonTypesEnum } from '@app/enums/log-book-page-person-types.enum'; 
+import { LogBookPagePersonTypesEnum } from '@app/enums/log-book-page-person-types.enum';
+import { LogBookStatusesEnum } from '@app/enums/log-book-statuses.enum'; 
 
 export class LogBookNomenclatureDTO extends NomenclatureDTO<number> {
     public constructor(obj?: Partial<LogBookNomenclatureDTO>) {
@@ -32,4 +33,10 @@ export class LogBookNomenclatureDTO extends NomenclatureDTO<number> {
 
     @StrictlyTyped(Number)
     public permitLicenseId?: number;
+
+    @StrictlyTyped(Number)
+    public logBookStatus?: LogBookStatusesEnum;
+
+    @StrictlyTyped(String)
+    public logBookStatusName?: string;
 }

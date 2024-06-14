@@ -4071,6 +4071,7 @@
         'add-ship-page-document-wizard-admission-document-type': 'Admission document',
         'add-ship-page-document-wizard-transportation-document-type': 'Transportation document',
         'add-ship-page-document-wizard-log-book-owner-type': 'Document log book owner type',
+        'add-ship-page-document-wizard-log-book-status': 'Log book status',
         'add-ship-page-document-wizard-log-book-owner': 'Owner',
         'edit-aquaculture-log-book-page-number-owner': 'Aquaculture facility',
         'add-ship-page-document-wizard-registered-buyer-parameter': 'Registered buyer',
@@ -4550,6 +4551,11 @@
         'log-book-page-person-registered-buyer-type': 'Registered buyer/first sale center',
         'log-book-page-person-permit-number': 'Permit License №',
         'log-book-page-person-cannot-find-log-book-error': 'Cannot find a log book with the given parameters. Please check them and try again.',
+
+        'log-book-finished': 'Finished',
+        'log-book-new': 'Active',
+        'log-book-renewed': 'Renewed',
+        'log-book-page-susp-lic': 'Suspended permit license',
 
         'page-product-copy-product': 'Copy product',
         'page-product-remove-product': 'Remove product',

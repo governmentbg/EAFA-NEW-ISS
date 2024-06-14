@@ -61,12 +61,20 @@ namespace IARA.Mobile.Insp.Application.Transactions
                 }
             }
 
-            HttpResult<List<InspectionCatchMeasureDto>> result = await RestClient.GetAsync<List<InspectionCatchMeasureDto>>(
-                "InspectionsData/GetCatchesFromLogBookPaheNumber",
+            return (await RestClient.GetAsync<List<CatchDto>>(
+                "InspectionData/GetCatchesForLogBookPage",
                 new { logBookId, pageNum }
-            );
-
-            return result.Content;
+            )).Content.Select(c => new InspectionCatchMeasureDto()
+            {
+                Id = c.Id,
+                FishId = c.FishId,
+                CatchInspectionTypeId = c.CatchTypeId,
+                CatchQuantity = c.Quantity,
+                UnloadedQuantity = c.UnloadedQuantity,
+                TurbotSizeGroupId = c.TurbotSizeGroupId,
+                CatchZoneId = c.CatchZoneId
+            }
+            ).ToList();
         }
 
         public async Task<string> GetNextReportNumber(int userId = -1)
@@ -274,13 +282,13 @@ namespace IARA.Mobile.Insp.Application.Transactions
                 filters = new InspectionsFilters
                 {
                     UpdatedAfter = lastFetchDate,
-                    ShowBothActiveAndInactive = lastFetchDate.HasValue
+                    ShowInactiveRecords = lastFetchDate.HasValue
                 };
             }
             else
             {
                 filters.UpdatedAfter = lastFetchDate;
-                filters.ShowBothActiveAndInactive = lastFetchDate.HasValue;
+                filters.ShowInactiveRecords = lastFetchDate.HasValue;
             }
             GridRequest<InspectionsFilters> gridRequest = new GridRequest<InspectionsFilters>(filters)
             {

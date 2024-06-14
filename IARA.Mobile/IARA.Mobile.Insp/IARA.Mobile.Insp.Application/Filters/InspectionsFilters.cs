@@ -7,6 +7,6 @@ namespace IARA.Mobile.Insp.Application.Filters
         public DateTime? DateFrom { get; set; }
         public DateTime? DateTo { get; set; }
         public DateTime? UpdatedAfter { get; set; }
-        public bool? ShowBothActiveAndInactive { get; set; }
+        public bool ShowInactiveRecords { get; set; }
     }
 }

@@ -189,7 +189,7 @@
                         </div>
                     </ng-template>
                 </data-template-column>
-                <data-column-inline [flexRate]="0.3"
+                <data-column-inline [flexRate]="isInspected ? 0.5 : 0.3"
                                     *ngIf="!isDisabled">
                 </data-column-inline>
             </tl-data-table>
@@ -246,7 +246,7 @@
                                  [formGroup]="pingersForm"
                                  dataType="string">
                     </data-column>
-                    <data-column-inline [flexRate]="0.5"
+                    <data-column-inline [flexRate]="isInspected ? 0.9 : 0.5"
                                         *ngIf="!isDisabled">
                     </data-column-inline>
                 </tl-data-table>
