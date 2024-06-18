@@ -22,21 +22,20 @@ import { InspectionsService } from '@app/services/administration-app/inspections
     templateUrl: './inspected-fishing-gears-table.component.html'
 })
 export class InspectedFishingGearsTableComponent extends CustomFormControl<InspectedFishingGearDTO[]> implements OnInit, OnChanges {
-
-    public fishingGears: InspectedFishingGearTableModel[] = [];
-
     @Input()
     public permitIds: number[] = [];
 
     @Input()
     public hasAttachedAppliances: boolean = false;
 
-    @ViewChild(TLDataTableComponent)
-    private datatable!: TLDataTableComponent;
+    public readonly inspectedFishingGearEnum: typeof InspectedFishingGearEnum = InspectedFishingGearEnum;
+
+    public fishingGears: InspectedFishingGearTableModel[] = [];
 
     private allFishingGears: InspectedFishingGearTableModel[] = [];
 
-    public readonly inspectedFishingGearEnum: typeof InspectedFishingGearEnum = InspectedFishingGearEnum;
+    @ViewChild(TLDataTableComponent)
+    private datatable!: TLDataTableComponent;
 
     private readonly translate: FuseTranslationLoaderService;
     private readonly confirmDialog: TLConfirmDialog;
@@ -69,9 +68,12 @@ export class InspectedFishingGearsTableComponent extends CustomFormControl<Inspe
 
         if (permitIds !== null && permitIds !== undefined) {
             if (this.allFishingGears.length > 0) {
-                this.fishingGears = this.allFishingGears
-                    .filter(f => f.gear.permittedFishingGear === null || f.gear.permittedFishingGear === undefined
-                        || this.permitIds.includes(f.gear.permittedFishingGear.permitId!));
+                this.fishingGears = this.allFishingGears.filter(x =>
+                    x.gear.permittedFishingGear === null
+                    || x.gear.permittedFishingGear === undefined
+                    || this.permitIds.includes(x.gear.permittedFishingGear.permitId!)
+                    || this.permitIds.length === 0
+                );
             }
         }
     }
@@ -126,9 +128,12 @@ export class InspectedFishingGearsTableComponent extends CustomFormControl<Inspe
 
             setTimeout(() => {
                 this.allFishingGears = fishingGears;
-                this.fishingGears = fishingGears
-                    .filter(f => f.gear.permittedFishingGear === null || f.gear.permittedFishingGear === undefined
-                        || this.permitIds.includes(f.gear.permittedFishingGear.permitId!));
+                this.fishingGears = fishingGears.filter(x =>
+                    x.gear.permittedFishingGear === null
+                    || x.gear.permittedFishingGear === undefined
+                    || this.permitIds.includes(x.gear.permittedFishingGear.permitId!)
+                    || this.permitIds.length === 0
+                );
             });
         }
         else {
@@ -150,7 +155,7 @@ export class InspectedFishingGearsTableComponent extends CustomFormControl<Inspe
                 readOnly: readOnly,
                 isRegistered: fishingGear.gear.permittedFishingGear !== null && fishingGear.gear.permittedFishingGear !== undefined,
                 isEdit: true,
-                hasAttachedAppliances: this.hasAttachedAppliances,
+                hasAttachedAppliances: this.hasAttachedAppliances
             });
 
             if (fishingGear?.gear?.id !== undefined && fishingGear?.gear?.id !== null) {
@@ -161,12 +166,9 @@ export class InspectedFishingGearsTableComponent extends CustomFormControl<Inspe
                 };
             }
 
-            if (readOnly) {
-                title = this.translate.getValue('inspections.view-inspected-gear-dialog-title');
-            }
-            else {
-                title = this.translate.getValue('inspections.edit-inspected-gear-dialog-title');
-            }
+            title = readOnly
+                ? this.translate.getValue('inspections.view-inspected-gear-dialog-title')
+                : this.translate.getValue('inspections.edit-inspected-gear-dialog-title');
         }
         else {
             data = new InspectedFishingGearTableParams({
@@ -177,7 +179,7 @@ export class InspectedFishingGearsTableComponent extends CustomFormControl<Inspe
                 }),
                 isEdit: false,
                 isRegistered: false,
-                hasAttachedAppliances: this.hasAttachedAppliances,
+                hasAttachedAppliances: this.hasAttachedAppliances
             });
 
             title = this.translate.getValue('inspections.add-inspected-gear-dialog-title');

@@ -72,6 +72,10 @@ namespace IARA.Mobile.Insp.Helpers
                         List<PermitLicenseDto> permitLicenses = nomTransaction.GetPermitLicenses(uid);
                         List<PermitDto> permits = nomTransaction.GetPermits(uid);
 
+                        shipChecks.PermitLicenses.PermitLicenses.Value.Clear();
+                        shipChecks.Permits.Permits.Value.Clear();
+                        shipChecks.LogBooks.LogBooks.Value.Clear();
+
                         if (permitLicenses.Count > 0)
                         {
                             shipChecks.PermitLicenses.ActionSelected = CommandBuilder.CreateFrom(() =>
@@ -90,7 +94,7 @@ namespace IARA.Mobile.Insp.Helpers
                                 }
                             });
 
-                            shipChecks.PermitLicenses.PermitLicenses.Value.ReplaceRange(
+                            shipChecks.PermitLicenses.PermitLicenses.Value.AddRange(
                                 permitLicenses.ConvertAll(f =>
                                 {
                                     PermitLicenseModel permit = new PermitLicenseModel
@@ -116,7 +120,7 @@ namespace IARA.Mobile.Insp.Helpers
 
                         if (permits.Count > 0)
                         {
-                            shipChecks.Permits.Permits.Value.ReplaceRange(
+                            shipChecks.Permits.Permits.Value.AddRange(
                                 permits.ConvertAll(f =>
                                 {
                                     PermitModel permit = new PermitModel
@@ -147,7 +151,7 @@ namespace IARA.Mobile.Insp.Helpers
 
                             List<LogBookPageDto> pages = await inspTransaction.GetLogBookPages(logBooks.ConvertAll(f => f.Id));
 
-                            shipChecks.LogBooks.LogBooks.Value.ReplaceRange(
+                            shipChecks.LogBooks.LogBooks.Value.AddRange(
                                 logBooks.ConvertAll(f =>
                                 {
                                     LogBookModel logBook = new LogBookModel(shipCatches)

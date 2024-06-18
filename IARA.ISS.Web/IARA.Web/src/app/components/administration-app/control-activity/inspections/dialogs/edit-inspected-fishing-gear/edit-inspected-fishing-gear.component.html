@@ -8,6 +8,7 @@
          fxLayout="column"
          fxLayoutGap="1em"
          fxLayoutAlign="start stretch">
+
         <div fxLayout="row"
              fxLayoutGap="1em"
              fxLayoutAlign="start stretch">
@@ -24,6 +25,7 @@
                     </edit-fishing-gear>
                 </tl-expansion-panel>
             </div>
+
             <tl-expansion-panel *ngIf="canEditInspectedGear"
                                 fxFlex="50"
                                 title="{{ 'inspections.inspected-fishing-gear' | tlTranslate }}"
@@ -40,12 +42,14 @@
                            [options]="options"
                            [toggle]="toggle">
         </inspection-toggle>
+
         <inspection-toggle *ngIf="hasAttachedAppliances"
                            formControlName="appliancesOptionsControl"
                            [options]="options"
                            [toggle]="appliancesToggle">
         </inspection-toggle>
     </div>
+
     <div *ngIf="!isRegistered"
          fxLayout="column"
          fxLayoutGap="1em"
@@ -54,12 +58,13 @@
                             [validityChecker]="form">
             <edit-fishing-gear formControlName="inspectedGearControl"
                                [isInspected]="true"
-                               [isNewInspectedGear]="true"
+                               [isNewInspectedGear]="isAddInspectedGear"
                                [filterTypes]="false"
                                [listenToService]="true"
                                (selectedMark)="onMarkSelected($event)">
             </edit-fishing-gear>
         </tl-expansion-panel>
+
         <inspection-toggle *ngIf="hasAttachedAppliances"
                            formControlName="appliancesOptionsControl"
                            [options]="options"

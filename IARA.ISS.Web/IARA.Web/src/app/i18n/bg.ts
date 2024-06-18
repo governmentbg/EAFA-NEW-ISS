@@ -4125,6 +4125,7 @@
         'add-ship-page-document-wizard-admission-document-type': 'Документ за приемане',
         'add-ship-page-document-wizard-transportation-document-type': 'Документ за превоз',
         'add-ship-page-document-wizard-log-book-owner-type': 'Тип притежател на дневника',
+        'add-ship-page-document-wizard-log-book-status': 'Статус',
         'edit-aquaculture-log-book-page-number-owner': 'Аквакултурно стопанство',
         'add-ship-page-document-wizard-log-book-owner': 'Притежател',
         'add-ship-page-document-wizard-registered-buyer-parameter': 'Регистриран купувач',
@@ -4607,6 +4608,11 @@
         'log-book-page-person-registered-buyer-type': 'Регистриран купувач/център за първа продажба',
         'log-book-page-person-permit-number': 'Удостоверение №',
         'log-book-page-person-cannot-find-log-book-error': 'Не е намерен дневник за подадените параметри. Моля, проверете ги и опитайте отново.',
+
+        'log-book-finished': 'Приключен',
+        'log-book-new': 'Активен',
+        'log-book-renewed': 'Презаверен',
+        'log-book-page-susp-lic': 'Прекратено УСР',
 
         'page-product-copy-product': 'Копирай продукт',
         'page-product-remove-product': 'Премахване на продукт',

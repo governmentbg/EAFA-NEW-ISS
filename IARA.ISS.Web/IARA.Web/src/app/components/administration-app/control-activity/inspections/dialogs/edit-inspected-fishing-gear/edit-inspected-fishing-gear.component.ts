@@ -84,6 +84,7 @@ export class EditInspectedFishingGearComponent implements OnInit, IDialogCompone
 
         this.readOnly = data.readOnly;
         this.isRegistered = data.isRegistered;
+        this.isAddInspectedGear = !data.isEdit;
         this.hasAttachedAppliances = data.hasAttachedAppliances;
 
         if (!data.isRegistered) {

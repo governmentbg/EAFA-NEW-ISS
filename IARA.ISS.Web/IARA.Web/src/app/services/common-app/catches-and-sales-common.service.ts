@@ -46,6 +46,7 @@ import { LogBookPageEditExceptionDTO } from '@app/models/generated/dtos/LogBookP
 import { LogBookOwnerNomenclatureDTO } from '@app/models/generated/dtos/LogBookOwnerNomenclatureDTO';
 import { LogBookPageNomenclatureDTO } from '@app/models/generated/dtos/LogBookPageNomenclatureDTO';
 import { DatePipe } from '@angular/common';
+import { LogBookStatusesEnum } from '@app/enums/log-book-statuses.enum';
 
 type FiltersUnion = CatchesAndSalesAdministrationFilters | CatchesAndSalesPublicFilters;
 
@@ -270,17 +271,25 @@ export class CatchesAndSalesCommonService {
             const logBookOwnerLabel: string = this.translate.getValue('catches-and-sales.add-ship-page-document-wizard-log-book-owner');
             for (const entry of entries) {
                 entry.displayName = `${entry.displayName} (${logBookOwnerLabel}: ${entry.ownerName})`;
+
                 if (entry.ownerType !== null && entry.ownerType !== undefined) {
                     const logBookOwnerTypeLabel: string = this.translate.getValue('catches-and-sales.add-ship-page-document-wizard-log-book-owner-type');
                     const logBookOwnerType: string = this.getLogBookOwnerTypeTranslation(entry.ownerType);
 
-                    if (entry.logBookPermitLicenseId !== null && entry.logBookPermitLicenseId !== undefined) {
+                    if (entry.permitLicenseNumber !== null && entry.permitLicenseNumber !== undefined) {
                         entry.description = `${logBookOwnerTypeLabel}: ${logBookOwnerType}; 
                                              ${this.translate.getValue('catches-and-sales.log-book-page-person-permit-number')}: ${entry.permitLicenseNumber}`;
                     }
                     else {
                         entry.description = `${logBookOwnerTypeLabel}: ${logBookOwnerType}`;
                     }
+                }
+
+                if (entry.logBookStatus !== null && entry.logBookStatus !== undefined) {
+                    const logBookStatusLabel: string = this.translate.getValue('catches-and-sales.add-ship-page-document-wizard-log-book-status');
+                    const logBookStatus: string = this.getLogBookStatusTranslation(entry.logBookStatus);
+
+                    entry.description += `; ${logBookStatusLabel}: ${logBookStatus}`;
                 }
             }
 
@@ -852,6 +861,30 @@ export class CatchesAndSalesCommonService {
         }
     }
 
+    private getLogBookOwnerTypeTranslation(ownerType: LogBookPagePersonTypesEnum): string {
+        switch (ownerType) {
+            case LogBookPagePersonTypesEnum.RegisteredBuyer:
+                return this.translate.getValue('catches-and-sales.log-book-page-person-registered-buyer-type');
+            case LogBookPagePersonTypesEnum.Person:
+                return this.translate.getValue('catches-and-sales.log-book-page-person-person-type');
+            case LogBookPagePersonTypesEnum.LegalPerson:
+                return this.translate.getValue('catches-and-sales.log-book-page-person-person-legal-type');
+        }
+    }
+
+    private getLogBookStatusTranslation(status: LogBookStatusesEnum): string {
+        switch (status) {
+            case LogBookStatusesEnum.Finished:
+                return this.translate.getValue('catches-and-sales.log-book-finished');
+            case LogBookStatusesEnum.New:
+                return this.translate.getValue('catches-and-sales.log-book-new');
+            case LogBookStatusesEnum.Renewed:
+                return this.translate.getValue('catches-and-sales.log-book-renewed');
+            case LogBookStatusesEnum.SuspLic:
+                return this.translate.getValue('catches-and-sales.log-book-page-susp-lic');
+        }
+    }
+
     private getLogBookPagesForTable(area: AreaTypes, controller: string, logBookIDs: number[], filters: FiltersUnion | undefined): Observable<LogBookPagesDTO> {
         const request = new LogBookData({ filters: filters, logBookIds: logBookIDs });
 
@@ -866,17 +899,6 @@ export class CatchesAndSalesCommonService {
         });
 
         return found;
-    }
-
-    private getLogBookOwnerTypeTranslation(ownerType: LogBookPagePersonTypesEnum): string {
-        switch (ownerType) {
-            case LogBookPagePersonTypesEnum.RegisteredBuyer:
-                return this.translate.getValue('catches-and-sales.log-book-page-person-registered-buyer-type');
-            case LogBookPagePersonTypesEnum.Person:
-                return this.translate.getValue('catches-and-sales.log-book-page-person-person-type');
-            case LogBookPagePersonTypesEnum.LegalPerson:
-                return this.translate.getValue('catches-and-sales.log-book-page-person-person-legal-type');
-        }
     }
 }
 
