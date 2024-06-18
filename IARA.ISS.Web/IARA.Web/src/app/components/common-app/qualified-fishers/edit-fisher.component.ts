@@ -826,7 +826,10 @@ export class EditFisherComponent implements OnInit, AfterViewInit, IDialogCompon
         ) {
             this.hasPersonAlreadyFisherError = true;
             this.editForm.updateValueAndValidity({ emitEvent: false });
-            this.validityCheckerGroup.validate();
+
+            setTimeout(() => {
+                this.validityCheckerGroup.validate();
+            });
         }
         else if (error?.code === ErrorCode.NoEDeliveryRegistration && this.model instanceof QualifiedFisherApplicationEditDTO) {
             this.hasNoEDeliveryRegistrationError = true;

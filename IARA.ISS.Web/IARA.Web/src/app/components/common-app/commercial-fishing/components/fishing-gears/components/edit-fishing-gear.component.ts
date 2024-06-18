@@ -495,7 +495,7 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
 
 
         if (type?.code !== FishingGearTypesEnum[FishingGearTypesEnum.DLN]) {
-            result.count = this.form.get('countControl')!.value ?? 0;
+            result.count = this.form.get('countControl')!.value ?? 1;
             result.hookCount = this.form.get('hooksCountControl')!.value;
             result.length = this.form.get('lengthControl')!.value;
             result.height = this.form.get('heightControl')!.value;
@@ -506,6 +506,7 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
             result.trawlModel = this.form.get('trawlModelControl')!.value;
         }
         else {
+            result.count = 1;
             result.towelLength = this.form.get('towelLengthControl')!.value;
             result.houseLength = this.form.get('houseLengthControl')!.value;
             result.houseWidth = this.form.get('houseWidthControl')!.value;
