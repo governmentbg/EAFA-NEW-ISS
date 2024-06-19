@@ -333,6 +333,10 @@ export class RecreationalFishingTicketComponent extends CustomFormControl<Recrea
         if (this.personPhotoRequired) {
             this.form.get('photoControl')?.setValidators(Validators.required);
             this.form.get('photoControl')?.updateValueAndValidity();
+
+            if (this.period.code === TicketPeriodEnum[TicketPeriodEnum.DISABILITY] || this.period.code === TicketPeriodEnum[TicketPeriodEnum.NOPERIOD]) {
+                this.form.get('photoControl')?.markAsTouched();
+            }
         }
         else {
             this.form.get('photoControl')?.clearValidators();
@@ -779,7 +783,7 @@ export class RecreationalFishingTicketComponent extends CustomFormControl<Recrea
             this.form.get('telkNumControl')!.clearValidators();
             this.form.get('telkValidToControl')!.clearValidators();
         }
-
+        
         this.form.updateValueAndValidity({ emitEvent: false });
     }
 
