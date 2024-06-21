@@ -13,15 +13,12 @@
                 ValidState="{Binding ReportNr}"
                 Keyboard="Telephone"
                 IsEnabled="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}">
-            <StackLayout Orientation="Horizontal"
-                    Spacing="0">
-                <Label Text="{Binding BindingContext.ReportNrStart, Source={Reference view}}"
-                        VerticalOptions="Center" />
-                <tl:TLInnerInput/>
+            <StackLayout Orientation="Horizontal" Spacing="0">
+                <Label Text="{Binding BindingContext.ReportNrStart, Source={Reference view}}" VerticalOptions="Center" />
+                <tl:TLInnerInput />
             </StackLayout>
         </tl:TLEntry>
-        <tl:TLFlex tl:TLFlex.Grow="2"
-                GrowUnit="200">
+        <tl:TLFlex tl:TLFlex.Grow="2" GrowUnit="200">
             <tl:TLDateTimePicker Title="{rt:Translate InspectionStart, Group=GeneralInfo}"
                     ValidState="{Binding StartDate}"
                     IsEnabled="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}" />
@@ -32,6 +29,7 @@
     </tl:TLFlex>
     <tl:TLCheckView Text="{rt:Translate Signal112, Group=GeneralInfo}"
             ValidState="{Binding ByEmergencySignal}"
-            IsEnabled="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}" />
+            IsEnabled="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}"
+            IsVisible="{Binding Show112Signal}" />
     <lc:InspectorsView BindingContext="{Binding Inspectors}" />
 </StackLayout>

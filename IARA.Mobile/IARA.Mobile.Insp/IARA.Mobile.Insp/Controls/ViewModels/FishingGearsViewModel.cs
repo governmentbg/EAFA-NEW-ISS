@@ -52,7 +52,12 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
                 return;
             }
 
-            List<SelectNomenclatureDto> fishingGearTypes = NomenclaturesTransaction.GetFishingGears();
+            List<SelectNomenclatureDto> fishingGearTypes = NomenclaturesTransaction.GetFishingGears().Select(x => new SelectNomenclatureDto()
+            {
+                Code = x.Code,
+                Id = x.Id,
+                Name = x.Name
+            }).ToList();
 
             if (fishingGears.Count > 0)
             {

@@ -18,11 +18,11 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
     public class InspectionGeneralInfoViewModel : ViewModel
     {
         private string _reportNrStart;
-        public InspectionGeneralInfoViewModel(InspectionPageViewModel inspection)
+        public InspectionGeneralInfoViewModel(InspectionPageViewModel inspection, bool show112Signal = true)
         {
             Inspection = inspection;
             Inspectors = new InspectorsViewModel(inspection, this);
-
+            Show112Signal = show112Signal;
             this.AddValidation(others: new[] { Inspectors });
 
             StartDate.Value = DateTime.Now;
@@ -32,6 +32,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
             CanEditReportNumber.AddFakeValidation();
 
         }
+        public bool Show112Signal { get; set; }
         public InspectionPageViewModel Inspection { get; }
 
         public InspectorsViewModel Inspectors { get; }

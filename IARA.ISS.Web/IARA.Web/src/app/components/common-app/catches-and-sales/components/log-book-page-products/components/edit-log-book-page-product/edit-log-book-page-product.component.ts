@@ -209,7 +209,9 @@ export class EditLogBookPageProductComponent implements AfterViewInit, OnInit, I
                         this.form.get('unitCountControl')!.setValue(undefined);
                     }
 
-                    this.updateQuantityCountValidators();
+                    if (!this.readOnly) {
+                        this.updateQuantityCountValidators();
+                    }
                 }
             }
         });
@@ -218,7 +220,10 @@ export class EditLogBookPageProductComponent implements AfterViewInit, OnInit, I
             next: (aquaticOrganism: FishNomenclatureDTO | undefined) => {
                 this.setTurbotFlagAndValidators(aquaticOrganism);
                 this.setMinCatchSize(aquaticOrganism);
-                this.updateQuantityCountValidators();
+
+                if (!this.readOnly) {
+                    this.updateQuantityCountValidators();
+                }
             }
         });
     }
@@ -420,7 +425,9 @@ export class EditLogBookPageProductComponent implements AfterViewInit, OnInit, I
             this.showFishCategoryControl = false;
         }
 
-        this.setTurbotControlsValidators();
+        if (!this.readOnly) {
+            this.setTurbotControlsValidators();
+        }
     }
 
     private setTurbotControlsValidators(): void {

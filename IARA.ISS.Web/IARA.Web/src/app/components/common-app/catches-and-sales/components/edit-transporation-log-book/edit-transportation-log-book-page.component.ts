@@ -116,7 +116,10 @@ export class EditTransportationLogBookPageComponent implements OnInit, IDialogCo
                     this.model.originalPossibleProducts = []; // за да не се мапират обратно към бекенда
 
                     this.commonLogBookPageData = this.model.commonData;
-                    this.setMinLoadingDateControlValidators();
+
+                    if (!this.viewMode) {
+                        this.setMinLoadingDateControlValidators();
+                    }
 
                     if (this.model.commonData!.originDeclarationId === null || this.model.commonData!.originDeclarationId === undefined) {
                         this.canAddProducts = true;

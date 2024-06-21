@@ -180,7 +180,12 @@ namespace IARA.Mobile.Insp.Helpers
                         {
                             IInspectionsTransaction inspectionTransaction = DependencyService.Resolve<IInspectionsTransaction>();
 
-                            List<SelectNomenclatureDto> fishingGearTypes = nomTransaction.GetFishingGears();
+                            List<SelectNomenclatureDto> fishingGearTypes = nomTransaction.GetFishingGears().Select(x => new SelectNomenclatureDto()
+                            {
+                                Code = x.Code,
+                                Id = x.Id,
+                                Name = x.Name
+                            }).ToList();
                             List<FishingGearDto> shipFishingGears = inspectionTransaction.GetFishingGearsForShip(uid);
 
                             fishingGears.AllFishingGears = shipFishingGears.ConvertAll(f => new FishingGearModel

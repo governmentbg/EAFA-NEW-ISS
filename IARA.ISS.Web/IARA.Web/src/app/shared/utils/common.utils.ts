@@ -397,4 +397,18 @@ export class CommonUtils {
             snackbar.errorResource('common.an-error-occurred-in-the-app');
         }
     }
+
+    public static hasDigitsOnly(value: string | undefined): boolean {
+        const pattern: RegExp = /(?=^[0-9]*$)/;
+
+        if (value === undefined || value === null || value.length === 0) {
+            return false;
+        }
+
+        if (pattern.test(value)) {
+            return true;
+        }
+
+        return false;
+    }
 }

@@ -167,6 +167,7 @@ export class EditAquacultureFacilityComponent implements OnInit, AfterViewInit, 
     public hasNoEDeliveryRegistrationError: boolean = false;
     public showHatcheryEquipment: boolean = false;
     public hideBasicPaymentInfo: boolean = false;
+    public isIdReadOnly: boolean = false;
     public hasStatisticalFormReadPermission: boolean = false;
     public hideRelation: boolean = true;
 
@@ -1700,10 +1701,12 @@ export class EditAquacultureFacilityComponent implements OnInit, AfterViewInit, 
                 case SubmittedByRolesEnum.Personal:
                 case SubmittedByRolesEnum.PersonalRepresentative:
                     this.hideRelation = false;
+                    this.isIdReadOnly = CommonUtils.hasDigitsOnly(this.model.submittedFor?.person?.egnLnc?.egnLnc);
                     break;
                 case SubmittedByRolesEnum.LegalOwner:
                 case SubmittedByRolesEnum.LegalRepresentative:
                     this.hideRelation = true;
+                    this.isIdReadOnly = CommonUtils.hasDigitsOnly(this.model.submittedFor?.legal?.eik);
                     break;
                 default:
                     this.hideRelation = false;

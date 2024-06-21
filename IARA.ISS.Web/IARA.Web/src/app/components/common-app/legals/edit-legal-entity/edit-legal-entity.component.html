@@ -36,7 +36,7 @@
                         notifier
                         [isPerson]="false"
                         [showCustodianOfProperty]="false"
-                        [isIdReadOnly]="isEditing"
+                        [isIdReadOnly]="isEditing && isIdReadOnly"
                         [expectedResults]="expectedResults.legal"
                         (downloadDataBtnClicked)="downloadedLegalData($event)"
                         checkboxLabel="{{ 'legal-entities-page.has-bulgarian-address-registration' | tlTranslate }}">

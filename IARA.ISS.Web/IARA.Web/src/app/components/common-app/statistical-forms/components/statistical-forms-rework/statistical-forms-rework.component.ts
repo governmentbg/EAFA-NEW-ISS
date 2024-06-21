@@ -76,6 +76,7 @@ export class StatisticalFormsReworkComponent implements OnInit, IDialogComponent
     public isEditing: boolean = false;
     public isReadonly: boolean = false;
     public isRegisterEntry: boolean = false;
+    public isIdReadOnly: boolean = false;
     public refreshFileTypes: Subject<void> = new Subject<void>();
 
     public fishTypes: NomenclatureDTO<number>[] = [];
@@ -649,6 +650,9 @@ export class StatisticalFormsReworkComponent implements OnInit, IDialogComponent
         this.form.get('totalYearTurnoverControl')!.setValue(model.totalYearTurnover);
 
         this.form.get('filesControl')!.setValue(model.files);
+
+        const eik: string | undefined = this.model.submittedFor?.legal?.eik;
+        this.isIdReadOnly = CommonUtils.hasDigitsOnly(eik);
 
         if (model.isOwnerEmployee) {
             this.form.get('isOwnerEmployeeControl')!.setValue(this.ownerEmployeeOptions.find(x => x.value === 'yes'));

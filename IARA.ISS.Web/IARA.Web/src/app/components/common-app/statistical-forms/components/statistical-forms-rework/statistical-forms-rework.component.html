@@ -34,7 +34,7 @@
                                relationLabel="{{ 'statistical-forms.rework-requester-role' | tlTranslate }}"
                                submittedForLabel="{{ 'statistical-forms.rework-receiver' | tlTranslate }}"
                                [pageCode]="pageCode"
-                               [isIdReadOnly]="isEditing"
+                               [isIdReadOnly]="isEditing && isIdReadOnly"
                                [showOnlyBasicData]="true"
                                [showPersonal]="!isApplication"
                                [submittedByControl]="form.controls.submittedByControl"

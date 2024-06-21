@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
-using IARA.Mobile.Application.DTObjects.Nomenclatures;
+﻿using IARA.Mobile.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Application.DTObjects.Translations;
 using IARA.Mobile.Application.Interfaces.Utilities;
 using IARA.Mobile.Domain.Interfaces;
@@ -14,6 +9,11 @@ using IARA.Mobile.Insp.Application.Interfaces.Database;
 using IARA.Mobile.Insp.Application.Interfaces.Utilities;
 using IARA.Mobile.Insp.Domain.Entities.Nomenclatures;
 using IARA.Mobile.Insp.Domain.Enums;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace IARA.Mobile.Insp.Application.Helpers
 {
@@ -268,7 +268,22 @@ namespace IARA.Mobile.Insp.Application.Helpers
                 case NomenclatureEnum.Fish:
                     return PullNomenclatures<NFish>(restClient, nomenclatureDates, nomenclatureEnum, prefix + "Fishes", lastUpdated);
                 case NomenclatureEnum.FishingGear:
-                    return PullNomenclatures<NFishingGear>(restClient, nomenclatureDates, nomenclatureEnum, prefix + "FishingGears", lastUpdated);
+                    return PullNomenclatures(restClient, nomenclatureDates, nomenclatureEnum, prefix + "FishingGears", lastUpdated,
+                        (NomenclatureFishingGearDto dto) =>
+                        {
+                            if (dto.HasHooks)
+                            {
+
+                            }
+                            return new NFishingGear()
+                            {
+                                Id = dto.Value,
+                                Code = dto.Code,
+                                Name = dto.DisplayName,
+                                IsActive = dto.IsActive,
+                                HasHooks = dto.HasHooks,
+                            };
+                        });
                 case NomenclatureEnum.InspectedPersonType:
                     return PullNomenclatures<NInspectedPersonType>(restClient, nomenclatureDates, nomenclatureEnum, prefix + "InspectedPersonTypes", lastUpdated);
                 case NomenclatureEnum.CatchZone:

@@ -19,7 +19,7 @@
             <regix-data formControlName="personControl"
                         validityChecker
                         [isPerson]="true"
-                        [isIdReadOnly]="isIdReadOnly"
+                        [isIdReadOnly]="isIdReadOnly && isIdentifierValid"
                         [isForeigner]="isForeigner"
                         [showOnlyBasicData]="showOnlyBasicData"
                         [readonly]="readonly"
@@ -41,7 +41,7 @@
                         [isPerson]="false"
                         [showCustodianOfProperty]="false"
                         [isForeigner]="isForeigner"
-                        [isIdReadOnly]="isIdReadOnly"
+                        [isIdReadOnly]="isIdReadOnly && isIdentifierValid"
                         [showOnlyBasicData]="showOnlyBasicData"
                         [readonly]="readonly"
                         (downloadDataBtnClicked)="downloadedLegalData($event)"

@@ -306,13 +306,16 @@ export class EditMarketCatchComponent implements OnInit, IDialogComponent {
                         this.form.get('shipControl')!.enable();
                     }
                 }
-                else {
-                    this.form.get('shipControl')!.setValue(undefined);
-                    this.form.get('catchZoneControl')!.disable();
-                    this.form.get('shipControl')!.disable();
-
+                else { 
                     this.declarationPages = [];
                     this.logBookFishes = [];
+
+                    this.form.get('pageNumberControl')!.setValue(undefined);
+                    this.form.get('pageNumberControl')!.updateValueAndValidity({ onlySelf: true });
+
+                    this.form.get('shipControl')!.reset();
+                    this.form.get('shipControl')!.disable();
+                    this.form.get('catchZoneControl')!.disable();
                 }
             }
         });

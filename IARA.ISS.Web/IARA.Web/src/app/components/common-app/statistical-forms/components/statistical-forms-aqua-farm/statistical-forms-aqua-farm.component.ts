@@ -94,6 +94,7 @@ export class StatisticalFormsAquaFarmComponent implements OnInit, IDialogCompone
     public emptyBroodstock: boolean = true;
     public showBasicInfo: boolean = false;
     public isPerson: boolean = false;
+    public isIdReadOnly: boolean = false;
     public refreshFileTypes: Subject<void> = new Subject<void>();
 
     public readonly pageCode: PageCodeEnum = PageCodeEnum.StatFormAquaFarm;
@@ -905,6 +906,15 @@ export class StatisticalFormsAquaFarmComponent implements OnInit, IDialogCompone
         }
         else {
             this.form.get('isOwnerEmployeeControl')!.setValue(this.ownerEmployeeOptions.find(x => x.value === 'no'));
+        }
+
+        if (this.model.submittedFor!.submittedByRole! & SubmittedByRolesEnum.LegalRole) {
+            const eik: string | undefined = this.model.submittedFor!.legal?.eik;
+            this.isIdReadOnly = CommonUtils.hasDigitsOnly(eik);
+        }
+        else if (this.model.submittedFor!.submittedByRole! & SubmittedByRolesEnum.PersonalRole) {
+            const egnLnc: string | undefined = this.model.submittedFor!.person?.egnLnc?.egnLnc;
+            this.isIdReadOnly = CommonUtils.hasDigitsOnly(egnLnc);
         }
 
         this.buildEmployeeInfoFormArray(model);

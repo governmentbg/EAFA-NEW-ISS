@@ -22,6 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\IARA.Mobile.Insp\IARA.Mobile.Insp.Domain\IARA.Mobile.Insp.Domain.csproj" />
     <ProjectReference Include="..\IARA.Mobile.Domain\IARA.Mobile.Domain.csproj" />
   </ItemGroup>
 
