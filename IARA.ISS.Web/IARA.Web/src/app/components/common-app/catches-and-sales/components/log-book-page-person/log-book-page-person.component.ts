@@ -12,6 +12,7 @@ import { PersonFullDataDTO } from '@app/models/generated/dtos/PersonFullDataDTO'
 import { LegalFullDataDTO } from '@app/models/generated/dtos/LegalFullDataDTO';
 import { CustomFormControl } from '@app/shared/utils/custom-form-control';
 import { ValidityCheckerDirective } from '@app/shared/directives/validity-checker/validity-checker.directive';
+import { CommonUtils } from '@app/shared/utils/common.utils';
 
 @Component({
     selector: 'log-book-page-person',
@@ -39,6 +40,7 @@ export class LogBookPagePersonComponent extends CustomFormControl<LogBookPagePer
 
     public personTypes: NomenclatureDTO<number>[] = [];
     public registeredBuyers: NomenclatureDTO<number>[] = [];
+    public isIdentifierValid: boolean = false;
 
     private translationService: FuseTranslationLoaderService;
 
@@ -89,6 +91,8 @@ export class LogBookPagePersonComponent extends CustomFormControl<LogBookPagePer
 
         this.form.get('personTypeControl')!.valueChanges.subscribe({
             next: (selectedPersonType: NomenclatureDTO<LogBookPagePersonTypesEnum> | undefined | null) => {
+                this.isIdentifierValid = false;
+
                 this.form.get('personControl')!.reset();
                 this.form.get('personControl')!.setValidators(null);
 
@@ -216,12 +220,20 @@ export class LogBookPagePersonComponent extends CustomFormControl<LogBookPagePer
                 } break;
                 case LogBookPagePersonTypesEnum.Person: {
                     this.form.get('personControl')!.setValue(this.model.person);
+
+                    const egnLnc: string | undefined = this.model.person?.egnLnc?.egnLnc;
+                    this.isIdentifierValid = CommonUtils.hasDigitsOnly(egnLnc);
+
                     if (!this.showOnlyBasicData) {
                         this.form.get('addressesControl')!.setValue(this.model.addresses);
                     }
                 } break;
                 case LogBookPagePersonTypesEnum.LegalPerson: {
                     this.form.get('legalControl')!.setValue(this.model.personLegal);
+
+                    const eik: string | undefined = this.model.personLegal?.eik;
+                    this.isIdentifierValid = CommonUtils.hasDigitsOnly(eik);
+
                     if (!this.showOnlyBasicData) {
                         this.form.get('addressesControl')!.setValue(this.model.addresses);
                     }

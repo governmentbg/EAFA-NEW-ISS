@@ -1,8 +1,4 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
-using IARA.Mobile.Application.DTObjects.Nomenclatures;
+﻿using IARA.Mobile.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Domain.Enums;
 using IARA.Mobile.Insp.Application;
 using IARA.Mobile.Insp.Application.DTObjects.Inspections;
@@ -16,6 +12,10 @@ using IARA.Mobile.Insp.Helpers;
 using IARA.Mobile.Insp.Models;
 using IARA.Mobile.Insp.ViewModels.Models;
 using IARA.Mobile.Shared.Views;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Threading.Tasks;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Helpers;
 using TechnoLogica.Xamarin.ViewModels.Interfaces;
@@ -157,7 +157,12 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.InspectionWater
 
                 if (Edit.FishingGears?.Count > 0)
                 {
-                    List<SelectNomenclatureDto> fishingGearTypes = nomTransaction.GetFishingGears();
+                    List<SelectNomenclatureDto> fishingGearTypes = nomTransaction.GetFishingGears().Select(x => new SelectNomenclatureDto()
+                    {
+                        Code = x.Code,
+                        Id = x.Id,
+                        Name = x.Name
+                    }).ToList();
 
                     foreach (WaterInspectionFishingGearDto fishingGear in Edit.FishingGears)
                     {

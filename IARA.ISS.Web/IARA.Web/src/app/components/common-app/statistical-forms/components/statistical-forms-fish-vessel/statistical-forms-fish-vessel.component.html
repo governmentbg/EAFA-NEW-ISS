@@ -33,7 +33,7 @@
                                relationLabel="{{ 'statistical-forms.fish-vessel-requester-role' | tlTranslate }}"
                                submittedForLabel="{{ 'statistical-forms.fish-vessel-receiver' | tlTranslate }}"
                                [pageCode]="pageCode"
-                               [isIdReadOnly]="isEditing"
+                               [isIdReadOnly]="isEditing && isIdReadOnly"
                                [showOnlyBasicData]="true"
                                [showPersonal]="!isApplication"
                                [submittedByControl]="form.controls.submittedByControl"

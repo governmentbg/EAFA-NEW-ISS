@@ -253,7 +253,7 @@
                                    relationLabel="{{ 'aquacultures.requester-role' | tlTranslate }}"
                                    [pageCode]="pageCode"
                                    [hideRelation]="hideRelation"
-                                   [isIdReadOnly]="isEditing && !isChangeOfCircumstancesApplication && hideRelation"
+                                   [isIdReadOnly]="isEditing && !isChangeOfCircumstancesApplication && hideRelation && isIdReadOnly"
                                    [hideDocument]="true"
                                    [showPersonal]="!isApplication">
         </application-submitted-for>

@@ -1,7 +1,7 @@
-﻿using System;
-using IARA.Mobile.Application.Interfaces.Utilities;
+﻿using IARA.Mobile.Application.Interfaces.Utilities;
 using IARA.Mobile.Insp.Application.Interfaces.Utilities;
 using IARA.Mobile.Insp.Domain.Enums;
+using System;
 using Xamarin.Essentials;
 
 namespace IARA.Mobile.Insp.Utilities
@@ -25,6 +25,11 @@ namespace IARA.Mobile.Insp.Utilities
         public void Clear()
         {
             Preferences.Clear(SharedName);
+        }
+
+        public void Remove(NomenclatureEnum nomenclatureEnum)
+        {
+            Preferences.Remove(nomenclatureEnum.ToString(), SharedName);
         }
     }
 }

@@ -117,7 +117,10 @@ export class EditAdmissionLogBookPageComponent implements OnInit, IDialogCompone
                     this.model.originalPossibleProducts = []; // за да не се мапират обратно към бекенда
 
                     this.commonLogBookPageData = this.model.commonData;
-                    this.setHandoverDateControlValidators();
+
+                    if (!this.viewMode) {
+                        this.setHandoverDateControlValidators();
+                    }
 
                     this.fillForm();
                 }

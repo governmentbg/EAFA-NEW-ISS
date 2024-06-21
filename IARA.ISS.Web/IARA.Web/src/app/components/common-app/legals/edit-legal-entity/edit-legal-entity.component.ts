@@ -60,6 +60,7 @@ export class EditLegalEntityComponent implements OnInit, IDialogComponent {
     public isEditing: boolean = false;
     public loadRegisterFromApplication: boolean = false;
     public isOnlineApplication: boolean = false;
+    public isIdReadOnly: boolean = false;
     public refreshFileTypes: Subject<void> = new Subject<void>();
     public isPublicApp: boolean;
 
@@ -526,6 +527,9 @@ export class EditLegalEntityComponent implements OnInit, IDialogComponent {
 
         this.form.get('legalControl')!.setValue(this.model.legal);
         this.form.get('addressesControl')!.setValue(this.model.addresses);
+    
+        const eik: string | undefined = this.model.legal?.eik;
+        this.isIdReadOnly = CommonUtils.hasDigitsOnly(eik);
 
         if (this.model instanceof LegalEntityRegixDataDTO) {
             this.fillFormRegiX();

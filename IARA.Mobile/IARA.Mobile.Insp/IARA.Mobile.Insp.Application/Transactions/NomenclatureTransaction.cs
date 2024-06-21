@@ -353,9 +353,21 @@ namespace IARA.Mobile.Insp.Application.Transactions
             return GetNomenclatureDtos<NFish>();
         }
 
-        public List<SelectNomenclatureDto> GetFishingGears()
+        public List<FishingGearSelectNomenclatureDto> GetFishingGears()
         {
-            return GetNomenclatureDtos<NFishingGear>();
+            using (IAppDbContext context = ContextBuilder.CreateContext())
+            {
+                return (from fishingGear in context.NFishingGears
+                        where fishingGear.IsActive
+                        orderby fishingGear.Id
+                        select new FishingGearSelectNomenclatureDto
+                        {
+                            Id = fishingGear.Id,
+                            Code = fishingGear.Code,
+                            Name = fishingGear.Name,
+                            HasHooks = fishingGear.HasHooks,
+                        }).ToList();
+            }
         }
 
         public List<SelectNomenclatureDto> GetPatrolVehicles(bool? isWaterVehicle, int page, int count, string search = null)

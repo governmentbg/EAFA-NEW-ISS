@@ -109,6 +109,8 @@ export class EditBuyersComponent implements OnInit, AfterViewInit, IDialogCompon
     public isChangeOfCircumstancesApplication: boolean = false;
     public isDeregistrationApplication: boolean = false;
     public isRegisterEntry: boolean = false;
+    public isIdReadOnly: boolean = false;
+    public isAgentIdReadOnly: boolean = false;
 
     public isPublicApp: boolean = false;
     public isPaid: boolean = false;
@@ -1365,6 +1367,9 @@ export class EditBuyersComponent implements OnInit, AfterViewInit, IDialogCompon
                 }
             }
 
+            const eik: string | undefined = this.model.submittedFor?.legal?.eik;
+            this.isIdReadOnly = CommonUtils.hasDigitsOnly(eik);
+
             if (this.isFirstSaleCenter) {
                 this.editForm.get('organizerSameAsSubmittedByControl')!.setValue(this.model.organizerSameAsSubmittedBy);
                 this.editForm.get('organizerControl')!.setValue(this.model.organizer);
@@ -1490,6 +1495,9 @@ export class EditBuyersComponent implements OnInit, AfterViewInit, IDialogCompon
                 else {
                     agentSameAsValue = this.agentSameAsOptions.find(x => x.value === AgentSameAsTypesEnum.Other)!;
                 }
+
+                const egnLnc: string | undefined = this.model.agent?.egnLnc?.egnLnc;
+                this.isAgentIdReadOnly = CommonUtils.hasDigitsOnly(egnLnc);
 
                 setTimeout(() => {
                     this.editForm.get('agentSameAsControl')!.setValue(agentSameAsValue);

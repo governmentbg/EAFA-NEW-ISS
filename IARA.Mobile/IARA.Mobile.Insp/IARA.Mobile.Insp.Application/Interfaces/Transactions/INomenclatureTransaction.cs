@@ -50,7 +50,7 @@ namespace IARA.Mobile.Insp.Application.Interfaces.Transactions
 
         List<SelectNomenclatureDto> GetFishes();
 
-        List<SelectNomenclatureDto> GetFishingGears();
+        List<FishingGearSelectNomenclatureDto> GetFishingGears();
 
         List<SelectNomenclatureDto> GetPatrolVehicles(bool? isWaterVehicle, int page, int count, string search = null);
 

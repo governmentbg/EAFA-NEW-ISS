@@ -60,6 +60,7 @@ export class EditFisherComponent implements OnInit, AfterViewInit, IDialogCompon
     public isThirdCountryFisherman: boolean = false;
     public isEditing: boolean = false;
     public isEditingSubmittedBy: boolean = false;
+    public isIdReadOnly: boolean = false;
     public hasNoEDeliveryRegistrationError: boolean = false;
     public hasPersonAlreadyFisherError: boolean = false;
     public isOnlineApplication: boolean = false;
@@ -640,6 +641,10 @@ export class EditFisherComponent implements OnInit, AfterViewInit, IDialogCompon
         }
 
         this.isThirdCountryFisherman = this.model.submittedForRegixData?.egnLnc?.identifierType === IdentifierTypeEnum.FORID ?? false;
+
+        const egnLnc: string | undefined = this.model.submittedForRegixData?.egnLnc?.egnLnc;
+        this.isIdReadOnly = CommonUtils.hasDigitsOnly(egnLnc);
+
         this.editForm.controls.submittedForRegixDataControl.setValue(this.model.submittedForRegixData);
         this.editForm.controls.submittedForAddressDataControl.setValue(this.model.submittedForAddresses);
 

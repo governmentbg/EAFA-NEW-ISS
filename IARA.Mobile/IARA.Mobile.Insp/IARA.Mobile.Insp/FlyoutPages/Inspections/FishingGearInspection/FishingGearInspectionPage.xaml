@@ -17,8 +17,7 @@
         Title="{rt:Translate Title, Group=FishingGearInspection}"
         BackgroundColor="{StaticResource BackgroundColor}">
     <lc:TLForwardSections x:Name="forwardSections">
-        <sv:SectionView Image="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Info}, Color=White, Size=100}"
-                Text="{rt:Translate GeneralInfo, Group=GeneralInfo}">
+        <sv:SectionView Image="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Info}, Color=White, Size=100}" Text="{rt:Translate GeneralInfo, Group=GeneralInfo}">
             <StackLayout Padding="10">
                 <lc:InspectionGeneralInfoView BindingContext="{Binding InspectionGeneralInfo}" />
             </StackLayout>
@@ -32,11 +31,15 @@
                         ItemsSource="{Binding FishingGearTypes}"
                         SelectedItem="{Binding FishingGearType}"
                         IsEnabled="{Binding ActivityType, Converter={StaticResource IsNotReview}}" />
+
                 <StackLayout IsVisible="{Binding BindingContext.FishingGearType.Code, Converter={StaticResource Equal}, ConverterParameter={Static local:FishingGearInspectionViewModel.FishingShip}, Source={Reference page}}">
-                    <lc:InspectedShipDataView ShipInRegisterLabel="{rt:Translate ShipInRegister, Group=FishingGearInspection}"
-                            BindingContext="{Binding ShipData}" />
-                    <lc:InspectionHarbourView BindingContext="{Binding LastHarbour}"
-                            InRegisterLabel="{rt:Translate LastPortInRegister, Group=FishingGearInspection}" />
+                    <lc:InspectedShipDataView ShipInRegisterLabel="{rt:Translate ShipInRegister, Group=FishingGearInspection}" BindingContext="{Binding ShipData}" />
+                    <StackLayout>
+                        <lc:InspectedPersonView Title="{rt:Translate ShipOwner, Group=FishingGearInspection}"
+                                BindingContext="{Binding Owner}"
+                                InRegisterText="{rt:Translate ShipOwnerInRegister, Group=FishingGearInspection}" />
+                    </StackLayout>
+                    <lc:InspectionHarbourView BindingContext="{Binding LastHarbour}" InRegisterLabel="{rt:Translate LastPortInRegister, Group=FishingGearInspection}" />
                 </StackLayout>
                 <StackLayout IsVisible="{Binding FishingGearType.Code, Converter={StaticResource Equal}, ConverterParameter={Static local:FishingGearInspectionViewModel.FishingPoundNet}}">
                     <lc:CustomInfinitePicker Title="{rt:Translate PoundNet, Group=FishingGearInspection}"
@@ -101,8 +104,7 @@
                         </Grid>
                     </DataTemplate>
                 </lc:CustomInfinitePicker>
-                <StackLayout Orientation="Horizontal"
-                        IsVisible="{Binding PermitType.Code, Converter={StaticResource Equal}, ConverterParameter={Static local:FishingGearInspectionViewModel.PermitUnregistered}}">
+                <StackLayout Orientation="Horizontal" IsVisible="{Binding PermitType.Code, Converter={StaticResource Equal}, ConverterParameter={Static local:FishingGearInspectionViewModel.PermitUnregistered}}">
                     <tl:TLEntry HorizontalOptions="FillAndExpand"
                             Title="{rt:Translate Permit, Group=FishingGearInspection}"
                             ValidState="{Binding PermitNumber}"
@@ -114,8 +116,7 @@
                             IsEnabled="{Binding ActivityType, Converter={StaticResource IsNotReview}}" />
                 </StackLayout>
                 <lc:FishingGearsView BindingContext="{Binding FishingGears}" />
-                <lc:TLGeneratedToggles ValidState="{Binding Toggles}"
-                        IsEnabled="{Binding ActivityType, Converter={StaticResource IsNotReview}}" />
+                <lc:TLGeneratedToggles ValidState="{Binding Toggles}" IsEnabled="{Binding ActivityType, Converter={StaticResource IsNotReview}}" />
             </StackLayout>
         </sv:SectionView>
         <lc:AdditionalInfoView BindingContext="{Binding AdditionalInfo}">

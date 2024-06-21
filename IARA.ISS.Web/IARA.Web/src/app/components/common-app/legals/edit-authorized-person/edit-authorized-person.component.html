@@ -6,7 +6,7 @@
      class="dialog-padding">
     <regix-data formControlName="personControl"
                 [isPerson]="true"
-                [isIdReadOnly]="isEditing"
+                [isIdReadOnly]="isEditing && isIdReadOnly"
                 [hideDocument]="true"
                 [isEmailRequired]="true"
                 [expectedResults]="expectedResults.person"

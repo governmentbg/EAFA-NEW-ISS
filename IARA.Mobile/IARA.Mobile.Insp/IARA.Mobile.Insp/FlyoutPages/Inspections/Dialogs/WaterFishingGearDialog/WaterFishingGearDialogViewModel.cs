@@ -1,8 +1,4 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using IARA.Mobile.Application.Attributes;
+﻿using IARA.Mobile.Application.Attributes;
 using IARA.Mobile.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Insp.Application.DTObjects.Inspections;
 using IARA.Mobile.Insp.Application.Interfaces.Transactions;
@@ -11,6 +7,11 @@ using IARA.Mobile.Insp.Controls.ViewModels;
 using IARA.Mobile.Insp.Domain.Enums;
 using IARA.Mobile.Insp.Helpers;
 using IARA.Mobile.Insp.Models;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows.Input;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Helpers;
 using TechnoLogica.Xamarin.ViewModels.Base;
@@ -96,7 +97,12 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.WaterFishingGearDialo
         {
             INomenclatureTransaction nomTransaction = DependencyService.Resolve<INomenclatureTransaction>();
 
-            FishingGearTypes = nomTransaction.GetFishingGears();
+            FishingGearTypes = nomTransaction.GetFishingGears().Select(x => new SelectNomenclatureDto()
+            {
+                Code = x.Code,
+                Id = x.Id,
+                Name = x.Name
+            }).ToList();
             MarkStatuses = nomTransaction.GetFishingGearMarkStatuses();
 
             FishingGearType.Value = FishingGearTypes[0];

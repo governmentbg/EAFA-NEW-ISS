@@ -64,7 +64,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FishingGearInspection
                 PersonChosen = CommandBuilder.CreateFrom<ShipPersonnelDto>(OnOwnerChosen),
             };
             FishingGears = new FishingGearsViewModel(this, hasPingers: true);
-            InspectionGeneralInfo = new InspectionGeneralInfoViewModel(this);
+            InspectionGeneralInfo = new InspectionGeneralInfoViewModel(this, false);
             InspectionFiles = new InspectionFilesViewModel(this);
             AdditionalInfo = new AdditionalInfoViewModel(this);
             Signatures = new SignaturesViewModel(this);
@@ -124,7 +124,6 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FishingGearInspection
         [Required]
         public ValidStateSelect<SelectNomenclatureDto> CheckReason { get; set; }
 
-        [Required]
         public ValidStateSelect<SelectNomenclatureDto> RecheckReason { get; set; }
 
         [Required]
@@ -490,7 +489,12 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FishingGearInspection
 
         private void LoadFishingGears(List<FishingGearDto> fishingGears)
         {
-            List<SelectNomenclatureDto> fishingGearTypes = NomenclaturesTransaction.GetFishingGears();
+            List<SelectNomenclatureDto> fishingGearTypes = NomenclaturesTransaction.GetFishingGears().Select(x => new SelectNomenclatureDto()
+            {
+                Code = x.Code,
+                Id = x.Id,
+                Name = x.Name
+            }).ToList();
 
             List<FishingGearModel> models = fishingGears.ConvertAll(f => new FishingGearModel
             {

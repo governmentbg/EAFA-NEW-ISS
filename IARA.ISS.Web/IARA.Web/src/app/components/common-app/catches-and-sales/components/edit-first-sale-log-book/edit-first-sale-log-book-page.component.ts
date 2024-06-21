@@ -127,7 +127,10 @@ export class EditFirstSaleLogBookPageComponent implements OnInit, AfterViewInit,
                     this.model.originalPossibleProducts = []; // за да не се мапират обратно към бекенда
 
                     this.commonLogBookPageData = this.model.commonData;
-                    this.setSaleDateControlValidators();
+
+                    if (!this.viewMode) {
+                        this.setSaleDateControlValidators();
+                    }
 
                     this.fillForm();
                 }
@@ -204,7 +207,6 @@ export class EditFirstSaleLogBookPageComponent implements OnInit, AfterViewInit,
     }
 
     public ngAfterViewInit(): void {
-        // TODO
         this.form.get('productsControl')!.valueChanges.subscribe({
             next: (products: LogBookPageProductDTO[] | undefined) => {
                 this.updateProductsTotalPrice(products);
@@ -556,7 +558,7 @@ export class EditFirstSaleLogBookPageComponent implements OnInit, AfterViewInit,
             }
 
             const hoursDifference: number = CatchesAndSalesUtils.convertDateDifferenceToHours(difference);
-           
+
             if (CatchesAndSalesUtils.pageHasLogBookPageDateLockedViaDaysAfterMonth(saleDate, now, this.lockFirstSaleLogBookPeriods.lockFirstSaleLogBookPeriod)
                 && !CatchesAndSalesUtils.checkIfPageDateIsUnlocked(this.logBookPageEditExceptions, this.currentUserId, logBookTypeId, logBookId, saleDate, now)
             ) {

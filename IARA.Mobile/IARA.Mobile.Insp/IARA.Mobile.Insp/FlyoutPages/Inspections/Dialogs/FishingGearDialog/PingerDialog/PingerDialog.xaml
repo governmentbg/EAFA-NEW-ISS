@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<tl:TLBaseDialog xmlns="http://xamarin.com/schemas/2014/forms"
+        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+        xmlns:rt="clr-namespace:TechnoLogica.Xamarin.ResourceTranslator;assembly=TechnoLogica.Xamarin"
+        xmlns:tl="clr-namespace:TechnoLogica.Xamarin.Controls;assembly=TechnoLogica.Xamarin"
+        xmlns:h="clr-namespace:TechnoLogica.Xamarin.Helpers;assembly=TechnoLogica.Xamarin"
+        xmlns:sv="clr-namespace:IARA.Mobile.Shared.Views;assembly=IARA.Mobile.Shared"
+        xmlns:local="clr-namespace:IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.FishingGearDialog.PingerDialog"
+        xmlns:m="clr-namespace:IARA.Mobile.Insp.Models"
+        x:Name="dialog"
+        x:Class="IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.FishingGearDialog.PingerDialog.PingerDialog"
+        Title="{rt:Translate Title, Group=Pinger}"
+        x:DataType="local:PingerDialogViewModel"
+        x:TypeArguments="local:PingerDialogViewModel, m:PingerModel"
+        BackgroundColor="White"
+        IconColor="White"
+        TitleBackgroundColor="{StaticResource Primary}"
+        TitleColor="White">
+    <StackLayout Padding="10">
+        <sv:SectionView Image="{FontImage FontFamily=FA, Glyph={Static h:IconFont.LocationDot}, Color=White, Size=100}" Text="{rt:Translate Section, Group=Pinger}">
+            <StackLayout Padding="10">
+                <tl:TLEntry Title="{rt:Translate Number, Group=Pinger}"
+                        ValidState="{Binding Number}"
+                        IsEnabled="{Binding IsEditable}" />
+                <tl:TLNativePicker Title="{rt:Translate Status, Group=Pinger}"
+                        ValidState="{Binding Status}"
+                        ItemsSource="{Binding PingerStatuses}"
+                        IsEnabled="{Binding IsEditable}" />
+                <tl:TLEntry Title="{rt:Translate Model, Group=Pinger}"
+                        ValidState="{Binding Model}"
+                        IsEnabled="{Binding IsEditable}" />
+                <tl:TLEntry Title="{rt:Translate Mark, Group=Pinger}"
+                        ValidState="{Binding Status}"
+                        IsEnabled="{Binding IsEditable}" />
+            </StackLayout>
+        </sv:SectionView>
+        <Button Text="{rt:Translate Save, Group=Common}" HorizontalOptions="End" />
+    </StackLayout>
+</tl:TLBaseDialog>

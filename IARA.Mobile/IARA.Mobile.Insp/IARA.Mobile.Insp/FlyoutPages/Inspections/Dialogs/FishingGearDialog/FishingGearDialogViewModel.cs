@@ -1,6 +1,7 @@
 ﻿using IARA.Mobile.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Domain.Enums;
 using IARA.Mobile.Insp.Application.DTObjects.Inspections;
+using IARA.Mobile.Insp.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Insp.Application.Interfaces.Transactions;
 using IARA.Mobile.Insp.Base;
 using IARA.Mobile.Insp.Domain.Enums;
@@ -69,7 +70,13 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.FishingGearDialog
         {
             INomenclatureTransaction nomTransaction = DependencyService.Resolve<INomenclatureTransaction>();
 
-            List<SelectNomenclatureDto> fishingGearTypes = nomTransaction.GetFishingGears();
+            List<FishingGearSelectNomenclatureDto> fishingGearTypes = nomTransaction.GetFishingGears().Select(x => new FishingGearSelectNomenclatureDto()
+            {
+                Name = x.DisplayValue,
+                Code = x.Code,
+                Id = x.Id,
+                HasHooks = x.HasHooks,
+            }).ToList();
             List<SelectNomenclatureDto> markStatuses = nomTransaction.GetFishingGearMarkStatuses();
 
             List<SelectNomenclatureDto> pingerStatuses = null;

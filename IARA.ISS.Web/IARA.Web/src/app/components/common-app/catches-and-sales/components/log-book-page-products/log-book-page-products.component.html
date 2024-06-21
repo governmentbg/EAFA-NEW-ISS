@@ -119,9 +119,17 @@
          fxLayoutAlign="end center">
         <mat-hint fxFlex="100" fxLayout="column">
             {{ 'catches-and-sales.ship-page-catch-record-quantity-sums' | tlTranslate }}
-            <span *ngFor="let fishQuantity of fishQuantities | keyvalue" fxLayout="row">
-                {{ fishQuantity.key }}: {{ fishQuantity.value }};
-            </span>
+            <div *ngIf="logBookType !== logBookTypesEnum.Aquaculture">
+                <span *ngFor="let fishQuantity of fishQuantities | keyvalue" fxLayout="row">
+                    {{ fishQuantity.key }}: {{ fishQuantity.value }};
+                </span>
+            </div>
+
+            <div *ngIf="logBookType === logBookTypesEnum.Aquaculture">
+                <span *ngFor="let fishQuantity of fishQuantities | keyvalue" fxLayout="row">
+                    {{ fishQuantity.value }};
+                </span>
+            </div>
         </mat-hint>
     </div>
 

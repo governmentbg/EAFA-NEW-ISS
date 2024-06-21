@@ -114,6 +114,9 @@
     <EmbeddedResource Update="FlyoutPages\Inspections\Dialogs\FishingGearDialog\FishingGearView.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
+    <EmbeddedResource Update="FlyoutPages\Inspections\Dialogs\FishingGearDialog\PingerDialog\PingerDialog.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
     <EmbeddedResource Update="FlyoutPages\Inspections\Dialogs\InspectorDialog\InspectorDialog.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>

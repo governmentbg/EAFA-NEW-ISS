@@ -36,6 +36,7 @@ export class EditAuthorizedPersonComponent implements OnInit, AfterViewInit, IDi
     public readOnly!: boolean;
     public showOnlyRegixData: boolean = false;
     public isEditing!: boolean;
+    public isIdReadOnly: boolean = false;
     public showConfirmEmailControl: boolean = false;
 
     public roles: NomenclatureDTO<number>[] = [];
@@ -231,6 +232,9 @@ export class EditAuthorizedPersonComponent implements OnInit, AfterViewInit, IDi
 
     private fillForm(): void {
         this.form.get('personControl')!.setValue(this.model.person);
+
+        const egnLnc: string | undefined = this.model.person?.egnLnc?.egnLnc;
+        this.isIdReadOnly = CommonUtils.hasDigitsOnly(egnLnc);
 
         if (this.showConfirmEmailControl) {
             this.form.get('isEmailConfirmedControl')!.setValue(this.model.isEmailConfirmed);

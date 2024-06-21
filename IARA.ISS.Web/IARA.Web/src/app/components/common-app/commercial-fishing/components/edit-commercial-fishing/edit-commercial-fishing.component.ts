@@ -168,6 +168,7 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
     public canReadSuspensions: boolean = false;
     public isFishingGearsApplication: boolean = false;
     public isRegisterEntry: boolean = false;
+    public isIdReadOnly: boolean = false;
 
     public submittedByRole: SubmittedByRolesEnum | undefined;
     public readonly submittedByRoles: typeof SubmittedByRolesEnum = SubmittedByRolesEnum;
@@ -617,7 +618,7 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
 
     public selectAllPermittedPorts(): void {
         this.quotaAquaticOrganisms = [];
-       
+
         for (const quotaOrganismType of this.quotaAquaticOrganismTypes) {
             const ports: NomenclatureDTO<number>[] = this.filterQuotaSpiciesPortsCollection(quotaOrganismType.value);
 
@@ -774,7 +775,7 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
         if (!this.isPublicApp) {
             const identifier: EgnLncDTO = this.form.get('qualifiedFisherIdNumberControl')!.value;
             const cached: PersonFullDataDTO | null | undefined = this.fisherCache.get(`${identifier.identifierType}|${identifier.egnLnc}`);
-            
+
             if (cached !== undefined) {
                 if (cached !== null) {
                     this.form.get('qualifiedFisherIdNumberControl')!.setValue(cached.person!.egnLnc);
@@ -831,12 +832,12 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
                             this.form.get('permitLicensePermitControl')!.reset();
                             this.form.get('permitLicensePermitControl')!.updateValueAndValidity();
                             this.noShipSelected = true;
-                            this.onlyOnlineLogBooks = undefined; 
+                            this.onlyOnlineLogBooks = undefined;
                         }
                     }
 
                     if (ship !== null && ship !== undefined && ship instanceof NomenclatureDTO && this.isPermitLicense && !this.isApplication) {
-                        this.onlyOnlineLogBooks = ShipsUtils.hasErs(ship); 
+                        this.onlyOnlineLogBooks = ShipsUtils.hasErs(ship);
                     }
 
                     if ((ship instanceof NomenclatureDTO || ship === null || ship === undefined)
@@ -1974,7 +1975,7 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
             if (shipId !== undefined && shipId !== null) {
                 const selectedShip: ShipNomenclatureDTO = ShipsUtils.get(this.ships, shipId)
                 this.form.get('shipControl')!.setValue(selectedShip);
-                this.onlyOnlineLogBooks = ShipsUtils.hasErs(selectedShip); 
+                this.onlyOnlineLogBooks = ShipsUtils.hasErs(selectedShip);
             }
 
             if (this.model instanceof CommercialFishingApplicationEditDTO && this.isPermitLicense) {
@@ -2112,9 +2113,15 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
 
             if (this.model.submittedFor!.submittedByRole! & SubmittedByRolesEnum.LegalRole) {
                 this.logBookOwnerType = LogBookPagePersonTypesEnum.LegalPerson;
+
+                const eik: string | undefined = this.model.submittedFor!.legal?.eik;
+                this.isIdReadOnly = CommonUtils.hasDigitsOnly(eik);
             }
             else if (this.model.submittedFor!.submittedByRole! & SubmittedByRolesEnum.PersonalRole) {
                 this.logBookOwnerType = LogBookPagePersonTypesEnum.Person;
+
+                const egnLnc: string | undefined = this.model.submittedFor!.person?.egnLnc?.egnLnc;
+                this.isIdReadOnly = CommonUtils.hasDigitsOnly(egnLnc);
             }
         }
     }

@@ -32,7 +32,7 @@
                                relationLabel="{{ 'statistical-forms.aqua-farm-requester-role' | tlTranslate }}"
                                submittedForLabel="{{ 'statistical-forms.aqua-farm-receiver' | tlTranslate }}"
                                [pageCode]="pageCode"
-                               [isIdReadOnly]="true"
+                               [isIdReadOnly]="isIdReadOnly"
                                [showOnlyBasicData]="true"
                                [showPersonal]="!isApplication || isPerson"
                                [submittedByControl]="form.controls.submittedByControl"

@@ -48,6 +48,7 @@ import { ShipsUtils } from '@app/shared/utils/ships.utils';
 import { TLError } from '@app/shared/components/input-controls/models/tl-error.model';
 import { GetControlErrorLabelTextCallback } from '@app/shared/components/input-controls/base-tl-control';
 import { StatisticalFormShipSeaDaysDTO } from '@app/models/generated/dtos/StatisticalFormShipSeaDaysDTO';
+import { SubmittedByRolesEnum } from '@app/enums/submitted-by-roles.enum';
 
 type YesNo = 'yes' | 'no';
 
@@ -98,6 +99,7 @@ export class StatisticalFormsFishVesselComponent implements OnInit, IDialogCompo
     public showOnlyRegiXData: boolean = false;
     public showRegiXData: boolean = false;
     public isEditing: boolean = false;
+    public isIdReadOnly: boolean = false;
     public refreshFileTypes: Subject<void> = new Subject<void>();
     public statFormShip: Map<number, StatisticalFormShipDTO> = new Map<number, StatisticalFormShipDTO>();
 
@@ -647,6 +649,15 @@ export class StatisticalFormsFishVesselComponent implements OnInit, IDialogCompo
         this.form.get('shipTonnageControl')!.setValue(model.shipTonnageId);
 
         this.form.get('hasEngineControl')!.setValue(model.hasEngine ?? false);
+
+        if (this.model.submittedFor!.submittedByRole! & SubmittedByRolesEnum.LegalRole) {
+            const eik: string | undefined = this.model.submittedFor!.legal?.eik;
+            this.isIdReadOnly = CommonUtils.hasDigitsOnly(eik);
+        }
+        else if (this.model.submittedFor!.submittedByRole! & SubmittedByRolesEnum.PersonalRole) {
+            const egnLnc: string | undefined = this.model.submittedFor!.person?.egnLnc?.egnLnc;
+            this.isIdReadOnly = CommonUtils.hasDigitsOnly(egnLnc);
+        }
 
         if ((model.hasEngine ?? false) === true) {
             this.form.get('fuelTypeControl')!.setValue(model.fuelTypeId);
