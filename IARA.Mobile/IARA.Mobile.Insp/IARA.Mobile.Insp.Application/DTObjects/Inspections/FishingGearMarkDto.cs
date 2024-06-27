@@ -1,5 +1,5 @@
-﻿using System;
-using IARA.Mobile.Insp.Domain.Enums;
+﻿using IARA.Mobile.Insp.Domain.Enums;
+using System;
 
 namespace IARA.Mobile.Insp.Application.DTObjects.Inspections
 {
@@ -10,5 +10,6 @@ namespace IARA.Mobile.Insp.Application.DTObjects.Inspections
         public int StatusId { get; set; }
         public DateTime? CreatedOn { get; set; }
         public FishingGearMarkStatus SelectedStatus { get; set; }
+        public bool IsActive { get; set; }
     }
 }

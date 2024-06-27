@@ -34,9 +34,9 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.InWaterOnBoard
             InspectionGeneralInfo = new InspectionGeneralInfoViewModel(this);
             PatrolVehicles = new PatrolVehiclesViewModel(this, null);
             InspectedShip = new FishingShipViewModel(this);
-            ShipChecks = new ShipChecksViewModel(this);
             ShipCatches = new ShipCatchesViewModel(this);
-            ShipFishingGears = new ShipFishingGearsViewModel(this);
+            ShipChecks = new ShipChecksViewModel(this, ShipCatches);
+            ShipFishingGears = new ShipFishingGearsViewModel(this, true);
             InspectionFiles = new InspectionFilesViewModel(this);
             AdditionalInfo = new AdditionalInfoViewModel(this);
             Signatures = new SignaturesViewModel(this);
@@ -104,7 +104,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.InWaterOnBoard
         public override async Task Initialize(object sender)
         {
             InspectionHelper.Initialize(this, Edit);
-            InspectionHelper.InitShip(InspectedShip, ShipChecks, fishingGears: ShipFishingGears.FishingGears);
+            InspectionHelper.InitShip(InspectedShip, ShipChecks, ShipCatches, fishingGears: ShipFishingGears.FishingGears);
 
             INomenclatureTransaction nomTransaction = NomenclaturesTransaction;
 

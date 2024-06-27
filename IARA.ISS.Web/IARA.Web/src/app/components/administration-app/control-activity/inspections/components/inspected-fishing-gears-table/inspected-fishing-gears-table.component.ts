@@ -88,6 +88,8 @@ export class InspectedFishingGearsTableComponent extends CustomFormControl<Inspe
                 fishingGear.gear.checkInspectedMatchingRegisteredGear = InspectedFishingGearEnum.R;
             }
         }
+
+        this.onChanged(this.getValue());
     }
 
     public writeValue(value: InspectedFishingGearDTO[]): void {
@@ -134,11 +136,14 @@ export class InspectedFishingGearsTableComponent extends CustomFormControl<Inspe
                     || this.permitIds.includes(x.gear.permittedFishingGear.permitId!)
                     || this.permitIds.length === 0
                 );
+
+                this.onChanged(this.getValue());
             });
         }
         else {
             this.fishingGears = [];
             this.allFishingGears = [];
+            this.onChanged(this.getValue());
         }
     }
 
@@ -245,7 +250,7 @@ export class InspectedFishingGearsTableComponent extends CustomFormControl<Inspe
             hasAttachedAppliances: x.gear.hasAttachedAppliances,
             isActive: x.gear.isActive
         }));
-
+        
         return result;
     }
 

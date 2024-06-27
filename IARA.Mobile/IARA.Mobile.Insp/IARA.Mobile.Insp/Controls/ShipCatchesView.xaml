@@ -15,11 +15,28 @@
     <sv:SectionView.InnerContent>
         <StackLayout Padding="10">
             <lc:CatchInspectionsView IsTitleVisible="False" BindingContext="{Binding Catches}" />
-            <Label Text="{Binding Catches.Summary}"
-                    FontSize="Small"
-                    Margin="8,-8,0,8"
-                    LineBreakMode="WordWrap"
-                    IsEnabled="{Binding Catches.Catches.IsValid}" />
+            <StackLayout Margin="2,-6,0,8" Orientation="Horizontal">
+                <Label Text="{rt:Translate OverallQuantity, Group=CatchInspection}"
+                        IsVisible="{Binding Catches.IsUnloadedQuantityRequired, Converter={StaticResource OppositeBool}}"
+                        FontSize="Small"
+                        FontAttributes="Italic"
+                        TextColor="Gray"
+                        LineBreakMode="WordWrap"
+                        IsEnabled="{Binding Catches.Catches.IsValid}" />
+                <Label Text="{rt:Translate OverallUnloadedQuantity, Group=CatchInspection}"
+                        IsVisible="{Binding Catches.IsUnloadedQuantityRequired}"
+                        FontSize="Small"
+                        FontAttributes="Italic"
+                        TextColor="Gray"
+                        LineBreakMode="WordWrap"
+                        IsEnabled="{Binding Catches.Catches.IsValid}" />
+                <Label Text="{Binding Catches.Summary}"
+                        FontSize="Small"
+                        FontAttributes="Italic"
+                        TextColor="Gray"
+                        LineBreakMode="WordWrap"
+                        IsEnabled="{Binding Catches.Catches.IsValid}" />
+            </StackLayout>
             <lc:TLGeneratedToggles ValidState="{Binding Toggles}"
                     IsVisible="{Binding Toggles.Value.Count, Converter={StaticResource NotEqual}, ConverterParameter=0}"
                     IsEnabled="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}" />

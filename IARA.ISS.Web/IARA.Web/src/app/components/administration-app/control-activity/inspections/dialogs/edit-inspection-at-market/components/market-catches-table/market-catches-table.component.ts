@@ -87,11 +87,13 @@ export class MarketCatchesTableComponent extends CustomFormControl<InspectedDecl
             setTimeout(() => {
                 this.catches = value;
                 this.recalculateCatchQuantitySums();
+                this.onChanged(this.getValue());
             });
         }
         else {
             this.catches = [];
             this.recalculateCatchQuantitySums();
+            this.onChanged(this.getValue());
         }
     }
 

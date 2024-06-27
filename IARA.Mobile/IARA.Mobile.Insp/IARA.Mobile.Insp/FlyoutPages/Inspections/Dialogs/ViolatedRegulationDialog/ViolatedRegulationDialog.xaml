@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<tl:TLBaseDialog xmlns="http://xamarin.com/schemas/2014/forms"
+        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+        x:Class="IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.ViolatedRegulationDialog.ViolatedRegulationDialog"
+        xmlns:lc="clr-namespace:IARA.Mobile.Insp.Controls"
+        xmlns:local="clr-namespace:IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.ViolatedRegulationDialog"
+        xmlns:m="clr-namespace:IARA.Mobile.Insp.Models"
+        xmlns:nom="clr-namespace:IARA.Mobile.Application.DTObjects.Nomenclatures;assembly=IARA.Mobile.Application"
+        xmlns:rt="clr-namespace:TechnoLogica.Xamarin.ResourceTranslator;assembly=TechnoLogica.Xamarin"
+        xmlns:tl="clr-namespace:TechnoLogica.Xamarin.Controls;assembly=TechnoLogica.Xamarin"
+        xmlns:h="clr-namespace:TechnoLogica.Xamarin.Helpers;assembly=TechnoLogica.Xamarin"
+        x:Name="dialog"
+        xmlns:sv="clr-namespace:IARA.Mobile.Shared.Views;assembly=IARA.Mobile.Shared"
+        x:DataType="local:ViolatedRegulationDialogViewModel"
+        x:TypeArguments="local:ViolatedRegulationDialogViewModel, m:ViolatedRegulationModel"
+        Title="{rt:Translate PatrolVehicleDialogTitle, Group=PatrolVehicle}"
+        BackgroundColor="White"
+        IconColor="White"
+        TitleBackgroundColor="{StaticResource Primary}"
+        TitleColor="White">
+    <sv:SectionView Image="{FontImage FontFamily=FA, Glyph={Static h:IconFont.File}, Color=White, Size=100}" Text="{rt:Translate ValidatedRegulationInformationSectionTitle, Group=GeneralInfo}">
+        <StackLayout Padding="10">
+            <tl:TLEntry Title="{rt:Translate Article, Group=GeneralInfo}"
+                    ValidState="{Binding Article}"
+                    IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}" />
+
+            <tl:TLEntry Title="{rt:Translate Paragraph, Group=GeneralInfo}"
+                    ValidState="{Binding Paragraph}"
+                    IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}" />
+
+            <tl:TLEntry Title="{rt:Translate Section, Group=GeneralInfo}"
+                    ValidState="{Binding Section}"
+                    IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}" />
+
+            <tl:TLEntry Title="{rt:Translate Letter, Group=GeneralInfo}"
+                    ValidState="{Binding Letter}"
+                    IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}" />
+
+            <tl:TLEntry Title="{rt:Translate Comments, Group=GeneralInfo}"
+                    ValidState="{Binding Comments}"
+                    IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}" />
+
+            <tl:TLEntry Title="{rt:Translate LawText, Group=GeneralInfo}"
+                    ValidState="{Binding LawText}"
+                    IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}" />
+        </StackLayout>
+    </sv:SectionView>
+</tl:TLBaseDialog>

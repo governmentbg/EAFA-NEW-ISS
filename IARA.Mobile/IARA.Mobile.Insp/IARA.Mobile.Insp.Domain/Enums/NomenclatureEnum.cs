@@ -2,6 +2,7 @@
 {
     public enum NomenclatureEnum
     {
+        Law,
         Catch,
         Translation,
         FileType,

@@ -43,17 +43,15 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.FishingGearDialog
 
         public void BeforeInit()
         {
-            PermittedFishingGear = new FishingGearViewModel(Inspection, DialogType)
+            PermittedFishingGear = new FishingGearViewModel(Inspection, DialogType, false)
             {
-                IsEditable = false,
                 HasPingers = HasPingers,
                 MoveMark = DialogType != ViewActivityType.Review
                     ? CommandBuilder.CreateFrom<MarkViewModel>(OnMoveMark)
                     : null,
             };
-            InspectedFishingGear = new FishingGearViewModel(Inspection, DialogType)
+            InspectedFishingGear = new FishingGearViewModel(Inspection, DialogType, true)
             {
-                IsEditable = true,
                 HasPingers = HasPingers,
                 IsInspectedGear = true,
             };
@@ -76,7 +74,12 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.FishingGearDialog
                 Code = x.Code,
                 Id = x.Id,
                 HasHooks = x.HasHooks,
-            }).ToList();
+            }).OrderBy(x => x.Code).ToList();
+            FishingGearSelectNomenclatureDto Poundnet = fishingGearTypes.FirstOrDefault(x => x.Code == "DLN");
+            int index = fishingGearTypes.IndexOf(Poundnet);
+            fishingGearTypes.RemoveAt(index);
+            fishingGearTypes.Insert(0, Poundnet);
+
             List<SelectNomenclatureDto> markStatuses = nomTransaction.GetFishingGearMarkStatuses();
 
             List<SelectNomenclatureDto> pingerStatuses = null;
@@ -85,6 +88,8 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.FishingGearDialog
             {
                 pingerStatuses = nomTransaction.GetFishingGearPingerStatuses();
             }
+
+            List<InspectionCheckTypeDto> checkTypes = nomTransaction.GetInspectionCheckTypes(InspectionType.IBP);
 
             InspectedFishingGear.Init(fishingGearTypes, markStatuses, pingerStatuses);
             PermittedFishingGear.Init(fishingGearTypes, markStatuses, pingerStatuses);
@@ -150,7 +155,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.FishingGearDialog
                 ? InspectedFishingGear
                 : PermittedFishingGear;
 
-            IReadOnlyList<string> result = (fishingGear.FishingGearType as IValidState).ForceValidation();
+            IReadOnlyList<string> result = (fishingGear.FishingGearGeneralInfo.FishingGearType as IValidState).ForceValidation();
             if (result?.Count > 0)
             {
                 return Task.CompletedTask;
@@ -163,9 +168,9 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.FishingGearDialog
                     .Select(f => f.Number.Value)
                     .Where(f => !string.IsNullOrWhiteSpace(f))
                     .ToArray()),
-                Type = fishingGear.FishingGearType.Value,
-                Count = ParseHelper.ParseInteger(fishingGear.Count) ?? 0,
-                NetEyeSize = ParseHelper.ParseInteger(fishingGear.NetEyeSize),
+                Type = fishingGear.FishingGearGeneralInfo.FishingGearType.Value,
+                Count = ParseHelper.ParseInteger(fishingGear.FishingGearGeneralInfo.Count) ?? 0,
+                NetEyeSize = ParseHelper.ParseInteger(fishingGear.FishingGearGeneralInfo.NetEyeSize),
                 CheckedValue = checkValue,
                 Dto = new InspectedFishingGearDto
                 {

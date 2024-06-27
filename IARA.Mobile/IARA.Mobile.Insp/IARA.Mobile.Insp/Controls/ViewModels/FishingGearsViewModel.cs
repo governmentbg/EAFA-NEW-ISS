@@ -18,10 +18,11 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
 {
     public class FishingGearsViewModel : ViewModel
     {
-        public FishingGearsViewModel(InspectionPageViewModel inspection, bool hasPingers = true)
+        public FishingGearsViewModel(InspectionPageViewModel inspection, bool hasPingers = true, bool hasAttachmentForFishingGear = false)
         {
             Inspection = inspection;
             HasPingers = hasPingers;
+            HasAttachmentForFishingGear = hasAttachmentForFishingGear;
 
             Review = CommandBuilder.CreateFrom<FishingGearModel>(OnReview);
             Add = CommandBuilder.CreateFrom(OnAdd);
@@ -35,6 +36,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
 
         public InspectionPageViewModel Inspection { get; }
         public bool HasPingers { get; }
+        public bool HasAttachmentForFishingGear { get; }
 
         public ValidStateTable<FishingGearModel> FishingGears { get; set; }
 
@@ -97,12 +99,12 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
 
         private Task OnReview(FishingGearModel model)
         {
-            return TLDialogHelper.ShowDialog(new FishingGearDialog(Inspection, ViewActivityType.Review, HasPingers, model));
+            return TLDialogHelper.ShowDialog(new FishingGearDialog(Inspection, ViewActivityType.Review, HasPingers, HasAttachmentForFishingGear, model));
         }
 
         private async Task OnAdd()
         {
-            FishingGearModel result = await TLDialogHelper.ShowDialog(new FishingGearDialog(Inspection, ViewActivityType.Add, HasPingers));
+            FishingGearModel result = await TLDialogHelper.ShowDialog(new FishingGearDialog(Inspection, ViewActivityType.Add, HasPingers, HasAttachmentForFishingGear));
 
             if (result != null)
             {
@@ -113,7 +115,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
 
         private async Task OnEdit(FishingGearModel fishingGear)
         {
-            FishingGearModel result = await TLDialogHelper.ShowDialog(new FishingGearDialog(Inspection, ViewActivityType.Edit, HasPingers, fishingGear));
+            FishingGearModel result = await TLDialogHelper.ShowDialog(new FishingGearDialog(Inspection, ViewActivityType.Edit, HasPingers, HasAttachmentForFishingGear, fishingGear));
 
             if (result != null)
             {

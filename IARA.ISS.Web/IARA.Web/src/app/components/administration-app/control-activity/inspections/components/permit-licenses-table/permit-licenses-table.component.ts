@@ -57,11 +57,13 @@ export class PermitLicensesTableComponent extends CustomFormControl<PermitLicens
         if (value !== undefined && value !== null) {
             setTimeout(() => {
                 this.permitLicenses = value;
+                this.onChanged(this.getValue());
             });
         }
         else {
             setTimeout(() => {
                 this.permitLicenses = [];
+                this.onChanged(this.getValue());
             });
         }
     }

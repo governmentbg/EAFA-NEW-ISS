@@ -134,6 +134,8 @@ export class InspectedShipWithPersonnelComponent extends CustomFormControl<ShipW
             this.representatives = [];
             this.captains = [];
         }
+
+        this.onChanged(this.getValue());
     }
 
     public async onShipSelected(ship: VesselDuringInspectionDTO): Promise<void> {
@@ -222,7 +224,7 @@ export class InspectedShipWithPersonnelComponent extends CustomFormControl<ShipW
             shipCaptainControl: new FormControl(undefined, Validators.required),
             togglesControl: new FormControl([]),
             portControl: new FormControl(undefined),
-            observationControl: new FormControl(undefined),
+            observationControl: new FormControl(undefined)
         });
 
         return form;

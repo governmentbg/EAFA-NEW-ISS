@@ -9,7 +9,7 @@
         xmlns:m="clr-namespace:IARA.Mobile.Insp.Models"
         x:Name="dialog"
         x:Class="IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.FishingGearDialog.PingerDialog.PingerDialog"
-        Title="{rt:Translate Title, Group=Pinger}"
+        Title="{rt:Translate PingerDialogTitle, Group=FishingGear}"
         x:DataType="local:PingerDialogViewModel"
         x:TypeArguments="local:PingerDialogViewModel, m:PingerModel"
         BackgroundColor="White"
@@ -17,23 +17,26 @@
         TitleBackgroundColor="{StaticResource Primary}"
         TitleColor="White">
     <StackLayout Padding="10">
-        <sv:SectionView Image="{FontImage FontFamily=FA, Glyph={Static h:IconFont.LocationDot}, Color=White, Size=100}" Text="{rt:Translate Section, Group=Pinger}">
+        <sv:SectionView Image="{FontImage FontFamily=FA, Glyph={Static h:IconFont.LocationDot}, Color=White, Size=100}" Text="{rt:Translate PingerSection, Group=FishingGear}">
             <StackLayout Padding="10">
-                <tl:TLEntry Title="{rt:Translate Number, Group=Pinger}"
+                <tl:TLEntry Title="{rt:Translate PingerNumber, Group=FishingGear}"
                         ValidState="{Binding Number}"
                         IsEnabled="{Binding IsEditable}" />
-                <tl:TLNativePicker Title="{rt:Translate Status, Group=Pinger}"
+                <tl:TLNativePicker Title="{rt:Translate PingerStatus, Group=FishingGear}"
                         ValidState="{Binding Status}"
                         ItemsSource="{Binding PingerStatuses}"
                         IsEnabled="{Binding IsEditable}" />
-                <tl:TLEntry Title="{rt:Translate Model, Group=Pinger}"
+                <tl:TLEntry Title="{rt:Translate PingerModel, Group=FishingGear}"
                         ValidState="{Binding Model}"
                         IsEnabled="{Binding IsEditable}" />
-                <tl:TLEntry Title="{rt:Translate Mark, Group=Pinger}"
-                        ValidState="{Binding Status}"
+                <tl:TLEntry Title="{rt:Translate PingerBrand, Group=FishingGear}"
+                        ValidState="{Binding Brand}"
                         IsEnabled="{Binding IsEditable}" />
             </StackLayout>
         </sv:SectionView>
-        <Button Text="{rt:Translate Save, Group=Common}" HorizontalOptions="End" />
+        <Button Text="{rt:Translate Save, Group=Common}"
+                HorizontalOptions="End"
+                Command="{Binding Save}"
+                IsVisible="{Binding IsEditable}" />
     </StackLayout>
 </tl:TLBaseDialog>

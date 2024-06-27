@@ -52,6 +52,7 @@ export class EditAdmissionLogBookPageComponent implements OnInit, IDialogCompone
 
     public noAvailableProducts: boolean = false;
     public isLogBookPageDateLockedError: boolean = false;
+    public isCommonLogBookPageDataReadonly: boolean = true;
 
     public getControlErrorLabelTextMethod: GetControlErrorLabelTextCallback = this.getControlErrorLabelText.bind(this);
 
@@ -228,7 +229,7 @@ export class EditAdmissionLogBookPageComponent implements OnInit, IDialogCompone
     public saveBtnClicked(actionInfo: IActionInfo, dialogClose: DialogCloseCallback): void {
         this.form.markAllAsTouched();
         this.validityCheckerGroup.validate();
-
+        
         if (this.isFormValid()) {
             this.fillModel();
             this.model = CommonUtils.sanitizeModelStrings(this.model);
@@ -327,7 +328,9 @@ export class EditAdmissionLogBookPageComponent implements OnInit, IDialogCompone
         this.form.get('acceptingPersonControl')!.setValue(this.model.acceptingPerson);
         this.form.get('productsControl')!.setValue(this.model.products);
         this.form.get('filesControl')!.setValue(this.model.files);
-
+        
+        this.isCommonLogBookPageDataReadonly = this.model.commonData?.originDeclarationNumber?.includes('missing data') !== true;
+       
         if (!this.isAdd) {
             this.form.get('statusControl')!.setValue(this.model.status);
         }

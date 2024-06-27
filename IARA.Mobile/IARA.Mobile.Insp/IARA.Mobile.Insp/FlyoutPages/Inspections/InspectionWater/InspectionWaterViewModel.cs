@@ -114,6 +114,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.InspectionWater
                 GroupResourceEnum.WaterCatch,
                 GroupResourceEnum.InspectionWater,
                 GroupResourceEnum.Validation,
+                GroupResourceEnum.FishingGear,
             };
         }
 

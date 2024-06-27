@@ -1,0 +1,191 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<StackLayout xmlns="http://xamarin.com/schemas/2014/forms"
+        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+        x:Class="IARA.Mobile.Insp.Controls.FishingGearGeneralInfo"
+        xmlns:h="clr-namespace:TechnoLogica.Xamarin.Helpers;assembly=TechnoLogica.Xamarin"
+        xmlns:conv="clr-namespace:IARA.Mobile.Insp.Converters"
+        xmlns:m="clr-namespace:IARA.Mobile.Insp.Models"
+        xmlns:sv="clr-namespace:IARA.Mobile.Shared.Views;assembly=IARA.Mobile.Shared"
+        xmlns:tl="clr-namespace:TechnoLogica.Xamarin.Controls;assembly=TechnoLogica.Xamarin"
+        xmlns:rt="clr-namespace:TechnoLogica.Xamarin.ResourceTranslator;assembly=TechnoLogica.Xamarin"
+        xmlns:vm="clr-namespace:IARA.Mobile.Insp.Controls.ViewModels"
+        x:DataType="vm:FishingGearGeneralInfoViewModel">
+
+    <tl:TLPicker Title="{rt:Translate Type, Group=FishingGear}"
+            ValidState="{Binding FishingGearType}"
+            ItemsSource="{Binding FishingGearTypes}"
+            Command="{Binding SelectFishingGearType}">
+        <tl:TLPicker.IsEnabled>
+            <MultiBinding Converter="{StaticResource All}">
+                <Binding Path="DialogType" Converter="{StaticResource IsNotReview}" />
+                <Binding Path="IsEditable" />
+            </MultiBinding>
+        </tl:TLPicker.IsEnabled>
+    </tl:TLPicker>
+    <sv:SectionView IsVisible="{Binding IsPoundnetSelected}"
+            Image="{FontImage FontFamily=FA, Glyph={Static h:IconFont.House}, Color=White, Size=100}"
+            Text="{rt:Translate PoundnetInformationSection, Group=FishingGear}">
+        <StackLayout Padding="10">
+            <tl:TLEntry Title="{rt:Translate NetEyeSize, Group=FishingGear}"
+                    ValidState="{Binding NetEyeSize}"
+                    Keyboard="Numeric">
+                <tl:TLEntry.IsEnabled>
+                    <MultiBinding Converter="{StaticResource All}">
+                        <Binding Path="DialogType" Converter="{StaticResource IsNotReview}" />
+                        <Binding Path="IsEditable" />
+                    </MultiBinding>
+                </tl:TLEntry.IsEnabled>
+            </tl:TLEntry>
+            <tl:TLEntry Title="{rt:Translate TowelLength, Group=FishingGear}"
+                    ValidState="{Binding TowelLength}"
+                    Keyboard="Numeric">
+                <tl:TLEntry.IsEnabled>
+                    <MultiBinding Converter="{StaticResource All}">
+                        <Binding Path="DialogType" Converter="{StaticResource IsNotReview}" />
+                        <Binding Path="IsEditable" />
+                    </MultiBinding>
+                </tl:TLEntry.IsEnabled>
+            </tl:TLEntry>
+            <tl:TLEntry Title="{rt:Translate HouseLength, Group=FishingGear}"
+                    ValidState="{Binding HouseLength}"
+                    Keyboard="Numeric">
+                <tl:TLEntry.IsEnabled>
+                    <MultiBinding Converter="{StaticResource All}">
+                        <Binding Path="DialogType" Converter="{StaticResource IsNotReview}" />
+                        <Binding Path="IsEditable" />
+                    </MultiBinding>
+                </tl:TLEntry.IsEnabled>
+            </tl:TLEntry>
+            <tl:TLEntry Title="{rt:Translate HouseWidth, Group=FishingGear}"
+                    ValidState="{Binding HouseWidth}"
+                    Keyboard="Numeric">
+                <tl:TLEntry.IsEnabled>
+                    <MultiBinding Converter="{StaticResource All}">
+                        <Binding Path="DialogType" Converter="{StaticResource IsNotReview}" />
+                        <Binding Path="IsEditable" />
+                    </MultiBinding>
+                </tl:TLEntry.IsEnabled>
+            </tl:TLEntry>
+        </StackLayout>
+    </sv:SectionView>
+
+    <sv:SectionView IsVisible="{Binding IsFishingGearSelected}"
+            Image="{FontImage FontFamily=FA, Glyph={Static h:IconFont.ScrewdriverWrench}, Color=White, Size=100}"
+            Text="{rt:Translate FishingGearInformationSection, Group=FishingGear}">
+        <StackLayout Padding="10">
+            <tl:TLEntry Title="{rt:Translate Count, Group=FishingGear}"
+                    ValidState="{Binding Count}"
+                    Keyboard="Numeric">
+                <tl:TLEntry.IsEnabled>
+                    <MultiBinding Converter="{StaticResource All}">
+                        <Binding Path="DialogType" Converter="{StaticResource IsNotReview}" />
+                        <Binding Path="IsEditable" />
+                    </MultiBinding>
+                </tl:TLEntry.IsEnabled>
+            </tl:TLEntry>
+            <tl:TLFlex GrowUnit="130">
+                <tl:TLEntry Title="{rt:Translate NetEyeSize, Group=FishingGear}"
+                        ValidState="{Binding NetEyeSize}"
+                        Keyboard="Numeric">
+                    <tl:TLEntry.IsEnabled>
+                        <MultiBinding Converter="{StaticResource All}">
+                            <Binding Path="DialogType" Converter="{StaticResource IsNotReview}" />
+                            <Binding Path="IsEditable" />
+                        </MultiBinding>
+                    </tl:TLEntry.IsEnabled>
+                </tl:TLEntry>
+                <tl:TLEntry Title="{rt:Translate HookCount, Group=FishingGear}"
+                        ValidState="{Binding HookCount}"
+                        Keyboard="Numeric">
+                    <tl:TLEntry.IsEnabled>
+                        <MultiBinding Converter="{StaticResource All}">
+                            <Binding Path="DialogType" Converter="{StaticResource IsNotReview}" />
+                            <Binding Path="IsEditable" />
+                        </MultiBinding>
+                    </tl:TLEntry.IsEnabled>
+                </tl:TLEntry>
+                <tl:TLEntry Title="{rt:Translate Length, Group=FishingGear}"
+                        ValidState="{Binding Length}"
+                        Keyboard="Numeric">
+                    <tl:TLEntry.IsEnabled>
+                        <MultiBinding Converter="{StaticResource All}">
+                            <Binding Path="DialogType" Converter="{StaticResource IsNotReview}" />
+                            <Binding Path="IsEditable" />
+                        </MultiBinding>
+                    </tl:TLEntry.IsEnabled>
+                </tl:TLEntry>
+                <tl:TLEntry Title="{rt:Translate Height, Group=FishingGear}"
+                        ValidState="{Binding Height}"
+                        Keyboard="Numeric">
+                    <tl:TLEntry.IsEnabled>
+                        <MultiBinding Converter="{StaticResource All}">
+                            <Binding Path="DialogType" Converter="{StaticResource IsNotReview}" />
+                            <Binding Path="IsEditable" />
+                        </MultiBinding>
+                    </tl:TLEntry.IsEnabled>
+                </tl:TLEntry>
+                <tl:TLEntry Title="{rt:Translate LineCount, Group=FishingGear}"
+                        ValidState="{Binding LineCount}"
+                        Keyboard="Numeric">
+                    <tl:TLEntry.IsEnabled>
+                        <MultiBinding Converter="{StaticResource All}">
+                            <Binding Path="DialogType" Converter="{StaticResource IsNotReview}" />
+                            <Binding Path="IsEditable" />
+                        </MultiBinding>
+                    </tl:TLEntry.IsEnabled>
+                </tl:TLEntry>
+                <tl:TLEntry Title="{rt:Translate NetNominalLength, Group=FishingGear}"
+                        ValidState="{Binding NetNominalLength}"
+                        Keyboard="Numeric">
+                    <tl:TLEntry.IsEnabled>
+                        <MultiBinding Converter="{StaticResource All}">
+                            <Binding Path="DialogType" Converter="{StaticResource IsNotReview}" />
+                            <Binding Path="IsEditable" />
+                        </MultiBinding>
+                    </tl:TLEntry.IsEnabled>
+                </tl:TLEntry>
+            </tl:TLFlex>
+            <tl:TLFlex GrowUnit="300">
+                <tl:TLEntry Title="{rt:Translate CordThickness, Group=FishingGear}"
+                        ValidState="{Binding CordThickness}"
+                        Keyboard="Numeric">
+                    <tl:TLEntry.IsEnabled>
+                        <MultiBinding Converter="{StaticResource All}">
+                            <Binding Path="DialogType" Converter="{StaticResource IsNotReview}" />
+                            <Binding Path="IsEditable" />
+                        </MultiBinding>
+                    </tl:TLEntry.IsEnabled>
+                </tl:TLEntry>
+                <tl:TLEntry Title="{rt:Translate NetsInFleetCount, Group=FishingGear}"
+                        ValidState="{Binding NetsInFleetCount}"
+                        Keyboard="Numeric">
+                    <tl:TLEntry.IsEnabled>
+                        <MultiBinding Converter="{StaticResource All}">
+                            <Binding Path="DialogType" Converter="{StaticResource IsNotReview}" />
+                            <Binding Path="IsEditable" />
+                        </MultiBinding>
+                    </tl:TLEntry.IsEnabled>
+                </tl:TLEntry>
+                <tl:TLEntry Title="{rt:Translate TrawlModel, Group=FishingGear}"
+                        ValidState="{Binding TrawlModel}"
+                        Keyboard="Numeric">
+                    <tl:TLEntry.IsEnabled>
+                        <MultiBinding Converter="{StaticResource All}">
+                            <Binding Path="DialogType" Converter="{StaticResource IsNotReview}" />
+                            <Binding Path="IsEditable" />
+                        </MultiBinding>
+                    </tl:TLEntry.IsEnabled>
+                </tl:TLEntry>
+            </tl:TLFlex>
+        </StackLayout>
+    </sv:SectionView>
+    
+    <tl:TLEditor Title="{rt:Translate Description, Group=FishingGear}" ValidState="{Binding Description}">
+        <tl:TLEditor.IsEnabled>
+            <MultiBinding Converter="{StaticResource All}">
+                <Binding Path="DialogType" Converter="{StaticResource IsNotReview}" />
+                <Binding Path="IsEditable" />
+            </MultiBinding>
+        </tl:TLEditor.IsEnabled>
+    </tl:TLEditor>
+</StackLayout>

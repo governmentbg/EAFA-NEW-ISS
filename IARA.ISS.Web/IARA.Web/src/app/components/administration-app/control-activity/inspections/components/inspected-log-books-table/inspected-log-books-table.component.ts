@@ -109,11 +109,13 @@ export class InspectedLogBooksTableComponent extends CustomFormControl<Inspectio
 
             setTimeout(() => {
                 this.logBooks = logBooks;
+                this.onChanged(this.getValue());
             });
         }
         else {
             setTimeout(() => {
                 this.logBooks = [];
+                this.onChanged(this.getValue());
             });
         }
     }
@@ -215,7 +217,7 @@ export class InspectedLogBooksTableComponent extends CustomFormControl<Inspectio
             number: f.number,
             pageId: f.page?.value,
             pageNum: f.pageNum,
-            startPage: f.startPage,
+            startPage: f.startPage
         }));
     }
 

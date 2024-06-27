@@ -1,12 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using IARA.Mobile.Application.Attributes;
+﻿using IARA.Mobile.Application.Attributes;
 using IARA.Mobile.Insp.Application.DTObjects.Inspections;
 using IARA.Mobile.Insp.Base;
 using IARA.Mobile.Insp.Controls.ViewModels;
 using IARA.Mobile.Insp.Domain.Enums;
 using IARA.Mobile.Insp.Helpers;
+using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
+using System.Windows.Input;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Helpers;
 using TechnoLogica.Xamarin.ViewModels.Base;
@@ -47,20 +47,16 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.EngineDialog
             set => SetProperty(ref _isStored, value);
         }
 
-        [Required]
         [MaxLength(50)]
         public ValidState Model { get; set; }
 
-        [Required]
-        [TLRange(1, 999.99)]
+        [TLRange(0, 999.99)]
         public ValidState Power { get; set; }
 
-        [Required]
         [MaxLength(50)]
         public ValidState Type { get; set; }
 
-        [Required]
-        [TLRange(1, 1000)]
+        [TLRange(0, 1000)]
         public ValidState TotalCount { get; set; }
 
         [MaxLength(500)]

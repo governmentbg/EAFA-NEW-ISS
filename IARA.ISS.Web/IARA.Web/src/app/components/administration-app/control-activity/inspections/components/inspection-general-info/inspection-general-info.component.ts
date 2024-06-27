@@ -167,6 +167,14 @@ export class InspectionGeneralInfoComponent extends CustomFormControl<Inspection
                     return new TLError({ text: `${messageText}: ${dateString}` });
                 }
             }
+            else if (errorCode === 'matDatetimePickerMax') { 
+                const maxDate: Date = new Date();
+                const dateString: string = this.datePipe.transform(maxDate, 'dd.MM.YYYY HH:mm') ?? "";
+                let messageText: string = this.translate.getValue('validation.max');
+
+                messageText = messageText[0].toUpperCase() + messageText.substr(1);
+                return new TLError({ text: `${messageText}: ${dateString}` });
+            }
         }
         return undefined;
     }

@@ -60,11 +60,13 @@ export class WaterFishingGearsTableComponent extends CustomFormControl<WaterInsp
         if (value !== undefined && value !== null) {
             setTimeout(() => {
                 this.fishingGears = value;
+                this.onChanged(this.getValue());
             });
         }
         else {
             setTimeout(() => {
                 this.fishingGears = [];
+                this.onChanged(this.getValue());
             });
         }
     }

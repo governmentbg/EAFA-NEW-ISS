@@ -64,11 +64,13 @@ export class WaterCatchesTableComponent extends CustomFormControl<InspectionCatc
         if (value !== undefined && value !== null) {
             setTimeout(() => {
                 this.catches = value;
+                this.onChanged(this.getValue());
             });
         }
         else {
             setTimeout(() => {
                 this.catches = [];
+                this.onChanged(this.getValue());
             });
         }
     }

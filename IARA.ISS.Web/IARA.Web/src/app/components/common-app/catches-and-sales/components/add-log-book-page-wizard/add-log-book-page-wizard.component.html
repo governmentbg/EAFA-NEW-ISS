@@ -93,6 +93,10 @@
                                 <mat-error *ngIf="preliminaryDataFormGroup.errors?.invalidOriginDeclaratioNumber">
                                     {{ 'catches-and-sales.add-log-book-page-wizard-origin-declaration-does-not-exist-error' | tlTranslate }} *
                                 </mat-error>
+
+                                <mat-hint *ngIf="noShipSelected">
+                                    {{ 'catches-and-sales.add-log-book-page-wizard-no-ship-selected' | tlTranslate }} *
+                                </mat-hint>
                             </div>
 
                             <div *ngIf="transportationDocumentTypeSelected === true" fxLayout="column" fxLayoutGap="1em">
@@ -117,6 +121,10 @@
                                 <mat-error *ngIf="preliminaryDataFormGroup.errors?.invalidTransportationDocNumber">
                                     {{ 'catches-and-sales.add-log-book-page-wizard-transportation-doc-does-not-exist-error' | tlTranslate }} *
                                 </mat-error>
+
+                                <mat-hint *ngIf="noTransportationLogBookOwnerSelected">
+                                    {{ 'catches-and-sales.add-log-book-page-wizard-no-transportation-log-book-owner-selected' | tlTranslate }} *
+                                </mat-hint>
                             </div>
 
                             <div *ngIf="admissionDocumentTypeSelected === true" fxLayout="column" fxLayoutGap="1em">
@@ -141,6 +149,10 @@
                                 <mat-error *ngIf="preliminaryDataFormGroup.errors?.invalidAdmissionDocNumber">
                                     {{ 'catches-and-sales.add-log-book-page-wizard-admission-doc-does-not-exist-error' | tlTranslate }} *
                                 </mat-error>
+
+                                <mat-hint *ngIf="noAdmissionLogBookOwnerSelected">
+                                    {{ 'catches-and-sales.add-log-book-page-wizard-no-admission-log-book-owner-selected' | tlTranslate }} *
+                                </mat-hint>
                             </div>
                         </div>
                     </ng-container>

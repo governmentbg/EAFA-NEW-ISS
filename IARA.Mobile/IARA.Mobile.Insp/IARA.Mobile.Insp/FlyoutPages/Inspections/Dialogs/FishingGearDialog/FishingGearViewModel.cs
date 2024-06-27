@@ -1,20 +1,21 @@
-﻿using IARA.Mobile.Application.Attributes;
-using IARA.Mobile.Application.DTObjects.Nomenclatures;
+﻿using IARA.Mobile.Application.DTObjects.Nomenclatures;
+using IARA.Mobile.Domain.Enums;
 using IARA.Mobile.Insp.Application.DTObjects.Inspections;
 using IARA.Mobile.Insp.Application.DTObjects.Nomenclatures;
-using IARA.Mobile.Insp.Attributes;
 using IARA.Mobile.Insp.Base;
+using IARA.Mobile.Insp.Controls.ViewModels;
 using IARA.Mobile.Insp.Domain.Enums;
 using IARA.Mobile.Insp.Helpers;
 using IARA.Mobile.Insp.Models;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Helpers;
+using TechnoLogica.Xamarin.ResourceTranslator;
+using TechnoLogica.Xamarin.ViewModels.Interfaces;
 using TechnoLogica.Xamarin.ViewModels.Models;
 
 namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.FishingGearDialog
@@ -25,94 +26,42 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.FishingGearDialog
         private List<SelectNomenclatureDto> _allMarkStatuses;
         private List<SelectNomenclatureDto> _markStatuses;
         private List<SelectNomenclatureDto> _pingerStatuses;
-        private List<FishingGearSelectNomenclatureDto> _fishingGearTypes;
         private bool _hasPingers;
 
-        public FishingGearViewModel(InspectionPageViewModel inspection, ViewActivityType dialogType)
+        public FishingGearViewModel(InspectionPageViewModel inspection, ViewActivityType dialogType, bool isEditable)
         {
             Inspection = inspection;
             DialogType = dialogType;
+            IsEditable = isEditable;
+            FishingGearGeneralInfo = new FishingGearGeneralInfoViewModel(dialogType, isEditable);
 
             AddMark = CommandBuilder.CreateFrom(OnAddMark);
+            GenerateMarks = CommandBuilder.CreateFrom(OnGenerateMarks);
             RemoveMark = CommandBuilder.CreateFrom<MarkViewModel>(OnRemoveMark);
             AddPinger = CommandBuilder.CreateFrom(OnAddPinger);
-            RemovePinger = CommandBuilder.CreateFrom<PingerViewModel>(OnRemovePinger);
-            EditPinger = CommandBuilder.CreateFrom<PingerViewModel>(OnEditPinger);
-            ViewPinger = CommandBuilder.CreateFrom<PingerViewModel>(OnViewPinger);
+            RemovePinger = CommandBuilder.CreateFrom<PingerModel>(OnRemovePinger);
+            EditPinger = CommandBuilder.CreateFrom<PingerModel>(OnEditPinger);
+            ViewPinger = CommandBuilder.CreateFrom<PingerModel>(OnViewPinger);
 
-            this.AddValidation();
+            this.AddValidation(others: new IValidatableViewModel[]
+            {
+                FishingGearGeneralInfo
+            });
         }
 
         public InspectionPageViewModel Inspection { get; set; }
+        public FishingGearGeneralInfoViewModel FishingGearGeneralInfo { get; set; }
         public ViewActivityType DialogType { get; set; }
         public bool IsEditable { get; set; }
         public bool IsInspectedGear { get; set; }
 
-        public bool HasPingers
-        {
-            get { return _hasPingers; }
-            set { SetProperty(ref _hasPingers, value); }
-        }
-
         public int? Id { get; set; }
-
-        [Required]
-        public ValidStateSelect<FishingGearSelectNomenclatureDto> FishingGearType { get; set; }
-
-        [TLRange(0, 10000)]
-        [Required]
-        public ValidState Count { get; set; }
-
-        [TLRange(0, 10000, true)]
-        [RequiredIfFishingGearEquals(nameof(FishingGearType), FishGearInputs.NetEyeSize, ErrorMessageResourceName = "Required")]
-        public ValidState NetEyeSize { get; set; }
-
-        [TLRange(0, 10000)]
-        [RequiredIfFishingGearHasHooks(nameof(FishingGearType), ErrorMessageResourceName = "Required")]
-        public ValidState HookCount { get; set; }
-
-        [TLRange(0, 10000, true)]
-        [RequiredIfOtherPropertyHasValue(nameof(FishingGearType), nameof(FishingGearType), ErrorMessageResourceName = "GearDimensionRequired")]
-        [RequiredIfFishingGearEquals(nameof(FishingGearType), FishGearInputs.Length, ErrorMessageResourceName = "Required")]
-        public ValidState Length { get; set; }
-
-        [TLRange(0, 10000, true)]
-        [RequiredIfFishingGearEquals(nameof(FishingGearType), FishGearInputs.Height, ErrorMessageResourceName = "Required")]
-        public ValidState Height { get; set; }
-
-        [TLRange(0, 10000, true)]
-        public ValidState CordThickness { get; set; }
-
-        [TLRange(0, 10000)]
-        [RequiredIfFishingGearEquals(nameof(FishingGearType), FishGearInputs.RowCount, ErrorMessageResourceName = "Required")]
-        public ValidState RowCount { get; set; }
-
-        [TLRange(0, 10000, true)]
-        [RequiredIfFishingGearEquals(nameof(FishingGearType), FishGearInputs.FullHeight, ErrorMessageResourceName = "Required")]
-        public ValidState FullHeight { get; set; }
-
-        [TLRange(0, 10000)]
-        [RequiredIfFishingGearEquals(nameof(FishingGearType), FishGearInputs.NetCountInFlot, ErrorMessageResourceName = "Required")]
-        public ValidState NetCountInFlot { get; set; }
-
-        [RequiredIfOtherPropertyHasValue(nameof(Length), nameof(FishingGearType), ErrorMessageResourceName = "GearDimensionRequired")]
-        [RequiredIfFishingGearEquals(nameof(FishingGearType), FishGearInputs.TralModel, ErrorMessageResourceName = "Required")]
-        public ValidState TralModel { get; set; }
-
-        [MaxLength(4000)]
-        public ValidState Description { get; set; }
 
         public ValidStateValidatableTable<MarkViewModel> Marks { get; set; }
 
-        public ValidStateValidatableTable<PingerViewModel> Pingers { get; set; }
+        public ValidStateTable<PingerModel> Pingers { get; set; }
 
 
-
-        public List<FishingGearSelectNomenclatureDto> FishingGearTypes
-        {
-            get => _fishingGearTypes;
-            private set => SetProperty(ref _fishingGearTypes, value);
-        }
         public List<SelectNomenclatureDto> MarkStatuses
         {
             get => _markStatuses;
@@ -123,7 +72,11 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.FishingGearDialog
             get => _pingerStatuses;
             private set => SetProperty(ref _pingerStatuses, value);
         }
-
+        public bool HasPingers
+        {
+            get { return _hasPingers; }
+            set { SetProperty(ref _hasPingers, value); }
+        }
         public ICommand AddMark { get; }
         public ICommand GenerateMarks { get; }
         public ICommand RemoveMark { get; }
@@ -132,11 +85,11 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.FishingGearDialog
         public ICommand EditPinger { get; }
         public ICommand ViewPinger { get; }
         public ICommand MoveMark { get; set; }
-        public ICommand SelectFishingGearType { get; set; }
 
         public void Init(List<FishingGearSelectNomenclatureDto> fishingGearTypes, List<SelectNomenclatureDto> markStatuses, List<SelectNomenclatureDto> pingerStatuses)
         {
-            FishingGearTypes = fishingGearTypes;
+            FishingGearGeneralInfo.Init(fishingGearTypes);
+
             _allMarkStatuses = markStatuses;
             PingerStatuses = pingerStatuses;
 
@@ -152,19 +105,8 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.FishingGearDialog
             }
 
             Id = dto.Id;
-            FishingGearType.AssignFrom(dto.TypeId, FishingGearTypes);
-            Count.AssignFrom(dto.Count);
-            NetEyeSize.AssignFrom(dto.NetEyeSize);
-            HookCount.AssignFrom(dto.HookCount);
-            Length.AssignFrom(dto.Length);
-            Height.AssignFrom(dto.Height);
-            CordThickness.AssignFrom(dto.CordThickness);
-            Description.AssignFrom(dto.Description);
 
-            if (FishingGearType.Value == null)
-            {
-                FishingGearType.Value = FishingGearTypes[0];
-            }
+            FishingGearGeneralInfo.AssignEdit(dto);
 
             if (dto.Marks?.Count > 0)
             {
@@ -190,14 +132,20 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.FishingGearDialog
             {
                 foreach (FishingGearPingerDto pinger in dto.Pingers)
                 {
-                    PingerViewModel pingerViewModel = new PingerViewModel
+                    PingerModel pingerModel = new PingerModel
                     {
                         Id = pinger.Id,
                     };
-                    pingerViewModel.Number.Value = pinger.Number;
-                    pingerViewModel.Status.Value = PingerStatuses.Find(f => f.Id == pinger.StatusId);
-                    Pingers.Value.Add(pingerViewModel);
+                    pingerModel.Number = pinger.Number;
+                    pingerModel.Status = PingerStatuses.Find(f => f.Id == pinger.StatusId);
+                    pingerModel.Model = pinger.Model;
+                    pingerModel.Brand = pinger.Brand;
+                    Pingers.Value.Add(pingerModel);
                 }
+            }
+            else
+            {
+                HasPingers = false;
             }
         }
 
@@ -221,6 +169,27 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.FishingGearDialog
             Marks.Value.Add(mark);
         }
 
+        private async Task OnGenerateMarks()
+        {
+            GenerateMarksModel generateMarks = await TLDialogHelper.ShowDialog(new GenerateMarksDialog.GenerateMarksDialog());
+            if (generateMarks != null)
+            {
+                List<MarkViewModel> marks = new List<MarkViewModel>();
+                for (int i = generateMarks.From; i <= generateMarks.To; i++)
+                {
+                    MarkViewModel mark = new MarkViewModel
+                    {
+                        AddedByInspector = true,
+                        CreatedOn = DateTime.Now,
+                    };
+                    mark.Number.AssignFrom(i);
+                    mark.Status.Value = _inspectedMarkStatus;
+                    marks.Add(mark);
+                }
+                Marks.Value.AddRange(marks);
+            }
+        }
+
         private void OnRemoveMark(MarkViewModel mark)
         {
             Marks.Value.Remove(mark);
@@ -229,49 +198,73 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.FishingGearDialog
         private async Task OnAddPinger()
         {
             PingerModel pinger = await TLDialogHelper.ShowDialog(new PingerDialog.PingerDialog(null, ViewActivityType.Add, PingerStatuses));
-
-            //pinger.Status.Value = PingerStatuses[0];
-            //Pingers.Value.Add(pinger);
+            if (pinger != null)
+            {
+                Pingers.Value.Add(pinger);
+            }
         }
 
-        private async Task OnViewPinger(PingerViewModel model)
+        private async Task OnViewPinger(PingerModel model)
         {
-            await TLDialogHelper.ShowDialog(new PingerDialog.PingerDialog(null, ViewActivityType.Review, PingerStatuses));
+            await TLDialogHelper.ShowDialog(new PingerDialog.PingerDialog(model, ViewActivityType.Review, PingerStatuses));
         }
 
-        private void OnEditPinger(PingerViewModel model)
+        private async Task OnEditPinger(PingerModel model)
         {
-            throw new NotImplementedException();
+            PingerModel pinger = await TLDialogHelper.ShowDialog(new PingerDialog.PingerDialog(model, ViewActivityType.Edit, PingerStatuses));
+
+            if (pinger != null)
+            {
+                model.Number = pinger.Number;
+                model.Status = pinger.Status;
+                model.Model = pinger.Model;
+                model.Brand = pinger.Brand;
+
+                Pingers.Value.Replace(model, pinger);
+            }
         }
 
-        private void OnRemovePinger(PingerViewModel pinger)
+        private async Task OnRemovePinger(PingerModel pinger)
         {
-            Pingers.Value.Remove(pinger);
+            bool result = await App.Current.MainPage.DisplayAlert(null,
+                TranslateExtension.Translator[nameof(GroupResourceEnum.Common) + "/DeleteMessage"],
+                TranslateExtension.Translator[nameof(GroupResourceEnum.Common) + "/Yes"],
+                TranslateExtension.Translator[nameof(GroupResourceEnum.Common) + "/No"]
+            );
+
+            if (result)
+            {
+                Pingers.Value.Remove(pinger);
+            }
         }
 
         public static implicit operator FishingGearDto(FishingGearViewModel viewModel)
         {
-            if (viewModel.FishingGearType.Value != null)
+            if (viewModel.FishingGearGeneralInfo.FishingGearType.Value != null)
             {
                 return new FishingGearDto
                 {
                     Id = viewModel.Id,
-                    Count = ParseHelper.ParseInteger(viewModel.Count) ?? 0,
-                    Description = viewModel.Description,
-                    Height = ParseHelper.ParseDecimal(viewModel.Height),
-                    HookCount = ParseHelper.ParseInteger(viewModel.HookCount),
-                    NetEyeSize = ParseHelper.ParseDecimal(viewModel.NetEyeSize),
-                    TypeId = viewModel.FishingGearType.Value,
-                    Length = ParseHelper.ParseDecimal(viewModel.Length),
-                    CordThickness = ParseHelper.ParseDecimal(viewModel.CordThickness),
+                    Count = ParseHelper.ParseInteger(viewModel.FishingGearGeneralInfo.Count) ?? 0,
+                    Description = viewModel.FishingGearGeneralInfo.Description,
+                    Height = ParseHelper.ParseDecimal(viewModel.FishingGearGeneralInfo.Height),
+                    HookCount = ParseHelper.ParseInteger(viewModel.FishingGearGeneralInfo.HookCount),
+                    NetEyeSize = ParseHelper.ParseDecimal(viewModel.FishingGearGeneralInfo.NetEyeSize),
+                    TypeId = viewModel.FishingGearGeneralInfo.FishingGearType.Value,
+                    Length = ParseHelper.ParseDecimal(viewModel.FishingGearGeneralInfo.Length),
+                    CordThickness = ParseHelper.ParseDecimal(viewModel.FishingGearGeneralInfo.CordThickness),
+                    TowelLength = ParseHelper.ParseInteger(viewModel.FishingGearGeneralInfo.TowelLength),
+                    HouseLength = ParseHelper.ParseInteger(viewModel.FishingGearGeneralInfo.HouseLength),
+                    HouseWidth = ParseHelper.ParseInteger(viewModel.FishingGearGeneralInfo.HouseWidth),
+                    HasPingers = viewModel.HasPingers,
                     Marks = viewModel.Marks
                         .Select(f => (FishingGearMarkDto)f)
                         .Where(f => f != null)
                         .ToList(),
-                    Pingers = viewModel.Pingers
+                    Pingers = viewModel.HasPingers ? viewModel.Pingers
                         .Select(f => (FishingGearPingerDto)f)
                         .Where(f => f != null)
-                        .ToList(),
+                        .ToList() : null
                 };
             }
 

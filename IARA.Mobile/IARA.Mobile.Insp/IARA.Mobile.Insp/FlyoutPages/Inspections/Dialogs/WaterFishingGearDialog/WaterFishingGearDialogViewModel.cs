@@ -1,6 +1,6 @@
-﻿using IARA.Mobile.Application.Attributes;
-using IARA.Mobile.Application.DTObjects.Nomenclatures;
+﻿using IARA.Mobile.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Insp.Application.DTObjects.Inspections;
+using IARA.Mobile.Insp.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Insp.Application.Interfaces.Transactions;
 using IARA.Mobile.Insp.Base;
 using IARA.Mobile.Insp.Controls.ViewModels;
@@ -15,6 +15,7 @@ using System.Windows.Input;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Helpers;
 using TechnoLogica.Xamarin.ViewModels.Base;
+using TechnoLogica.Xamarin.ViewModels.Interfaces;
 using TechnoLogica.Xamarin.ViewModels.Models;
 using Xamarin.Forms;
 
@@ -23,20 +24,26 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.WaterFishingGearDialo
     public class WaterFishingGearDialogViewModel : TLBaseDialogViewModel<WaterFishingGearModel>
     {
         private List<SelectNomenclatureDto> _markStatuses;
-        private List<SelectNomenclatureDto> _fishingGearTypes;
         private bool _isTaken;
         private bool _isStored;
 
         public WaterFishingGearDialogViewModel()
         {
+            FishingGearGeneralInfo = new FishingGearGeneralInfoViewModel(ViewActivityType.Add, true, false, true);
+
             Save = CommandBuilder.CreateFrom(OnSave);
 
-            this.AddValidation();
+
+            this.AddValidation(others: new IValidatableViewModel[]
+            {
+                FishingGearGeneralInfo
+            });
         }
 
         public InspectionPageViewModel Inspection { get; set; }
 
         public WaterFishingGearsViewModel WaterFishingGears { get; set; }
+        public FishingGearGeneralInfoViewModel FishingGearGeneralInfo { get; set; }
 
         public WaterFishingGearModel Edit { get; set; }
 
@@ -55,36 +62,8 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.WaterFishingGearDialo
             set => SetProperty(ref _isStored, value);
         }
 
-        [Required]
-        public ValidStateSelect<SelectNomenclatureDto> FishingGearType { get; set; }
-
-        [Required]
-        [TLRange(1, 10000)]
-        public ValidState Count { get; set; }
-
-        [TLRange(1, 10000, true)]
-        public ValidState NetEyeSize { get; set; }
-
-        [TLRange(0, 10000)]
-        public ValidState HookCount { get; set; }
-
-        [TLRange(1, 10000, true)]
-        public ValidState Length { get; set; }
-
-        [TLRange(1, 10000, true)]
-        public ValidState Height { get; set; }
-
-        [MaxLength(4000)]
-        public ValidState Description { get; set; }
-
         [MaxLength(500)]
         public ValidState Location { get; set; }
-
-        public List<SelectNomenclatureDto> FishingGearTypes
-        {
-            get => _fishingGearTypes;
-            private set => SetProperty(ref _fishingGearTypes, value);
-        }
         public List<SelectNomenclatureDto> MarkStatuses
         {
             get => _markStatuses;
@@ -96,35 +75,29 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.WaterFishingGearDialo
         public override Task Initialize(object sender)
         {
             INomenclatureTransaction nomTransaction = DependencyService.Resolve<INomenclatureTransaction>();
-
-            FishingGearTypes = nomTransaction.GetFishingGears().Select(x => new SelectNomenclatureDto()
+            List<FishingGearSelectNomenclatureDto> fishingGearTypes = nomTransaction.GetFishingGears().Select(x => new FishingGearSelectNomenclatureDto()
             {
+                Name = x.DisplayValue,
                 Code = x.Code,
                 Id = x.Id,
-                Name = x.Name
-            }).ToList();
-            MarkStatuses = nomTransaction.GetFishingGearMarkStatuses();
+                HasHooks = x.HasHooks,
+            }).OrderBy(x => x.Code).ToList();
+            FishingGearSelectNomenclatureDto Poundnet = fishingGearTypes.FirstOrDefault(x => x.Code == "DLN");
+            int index = fishingGearTypes.IndexOf(Poundnet);
+            fishingGearTypes.RemoveAt(index);
 
-            FishingGearType.Value = FishingGearTypes[0];
+            FishingGearGeneralInfo.Init(fishingGearTypes);
+            FishingGearGeneralInfo.DialogType = DialogType;
+
+            MarkStatuses = nomTransaction.GetFishingGearMarkStatuses();
 
             if (Edit != null)
             {
                 Id = Edit.Dto.Id;
-                IsTaken = Edit.Dto.IsTaken;
-                IsStored = Edit.Dto.IsStored;
-                FishingGearType.AssignFrom(Edit.Dto.TypeId, FishingGearTypes);
-                Count.AssignFrom(Edit.Dto.Count);
-                NetEyeSize.AssignFrom(Edit.Dto.NetEyeSize);
-                HookCount.AssignFrom(Edit.Dto.HookCount);
-                Length.AssignFrom(Edit.Dto.Length);
-                Height.AssignFrom(Edit.Dto.Height);
-                Description.AssignFrom(Edit.Dto.Description);
+                IsTaken = Edit.Dto.IsTaken.Value;
+                IsStored = Edit.Dto.IsStored.Value;
                 Location.AssignFrom(Edit.Dto.StorageLocation);
-
-                if (FishingGearType.Value == null)
-                {
-                    FishingGearType.Value = FishingGearTypes[0];
-                }
+                FishingGearGeneralInfo.AssignEdit(Edit.Dto);
 
                 if (DialogType == ViewActivityType.Edit)
                 {
@@ -146,17 +119,21 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.WaterFishingGearDialo
 
             return HideDialog(new WaterFishingGearModel
             {
-                Type = FishingGearType.Value,
+                Type = FishingGearGeneralInfo.FishingGearType.Value,
                 Dto = new WaterInspectionFishingGearDto
                 {
                     Id = Id,
-                    Count = ParseHelper.ParseInteger(Count) ?? 0,
-                    Description = Description,
-                    Height = ParseHelper.ParseDecimal(Height),
-                    HookCount = ParseHelper.ParseInteger(HookCount),
-                    NetEyeSize = ParseHelper.ParseDecimal(NetEyeSize),
-                    TypeId = FishingGearType.Value,
-                    Length = ParseHelper.ParseDecimal(Length),
+                    Count = ParseHelper.ParseInteger(FishingGearGeneralInfo.Count) ?? 0,
+                    Description = FishingGearGeneralInfo.Description,
+                    Height = ParseHelper.ParseDecimal(FishingGearGeneralInfo.Height),
+                    HookCount = ParseHelper.ParseInteger(FishingGearGeneralInfo.HookCount),
+                    NetEyeSize = ParseHelper.ParseDecimal(FishingGearGeneralInfo.NetEyeSize),
+                    Length = ParseHelper.ParseDecimal(FishingGearGeneralInfo.Length),
+                    CordThickness = ParseHelper.ParseDecimal(FishingGearGeneralInfo.CordThickness),
+                    TowelLength = ParseHelper.ParseInteger(FishingGearGeneralInfo.TowelLength),
+                    HouseLength = ParseHelper.ParseInteger(FishingGearGeneralInfo.HouseLength),
+                    HouseWidth = ParseHelper.ParseInteger(FishingGearGeneralInfo.HouseWidth),
+                    TypeId = FishingGearGeneralInfo.FishingGearType.Value,
                     IsTaken = IsTaken,
                     IsStored = IsStored,
                     StorageLocation = Location,

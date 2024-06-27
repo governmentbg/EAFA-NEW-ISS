@@ -3,6 +3,7 @@ using IARA.Mobile.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Insp.Application.DTObjects.Inspections;
 using IARA.Mobile.Insp.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Insp.Base;
+using IARA.Mobile.Insp.Helpers;
 using IARA.Mobile.Insp.ViewModels.Models;
 using System;
 using System.Collections.Generic;
@@ -27,15 +28,12 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
             Inspection = inspection;
             CanPickLocation = canPickLocation;
 
-            Location = new ExtendedLocationViewModel(inspection);
-
             this.AddValidation(
                 groups: new Dictionary<string, Func<bool>>
                 {
                     { Group.REGISTERED, () => ShipInRegister.Value },
                     { Group.NOT_REGISTERED, () => !ShipInRegister.Value },
-                },
-                others: new[] { Location }
+                }
             );
 
             ShipInRegister.Value = true;
@@ -45,7 +43,12 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
 
             if (canPickLocation)
             {
-                Location.Location.HasAsterisk = true;
+                Location.HasAsterisk = true;
+            }
+            else
+            {
+                Location.Validations.RemoveAt(Location.Validations.FindIndex(f => f.Name == nameof(RequiredAttribute)));
+                Location.HasAsterisk = false;
             }
         }
 
@@ -53,11 +56,12 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
 
         public ShipDto InspectedShip { get; set; }
 
-        public ExtendedLocationViewModel Location { get; set; }
-
         public bool CanPickLocation { get; }
 
         public ValidStateBool ShipInRegister { get; set; }
+
+        [Required]
+        public ValidStateLocation Location { get; set; }
 
         [Required]
         [ValidGroup(Group.REGISTERED)]
@@ -117,8 +121,6 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
 
         public void Init(List<SelectNomenclatureDto> flags, List<SelectNomenclatureDto> shipTypes, List<CatchZoneNomenclatureDto> quadrants)
         {
-            Location.Init(quadrants);
-
             Flags = flags;
             ShipTypes = shipTypes;
             Ship.ItemsSource.AddRange(NomenclaturesTransaction.GetShips(0, CommonGlobalVariables.PullItemsCount));
@@ -131,7 +133,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
                 return;
             }
 
-            Location.OnEdit(dto.Location, dto.CatchZoneId, dto.LocationDescription);
+            Location.AssignFrom(dto.Location);
 
             ShipInRegister.Value = dto.IsRegistered.GetValueOrDefault() && dto.ShipId.HasValue;
 
@@ -219,9 +221,9 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
                     RegularCallsign = viewModel.CallSign,
                     UVI = viewModel.UVI,
                     VesselTypeId = viewModel.ShipType.Value,
-                    Location = viewModel.Location.Location,
-                    CatchZoneId = viewModel.Location.Quadrant.Value,
-                    LocationDescription = viewModel.Location.Description,
+                    Location = viewModel.Location,
+                    //CatchZoneId = viewModel.Location.Quadrant.Value,
+                    //LocationDescription = viewModel.Location.Description,
                 };
             }
             else if (viewModel.InspectedShip != null)
@@ -241,9 +243,9 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
                     RegularCallsign = ship.CallSign,
                     ShipAssociationId = ship.AssociationId,
                     UVI = ship.UVI,
-                    Location = viewModel.Location.Location,
-                    CatchZoneId = viewModel.Location.Quadrant.Value,
-                    LocationDescription = viewModel.Location.Description,
+                    Location = viewModel.Location,
+                    //CatchZoneId = viewModel.Location.Quadrant.Value,
+                    //LocationDescription = viewModel.Location.Description,
                 };
             }
 

@@ -312,6 +312,15 @@ export class CatchesAndSalesCommonService {
         }));
     }
 
+    public getCommonLogBookPageDataByOriginDeclarationNumber(area: AreaTypes, controller: string, originDeclarationNumber: string): Observable<CommonLogBookPageDataDTO> {
+        const params: HttpParams = new HttpParams().append('originDeclarationNumber', originDeclarationNumber.toString());
+      
+        return this.http.get(area, controller, 'GetCommonLogBookPageDataByOriginDeclarationNumber', {
+            httpParams: params,
+            responseTypeCtr: CommonLogBookPageDataDTO
+        });
+    }
+
     public getPreviousTripsOnBoardCatchRecords(area: AreaTypes, controller: string, shipId: number, currentPageId?: number): Observable<OnBoardCatchRecordFishDTO[]> {
         let params: HttpParams = new HttpParams().append('shipId', shipId.toString());
 

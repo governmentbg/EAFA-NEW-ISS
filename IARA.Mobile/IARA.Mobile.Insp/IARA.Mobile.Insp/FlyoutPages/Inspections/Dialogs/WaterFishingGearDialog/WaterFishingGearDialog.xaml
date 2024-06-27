@@ -6,6 +6,7 @@
         xmlns:m="clr-namespace:IARA.Mobile.Insp.Models"
         xmlns:rt="clr-namespace:TechnoLogica.Xamarin.ResourceTranslator;assembly=TechnoLogica.Xamarin"
         xmlns:tl="clr-namespace:TechnoLogica.Xamarin.Controls;assembly=TechnoLogica.Xamarin"
+        xmlns:lc="clr-namespace:IARA.Mobile.Insp.Controls"
         x:Class="IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.WaterFishingGearDialog.WaterFishingGearDialog"
         x:Name="dialog"
         x:DataType="local:WaterFishingGearDialogViewModel"
@@ -17,33 +18,8 @@
         TitleColor="White">
     <tl:TLScrollView>
         <StackLayout Padding="10">
-            <tl:TLFlex GrowUnit="125">
-                <tl:TLPicker Title="{rt:Translate Type, Group=WaterFishingGear}"
-                        tl:TLFlex.Grow="2"
-                        IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}"
-                        ItemsSource="{Binding FishingGearTypes}"
-                        ValidState="{Binding FishingGearType}" />
-                <tl:TLEntry Title="{rt:Translate Count, Group=WaterFishingGear}"
-                        IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}"
-                        Keyboard="Numeric"
-                        ValidState="{Binding Count}" />
-                <tl:TLEntry Title="{rt:Translate NetEyeSize, Group=WaterFishingGear}"
-                        IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}"
-                        Keyboard="Numeric"
-                        ValidState="{Binding NetEyeSize}" />
-                <tl:TLEntry Title="{rt:Translate HookCount, Group=WaterFishingGear}"
-                        IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}"
-                        Keyboard="Numeric"
-                        ValidState="{Binding HookCount}" />
-                <tl:TLEntry Title="{rt:Translate Length, Group=WaterFishingGear}"
-                        IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}"
-                        Keyboard="Numeric"
-                        ValidState="{Binding Length}" />
-                <tl:TLEntry Title="{rt:Translate Height, Group=WaterFishingGear}"
-                        IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}"
-                        Keyboard="Numeric"
-                        ValidState="{Binding Height}" />
-            </tl:TLFlex>
+            <lc:FishingGearGeneralInfo BindingContext="{Binding FishingGearGeneralInfo}" />
+
             <tl:TLCheckView Text="{rt:Translate Taken, Group=WaterFishingGear}"
                     IsChecked="{Binding IsTaken}"
                     IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}" />
@@ -53,9 +29,6 @@
             <tl:TLEntry Title="{rt:Translate Location, Group=WaterFishingGear}"
                     IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}"
                     ValidState="{Binding Location}" />
-            <tl:TLEditor Title="{rt:Translate Description, Group=WaterFishingGear}"
-                    IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}"
-                    ValidState="{Binding Description}" />
             <Button Command="{Binding Save}"
                     IsVisible="{Binding DialogType, Converter={StaticResource IsNotReview}}"
                     Text="{rt:Translate Save, Group=Common}" />

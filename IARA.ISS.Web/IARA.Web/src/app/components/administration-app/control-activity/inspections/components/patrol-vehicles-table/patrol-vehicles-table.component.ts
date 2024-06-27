@@ -64,10 +64,12 @@ export class PatrolVehiclesTableComponent extends CustomFormControl<VesselDuring
     public writeValue(value: VesselDuringInspectionDTO[]): void {
         if (value !== undefined && value !== null) {
             this.patrolVehicles = value;
+            this.onChanged(this.getValue());
         }
         else {
             setTimeout(() => {
                 this.patrolVehicles = [];
+                this.onChanged(this.getValue());
             });
         }
     }

@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<tl:TLBaseDialog xmlns="http://xamarin.com/schemas/2014/forms"
+        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+        x:Class="IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.FishingGearDialog.GenerateMarksDialog.GenerateMarksDialog"
+        xmlns:rt="clr-namespace:TechnoLogica.Xamarin.ResourceTranslator;assembly=TechnoLogica.Xamarin"
+        xmlns:tl="clr-namespace:TechnoLogica.Xamarin.Controls;assembly=TechnoLogica.Xamarin"
+        xmlns:h="clr-namespace:TechnoLogica.Xamarin.Helpers;assembly=TechnoLogica.Xamarin"
+        xmlns:sv="clr-namespace:IARA.Mobile.Shared.Views;assembly=IARA.Mobile.Shared"
+        xmlns:local="clr-namespace:IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.FishingGearDialog.GenerateMarksDialog"
+        xmlns:m="clr-namespace:IARA.Mobile.Insp.Models"
+        x:Name="dialog"
+        Title="{rt:Translate MarksDialogTitle, Group=FishingGear}"
+        x:DataType="local:GenerateMarksDialogViewModel"
+        x:TypeArguments="local:GenerateMarksDialogViewModel, m:GenerateMarksModel"
+        BackgroundColor="White"
+        IconColor="White"
+        TitleBackgroundColor="{StaticResource Primary}"
+        TitleColor="White">
+    <StackLayout Padding="10">
+        <sv:SectionView Image="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Hashtag}, Color=White, Size=100}" Text="{rt:Translate MarkSection, Group=FishingGear}">
+            <Grid Padding="10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <tl:TLEntry Grid.Column="0"
+                        Title="{rt:Translate MarkFrom, Group=FishingGear}"
+                        ValidState="{Binding From}"
+                        HorizontalOptions="Fill" />
+                <tl:TLEntry Grid.Column="1"
+                        Title="{rt:Translate MarkTo, Group=FishingGear}"
+                        ValidState="{Binding To}"
+                        HorizontalOptions="Fill" />
+            </Grid>
+        </sv:SectionView>
+        <Button Text="{rt:Translate MarkGenerate, Group=FishingGear}"
+                HorizontalOptions="End"
+                Command="{Binding Save}" />
+    </StackLayout>
+</tl:TLBaseDialog>

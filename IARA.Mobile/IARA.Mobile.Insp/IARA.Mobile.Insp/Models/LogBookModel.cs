@@ -93,6 +93,7 @@ namespace IARA.Mobile.Insp.Models
         }
         private async Task OnPageSelected(LogBookPageDto dto)
         {
+            _shipCatches.Catches.Catches.Value.Clear();
             await _shipCatches.Catches.AddCatches(dto);
         }
     }

@@ -38,6 +38,7 @@ export interface ICatchesAndSalesService {
     getLogBookPageDocumentData(parameters: BasicLogBookPageDocumentParameters): Observable<BasicLogBookPageDocumentDataDTO>;
     getLogBookPageDocumentOwnerData(documentNumber: number, documentType: LogBookPageDocumentTypesEnum): Observable<NomenclatureDTO<number>[]>;
     getAquacultureLogBookPageOwnerData(pageNumber: number): Observable<LogBookNomenclatureDTO[]>;
+    getCommonLogBookPageDataByOriginDeclarationNumber(originDeclarationNumber: string): Observable<CommonLogBookPageDataDTO>;
 
     getPreviousTripOnBoardCatchRecords(shipId: number, currentPageId?: number): Observable<OnBoardCatchRecordFishDTO[]>;
 

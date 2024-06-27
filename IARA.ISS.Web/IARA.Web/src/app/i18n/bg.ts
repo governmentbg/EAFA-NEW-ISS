@@ -4203,6 +4203,9 @@
         'add-log-book-page-wizard-origin-declaration-does-not-exist-error': 'Невалиден номер на декларация за произход',
         'add-log-book-page-wizard-transportation-doc-does-not-exist-error': 'Невалиден номер на документ за превоз',
         'add-log-book-page-wizard-admission-doc-does-not-exist-error': 'Невалиден номер на документ за приемане',
+        'add-log-book-page-wizard-no-admission-log-book-owner-selected': 'Трябва да се избере собственик на дневник за приемане, за да се избере номер на страница',
+        'add-log-book-page-wizard-no-ship-selected': 'Трябва да се избере кораб, за да се избере номер на декларация за произход',
+        'add-log-book-page-wizard-no-transportation-log-book-owner-selected': 'Трябва да се избере собственик на дневник за превоз, за да се избере номер на страница',
         'add-log-book-page-wizard-is-import-not-by-ship': 'Вносът е осъществен по начин, различен от внос с кораб',
         'add-log-book-page-wizard-place-of-import': 'Място на внос',
         'add-log-book-page-wizard-page-not-in-log-book-error': 'Страница не принадлежи към диапазона от страници за дневника',
@@ -4230,6 +4233,7 @@
         'common-log-book-page-data-uploading-date': 'Дата на разтоварване',
         'common-log-book-page-data-is-import-not-by-ship': 'Вносът е осъществен по начин, различен от внос с кораб',
         'common-log-book-page-data-place-of-import': 'Място на внос',
+        'common-log-book-page-data-no-ship-selected': 'Трябва да се избере кораб, за да се избере номер на декларация за произход',
         'common-log-book-page-data-vendor-permit-license-holder': 'Титуляр на удостоверение за придобито право за усвояване на ресурс от риба и др. водни организми',
 
         'edit-log-book-page-fill-preliminary-data': 'Попълване на номер на страница',

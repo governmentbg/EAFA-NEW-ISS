@@ -22,7 +22,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
         public LogBooksViewModel(InspectionPageViewModel inspection, ShipCatchesViewModel shipCatches)
         {
             Inspection = inspection;
-            _shipCatches = _shipCatches;
+            _shipCatches = shipCatches;
             Add = CommandBuilder.CreateFrom(OnAdd);
             Remove = CommandBuilder.CreateFrom<LogBookModel>(OnRemove);
 

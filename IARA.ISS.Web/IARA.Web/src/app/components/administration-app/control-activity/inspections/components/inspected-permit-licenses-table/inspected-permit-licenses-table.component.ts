@@ -75,11 +75,13 @@ export class InspectedPermitLicensesTableComponent extends CustomFormControl<Ins
 
             setTimeout(() => {
                 this.permits = permits;
+                this.onChanged(this.getValue());
             });
         }
         else {
             setTimeout(() => {
                 this.permits = [];
+                this.onChanged(this.getValue());
             });
         }
     }
@@ -157,7 +159,7 @@ export class InspectedPermitLicensesTableComponent extends CustomFormControl<Ins
             permitNumber: f.permitNumber,
             typeName: f.typeName,
             typeId: f.typeId,
-            permitLicenseId: f.permitLicenseId,
+            permitLicenseId: f.permitLicenseId
         }));
     }
 

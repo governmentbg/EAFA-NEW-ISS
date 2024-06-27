@@ -59,11 +59,13 @@ export class WaterVesselsTableComponent extends CustomFormControl<WaterInspectio
         if (value !== undefined && value !== null) {
             setTimeout(() => {
                 this.vessels = value;
+                this.onChanged(this.getValue());
             });
         }
         else {
             setTimeout(() => {
                 this.vessels = [];
+                this.onChanged(this.getValue());
             });
         }
     }

@@ -7,6 +7,7 @@
         xmlns:local="clr-namespace:IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.FishingGearDialog"
         xmlns:h="clr-namespace:TechnoLogica.Xamarin.Helpers;assembly=TechnoLogica.Xamarin"
         xmlns:conv="clr-namespace:IARA.Mobile.Insp.Converters"
+        xmlns:m="clr-namespace:IARA.Mobile.Insp.Models"
         xmlns:nom="clr-namespace:IARA.Mobile.Application.DTObjects.Nomenclatures;assembly=IARA.Mobile.Application"
         xmlns:lc="clr-namespace:IARA.Mobile.Insp.Controls"
         x:Class="IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.FishingGearDialog.FishingGearView"
@@ -16,130 +17,8 @@
         <conv:MarkColumnWidthConverter x:Key="MarkColumnWidth" HasMoveMark="{Binding MoveMark, Converter={StaticResource IsNotNull}}" />
     </ContentView.Resources>
     <StackLayout Padding="10">
-        <tl:TLPicker Title="{rt:Translate Type, Group=FishingGear}"
-                ValidState="{Binding FishingGearType}"
-                ItemsSource="{Binding FishingGearTypes}">
-            <tl:TLPicker.IsEnabled>
-                <MultiBinding Converter="{StaticResource All}">
-                    <Binding Path="DialogType" Converter="{StaticResource IsNotReview}" />
-                    <Binding Path="IsEditable" />
-                </MultiBinding>
-            </tl:TLPicker.IsEnabled>
-        </tl:TLPicker>
-        <StackLayout>
-            <tl:TLFlex GrowUnit="140">
-                <tl:TLEntry Title="{rt:Translate Count, Group=FishingGear}"
-                        ValidState="{Binding Count}"
-                        Keyboard="Numeric">
-                    <tl:TLEntry.IsEnabled>
-                        <MultiBinding Converter="{StaticResource All}">
-                            <Binding Path="DialogType" Converter="{StaticResource IsNotReview}" />
-                            <Binding Path="IsEditable" />
-                        </MultiBinding>
-                    </tl:TLEntry.IsEnabled>
-                </tl:TLEntry>
-                <tl:TLEntry Title="{rt:Translate NetEyeSize, Group=FishingGear}"
-                        ValidState="{Binding NetEyeSize}"
-                        Keyboard="Numeric">
-                    <tl:TLEntry.IsEnabled>
-                        <MultiBinding Converter="{StaticResource All}">
-                            <Binding Path="DialogType" Converter="{StaticResource IsNotReview}" />
-                            <Binding Path="IsEditable" />
-                        </MultiBinding>
-                    </tl:TLEntry.IsEnabled>
-                </tl:TLEntry>
-                <tl:TLEntry Title="{rt:Translate HookCount, Group=FishingGear}"
-                        ValidState="{Binding HookCount}"
-                        Keyboard="Numeric">
-                    <tl:TLEntry.IsEnabled>
-                        <MultiBinding Converter="{StaticResource All}">
-                            <Binding Path="DialogType" Converter="{StaticResource IsNotReview}" />
-                            <Binding Path="IsEditable" />
-                        </MultiBinding>
-                    </tl:TLEntry.IsEnabled>
-                </tl:TLEntry>
-                <tl:TLEntry Title="{rt:Translate Length, Group=FishingGear}"
-                        ValidState="{Binding Length}"
-                        Keyboard="Numeric">
-                    <tl:TLEntry.IsEnabled>
-                        <MultiBinding Converter="{StaticResource All}">
-                            <Binding Path="DialogType" Converter="{StaticResource IsNotReview}" />
-                            <Binding Path="IsEditable" />
-                        </MultiBinding>
-                    </tl:TLEntry.IsEnabled>
-                </tl:TLEntry>
-                <tl:TLEntry Title="{rt:Translate Height, Group=FishingGear}"
-                        ValidState="{Binding Height}"
-                        Keyboard="Numeric">
-                    <tl:TLEntry.IsEnabled>
-                        <MultiBinding Converter="{StaticResource All}">
-                            <Binding Path="DialogType" Converter="{StaticResource IsNotReview}" />
-                            <Binding Path="IsEditable" />
-                        </MultiBinding>
-                    </tl:TLEntry.IsEnabled>
-                </tl:TLEntry>
-                <tl:TLEntry Title="{rt:Translate RowCount, Group=FishingGear}"
-                        ValidState="{Binding RowCount}"
-                        Keyboard="Numeric">
-                    <tl:TLEntry.IsEnabled>
-                        <MultiBinding Converter="{StaticResource All}">
-                            <Binding Path="DialogType" Converter="{StaticResource IsNotReview}" />
-                            <Binding Path="IsEditable" />
-                        </MultiBinding>
-                    </tl:TLEntry.IsEnabled>
-                </tl:TLEntry>
-            </tl:TLFlex>
-            <tl:TLFlex GrowUnit="300">
-                <tl:TLEntry Title="{rt:Translate CordThickness, Group=FishingGear}"
-                        ValidState="{Binding CordThickness}"
-                        Keyboard="Numeric">
-                    <tl:TLEntry.IsEnabled>
-                        <MultiBinding Converter="{StaticResource All}">
-                            <Binding Path="DialogType" Converter="{StaticResource IsNotReview}" />
-                            <Binding Path="IsEditable" />
-                        </MultiBinding>
-                    </tl:TLEntry.IsEnabled>
-                </tl:TLEntry>
-                <tl:TLEntry Title="{rt:Translate FullHeight, Group=FishingGear}"
-                        ValidState="{Binding FullHeight}"
-                        Keyboard="Numeric">
-                    <tl:TLEntry.IsEnabled>
-                        <MultiBinding Converter="{StaticResource All}">
-                            <Binding Path="DialogType" Converter="{StaticResource IsNotReview}" />
-                            <Binding Path="IsEditable" />
-                        </MultiBinding>
-                    </tl:TLEntry.IsEnabled>
-                </tl:TLEntry>
-                <tl:TLEntry Title="{rt:Translate NetCountInFlot, Group=FishingGear}"
-                        ValidState="{Binding NetCountInFlot}"
-                        Keyboard="Numeric">
-                    <tl:TLEntry.IsEnabled>
-                        <MultiBinding Converter="{StaticResource All}">
-                            <Binding Path="DialogType" Converter="{StaticResource IsNotReview}" />
-                            <Binding Path="IsEditable" />
-                        </MultiBinding>
-                    </tl:TLEntry.IsEnabled>
-                </tl:TLEntry>
-                <tl:TLEntry Title="{rt:Translate TralModel, Group=FishingGear}"
-                        ValidState="{Binding TralModel}"
-                        Keyboard="Numeric">
-                    <tl:TLEntry.IsEnabled>
-                        <MultiBinding Converter="{StaticResource All}">
-                            <Binding Path="DialogType" Converter="{StaticResource IsNotReview}" />
-                            <Binding Path="IsEditable" />
-                        </MultiBinding>
-                    </tl:TLEntry.IsEnabled>
-                </tl:TLEntry>
-                <tl:TLEditor Title="{rt:Translate Description, Group=FishingGear}" ValidState="{Binding Description}">
-                    <tl:TLEditor.IsEnabled>
-                        <MultiBinding Converter="{StaticResource All}">
-                            <Binding Path="DialogType" Converter="{StaticResource IsNotReview}" />
-                            <Binding Path="IsEditable" />
-                        </MultiBinding>
-                    </tl:TLEditor.IsEnabled>
-                </tl:TLEditor>
-            </tl:TLFlex>
-        </StackLayout>
+
+        <lc:FishingGearGeneralInfo BindingContext="{Binding FishingGearGeneralInfo}" />
 
         <tl:TLTable Title="{rt:Translate Marks, Group=FishingGear}" ValidState="{Binding Marks}">
             <tl:TLTable.TableColumns>
@@ -247,55 +126,71 @@
         </tl:TLTable>
         <tl:TLCheckView Text="{rt:Translate HasPingers, Group=FishingGear}"
                 IsChecked="{Binding HasPingers}"
-                IsEnabled="{Binding IsEditable}" />
-        <tl:TLTable Title="{rt:Translate Pingers, Group=FishingGear}"
+                Margin="0,10,0,0">
+            <tl:TLCheckView.IsEnabled>
+                <MultiBinding Converter="{StaticResource All}">
+                    <Binding Path="DialogType" Converter="{StaticResource IsNotReview}" />
+                    <Binding Path="IsEditable" />
+                </MultiBinding>
+            </tl:TLCheckView.IsEnabled>
+        </tl:TLCheckView>
+        <tl:TLResponsiveTable Title="{rt:Translate PingersTableTitle, Group=FishingGear}"
                 ValidState="{Binding Pingers}"
                 IsVisible="{Binding HasPingers}">
-            <tl:TLTable.TableColumns>
-                <tl:TLTableColumn Text="{rt:Translate Number, Group=FishingGear}" Width="*" />
+            <tl:TLResponsiveTable.TableColumns>
+                <tl:TLTableColumn Text="{rt:Translate PingerNumber, Group=FishingGear}" Width="*" />
+                <tl:TLTableColumn Text="{rt:Translate PingerStatus, Group=FishingGear}" Width="*" />
                 <tl:TLTableColumn Width="{Binding BindingContext.DialogType, Converter={StaticResource ReviewToWidth}, ConverterParameter=40, Source={Reference view}}" />
-                <tl:TLTableColumn Width="{Binding BindingContext.DialogType, Converter={StaticResource ReviewToWidth}, ConverterParameter=40, Source={Reference view}}" />
-                <tl:TLTableColumn Width="{Binding BindingContext.DialogType, Converter={StaticResource ReviewToWidth}, ConverterParameter=40, Source={Reference view}}" />
-            </tl:TLTable.TableColumns>
-            <DataTemplate>
-                <tl:TLTableRow x:DataType="local:PingerViewModel">
-                    <tl:TLEntry IsTitleVisible="False"
-                            ValidState="{Binding Number}"
-                            IsEnabled="false" />
-                    <ImageButton Source="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Eye}, Size=20, Color=White}"
-                            Padding="10"
-                            Command="{Binding BindingContext.ViewPinger, Source={Reference view}}"
-                            CommandParameter="{Binding}">
-                    </ImageButton>
-                    <ImageButton Source="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Pencil}, Size=20, Color=White}"
-                            Padding="10"
-                            Command="{Binding BindingContext.EditPinger, Source={Reference view}}"
-                            CommandParameter="{Binding}">
-                        <ImageButton.IsVisible>
-                            <MultiBinding Converter="{StaticResource All}">
-                                <Binding Path="BindingContext.DialogType"
-                                        Converter="{StaticResource IsNotReview}"
-                                        Source="{Reference view}" />
-                                <Binding Path="BindingContext.IsEditable" Source="{Reference view}" />
-                            </MultiBinding>
-                        </ImageButton.IsVisible>
-                    </ImageButton>
-                    <ImageButton Source="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Trash}, Size=20, Color=White}"
-                            Padding="10"
-                            Command="{Binding BindingContext.RemovePinger, Source={Reference view}}"
-                            CommandParameter="{Binding}">
-                        <ImageButton.IsVisible>
-                            <MultiBinding Converter="{StaticResource All}">
-                                <Binding Path="BindingContext.DialogType"
-                                        Converter="{StaticResource IsNotReview}"
-                                        Source="{Reference view}" />
-                                <Binding Path="BindingContext.IsEditable" Source="{Reference view}" />
-                            </MultiBinding>
-                        </ImageButton.IsVisible>
-                    </ImageButton>
-                </tl:TLTableRow>
-            </DataTemplate>
-            <tl:TLTable.FooterView>
+            </tl:TLResponsiveTable.TableColumns>
+            <tl:TLResponsiveTable.DefaultItemTemplate>
+                <DataTemplate>
+                    <tl:TLTableRow x:DataType="m:PingerModel">
+                        <Label Text="{Binding Number}"
+                                LineBreakMode="WordWrap"
+                                VerticalOptions="Center"
+                                IsEnabled="{Binding BindingContext.Inspection.ActivityType, Converter={StaticResource IsNotReview}, Source={Reference view}}" />
+                        <Label Text="{Binding Status.Name}"
+                                LineBreakMode="WordWrap"
+                                VerticalOptions="Center"
+                                IsEnabled="{Binding BindingContext.Inspection.ActivityType, Converter={StaticResource IsNotReview}, Source={Reference view}}" />
+                        <StackLayout Orientation="Horizontal" VerticalOptions="Start">
+                            <ImageButton Source="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Eye}, Size=20, Color=White}"
+                                    Padding="10"
+                                    Command="{Binding BindingContext.ViewPinger, Source={Reference view}}"
+                                    CommandParameter="{Binding}" />
+                            <ImageButton Source="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Pencil}, Size=20, Color=White}"
+                                    Padding="10"
+                                    Command="{Binding BindingContext.EditPinger, Source={Reference view}}"
+                                    CommandParameter="{Binding}">
+                                <ImageButton.IsVisible>
+                                    <MultiBinding Converter="{StaticResource All}">
+                                        <Binding Path="BindingContext.DialogType"
+                                                Converter="{StaticResource IsNotReview}"
+                                                Source="{Reference view}" />
+                                        <Binding Path="BindingContext.IsEditable" Source="{Reference view}" />
+                                    </MultiBinding>
+                                </ImageButton.IsVisible>
+                            </ImageButton>
+                            <ImageButton Source="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Trash}, Size=20, Color=White}"
+                                    Padding="10"
+                                    Command="{Binding BindingContext.RemovePinger, Source={Reference view}}"
+                                    CommandParameter="{Binding}">
+                                <ImageButton.IsVisible>
+                                    <MultiBinding Converter="{StaticResource All}">
+                                        <Binding Path="BindingContext.DialogType"
+                                                Converter="{StaticResource IsNotReview}"
+                                                Source="{Reference view}" />
+                                        <Binding Path="BindingContext.IsEditable" Source="{Reference view}" />
+                                    </MultiBinding>
+                                </ImageButton.IsVisible>
+                            </ImageButton>
+                        </StackLayout>
+                    </tl:TLTableRow>
+                </DataTemplate>
+            </tl:TLResponsiveTable.DefaultItemTemplate>
+            <tl:TLResponsivleTableChild TableLayout="Table" />
+            <tl:TLResponsivleTableChild TableLayout="Sections" QueryWidth="800" />
+            <tl:TLResponsiveTable.FooterView>
                 <Button Text="{rt:Translate AddPinger, Group=FishingGear}"
                         Command="{Binding AddPinger}"
                         ImageSource="{FontImage FontFamily=FA, Glyph={Static h:IconFont.CirclePlus}, Size=25, Color=White}"
@@ -307,10 +202,10 @@
                         </MultiBinding>
                     </Button.IsVisible>
                 </Button>
-            </tl:TLTable.FooterView>
-            <tl:TLTable.EmptyView>
+            </tl:TLResponsiveTable.FooterView>
+            <tl:TLResponsiveTable.EmptyView>
                 <Label Text="{rt:Translate NoInformation, Group=Common}" Margin="20,10" />
-            </tl:TLTable.EmptyView>
-        </tl:TLTable>
+            </tl:TLResponsiveTable.EmptyView>
+        </tl:TLResponsiveTable>
     </StackLayout>
 </sv:SectionView>

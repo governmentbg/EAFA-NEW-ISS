@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<sv:SectionView xmlns="http://xamarin.com/schemas/2014/forms"
+        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+        xmlns:lc="clr-namespace:IARA.Mobile.Insp.Controls"
+        xmlns:sv="clr-namespace:IARA.Mobile.Shared.Views;assembly=IARA.Mobile.Shared"
+        xmlns:tl="clr-namespace:TechnoLogica.Xamarin.Controls;assembly=TechnoLogica.Xamarin"
+        xmlns:rt="clr-namespace:TechnoLogica.Xamarin.ResourceTranslator;assembly=TechnoLogica.Xamarin"
+        xmlns:vm="clr-namespace:IARA.Mobile.Insp.Controls.ViewModels"
+        xmlns:h="clr-namespace:TechnoLogica.Xamarin.Helpers;assembly=TechnoLogica.Xamarin"
+        xmlns:m="clr-namespace:IARA.Mobile.Insp.Models;assembly=IARA.Mobile.Insp"
+        x:DataType="vm:ViolatedRegulationsViewModel"
+        x:Class="IARA.Mobile.Insp.Controls.ViolatedRegulationView"
+        Image="{FontImage FontFamily=FA, Glyph={Static h:IconFont.File}, Color=White, Size=100}"
+        Text="{rt:Translate ViolatedRegulationsSectionTitle, Group=GeneralInfo}">
+    <tl:TLResponsiveTable Title="{rt:Translate ViolatedRegulationsTableTitle, Group=GeneralInfo}" ValidState="{Binding ViolatedRegulations}">
+        <tl:TLResponsiveTable.TableColumns>
+            <tl:TLTableColumn Text="{rt:Translate Article, Group=GeneralInfo}" Width="*" />
+            <tl:TLTableColumn Text="{rt:Translate Paragraph, Group=GeneralInfo}" Width="*" />
+            <tl:TLTableColumn Text="{rt:Translate Section, Group=GeneralInfo}" Width="*" />
+            <tl:TLTableColumn Text="{rt:Translate Letter, Group=GeneralInfo}" Width="*" />
+            <tl:TLTableColumn Width="{Binding BindingContext.DialogType, Converter={StaticResource ReviewToWidth}, ConverterParameter=40, Source={Reference view}}" />
+        </tl:TLResponsiveTable.TableColumns>
+        <tl:TLResponsiveTable.DefaultItemTemplate>
+            <DataTemplate>
+                <tl:TLTableRow x:DataType="m:ViolatedRegulationModel">
+                    <Label Text="{Binding Article}"
+                            LineBreakMode="WordWrap"
+                            VerticalOptions="Center"
+                            IsEnabled="{Binding BindingContext.Inspection.ActivityType, Converter={StaticResource IsNotReview}, Source={Reference view}}" />
+                    <Label Text="{Binding Paragraph}"
+                            LineBreakMode="WordWrap"
+                            VerticalOptions="Center"
+                            IsEnabled="{Binding BindingContext.Inspection.ActivityType, Converter={StaticResource IsNotReview}, Source={Reference view}}" />
+                    <Label Text="{Binding Section}"
+                            LineBreakMode="WordWrap"
+                            VerticalOptions="Center"
+                            IsEnabled="{Binding BindingContext.Inspection.ActivityType, Converter={StaticResource IsNotReview}, Source={Reference view}}" />
+                    <Label Text="{Binding Letter}"
+                            LineBreakMode="WordWrap"
+                            VerticalOptions="Center"
+                            IsEnabled="{Binding BindingContext.Inspection.ActivityType, Converter={StaticResource IsNotReview}, Source={Reference view}}" />
+                    <StackLayout Orientation="Horizontal" VerticalOptions="Start">
+                        <ImageButton Source="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Eye}, Size=20, Color=White}"
+                                Padding="10"
+                                Command="{Binding BindingContext.ViewViolation, Source={Reference view}}"
+                                CommandParameter="{Binding}" />
+                        <ImageButton Source="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Pencil}, Size=20, Color=White}"
+                                Padding="10"
+                                Command="{Binding BindingContext.EditViolation, Source={Reference view}}"
+                                CommandParameter="{Binding}"
+                                IsVisible="{Binding BindingContext.Inspection.ActivityType, Converter={StaticResource IsNotReview}, Source={Reference view}}" />
+                        <ImageButton Source="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Trash}, Size=20, Color=White}"
+                                Padding="10"
+                                Command="{Binding BindingContext.RemoveViolation, Source={Reference view}}"
+                                CommandParameter="{Binding}"
+                                IsVisible="{Binding BindingContext.Inspection.ActivityType, Converter={StaticResource IsNotReview}, Source={Reference view}}" />
+                    </StackLayout>
+                </tl:TLTableRow>
+            </DataTemplate>
+        </tl:TLResponsiveTable.DefaultItemTemplate>
+        <tl:TLResponsivleTableChild TableLayout="Table" />
+        <tl:TLResponsivleTableChild TableLayout="Sections" QueryWidth="800" />
+        <tl:TLResponsiveTable.FooterView>
+            <Button Text="{rt:Translate AddViolation, Group=GeneralInfo}"
+                    Command="{Binding AddViolation}"
+                    ImageSource="{FontImage FontFamily=FA, Glyph={Static h:IconFont.CirclePlus}, Size=25, Color=White}"
+                    HorizontalOptions="End"
+                    IsVisible="{Binding BindingContext.Inspection.ActivityType, Converter={StaticResource IsNotReview}, Source={Reference view}}" />
+        </tl:TLResponsiveTable.FooterView>
+        <tl:TLResponsiveTable.EmptyView>
+            <Label Text="{rt:Translate NoInformation, Group=Common}" Margin="20,10" />
+        </tl:TLResponsiveTable.EmptyView>
+    </tl:TLResponsiveTable>
+</sv:SectionView>

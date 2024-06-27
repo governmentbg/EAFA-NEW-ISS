@@ -23,6 +23,7 @@ namespace IARA.Mobile.Insp.Infrastructure.Persistence
 
         #region Nomenclatures
 
+        public TLTableQuery<NLaws> NLaws => TLTable<NLaws>();
         public TLTableQuery<NPort> NPorts => TLTable<NPort>();
         public TLTableQuery<NFish> NFishes => TLTable<NFish>();
         public TLTableQuery<NGender> NGenders => TLTable<NGender>();

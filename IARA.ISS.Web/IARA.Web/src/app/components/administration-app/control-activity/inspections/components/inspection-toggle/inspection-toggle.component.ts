@@ -77,6 +77,8 @@ export class InspectionToggleComponent extends CustomFormControl<InspectionCheck
             this.form.get('togglesControl')!.setValue(null);
             this.form.get('toggleTextControl')!.setValue(null);
         }
+
+        this.onChanged(this.getValue());
     }
 
     protected buildForm(): AbstractControl {
