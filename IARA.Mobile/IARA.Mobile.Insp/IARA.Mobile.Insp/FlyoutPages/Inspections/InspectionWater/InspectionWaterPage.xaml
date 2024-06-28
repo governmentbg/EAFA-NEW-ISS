@@ -47,6 +47,7 @@
             </StackLayout>
         </sv:SectionView>
         <lc:AdditionalInfoView BindingContext="{Binding AdditionalInfo}" />
+        
         <lc:InspectionFilesView BindingContext="{Binding InspectionFiles}" />
         <lc:SignaturesView BindingContext="{Binding Signatures}" />
         <lc:SaveButtonsLayout />

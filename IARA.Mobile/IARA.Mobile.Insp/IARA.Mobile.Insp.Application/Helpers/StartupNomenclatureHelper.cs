@@ -162,6 +162,24 @@ namespace IARA.Mobile.Insp.Application.Helpers
 
             switch (nomenclatureEnum)
             {
+                case NomenclatureEnum.Law:
+                    return PullNomenclatures(restClient, nomenclatureDates, nomenclatureEnum, prefix + "Laws", lastUpdated,
+                        (LawApiDto dto) => new NLaws
+                        {
+                            Code = dto.Code,
+                            Name = dto.DisplayName,
+                            Id = dto.Value,
+                            Article = dto.Article,
+                            Paragraph = dto.Paragraph,
+                            Section = dto.Section,
+                            Letter = dto.Letter,
+                            SectionType = dto.SectionType,
+                            LawSectionId = dto.LawSectionId,
+                            LawSection = dto.LawSection,
+                            LawText = dto.LawText,
+                            Comments = dto.Comments,
+                            IsActive = dto.IsActive,
+                        });
                 case NomenclatureEnum.Country:
                     return PullNomenclatures<NCountry>(restClient, nomenclatureDates, nomenclatureEnum, prefix + "Countries", lastUpdated);
                 case NomenclatureEnum.District:
@@ -357,6 +375,8 @@ namespace IARA.Mobile.Insp.Application.Helpers
         {
             switch (nomenclatureName)
             {
+                case "Laws":
+                    return NomenclatureEnum.Law;
                 case "Countries":
                     return NomenclatureEnum.Country;
                 case "Districts":

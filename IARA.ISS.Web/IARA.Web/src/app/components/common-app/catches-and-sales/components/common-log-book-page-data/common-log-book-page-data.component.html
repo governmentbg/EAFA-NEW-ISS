@@ -16,17 +16,35 @@
         </tl-input>
     </div>
     <ng-container *ngIf="!form.controls.isImportNotByShipControl.value">
-        <div *ngIf="form.controls.originDeclarationNumberControl.value !== null && form.controls.originDeclarationNumberControl.value !== undefined"
+        <div fxFlex="100" fxLayout="row" fxLayoutAlign="space-between center">
+            <tl-autocomplete fxFlex="100"
+                             formControlName="shipControl"
+                             label="{{ 'catches-and-sales.common-log-book-page-data-ship' | tlTranslate }}"
+                             tooltipResourceName="catches-and-sales.common-log-book-page-data-ship-helper"
+                             [options]="ships"
+                             [readonly]="isReadonly && !hidePageNumber">
+            </tl-autocomplete>
+        </div>
+        <div *ngIf="(form.controls.originDeclarationNumberControl.value !== null && form.controls.originDeclarationNumberControl.value !== undefined) || hidePageNumber"
              fxFlex="100"
              fxLayout="row"
              fxLayoutAlign="space-between center"
              fxLayoutGap="1em">
-            <tl-input fxFlex="50"
+            <tl-input *ngIf="!hidePageNumber"
+                      fxFlex="50"
                       formControlName="originDeclarationNumberControl"
                       label="{{ 'catches-and-sales.common-log-book-page-data-origin-declaration-number' | tlTranslate }}"
                       tooltipResourceName="catches-and-sales.common-log-book-page-data-origin-declaration-number-helper"
                       [readonly]="isReadonly">
             </tl-input>
+            <tl-autocomplete *ngIf="hidePageNumber"
+                             fxFlex="100"
+                             formControlName="originDeclarationControl"
+                             label="{{ 'catches-and-sales.common-log-book-page-data-origin-declaration-number' | tlTranslate }}"
+                             tooltipResourceName="catches-and-sales.common-log-book-page-data-origin-declaration-number-helper"
+                             [options]="originDeclarationsForShip"
+                             [readonly]="noShipSelected">
+            </tl-autocomplete>
             <tl-date fxFlex="50"
                      formControlName="originDeclarationDateControl"
                      label="{{ 'catches-and-sales.common-log-book-page-data-origin-declaration-date' | tlTranslate }}"
@@ -34,7 +52,7 @@
                      [readonly]="isReadonly">
             </tl-date>
         </div>
-        <div *ngIf="form.controls.transportationDocumentNumberControl.value !== null && form.controls.transportationDocumentNumberControl.value !== undefined"
+        <div *ngIf="form.controls.transportationDocumentNumberControl.value !== null && form.controls.transportationDocumentNumberControl.value !== undefined && !hidePageNumber"
              fxFlex="100"
              fxLayout="row"
              fxLayoutAlign="space-between center"
@@ -52,7 +70,7 @@
                      [readonly]="isReadonly">
             </tl-date>
         </div>
-        <div *ngIf="form.controls.admissionDocumentNumberControl.value !== null && form.controls.admissionDocumentNumberControl.value !== undefined"
+        <div *ngIf="form.controls.admissionDocumentNumberControl.value !== null && form.controls.admissionDocumentNumberControl.value !== undefined  && !hidePageNumber"
              fxFlex="100"
              fxLayout="row"
              fxLayoutAlign="space-between center"
@@ -69,15 +87,6 @@
                      tooltipResourceName="catches-and-sales.common-log-book-page-data-admission-document-handover-date-helper"
                      [readonly]="isReadonly">
             </tl-date>
-        </div>
-        <div fxFlex="100" fxLayout="row" fxLayoutAlign="space-between center">
-            <tl-autocomplete fxFlex="100"
-                             formControlName="shipControl"
-                             label="{{ 'catches-and-sales.common-log-book-page-data-ship' | tlTranslate }}"
-                             tooltipResourceName="catches-and-sales.common-log-book-page-data-ship-helper"
-                             [options]="ships"
-                             [readonly]="isReadonly">
-            </tl-autocomplete>
         </div>
         <div fxFlex="100" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
             <tl-input fxFlex="45"
@@ -104,5 +113,8 @@
                       [readonly]="isReadonly">
             </tl-input>
         </div>
+        <mat-hint *ngIf="hidePageNumber && noShipSelected">
+            {{ 'catches-and-sales.common-log-book-page-data-no-ship-selected' | tlTranslate }} *
+        </mat-hint>
     </ng-container>
 </div>

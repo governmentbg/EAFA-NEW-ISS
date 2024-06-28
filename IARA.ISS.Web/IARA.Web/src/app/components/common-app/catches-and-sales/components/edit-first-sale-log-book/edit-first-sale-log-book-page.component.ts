@@ -55,6 +55,7 @@ export class EditFirstSaleLogBookPageComponent implements OnInit, AfterViewInit,
 
     public noAvailableProducts: boolean = false;
     public isLogBookPageDateLockedError: boolean = false;
+    public isCommonLogBookPageDataReadonly: boolean = true;
 
     public getControlErrorLabelTextMethod: GetControlErrorLabelTextCallback = this.getControlErrorLabelText.bind(this);
 
@@ -342,6 +343,8 @@ export class EditFirstSaleLogBookPageComponent implements OnInit, AfterViewInit,
 
         this.form.get('commonLogBookPageDataControl')!.setValue(this.model.commonData);
 
+        this.isCommonLogBookPageDataReadonly = this.model.commonData?.originDeclarationNumber?.includes('missing data') !== true;
+
         if (this.model.buyerId !== null && this.model.buyerId !== undefined) {
             const buyer: NomenclatureDTO<number> = this.registeredBuyers.find(x => x.value === this.model.buyerId)!;
             this.form.get('buyerControl')!.setValue(buyer);
@@ -374,6 +377,10 @@ export class EditFirstSaleLogBookPageComponent implements OnInit, AfterViewInit,
         this.model.products = this.form.get('productsControl')!.value;
         this.model.productsTotalPrice = this.form.get('productsTotalValueControl')!.value;
         this.model.files = this.form.get('filesControl')!.value;
+
+        if (!this.isCommonLogBookPageDataReadonly) {
+            this.model.commonData = this.form.get('commonLogBookPageDataControl')!.value;
+        }
     }
 
     private addFirstSaleLogBookPage(dialogClose: DialogCloseCallback): void {

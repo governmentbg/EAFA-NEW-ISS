@@ -1,12 +1,12 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using IARA.Mobile.Application.DTObjects.Nomenclatures;
+﻿using IARA.Mobile.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Insp.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Insp.Application.Interfaces.Dtos;
 using IARA.Mobile.Insp.Base;
 using IARA.Mobile.Insp.Domain.Enums;
 using IARA.Mobile.Insp.Helpers;
 using IARA.Mobile.Insp.Models;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using TechnoLogica.Xamarin.Helpers;
 using TechnoLogica.Xamarin.ViewModels.Models;
 
@@ -14,11 +14,11 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
 {
     public class ShipCatchesViewModel : ViewModel
     {
-        public ShipCatchesViewModel(InspectionPageViewModel inspection, bool showUnloadedQuantity = false)
+        public ShipCatchesViewModel(InspectionPageViewModel inspection, bool isUnloadedQuantityRequired = false)
         {
             Inspection = inspection;
 
-            Catches = new CatchInspectionsViewModel(inspection, showUnloadedQuantity: showUnloadedQuantity);
+            Catches = new CatchInspectionsViewModel(inspection, isUnloadedQuantityRequired: isUnloadedQuantityRequired);
 
             this.AddValidation(others: new[] { Catches });
 

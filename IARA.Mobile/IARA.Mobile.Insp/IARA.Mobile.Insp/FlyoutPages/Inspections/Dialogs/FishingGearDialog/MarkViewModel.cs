@@ -1,10 +1,10 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
-using IARA.Mobile.Application.Attributes;
+﻿using IARA.Mobile.Application.Attributes;
 using IARA.Mobile.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Insp.Application.DTObjects.Inspections;
 using IARA.Mobile.Insp.Base;
 using IARA.Mobile.Insp.Domain.Enums;
+using System;
+using System.ComponentModel.DataAnnotations;
 using TechnoLogica.Xamarin.Helpers;
 using TechnoLogica.Xamarin.ViewModels.Models;
 
@@ -40,6 +40,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.FishingGearDialog
                 return new FishingGearMarkDto
                 {
                     Id = viewModel.Id,
+                    IsActive = true,
                     FullNumber = new PrefixInputDto
                     {
                         Prefix = viewModel.Prefix,

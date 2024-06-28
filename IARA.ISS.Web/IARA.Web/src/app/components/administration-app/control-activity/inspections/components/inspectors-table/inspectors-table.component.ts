@@ -98,6 +98,7 @@ export class InspectorsTableComponent extends CustomFormControl<InspectorDuringI
                 this.inspectors = inspectors;
 
                 this.changeReportNumber(this.inspectors.find(f => f.isInCharge)!);
+                this.onChanged(this.getValue());
             });
         }
         else {
@@ -112,6 +113,8 @@ export class InspectorsTableComponent extends CustomFormControl<InspectorDuringI
                     this.inspectors[0].userId = this.userId;
                     this.changeReportNumber(this.inspectors[0]);
                 }
+
+                this.onChanged(this.getValue());
             });
         }
     }
@@ -247,7 +250,7 @@ export class InspectorsTableComponent extends CustomFormControl<InspectorDuringI
             unregisteredPersonId: f.unregisteredPersonId,
             userId: f.userId,
             territoryCode: f.territoryCode,
-            institution: f.institution,
+            institution: f.institution
         }));
     }
 

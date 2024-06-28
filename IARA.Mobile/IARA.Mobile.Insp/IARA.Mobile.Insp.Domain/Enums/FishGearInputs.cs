@@ -7,10 +7,10 @@
         Length,
         Height,
         CordThickness,
-        RowCount,
-        FullHeight,
-        NetCountInFlot,
-        TralModel,
+        LineCount,
+        NetNominalLength,
+        NetsInFleetCount,
+        TrawlModel,
         OptionalGearDimension
     }
 }

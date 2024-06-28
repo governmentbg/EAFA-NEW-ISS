@@ -118,6 +118,8 @@ export class InspectedSubjectComponent extends CustomFormControl<InspectionSubje
         else {
             this.form.get('countryControl')!.setValue(this.countries.find(f => f.code === CommonUtils.COUNTRIES_BG));
         }
+
+        this.onChanged(this.getValue());
     }
 
     public downloadedPersonData(person: PersonFullDataDTO): void {
@@ -185,7 +187,7 @@ export class InspectedSubjectComponent extends CustomFormControl<InspectionSubje
                 firstName: person.firstName,
                 middleName: person.middleName,
                 lastName: person.lastName,
-                type: this.personType,
+                type: this.personType
             });
         }
         else {
@@ -202,7 +204,7 @@ export class InspectedSubjectComponent extends CustomFormControl<InspectionSubje
                 isLegal: true,
                 eik: legal.eik,
                 firstName: legal.name,
-                type: this.legalType,
+                type: this.legalType
             });
         }
     }

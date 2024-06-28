@@ -118,7 +118,7 @@
             </tl:TLEntry.IsEnabled>
         </tl:TLEntry>
     </tl:TLFlex>
-    <lc:ExtendedLocationView Title="{rt:Translate GPSCoordinates, Group=InspectedShipData}"
+    <lc:TLLocationView Title="{rt:Translate GPSCoordinates, Group=InspectedShipData}"
             BindingContext="{Binding Location}"
             IsEnabled="{Binding BindingContext.Inspection.ActivityType, Converter={StaticResource IsNotReview}, Source={Reference view}}"
             IsVisible="{Binding BindingContext.CanPickLocation, Source={Reference view}}" />

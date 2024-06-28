@@ -36,6 +36,9 @@
                         ShipInRegisterLabel="{rt:Translate TranshipmentShipInRegister, Group=HarbourInspection}"
                         IsVisible="{Binding BindingContext.HasTranshipment, Source={Reference page}}"
                         IsEnabled="{Binding BindingContext.HasTranshipment, Source={Reference page}}" />
+                <lc:TLLocationView ValidState="{Binding Location}"
+                        IsVisible="{Binding BindingContext.HasTranshipment, Source={Reference page}}"
+                        IsEnabled="{Binding ActivityType, Converter={StaticResource IsNotReview}}" />
                 <lc:CatchInspectionsView Title="{rt:Translate TransshippedCatches, Group=HarbourInspection}"
                         BindingContext="{Binding TransshippedCatches}"
                         IsVisible="{Binding BindingContext.HasTranshipment, Source={Reference page}}"

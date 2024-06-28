@@ -49,10 +49,10 @@ namespace IARA.Mobile.Insp.Attributes
                                                         "GNF", "GEN" }},
             { FishGearInputs.Height, new List<string> { "PS", "PS1", "PS2", "LA", "SUX", "GN", "GNS", "GND", "GNC", "GTN",
                                                         "GTR", "GNF", "GEN" }},
-            { FishGearInputs.FullHeight, new List<string> { "GN", "GNS", "GND", "GNC", "GTN", "GTR", "GNF", "GEN" }},
-            { FishGearInputs.RowCount, new List<string> { "LHP", "LHM", "LLS", "LLD", "LL" }},
-            { FishGearInputs.NetCountInFlot, new List<string> { "GN", "GNS", "GND", "GNC", "GTN", "GTR", "GNF", "GEN" }},
-            { FishGearInputs.TralModel, new List<string> { "OTM", "PTM", "TM", "TMS", "TSP" }},
+            { FishGearInputs.NetNominalLength, new List<string> { "GN", "GNS", "GND", "GNC", "GTN", "GTR", "GNF", "GEN" }},
+            { FishGearInputs.LineCount, new List<string> { "LHP", "LHM", "LLS", "LLD", "LL" }},
+            { FishGearInputs.NetsInFleetCount, new List<string> { "GN", "GNS", "GND", "GNC", "GTN", "GTR", "GNF", "GEN" }},
+            { FishGearInputs.TrawlModel, new List<string> { "OTM", "PTM", "TM", "TMS", "TSP" }},
         };
     }
 }

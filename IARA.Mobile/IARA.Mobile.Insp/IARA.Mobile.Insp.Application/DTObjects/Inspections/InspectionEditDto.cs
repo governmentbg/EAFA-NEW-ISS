@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using IARA.Mobile.Domain.Models;
+﻿using IARA.Mobile.Domain.Models;
 using IARA.Mobile.Insp.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Insp.Domain.Enums;
+using System;
+using System.Collections.Generic;
 
 namespace IARA.Mobile.Insp.Application.DTObjects.Inspections
 {
@@ -18,6 +18,7 @@ namespace IARA.Mobile.Insp.Application.DTObjects.Inspections
         public string InspectorComment { get; set; }
         public bool? AdministrativeViolation { get; set; }
         public string ActionsTaken { get; set; }
+        public List<AuanViolatedRegulationDto> ViolatedRegulations { get; set; }
         public List<InspectorDuringInspectionDto> Inspectors { get; set; }
         public List<FileModel> Files { get; set; }
         public List<InspectionSubjectPersonnelDto> Personnel { get; set; }

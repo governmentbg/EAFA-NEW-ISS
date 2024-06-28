@@ -1,8 +1,4 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using IARA.Mobile.Application.Attributes;
+﻿using IARA.Mobile.Application.Attributes;
 using IARA.Mobile.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Application.Extensions;
 using IARA.Mobile.Domain.Enums;
@@ -13,6 +9,11 @@ using IARA.Mobile.Insp.Controls.ViewModels;
 using IARA.Mobile.Insp.Domain.Enums;
 using IARA.Mobile.Insp.Helpers;
 using IARA.Mobile.Insp.Models;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows.Input;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Helpers;
 using TechnoLogica.Xamarin.ResourceTranslator;
@@ -27,15 +28,10 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.WaterCatchDialog
         private bool _isTaken;
         private SelectNomenclatureDto _action;
         private List<SelectNomenclatureDto> _fishes;
+        private bool _showErrorText;
 
         public WaterCatchViewModel()
         {
-            _action = new SelectNomenclatureDto
-            {
-                Id = 1,
-                Code = nameof(TakenStoredEnum.Stored),
-                Name = TranslateExtension.Translator[nameof(GroupResourceEnum.WaterCatch) + "/Stored"],
-            };
 
             Save = CommandBuilder.CreateFrom(OnSave);
 
@@ -67,6 +63,8 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.WaterCatchDialog
                 },
             };
 
+            Action = Actions.First();
+
             this.AddValidation();
         }
 
@@ -85,13 +83,18 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.WaterCatchDialog
             get => _isTaken;
             set => SetProperty(ref _isTaken, value);
         }
+        public bool ShowErrorText
+        {
+            get { return _showErrorText; }
+            set { _showErrorText = value; }
+        }
+
         public SelectNomenclatureDto Action
         {
             get => _action;
             set => SetProperty(ref _action, value);
         }
 
-        [Required]
         public ValidStateSelect<SelectNomenclatureDto> Fish { get; set; }
 
         [TLRange(0, 1000, true)]
@@ -99,7 +102,6 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.WaterCatchDialog
 
         [MaxLength(500)]
         public ValidState Location { get; set; }
-
         public List<SelectNomenclatureDto> Actions { get; set; }
 
         public List<SelectNomenclatureDto> Fishes
@@ -146,9 +148,10 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.WaterCatchDialog
                 return Task.CompletedTask;
             }
 
+
             return HideDialog(new WaterCatchModel
             {
-                FishName = Fish.Value.DisplayValue,
+                FishName = Fish.Value == null ? "" : Fish.Value.DisplayValue,
                 Dto = new InspectionCatchMeasureDto
                 {
                     Id = Id,

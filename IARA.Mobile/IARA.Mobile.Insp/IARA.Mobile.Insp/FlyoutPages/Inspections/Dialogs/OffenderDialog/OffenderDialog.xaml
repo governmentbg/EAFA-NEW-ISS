@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<tl:TLBaseDialog xmlns="http://xamarin.com/schemas/2014/forms"
+        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+        x:Class="IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.OffenderDialog.OffenderDialog"
+        xmlns:h="clr-namespace:TechnoLogica.Xamarin.Helpers;assembly=TechnoLogica.Xamarin"
+        xmlns:sv="clr-namespace:IARA.Mobile.Shared.Views;assembly=IARA.Mobile.Shared"
+        xmlns:lc="clr-namespace:IARA.Mobile.Insp.Controls"
+        xmlns:nom="clr-namespace:IARA.Mobile.Application.DTObjects.Nomenclatures;assembly=IARA.Mobile.Application"
+        xmlns:rt="clr-namespace:TechnoLogica.Xamarin.ResourceTranslator;assembly=TechnoLogica.Xamarin"
+        xmlns:tl="clr-namespace:TechnoLogica.Xamarin.Controls;assembly=TechnoLogica.Xamarin"
+        xmlns:local="clr-namespace:IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.OffenderDialog"
+        xmlns:m="clr-namespace:IARA.Mobile.Insp.Models"
+        x:Name="dialog"
+        x:DataType="local:OffenderDialogViewModel"
+        x:TypeArguments="local:OffenderDialogViewModel, m:OffenderModel"
+        Title="{rt:Translate InspectorDialogTitle, Group=GeneralInfo}"
+        BackgroundColor="White"
+        IconColor="White"
+        TitleBackgroundColor="{StaticResource Primary}"
+        TitleColor="White">
+    <sv:SectionView>
+        <StackLayout Padding="10" />
+    </sv:SectionView>
+</tl:TLBaseDialog>

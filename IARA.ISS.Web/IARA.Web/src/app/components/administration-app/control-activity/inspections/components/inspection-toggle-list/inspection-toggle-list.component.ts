@@ -103,6 +103,8 @@ export class InspectionToggleListComponent extends CustomFormControl<InspectionC
                 this.form.controls[keys[i]].setValue(undefined);
             }
         }
+
+        this.onChanged(this.getValue());
     }
 
     protected buildForm(): AbstractControl {

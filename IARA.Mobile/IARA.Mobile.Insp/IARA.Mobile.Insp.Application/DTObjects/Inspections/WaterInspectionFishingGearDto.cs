@@ -2,8 +2,9 @@
 {
     public class WaterInspectionFishingGearDto : FishingGearDto
     {
-        public bool IsStored { get; set; }
-        public bool IsTaken { get; set; }
+        public int InspectedFishingGearId { get; set; }
+        public bool? IsTaken { get; set; }
+        public bool? IsStored { get; set; }
         public string StorageLocation { get; set; }
     }
 }

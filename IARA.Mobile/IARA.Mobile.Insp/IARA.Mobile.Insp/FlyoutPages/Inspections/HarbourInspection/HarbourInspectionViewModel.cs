@@ -10,6 +10,7 @@ using IARA.Mobile.Insp.Controls.ViewModels;
 using IARA.Mobile.Insp.Domain.Enums;
 using IARA.Mobile.Insp.Helpers;
 using IARA.Mobile.Insp.Models;
+using IARA.Mobile.Insp.ViewModels.Models;
 using IARA.Mobile.Shared.Views;
 using System;
 using System.Collections.Generic;
@@ -37,8 +38,8 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.HarbourInspection
             InspectionHarbour = new InspectionHarbourViewModel(this, hasDate: false);
             InspectedShip = new FishingShipViewModel(this, canPickLocation: false);
             ShipChecks = new ShipChecksViewModel(this, ShipCatches);
-            ShipCatches = new ShipCatchesViewModel(this);
-            ShipFishingGears = new ShipFishingGearsViewModel(this);
+            ShipCatches = new ShipCatchesViewModel(this, isUnloadedQuantityRequired: true);
+            ShipFishingGears = new ShipFishingGearsViewModel(this, true);
             TransshippedShip = new InspectedShipDataViewModel(this, canPickLocation: false)
             {
                 ShipSelected = CommandBuilder.CreateFrom<ShipSelectNomenclatureDto>(OnShipSelected),
@@ -111,6 +112,9 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.HarbourInspection
         [MaxLength(4000)]
         public ValidState CaptainComment { get; set; }
 
+        [Required]
+        public ValidStateLocation Location { get; set; }
+
         public bool HasTranshipment
         {
             get => _hasTranshipment;
@@ -152,7 +156,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.HarbourInspection
 
         public override async Task Initialize(object sender)
         {
-            await OnGetStartupData();
+            //await OnGetStartupData();
             InspectionHelper.Initialize(this, Edit);
             InspectionHelper.InitShip(InspectedShip, ShipChecks, ShipCatches, ShipFishingGears.FishingGears);
 
@@ -228,7 +232,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.HarbourInspection
                 Signatures.OnEdit(Edit.Files, fileTypes);
                 TransshippedCatches.OnEdit(Edit.TransboardedCatchMeasures);
                 AdditionalInfo.OnEdit(Edit);
-
+                Location.AssignFrom(Edit.ReceivingShipInspection.InspectedShip.Location);
                 if (Edit.ReceivingShipInspection != null)
                 {
                     ShipFishingGears.FishingGears.OnEdit(Edit.FishingGears,
@@ -325,6 +329,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.HarbourInspection
                 (inspectionIdentifier, files) =>
                 {
                     VesselDuringInspectionDto rransshippedShip = TransshippedShip;
+                    rransshippedShip.Location = Location;
 
                     InspectionTransboardingDto dto = new InspectionTransboardingDto
                     {
@@ -351,7 +356,6 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.HarbourInspection
                             InspectionPortId = InspectionHarbour.Harbour.Value,
                             UnregisteredPortCountryId = InspectionHarbour.Country.Value,
                             UnregisteredPortName = InspectionHarbour.Name,
-                            //LastPortVisit = InspectionHarbour,
                             LogBooks = ShipChecks.LogBooks,
                             PermitLicenses = ShipChecks.PermitLicenses,
                             Permits = ShipChecks.Permits,

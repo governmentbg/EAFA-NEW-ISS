@@ -45,6 +45,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Controls\FishingGearGeneralInfo.xaml.cs">
+      <DependentUpon>FishingGearGeneralInfo.xaml</DependentUpon>
+    </Compile>
     <Compile Update="Controls\WaterCatchesView.xaml.cs">
       <DependentUpon>WaterCatchesView.xaml</DependentUpon>
     </Compile>
@@ -55,6 +58,12 @@
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Controls\DeclarationCatchesView.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Controls\EstablishedOffendersView.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Controls\FishingGearGeneralInfo.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Controls\FishingShipView.xaml">
@@ -96,6 +105,9 @@
     <EmbeddedResource Update="Controls\UnloadingDeclarationsView.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
+    <EmbeddedResource Update="Controls\ViolatedRegulationView.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
     <EmbeddedResource Update="Controls\WaterCatchesView.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
@@ -114,16 +126,25 @@
     <EmbeddedResource Update="FlyoutPages\Inspections\Dialogs\FishingGearDialog\FishingGearView.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
+    <EmbeddedResource Update="FlyoutPages\Inspections\Dialogs\FishingGearDialog\GenerateMarksDialog\GenerateMarksDialog.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
     <EmbeddedResource Update="FlyoutPages\Inspections\Dialogs\FishingGearDialog\PingerDialog\PingerDialog.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="FlyoutPages\Inspections\Dialogs\InspectorDialog\InspectorDialog.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
+    <EmbeddedResource Update="FlyoutPages\Inspections\Dialogs\OffenderDialog\OffenderDialog.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
     <EmbeddedResource Update="FlyoutPages\Inspections\Dialogs\PatrolVehicleDialog\PatrolVehicleDialog.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="FlyoutPages\Inspections\Dialogs\UnloadingDeclarationDialog\UnloadingDeclarationDialog.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="FlyoutPages\Inspections\Dialogs\ViolatedRegulationDialog\ViolatedRegulationDialog.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="FlyoutPages\Inspections\Dialogs\WaterCatchDialog\WaterCatchDialog.xaml">

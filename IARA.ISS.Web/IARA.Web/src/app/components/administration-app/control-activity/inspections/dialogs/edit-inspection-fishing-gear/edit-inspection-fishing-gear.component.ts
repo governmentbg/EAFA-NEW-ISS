@@ -311,6 +311,7 @@ export class EditInspectionFishingGearComponent extends BaseInspectionsComponent
         this.model.unregisteredPermitNumber = this.form.get('unregisteredPermitControl')!.value;
         this.model.ownerComment = this.form.get('ownerCommentControl')!.value;
         this.model.files = this.form.get('filesControl')!.value;
+        this.model.isActive = true;
 
         this.model.personnel = [];
         if (this.isShip) {

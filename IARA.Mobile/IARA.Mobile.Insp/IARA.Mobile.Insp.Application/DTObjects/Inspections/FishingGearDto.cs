@@ -16,8 +16,14 @@ namespace IARA.Mobile.Insp.Application.DTObjects.Inspections
         public int? HouseLength { get; set; }
         public int? HouseWidth { get; set; }
         public decimal? CordThickness { get; set; }
+        public int? LineCount { get; set; }
+        public decimal? NetNominalLength { get; set; }
+        public decimal? NetsInFleetCount { get; set; }
+        public string TrawlModel { get; set; }
         public int? PermitId { get; set; }
         public bool IsActive { get; set; }
+        public bool? HasPingers { get; set; }
+
         public List<FishingGearMarkDto> Marks { get; set; }
         public List<FishingGearPingerDto> Pingers { get; set; }
     }

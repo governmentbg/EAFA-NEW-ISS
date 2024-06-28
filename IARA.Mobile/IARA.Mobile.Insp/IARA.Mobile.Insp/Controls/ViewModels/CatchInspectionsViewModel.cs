@@ -23,30 +23,29 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
         private List<SelectNomenclatureDto> _fishSexTypes;
         private List<SelectNomenclatureDto> _turbotSizeGroups;
         private string _summary;
-
         public CatchInspectionsViewModel(
             InspectionPageViewModel inspection,
             bool showCatchArea = true,
             bool showAllowedDeviation = true,
-            bool showUnloadedQuantity = false,
             bool showOriginShip = false,
             bool showAverageSize = false,
             bool showFishSex = false,
             bool showType = true,
             bool showUndersizedCheck = false,
-            bool showTurbotSizeGroups = true
+            bool showTurbotSizeGroups = true,
+            bool isUnloadedQuantityRequired = false
         )
         {
             Inspection = inspection;
             ShowCatchArea = showCatchArea;
             ShowAllowedDeviation = showAllowedDeviation;
-            ShowUnloadedQuantity = showUnloadedQuantity;
             ShowOriginShip = showOriginShip;
             ShowAverageSize = showAverageSize;
             ShowFishSex = showFishSex;
             ShowType = showType;
             ShowUndersizedCheck = showUndersizedCheck;
             ShowTurbotSizeGroups = showTurbotSizeGroups;
+            IsUnloadedQuantityRequired = isUnloadedQuantityRequired;
 
             AddCatch = CommandBuilder.CreateFrom(OnAddCatch);
             RemoveCatch = CommandBuilder.CreateFrom<CatchInspectionViewModel>(OnRemoveCatch);
@@ -58,7 +57,6 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
 
         public bool ShowCatchArea { get; }
         public bool ShowAllowedDeviation { get; }
-        public bool ShowUnloadedQuantity { get; }
         public bool ShowOriginShip { get; }
         public bool ShowAverageSize { get; }
         public bool ShowFishSex { get; }
@@ -67,7 +65,10 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
         public bool ShowTurbotSizeGroups { get; }
 
         [DuplicateMarketCatches]
+        [AtLeastOne(ErrorMessageResourceName = "AtLeastOneCatch")]
         public ValidStateValidatableTable<CatchInspectionViewModel> Catches { get; set; }
+
+        public bool IsUnloadedQuantityRequired { get; set; }
 
         public string Summary
         {
@@ -128,7 +129,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
 
             Catches.Value.AddRange(catchMeasures.ConvertAll(f =>
             {
-                CatchInspectionViewModel viewModel = new CatchInspectionViewModel(Inspection, this);
+                CatchInspectionViewModel viewModel = new CatchInspectionViewModel(Inspection, this, IsUnloadedQuantityRequired);
 
                 viewModel.CatchQuantity.AssignFrom(f.CatchQuantity);
                 viewModel.UnloadedQuantity.AssignFrom(f.UnloadedQuantity);
@@ -164,7 +165,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
 
         private void OnAddCatch()
         {
-            Catches.Value.Add(new CatchInspectionViewModel(Inspection, this));
+            Catches.Value.Add(new CatchInspectionViewModel(Inspection, this, IsUnloadedQuantityRequired));
         }
 
         private void OnRemoveCatch(CatchInspectionViewModel catchInspection)
@@ -204,15 +205,27 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
                         {
                             return "";
                         }
-                        var quantity = catches.Select(ci => ci.UnloadedQuantity)
-                            .Where(ci => !string.IsNullOrEmpty(ci.Value))
-                            .Where(ci => int.TryParse(ci.Value, out int tmp));
+                        IEnumerable<ValidState> quantity = null;
+
+                        if (IsUnloadedQuantityRequired)
+                        {
+
+                            quantity = catches.Select(ci => ci.UnloadedQuantity)
+                                .Where(ci => !string.IsNullOrEmpty(ci.Value))
+                                .Where(ci => double.TryParse(ci.Value, out double tmp));
+                        }
+                        else
+                        {
+                            quantity = catches.Select(ci => ci.CatchQuantity)
+                                .Where(ci => !string.IsNullOrEmpty(ci.Value))
+                                .Where(ci => double.TryParse(ci.Value, out double tmp));
+                        }
 
                         if (quantity.Count() == 0)
                         {
                             return "";
                         }
-                        return $"{fishType.DisplayValue}: {quantity.Sum(x => int.Parse(x.Value)):f2} кг";
+                        return $"{fishType.DisplayValue}: {quantity.Sum(x => double.Parse(x.Value)):f2} кг";
                     }
                 ).Where(c => !string.IsNullOrEmpty(c)));
         }

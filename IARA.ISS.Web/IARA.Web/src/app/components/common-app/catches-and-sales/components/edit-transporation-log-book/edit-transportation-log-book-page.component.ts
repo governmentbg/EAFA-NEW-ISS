@@ -48,6 +48,7 @@ export class EditTransportationLogBookPageComponent implements OnInit, IDialogCo
     public originPossibleProducts: LogBookPageProductDTO[] = [];
     public isAdd: boolean = false;
     public canAddProducts: boolean = false;
+    public isCommonLogBookPageDataReadonly: boolean = true;
 
     public getControlErrorLabelTextMethod: GetControlErrorLabelTextCallback = this.getControlErrorLabelText.bind(this);
 
@@ -334,7 +335,7 @@ export class EditTransportationLogBookPageComponent implements OnInit, IDialogCo
     private fillForm(): void {
         this.form.get('pageNumberControl')!.setValue(this.model.pageNumber);
         this.form.get('vehicleIdentificationControl')!.setValue(this.model.vehicleIdentification);
-
+        
         if (!this.isAdd) {
             this.form.get('statusControl')!.setValue(this.model.status);
         }
@@ -346,6 +347,8 @@ export class EditTransportationLogBookPageComponent implements OnInit, IDialogCo
         this.form.get('commonLogBookPageDataControl')!.setValue(this.model.commonData);
         this.form.get('receiverPersonControl')!.setValue(this.model.receiver);
         this.form.get('productsControl')!.setValue(this.model.products);
+
+        this.isCommonLogBookPageDataReadonly = this.model.commonData?.originDeclarationNumber?.includes('missing data') !== true;
 
         this.form.get('filesControl')!.setValue(this.model.files);
     }

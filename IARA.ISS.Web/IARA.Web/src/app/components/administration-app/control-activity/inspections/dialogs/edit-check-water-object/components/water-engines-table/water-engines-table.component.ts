@@ -59,11 +59,13 @@ export class WaterEnginesTableComponent extends CustomFormControl<WaterInspectio
         if (value !== undefined && value !== null) {
             setTimeout(() => {
                 this.engines = value;
+                this.onChanged(this.getValue());
             });
         }
         else {
             setTimeout(() => {
                 this.engines = [];
+                this.onChanged(this.getValue());
             });
         }
     }

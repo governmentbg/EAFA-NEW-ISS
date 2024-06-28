@@ -89,7 +89,9 @@
                                        formControlName="commonLogBookPageDataControl"
                                        validityChecker
                                        [logBookType]="logBookType"
-                                       [isReadonly]="true">
+                                       [isReadonly]="true"
+                                       [hidePageNumber]="!isCommonLogBookPageDataReadonly"
+                                       [service]="service">
             </common-log-book-page-data>
         </div>
     </tl-expansion-panel>

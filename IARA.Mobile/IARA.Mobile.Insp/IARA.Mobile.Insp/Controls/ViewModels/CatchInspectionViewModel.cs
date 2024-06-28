@@ -19,11 +19,12 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
     public class CatchInspectionViewModel : ViewModel
     {
         private string _shipText;
-
-        public CatchInspectionViewModel(InspectionPageViewModel inspection, CatchInspectionsViewModel catchInspections)
+        private bool _isUnloadedQuantityRequired;
+        public CatchInspectionViewModel(InspectionPageViewModel inspection, CatchInspectionsViewModel catchInspections, bool isUnloadedQuantityRequired = false)
         {
             Inspection = inspection;
             CatchInspections = catchInspections;
+            _isUnloadedQuantityRequired = isUnloadedQuantityRequired;
 
             FishTypeChosen = CommandBuilder.CreateFrom<SelectNomenclatureDto>(OnFishTypeChosen);
             OpenShipPicker = CommandBuilder.CreateFrom(OnOpenShipPicker);
@@ -35,18 +36,27 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
                 CatchType.Validations.RemoveAt(CatchType.Validations.FindIndex(f => f.Name == nameof(RequiredAttribute)));
             }
 
-            UnloadedQuantity.PropertyChanged += OnUnloadedValueChanged;
+            if (!isUnloadedQuantityRequired)
+            {
+                UnloadedQuantity.Validations.RemoveAt(UnloadedQuantity.Validations.FindIndex(f => f.Name == nameof(RequiredAttribute)));
+                UnloadedQuantity.HasAsterisk = false;
+                OnPropertyChanged(nameof(UnloadedQuantity));
+            }
+
+            UnloadedQuantity.PropertyChanged += OnValueChanged;
+            CatchQuantity.PropertyChanged += OnValueChanged;
         }
         public void Unsubscribe()
         {
-            UnloadedQuantity.PropertyChanged -= OnUnloadedValueChanged;
+            UnloadedQuantity.PropertyChanged -= OnValueChanged;
+            CatchQuantity.PropertyChanged -= OnValueChanged;
         }
         ~CatchInspectionViewModel()
         {
             Unsubscribe();
         }
 
-        private void OnUnloadedValueChanged(object s, PropertyChangedEventArgs e)
+        private void OnValueChanged(object s, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(ValidState.Value))
             {

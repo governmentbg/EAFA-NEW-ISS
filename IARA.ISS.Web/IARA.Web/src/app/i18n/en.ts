@@ -4147,6 +4147,9 @@
         'add-log-book-page-wizard-origin-declaration-does-not-exist-error': 'Invalid origin declaration number',
         'add-log-book-page-wizard-transportation-doc-does-not-exist-error': 'Invalid transportation document number',
         'add-log-book-page-wizard-admission-doc-does-not-exist-error': 'Invalid admission document number',
+        'add-log-book-page-wizard-no-admission-log-book-owner-selected': 'Трябва да се избере собственик на дневник за приемане, за да се избере страница',
+        'add-log-book-page-wizard-no-ship-selected': 'Трябва да се избере кораб, за да се избере страница',
+        'add-log-book-page-wizard-no-transportation-log-book-owner-selected': 'Трябва да се избере собственик на дневник за превоз, за да се избере страница',
         'add-log-book-page-wizard-is-import-not-by-ship': 'Imports are made in a different way than imports by ship',
         'add-log-book-page-wizard-place-of-import': 'Place of import',
         'add-log-book-page-wizard-page-not-in-log-book-error': 'The page is not in the range of the log book',
@@ -4176,6 +4179,7 @@
         'common-log-book-page-data-uploading-date': 'Date of unloading',
         'common-log-book-page-data-is-import-not-by-ship': 'Imports are made in a different way than imports by ship',
         'common-log-book-page-data-place-of-import': 'Place of import',
+        'common-log-book-page-data-no-ship-selected': 'Трябва да се избере кораб, за да се избере номер на страница',
         'common-log-book-page-data-vendor-permit-license-holder': 'Vendor information',
 
         'edit-log-book-page-fill-preliminary-data': 'Preliminary data',

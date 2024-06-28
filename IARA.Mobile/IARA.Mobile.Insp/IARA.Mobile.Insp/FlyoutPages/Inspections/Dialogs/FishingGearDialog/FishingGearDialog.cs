@@ -13,7 +13,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.FishingGearDialog
 {
     public class FishingGearDialog : TLBaseDialog<FishingGearDialogViewModel, FishingGearModel>
     {
-        public FishingGearDialog(InspectionPageViewModel inspection, ViewActivityType dialogType, bool hasPingers, FishingGearModel dto = null)
+        public FishingGearDialog(InspectionPageViewModel inspection, ViewActivityType dialogType, bool hasPingers, bool hasAttachmentForFishingGear, FishingGearModel dto = null)
         {
             ViewModel.Inspection = inspection;
             ViewModel.Edit = dto;
@@ -39,6 +39,13 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.FishingGearDialog
                     {
                         new FishingGearView(ViewModel.InspectedFishingGear)
                             .BindTranslation(SectionView.TextProperty, "InspectedFishingGear", nameof(GroupResourceEnum.FishingGear)),
+                        new TLMultiToggleView
+                        {
+                            ValidState = ViewModel.HasAttachedAppliances,
+                            Buttons = InspectionTogglesHelper.YesNoMultiToggles,
+                            IsEnabled = dialogType != ViewActivityType.Review,
+                            IsVisible = hasAttachmentForFishingGear,
+                        }.BindTranslation(TLMultiToggleView.TextProperty, "HasAttachedAppliances", nameof(GroupResourceEnum.FishingGear)),
                         new Button
                         {
                             Command = ViewModel.Save,

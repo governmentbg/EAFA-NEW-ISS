@@ -34,6 +34,9 @@
                     SelectedItem="{Binding Action}"
                     Orientation="Vertical"
                     IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}" />
+            <Label Text="{rt:Translate Required, Group=Validation}"
+                    IsVisible="{Binding ShowErrorText}"
+                    TextColor="Red" />
             <tl:TLEntry Title="{rt:Translate Location, Group=WaterCatch}"
                     ValidState="{Binding Location}"
                     IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}" />

@@ -184,12 +184,14 @@ export class InspectedCatchesTableComponent extends CustomFormControl<Inspection
             setTimeout(() => {
                 this.catches = catches;
                 this.recalculateCatchQuantitySums();
+                this.onChanged(this.getValue());
             });
         }
         else {
             setTimeout(() => {
                 this.catches = [];
                 this.recalculateCatchQuantitySums();
+                this.onChanged(this.getValue());
             });
         }
     }

@@ -54,11 +54,13 @@ export class AuanViolatedRegulationsComponent extends CustomFormControl<AuanViol
         if (value !== null && value !== undefined) {
             setTimeout(() => {
                 this.violatedRegulations = value;
+                this.onChanged(this.getValue());
             });
         }
         else {
             setTimeout(() => {
                 this.violatedRegulations = [];
+                this.onChanged(this.getValue());
             });
         }
     }
