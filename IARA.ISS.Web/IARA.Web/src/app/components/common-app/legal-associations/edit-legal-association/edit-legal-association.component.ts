@@ -219,8 +219,10 @@ export class EditLegalAssociationComponent implements OnInit, IDialogComponent {
                             this.model = new FishingAssociationRegixDataDTO(regixData.dialogDataModel);
                             this.expectedResults = new FishingAssociationRegixDataDTO(regixData.regiXDataModel);
 
-                            for (const person of this.model.persons as FishingAssociationPersonDTO[]) {
-                                person.hasRegixDataDiscrepancy = !this.personEqualsRegixPerson(person);
+                            if (this.model.persons !== undefined && this.model.persons !== null) {
+                                for (const person of this.model.persons as FishingAssociationPersonDTO[]) {
+                                    person.hasRegixDataDiscrepancy = !this.personEqualsRegixPerson(person);
+                                }
                             }
 
                             this.fillForm();
@@ -240,8 +242,10 @@ export class EditLegalAssociationComponent implements OnInit, IDialogComponent {
                             if (this.showRegiXData) {
                                 this.expectedResults = new FishingAssociationRegixDataDTO(legal.regiXDataModel);
 
-                                for (const person of this.model.persons as FishingAssociationPersonDTO[]) {
-                                    person.hasRegixDataDiscrepancy = !this.personEqualsRegixPerson(person);
+                                if (legal.persons !== undefined && legal.persons !== null) {
+                                    for (const person of legal.persons as FishingAssociationPersonDTO[]) {
+                                        person.hasRegixDataDiscrepancy = !this.personEqualsRegixPerson(person);
+                                    }
                                 }
 
                                 legal.regiXDataModel = undefined;
@@ -744,30 +748,37 @@ export class EditLegalAssociationComponent implements OnInit, IDialogComponent {
     private personsValidator(): ValidatorFn {
         return (control: AbstractControl): ValidationErrors | null => {
             let atLeastOneActive: boolean = false;
-            for (const person of this.persons) {
-                if (person.isActive === true) {
-                    atLeastOneActive = true;
-                    break;
-                }
-            }
 
-            if (this.persons.length > 0) {
-                const noEmailPerson: FishingAssociationPersonDTO | undefined = this.persons.find(x => !x.email || x.email === '');
-                if (noEmailPerson) {
-                    this.emailNotEnteredFor = noEmailPerson.fullName;
-                    return { 'emailNotEntered': true }
+            if (this.persons === undefined || this.persons === null) {
+                atLeastOneActive = true;
+            }
+            else {
+                for (const person of this.persons) {
+                    if (person.isActive === true) {
+                        atLeastOneActive = true;
+                        break;
+                    }
+                }
+
+                if (this.persons.length > 0) {
+                    const noEmailPerson: FishingAssociationPersonDTO | undefined = this.persons.find(x => !x.email || x.email === '');
+                    if (noEmailPerson) {
+                        this.emailNotEnteredFor = noEmailPerson.fullName;
+                        return { 'emailNotEntered': true }
+                    }
+                    else {
+                        this.emailNotEnteredFor = undefined;
+                    }
                 }
                 else {
                     this.emailNotEnteredFor = undefined;
                 }
             }
-            else {
-                this.emailNotEnteredFor = undefined;
-            }
 
             if (!atLeastOneActive) {
                 return { 'atLeastOnePersonNeeded': true };
             }
+
             return null;
         };
     }
