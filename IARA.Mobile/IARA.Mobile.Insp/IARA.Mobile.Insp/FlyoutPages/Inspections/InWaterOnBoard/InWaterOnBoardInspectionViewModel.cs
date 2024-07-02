@@ -244,7 +244,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.InWaterOnBoard
                         InspectionState = submitType == SubmitType.Draft || submitType == SubmitType.Edit || submitType == SubmitType.ReturnForEdit ? InspectionState.Draft : InspectionState.Submitted,
                         InspectionType = InspectionType.IBS,
                         ActionsTaken = AdditionalInfo.ActionsTaken,
-                        AdministrativeViolation = AdditionalInfo.AdministrativeViolation,
+                        AdministrativeViolation = AdditionalInfo.ViolatedRegulations.HasViolations,
                         InspectorComment = AdditionalInfo.InspectorComment,
                         ByEmergencySignal = InspectionGeneralInfo.ByEmergencySignal,
                         EndDate = InspectionGeneralInfo.EndDate,

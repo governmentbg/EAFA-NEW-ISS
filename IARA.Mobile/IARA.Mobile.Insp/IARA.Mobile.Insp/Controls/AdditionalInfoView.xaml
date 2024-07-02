@@ -5,6 +5,7 @@
         xmlns:tl="clr-namespace:TechnoLogica.Xamarin.Controls;assembly=TechnoLogica.Xamarin"
         xmlns:rt="clr-namespace:TechnoLogica.Xamarin.ResourceTranslator;assembly=TechnoLogica.Xamarin"
         xmlns:vm="clr-namespace:IARA.Mobile.Insp.Controls.ViewModels"
+        xmlns:lc="clr-namespace:IARA.Mobile.Insp.Controls;assembly=IARA.Mobile.Insp"
         xmlns:h="clr-namespace:TechnoLogica.Xamarin.Helpers;assembly=TechnoLogica.Xamarin"
         x:Class="IARA.Mobile.Insp.Controls.AdditionalInfoView"
         x:DataType="vm:AdditionalInfoViewModel"
@@ -26,9 +27,8 @@
             <tl:TLEditor Title="{rt:Translate ActionsTaken, Group=GeneralInfo}"
                     ValidState="{Binding ActionsTaken}"
                     IsEnabled="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}" />
-            <tl:TLCheckView Text="{rt:Translate AdministrativeViolation, Group=GeneralInfo}"
-                    ValidState="{Binding AdministrativeViolation}"
-                    IsEnabled="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}" />
+
+            <lc:ViolatedRegulationView BindingContext="{Binding ViolatedRegulations}" />
         </StackLayout>
     </sv:SectionView.InnerContent>
 </sv:SectionView>

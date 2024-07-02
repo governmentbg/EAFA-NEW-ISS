@@ -276,17 +276,11 @@ export class EditLogBookComponent implements OnInit, IDialogComponent {
                                 this.form.get('startPageNumberControl')!.enable();
                                 this.form.get('endPageNumberControl')!.enable();
 
-                                if (this.isOnline) {
-                                    this.form.get('startPageNumberControl')!.setValidators([TLValidators.number(0, undefined, 0)]);
-                                    this.form.get('endPageNumberControl')!.setValidators([TLValidators.number(0, undefined, 0)]);
-                                }
-                                else {
-                                    this.form.get('startPageNumberControl')!.setValidators([TLValidators.number(0, undefined, 0), Validators.required]);
-                                    this.form.get('endPageNumberControl')!.setValidators([TLValidators.number(0, undefined, 0), Validators.required]);
+                                this.form.get('startPageNumberControl')!.setValidators([TLValidators.number(0, undefined, 0), Validators.required]);
+                                this.form.get('endPageNumberControl')!.setValidators([TLValidators.number(0, undefined, 0), Validators.required]);
 
-                                    this.form.get('startPageNumberControl')!.markAsPending();
-                                    this.form.get('endPageNumberControl')!.markAsPending();
-                                }
+                                this.form.get('startPageNumberControl')!.markAsPending();
+                                this.form.get('endPageNumberControl')!.markAsPending();
 
                                 if (this.model instanceof CommercialFishingLogBookEditDTO) {
                                     this.form.get('permitLicenseStartPageNumberControl')!.enable();
@@ -376,10 +370,12 @@ export class EditLogBookComponent implements OnInit, IDialogComponent {
                 }
             });
 
-            if (!this.isOnline && !this.isForRenewal) {
+            if (!this.isForRenewal) {
                 this.form.get('startPageNumberControl')!.valueChanges.subscribe({
                     next: (value: number | undefined) => {
-                        if (value !== null && value !== undefined) {
+                        if ((!this.isOnline || this.selectedLogBookType !== LogBookTypesEnum.Ship)
+                            && value !== null && value !== undefined
+                        ) {
                             if (this.maxNumberOfLogBookPages !== null && this.maxNumberOfLogBookPages !== undefined) {
                                 this.maxEndPageNumber = Number(value) + Number(this.maxNumberOfLogBookPages);
                             }
@@ -979,7 +975,7 @@ export class EditLogBookComponent implements OnInit, IDialogComponent {
                 return null;
             }
 
-            if (this.isOnline || this.isForRenewal) {
+            if ((this.isOnline && this.selectedLogBookType === LogBookTypesEnum.Ship) || this.isForRenewal) {
                 return null;
             }
 

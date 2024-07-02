@@ -1420,5 +1420,58 @@ namespace IARA.Mobile.Insp.Application.Transactions
                     .ToList();
             }
         }
+
+        public List<AuanViolatedRegulationDto> GetLaws(int page, int pageSize, string search = null)
+        {
+            search = search?.ToLower();
+
+            using (IAppDbContext context = ContextBuilder.CreateContext())
+            {
+                List<AuanViolatedRegulationDto> result = new List<AuanViolatedRegulationDto>();
+                if (string.IsNullOrEmpty(search))
+                {
+                    result = (
+                    from law in context.NLaws
+                    select new AuanViolatedRegulationDto
+                    {
+                        Id = law.Id,
+                        Article = law.Article,
+                        Paragraph = law.Paragraph,
+                        Section = law.Section,
+                        Letter = law.Letter,
+                        SectionType = law.SectionType,
+                        LawSectionId = law.LawSectionId,
+                        Law = law.LawSection,
+                        LawText = law.LawText,
+                        Comments = law.Comments,
+                    }).Skip(page * pageSize).Take(pageSize).ToList();
+                }
+                else
+                {
+                    result = context.NLaws
+                        .Where(x => x.Article.ToLower().Contains(search) ||
+                                    x.Paragraph.ToLower().Contains(search) ||
+                                    x.Section.ToLower().Contains(search) ||
+                                    x.Letter.ToLower().Contains(search) ||
+                                    x.LawSection.ToLower().Contains(search) ||
+                                    x.LawText.ToLower().Contains(search))
+                        .Select(x => new AuanViolatedRegulationDto
+                        {
+                            Id = x.Id,
+                            Article = string.IsNullOrEmpty(x.Article) ? null : x.Article,
+                            Paragraph = string.IsNullOrEmpty(x.Paragraph) ? null : x.Paragraph,
+                            Section = string.IsNullOrEmpty(x.Section) ? null : x.Section,
+                            Letter = string.IsNullOrEmpty(x.Letter) ? null : x.Letter,
+                            SectionType = x.SectionType,
+                            LawSectionId = x.LawSectionId,
+                            Law = x.LawSection,
+                            LawText = x.LawText,
+                            Comments = x.Comments,
+                        }).ToList();
+                }
+
+                return result;
+            }
+        }
     }
 }

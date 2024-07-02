@@ -1,9 +1,4 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using IARA.Mobile.Application.Attributes;
+﻿using IARA.Mobile.Application.Attributes;
 using IARA.Mobile.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Application.DTObjects.Reports;
 using IARA.Mobile.Domain.Enums;
@@ -20,6 +15,11 @@ using IARA.Mobile.Insp.ViewModels.Models;
 using IARA.Mobile.Shared.Attributes;
 using IARA.Mobile.Shared.Menu;
 using IARA.Mobile.Shared.Views;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows.Input;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Helpers;
 using TechnoLogica.Xamarin.ViewModels.Interfaces;
@@ -242,7 +242,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FishermanInspection
                         InspectionState = submitType == SubmitType.Draft || submitType == SubmitType.Edit || submitType == SubmitType.ReturnForEdit ? InspectionState.Draft : InspectionState.Submitted,
                         InspectionType = InspectionType.IFP,
                         ActionsTaken = AdditionalInfo.ActionsTaken,
-                        AdministrativeViolation = AdditionalInfo.AdministrativeViolation,
+                        AdministrativeViolation = AdditionalInfo.ViolatedRegulations.HasViolations,
                         InspectorComment = AdditionalInfo.InspectorComment,
                         ByEmergencySignal = InspectionGeneralInfo.ByEmergencySignal,
                         EndDate = InspectionGeneralInfo.EndDate,

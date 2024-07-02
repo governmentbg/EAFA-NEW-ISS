@@ -111,11 +111,19 @@ namespace IARA.Mobile.Insp.Application.Helpers
                             }
                         }
 
-                        table.AddRange(result.Content
-                            .Where(f => f.IsActive)
-                            .Select(convert)
-                            .ToList()
-                        );
+                        try
+                        {
+                            table.AddRange(result.Content
+                                .Where(f => f.IsActive)
+                                .Select(convert)
+                                .ToList()
+                            );
+                        }
+                        catch (Exception ex)
+                        {
+
+                            throw;
+                        }
                     }
 
                     nomenclatureDates[nomenclatureEnum] = now;

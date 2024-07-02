@@ -24,7 +24,7 @@ namespace IARA.Mobile.Insp.Infrastructure.Persistence
         /// <summary>
         /// Represents the current version of the migrations
         /// </summary>
-        private const int CURRENT_VERSION = 4;
+        private const int CURRENT_VERSION = 5;
 
         private readonly INomenclatureDatesClear nomenclatureDatesClear;
         private readonly IExceptionHandler exceptionHandler;
@@ -62,6 +62,7 @@ namespace IARA.Mobile.Insp.Infrastructure.Persistence
                             new Version2(),
                             new Version3(nomenclatureDatesClear),
                             new Version4(),
+                            new Version5(nomenclatureDatesClear),
                         };
 
                         for (int i = lastVersion; i < CURRENT_VERSION; i++)
