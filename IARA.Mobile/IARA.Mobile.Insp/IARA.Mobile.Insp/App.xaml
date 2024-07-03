@@ -14,6 +14,7 @@
             <!--  CONVERTERS  -->
             <xct:VariableMultiValueConverter x:Key="All" ConditionType="All" />
             <converters:ReviewToWidthConverter x:Key="ReviewToWidth" />
+            <converters:IsNotEmptyOrNotNullConverter x:Key="NotEmptyOrNotNull" />
             <converters:ReviewDialogToWidthConverter x:Key="ReviewDialogToWidth" />
             <tlConverters:IsNotNullConverter x:Key="IsNotNull" />
             <tlConverters:IsNullConverter x:Key="IsNull" />

@@ -11,7 +11,7 @@ namespace IARA.Mobile.Insp.Application.DTObjects.Nomenclatures.API
         public string Letter { get; set; }
         public ViolatedRegulationSectionTypesEnum? SectionType { get; set; }
         public int LawSectionId { get; set; }
-        public string LawSection { get; set; }
+        public string Law { get; set; }
         public string LawText { get; set; }
         public string Comments { get; set; }
     }

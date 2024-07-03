@@ -335,7 +335,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.BoatOnOpenWater
                         InspectionType = InspectionType.OFS,
                         ObservedVesselActivities = MapVesselActivities().ToList(),
                         ActionsTaken = AdditionalInfo.ActionsTaken,
-                        AdministrativeViolation = AdditionalInfo.AdministrativeViolation,
+                        AdministrativeViolation = AdditionalInfo.ViolatedRegulations.HasViolations,
                         InspectorComment = AdditionalInfo.InspectorComment,
                         ByEmergencySignal = InspectionGeneralInfo.ByEmergencySignal,
                         Course = Course,

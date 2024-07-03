@@ -1,10 +1,10 @@
-﻿using IARA.Mobile.Shared.Views;
+﻿using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
 namespace IARA.Mobile.Insp.Controls
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class ViolatedRegulationView : SectionView
+    public partial class ViolatedRegulationView : StackLayout
     {
         public ViolatedRegulationView()
         {

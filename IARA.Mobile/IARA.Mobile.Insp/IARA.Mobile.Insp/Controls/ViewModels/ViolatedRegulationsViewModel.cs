@@ -17,6 +17,8 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
 {
     public class ViolatedRegulationsViewModel : ViewModel
     {
+        private bool _hasViolations;
+
         public ViolatedRegulationsViewModel(InspectionPageViewModel inspection)
         {
             Inspection = inspection;
@@ -29,6 +31,12 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
 
         public InspectionPageViewModel Inspection { get; set; }
         public ValidStateTable<ViolatedRegulationModel> ViolatedRegulations { get; set; }
+
+        public bool HasViolations
+        {
+            get { return _hasViolations; }
+            set { SetProperty(ref _hasViolations, value); }
+        }
 
         public ICommand AddViolation { get; set; }
         public ICommand ViewViolation { get; set; }

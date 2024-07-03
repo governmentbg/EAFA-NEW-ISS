@@ -15,6 +15,7 @@ namespace IARA.Mobile.Insp.Infrastructure.Persistence.Migrations
 
         public void CreateDatabase()
         {
+            context.CreateTable<NLaws>();
             context.CreateTable<Catch>();
             context.CreateTable<Ship>();
             context.CreateTable<NFish>();

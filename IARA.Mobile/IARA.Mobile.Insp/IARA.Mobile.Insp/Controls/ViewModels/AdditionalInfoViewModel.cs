@@ -1,8 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations;
-using IARA.Mobile.Insp.Application.DTObjects.Inspections;
+﻿using IARA.Mobile.Insp.Application.DTObjects.Inspections;
 using IARA.Mobile.Insp.Base;
 using IARA.Mobile.Insp.Domain.Enums;
 using IARA.Mobile.Insp.Models;
+using System.ComponentModel.DataAnnotations;
 using TechnoLogica.Xamarin.Helpers;
 using TechnoLogica.Xamarin.ViewModels.Models;
 
@@ -10,9 +10,11 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
 {
     public class AdditionalInfoViewModel : ViewModel
     {
+        private bool _hasViolations;
         public AdditionalInfoViewModel(InspectionPageViewModel inspection)
         {
             Inspection = inspection;
+            ViolatedRegulations = new ViolatedRegulationsViewModel(inspection);
 
             this.AddValidation();
 
@@ -20,6 +22,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
         }
 
         public InspectionPageViewModel Inspection { get; }
+        public ViolatedRegulationsViewModel ViolatedRegulations { get; }
 
         [MaxLength(4000)]
         public ValidStateObservation ObservationsOrViolations { get; set; }
@@ -30,13 +33,18 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
         [MaxLength(4000)]
         public ValidState ActionsTaken { get; set; }
 
-        public ValidStateBool AdministrativeViolation { get; set; }
+        public bool HasViolations
+        {
+            get { return _hasViolations; }
+            set { _hasViolations = value; }
+        }
+
 
         public void OnEdit(InspectionEditDto dto)
         {
             ActionsTaken.Value = dto.ActionsTaken ?? string.Empty;
             InspectorComment.Value = dto.InspectorComment ?? string.Empty;
-            AdministrativeViolation.Value = dto.AdministrativeViolation ?? false;
+            ViolatedRegulations.HasViolations = dto.AdministrativeViolation ?? false;
 
             InspectionObservationTextDto additionalInfoObservation = dto.ObservationTexts?.Find(f => f.Category == InspectionObservationCategory.AdditionalInfo);
 

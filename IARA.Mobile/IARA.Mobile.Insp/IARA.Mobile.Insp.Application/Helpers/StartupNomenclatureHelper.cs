@@ -175,7 +175,7 @@ namespace IARA.Mobile.Insp.Application.Helpers
                             Letter = dto.Letter,
                             SectionType = dto.SectionType,
                             LawSectionId = dto.LawSectionId,
-                            LawSection = dto.LawSection,
+                            LawSection = dto.Law,
                             LawText = dto.LawText,
                             Comments = dto.Comments,
                             IsActive = dto.IsActive,

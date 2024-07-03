@@ -17,5 +17,6 @@
         public string LawText { get; set; }
 
         public string Comments { get; set; }
+        public string Law { get; set; }
     }
 }

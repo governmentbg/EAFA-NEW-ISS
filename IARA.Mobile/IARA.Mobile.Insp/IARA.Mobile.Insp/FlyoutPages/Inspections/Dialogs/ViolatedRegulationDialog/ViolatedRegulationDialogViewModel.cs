@@ -1,6 +1,11 @@
-﻿using IARA.Mobile.Insp.Domain.Enums;
+﻿using IARA.Mobile.Application;
+using IARA.Mobile.Insp.Application.DTObjects.Inspections;
+using IARA.Mobile.Insp.Application.Interfaces.Transactions;
+using IARA.Mobile.Insp.Domain.Enums;
 using IARA.Mobile.Insp.Helpers;
 using IARA.Mobile.Insp.Models;
+using IARA.Mobile.Insp.ViewModels.Models;
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -8,6 +13,7 @@ using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Helpers;
 using TechnoLogica.Xamarin.ViewModels.Base;
 using TechnoLogica.Xamarin.ViewModels.Models;
+using Xamarin.Forms;
 
 namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.ViolatedRegulationDialog
 {
@@ -16,12 +22,15 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.ViolatedRegulationDia
         public ViolatedRegulationDialogViewModel()
         {
             Save = CommandBuilder.CreateFrom(OnSave);
-
+            RegulationChosen = CommandBuilder.CreateFrom<AuanViolatedRegulationDto>(OnRegulationChosaen);
             this.AddValidation();
+
+            Regulation.ItemsSource = new TLObservableCollection<AuanViolatedRegulationDto>();
+            Regulation.GetMore = (int page, int pageSize, string search) =>
+                DependencyService.Resolve<INomenclatureTransaction>().GetLaws(page, pageSize, search);
         }
 
         public ViolatedRegulationModel Edit { get; set; }
-
         public ViewActivityType DialogType { get; set; }
 
         [Required]
@@ -32,10 +41,15 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.ViolatedRegulationDia
         public ValidState Comments { get; set; }
         public ValidState LawText { get; set; }
 
+        public ValidStateInfiniteSelect<AuanViolatedRegulationDto> Regulation { get; set; }
+
         public ICommand Save { get; set; }
+        public ICommand RegulationChosen { get; set; }
 
         public override Task Initialize(object sender)
         {
+            Regulation.ItemsSource.AddRange(DependencyService.Resolve<INomenclatureTransaction>().GetLaws(0, CommonGlobalVariables.PullItemsCount));
+
             if (Edit != null)
             {
                 Article.AssignFrom(Edit.Article);
@@ -47,6 +61,11 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.ViolatedRegulationDia
             }
 
             return Task.CompletedTask;
+        }
+
+        private void OnRegulationChosaen(AuanViolatedRegulationDto dto)
+        {
+            throw new NotImplementedException();
         }
 
         private Task OnSave()
@@ -62,6 +81,5 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.ViolatedRegulationDia
                 LawText = LawText.Value
             });
         }
-
     }
 }
