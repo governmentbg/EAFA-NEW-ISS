@@ -271,6 +271,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.InspectionWater
                             AdditionalInfo.ObservationsOrViolations,
                         }.Where(f => !string.IsNullOrWhiteSpace(f.Text)).ToList(),
                         Catches = Catches,
+                        ViolatedRegulations = AdditionalInfo.ViolatedRegulations.ViolatedRegulations.Value.Select(x => (AuanViolatedRegulationDto)x).ToList(),
                     };
 
                     return InspectionsTransaction.HandleInspection(dto, submitType);

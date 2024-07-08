@@ -9,6 +9,7 @@ namespace IARA.Mobile.Insp.Application.Interfaces.Transactions
     public interface INomenclatureTransaction
     {
         List<AuanViolatedRegulationDto> GetLaws(int page, int pageSize, string search = null);
+        AuanViolatedRegulationDto GetLaw(int lawId);
 
         List<SelectNomenclatureDto> GetCountries();
 

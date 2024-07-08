@@ -301,8 +301,8 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.VehicleInspection
                         VehicleTypeId = VehicleType.Value,
                         Personnel = new InspectionSubjectPersonnelDto[]
                         {
-                            ModifiedOwner(),
-                            Driver,
+                            Owner,
+                            ModifiedDriver(),
                             Buyer,
                         }.Where(f => f != null).ToList(),
                         InspectionLocation = Location,
@@ -314,6 +314,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.VehicleInspection
                         {
                             AdditionalInfo.ObservationsOrViolations,
                         }.Where(f => !string.IsNullOrWhiteSpace(f.Text)).ToList(),
+                        ViolatedRegulations = AdditionalInfo.ViolatedRegulations.ViolatedRegulations.Value.Select(x => (AuanViolatedRegulationDto)x).ToList(),
                     };
 
                     return InspectionsTransaction.HandleInspection(dto, submitType);
@@ -321,17 +322,17 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.VehicleInspection
             );
         }
 
-        private InspectionSubjectPersonnelDto ModifiedOwner()
+        private InspectionSubjectPersonnelDto ModifiedDriver()
         {
             if (OwnerIsDriver)
             {
-                InspectionSubjectPersonnelDto owner = Driver;
-                owner.Type = InspectedPersonType.OwnerPers;
-                return owner;
+                InspectionSubjectPersonnelDto driver = Owner;
+                driver.Type = InspectedPersonType.Driver;
+                return driver;
             }
             else
             {
-                return Owner;
+                return Driver;
             }
         }
     }

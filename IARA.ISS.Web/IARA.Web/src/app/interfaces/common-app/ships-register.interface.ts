@@ -9,6 +9,8 @@ import { IBaseAuditService } from '../base-audit.interface';
 import { FleetTypeNomenclatureDTO } from '@app/models/generated/dtos/FleetTypeNomenclatureDTO';
 import { ShipsRegisterFilters } from '@app/models/generated/filters/ShipsRegisterFilters';
 import { ExcelExporterRequestModel } from '@app/shared/components/data-table/models/excel-exporter-request-model.model';
+import { PaymentTariffDTO } from '@app/models/generated/dtos/PaymentTariffDTO';
+import { FreedCapacityTariffCalculationParameters } from '@app/components/common-app/ships-register/models/freed-capacity-tariff-calculation-parameters.model';
 
 export interface IShipsRegisterService extends IApplicationsActionsService, IBaseAuditService {
     getShip(id: number): Observable<ShipRegisterEditDTO>;
@@ -21,6 +23,8 @@ export interface IShipsRegisterService extends IApplicationsActionsService, IBas
 
     downloadFile(fileId: number, fileName: string): Observable<boolean>;
     downloadShipRegisterExcel(request: ExcelExporterRequestModel<ShipsRegisterFilters>): Observable<boolean>;
+
+    calculateFreedCapacityAppliedTariffs(parameters: FreedCapacityTariffCalculationParameters): Observable<PaymentTariffDTO[]>;
 
     getShipOwnerAudit(id: number): Observable<SimpleAuditDTO>;
     getShipLogBookPageSimpleAudit(id: number): Observable<SimpleAuditDTO>;

@@ -24,11 +24,13 @@
                       formControlName="nameControl"
                       label="{{ 'inspections.vehicle-name' | tlTranslate }}">
             </tl-input>
+
             <tl-input *ngIf="isWaterVehicle"
                       fxFlex="50"
                       formControlName="cfrControl"
                       label="{{ 'inspections.cfr' | tlTranslate }}">
             </tl-input>
+
             <tl-input *ngIf="!isWaterVehicle"
                       fxFlex="50"
                       formControlName="cfrControl"
@@ -44,26 +46,22 @@
                       formControlName="externalMarkControl"
                       label="{{ 'inspections.external-mark' | tlTranslate }}">
             </tl-input>
+
             <tl-input fxFlex="50"
                       formControlName="callsignControl"
                       label="{{ 'inspections.callsign' | tlTranslate }}">
             </tl-input>
         </div>
 
-        <div fxLayout="row"
-             fxLayoutGap="1em"
-             fxLayoutAlign="start center">
-            <tl-autocomplete fxFlex="50"
-                             formControlName="countryControl"
-                             label="{{ 'inspections.country' | tlTranslate }}"
-                             [options]="countries">
-            </tl-autocomplete>
-            <tl-autocomplete fxFlex="50"
-                             formControlName="institutionControl"
-                             label="{{ 'inspections.institution' | tlTranslate }}"
-                             [options]="institutions">
-            </tl-autocomplete>
-        </div>
+        <tl-autocomplete formControlName="countryControl"
+                         label="{{ 'inspections.country' | tlTranslate }}"
+                         [options]="countries">
+        </tl-autocomplete>
+
+        <tl-autocomplete formControlName="institutionControl"
+                         label="{{ 'inspections.institution' | tlTranslate }}"
+                         [options]="institutions">
+        </tl-autocomplete>
 
         <tl-autocomplete formControlName="patrolVehicleTypeControl"
                          label="{{ 'inspections.patrol-vehicle-type' | tlTranslate }}"

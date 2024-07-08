@@ -19,10 +19,6 @@ import { ShipsUtils } from '@app/shared/utils/ships.utils';
     templateUrl: './inspected-ship.component.html'
 })
 export class InspectedShipComponent extends CustomFormControl<VesselDuringInspectionDTO | undefined> implements OnInit, OnChanges, IDialogComponent {
-
-    @Output()
-    public shipSelected: EventEmitter<VesselDuringInspectionDTO> = new EventEmitter<VesselDuringInspectionDTO>();
-
     @Input()
     public hasMap: boolean = true;
 
@@ -37,6 +33,9 @@ export class InspectedShipComponent extends CustomFormControl<VesselDuringInspec
 
     @Input()
     public isShipRequired: boolean = true;
+
+    @Output()
+    public shipSelected: EventEmitter<VesselDuringInspectionDTO> = new EventEmitter<VesselDuringInspectionDTO>();
 
     public isFromRegister: boolean = true;
     public canChangeRegister: boolean = true;
@@ -115,7 +114,8 @@ export class InspectedShipComponent extends CustomFormControl<VesselDuringInspec
                 this.form.get('callsignControl')!.disable();
                 this.form.get('shipTypeControl')!.disable();
                 this.form.get('mmsiControl')!.disable();
-            } else {
+            }
+            else {
                 this.form.get('nameControl')!.enable();
                 this.form.get('externalMarkControl')!.enable();
                 this.form.get('cfrControl')!.enable();
@@ -268,7 +268,8 @@ export class InspectedShipComponent extends CustomFormControl<VesselDuringInspec
             this.form.get('callsignControl')!.disable();
             this.form.get('shipTypeControl')!.disable();
             this.form.get('mmsiControl')!.disable();
-        } else {
+        }
+        else {
             this.form.get('shipControl')!.clearValidators();
             this.form.get('nameControl')!.setValidators(this.isShipRequired ? [Validators.required, Validators.maxLength(500)] : [Validators.maxLength(500)]);
             this.form.get('externalMarkControl')!.setValidators(this.isShipRequired ? [Validators.required, Validators.maxLength(50)] : [Validators.maxLength(50)]);

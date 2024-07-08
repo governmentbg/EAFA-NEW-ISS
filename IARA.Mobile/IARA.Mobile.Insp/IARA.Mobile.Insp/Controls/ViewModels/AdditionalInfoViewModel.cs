@@ -45,6 +45,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
             ActionsTaken.Value = dto.ActionsTaken ?? string.Empty;
             InspectorComment.Value = dto.InspectorComment ?? string.Empty;
             ViolatedRegulations.HasViolations = dto.AdministrativeViolation ?? false;
+            ViolatedRegulations.OnEdit(dto.ViolatedRegulations);
 
             InspectionObservationTextDto additionalInfoObservation = dto.ObservationTexts?.Find(f => f.Category == InspectionObservationCategory.AdditionalInfo);
 

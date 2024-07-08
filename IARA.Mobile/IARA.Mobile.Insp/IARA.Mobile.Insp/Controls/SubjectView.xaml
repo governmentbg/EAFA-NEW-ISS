@@ -28,18 +28,15 @@
                 ValidState="{Binding LastName}"
                 IsEnabled="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}"
                 IsVisible="{Binding Action.Code, Converter={StaticResource Equal}, ConverterParameter=Person}" />
-        <Grid ColumnDefinitions="*,Auto"
-                IsVisible="{Binding Action.Code, Converter={StaticResource Equal}, ConverterParameter=Person}">
-            <sv:TLEntryWithType ValidState="{Binding EGN}"
-                    IsEnabled="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}" />
+        <Grid ColumnDefinitions="*,Auto" IsVisible="{Binding Action.Code, Converter={StaticResource Equal}, ConverterParameter=Person}">
+            <sv:TLEntryWithType ValidState="{Binding EGN}" IsEnabled="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}" />
             <ImageButton Grid.Column="1"
                     Source="{FontImageSource Color=White, FontFamily=FA, Glyph={Static h:IconFont.MagnifyingGlass}, Size=25}"
                     Padding="10"
                     VerticalOptions="End"
                     Command="{Binding SearchPerson}" />
         </Grid>
-        <Grid ColumnDefinitions="*,Auto"
-                IsVisible="{Binding Action.Code, Converter={StaticResource Equal}, ConverterParameter=Legal}">
+        <Grid ColumnDefinitions="*,Auto" IsVisible="{Binding Action.Code, Converter={StaticResource Equal}, ConverterParameter=Legal}">
             <tl:TLEntry Title="{rt:Translate EIK, Group=Common}"
                     ValidState="{Binding EGN}"
                     IsEnabled="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}" />

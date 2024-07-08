@@ -39,6 +39,8 @@ import { FishingCapacityStatisticsDTO } from '@app/models/generated/dtos/Fishing
 import { CapacityCertificateDuplicateApplicationDTO } from '@app/models/generated/dtos/CapacityCertificateDuplicateApplicationDTO';
 import { CapacityCertificateDuplicateRegixDataDTO } from '@app/models/generated/dtos/CapacityCertificateDuplicateRegixDataDTO';
 import { ExcelExporterRequestModel } from '@app/shared/components/data-table/models/excel-exporter-request-model.model';
+import { PaymentTariffDTO } from '@app/models/generated/dtos/PaymentTariffDTO';
+import { FreedCapacityTariffCalculationParameters } from '@app/components/common-app/ships-register/models/freed-capacity-tariff-calculation-parameters.model';
 
 @Injectable({
     providedIn: 'root'
@@ -410,6 +412,13 @@ export class FishingCapacityAdministrationService extends ApplicationsRegisterAd
         return this.requestService.get(this.area, this.controller, 'GetFishingCapacityStatistics', {
             httpParams: params,
             responseTypeCtr: FishingCapacityStatisticsDTO
+        });
+    }
+
+    //tariffs
+    public calculateFreedCapacityAppliedTariffs(parameters: FreedCapacityTariffCalculationParameters): Observable<PaymentTariffDTO[]> {
+        return this.requestService.post(this.area, this.controller, 'CalculateFreedCapacityAppliedTariffs', parameters, {
+            responseTypeCtr: PaymentTariffDTO
         });
     }
 

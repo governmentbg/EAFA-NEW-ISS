@@ -2,6 +2,7 @@
 using IARA.Mobile.Application.Interfaces.Utilities;
 using IARA.Mobile.Insp.Infrastructure.Persistence.Migrations;
 using IARA.Mobile.Insp.Infrastructure.Persistence.Migrations.Interfaces;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.IO;
 
@@ -24,17 +25,21 @@ namespace IARA.Mobile.Insp.Infrastructure.Persistence
         /// <summary>
         /// Represents the current version of the migrations
         /// </summary>
-        private const int CURRENT_VERSION = 5;
+        private const int CURRENT_VERSION = 4;
 
         private readonly INomenclatureDatesClear nomenclatureDatesClear;
         private readonly IExceptionHandler exceptionHandler;
         private readonly IDbSettings dbSettings;
+        private readonly IAuthenticationProvider authenticationProvider;
+        private readonly IServiceProvider serviceProvider;
 
-        public AppDbMigration(INomenclatureDatesClear nomenclatureDatesClear, IExceptionHandler exceptionHandler, IDbSettings dbSettings)
+        public AppDbMigration(INomenclatureDatesClear nomenclatureDatesClear, IExceptionHandler exceptionHandler, IDbSettings dbSettings, IAuthenticationProvider authenticationProvider, IServiceProvider serviceProvider)
         {
             this.nomenclatureDatesClear = nomenclatureDatesClear ?? throw new ArgumentNullException(nameof(nomenclatureDatesClear));
             this.exceptionHandler = exceptionHandler ?? throw new ArgumentNullException(nameof(exceptionHandler));
             this.dbSettings = dbSettings ?? throw new ArgumentNullException(nameof(dbSettings));
+            this.authenticationProvider = authenticationProvider ?? throw new ArgumentNullException(nameof(authenticationProvider));
+            this.serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
         }
 
         public static bool DatabaseExists { get; private set; }
@@ -61,8 +66,7 @@ namespace IARA.Mobile.Insp.Infrastructure.Persistence
                         {
                             new Version2(),
                             new Version3(nomenclatureDatesClear),
-                            new Version4(),
-                            new Version5(nomenclatureDatesClear),
+                            new Version4(authenticationProvider, serviceProvider.GetService<ICommonLogout>()),
                         };
 
                         for (int i = lastVersion; i < CURRENT_VERSION; i++)

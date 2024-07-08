@@ -16,8 +16,7 @@
         Title="{rt:Translate Title, Group=VehicleInspection}"
         BackgroundColor="{StaticResource BackgroundColor}">
     <lc:TLForwardSections x:Name="forwardSections">
-        <sv:SectionView Image="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Info}, Color=White, Size=100}"
-                Text="{rt:Translate GeneralInfo, Group=GeneralInfo}">
+        <sv:SectionView Image="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Info}, Color=White, Size=100}" Text="{rt:Translate GeneralInfo, Group=GeneralInfo}">
             <StackLayout Padding="10">
                 <lc:InspectionGeneralInfoView BindingContext="{Binding InspectionGeneralInfo}" />
                 <lc:TLLocationView Title="{rt:Translate Location, Group=VehicleInspection}"
@@ -57,11 +56,10 @@
                 <tl:TLCheckView Text="{rt:Translate OwnerIsDriver, Group=VehicleInspection}"
                         IsChecked="{Binding OwnerIsDriver}"
                         IsEnabled="{Binding ActivityType, Converter={StaticResource IsNotReview}}" />
-                <lc:SubjectView BindingContext="{Binding Owner}"
-                        Title="{rt:Translate Owner, Group=VehicleInspection}"
-                        IsVisible="{Binding OwnerIsDriver, Converter={StaticResource OppositeBool}}" />
-                <lc:PersonView BindingContext="{Binding Driver}"
-                        Title="{rt:Translate Driver, Group=VehicleInspection}" />
+                <lc:SubjectView BindingContext="{Binding Owner}" Title="{rt:Translate Owner, Group=VehicleInspection}" />
+                <StackLayout IsVisible="{Binding OwnerIsDriver, Converter={StaticResource OppositeBool}}">
+                    <lc:PersonView BindingContext="{Binding Driver}" Title="{rt:Translate Driver, Group=VehicleInspection}" />
+                </StackLayout>
             </StackLayout>
         </sv:SectionView>
         <sv:SectionView Image="{lh:Image hook}"
@@ -69,13 +67,11 @@
                 IsExpanded="False">
             <StackLayout Padding="10">
                 <lc:DeclarationCatchesView BindingContext="{Binding Catches}" />
-                <lc:TLGeneratedToggles ValidState="{Binding InspectedVehicleToggles}"
-                        IsEnabled="{Binding ActivityType, Converter={StaticResource IsNotReview}}" />
+                <lc:TLGeneratedToggles ValidState="{Binding InspectedVehicleToggles}" IsEnabled="{Binding ActivityType, Converter={StaticResource IsNotReview}}" />
                 <tl:TLCheckView Text="{rt:Translate IsSealed, Group=VehicleInspection}"
                         ValidState="{Binding IsSealed}"
                         IsEnabled="{Binding ActivityType, Converter={StaticResource IsNotReview}}" />
-                <tl:TLFlex GrowUnit="300"
-                        IsVisible="{Binding IsSealed.Value}">
+                <tl:TLFlex GrowUnit="300" IsVisible="{Binding IsSealed.Value}">
                     <tl:TLPicker Title="{rt:Translate InstitutionWhoPutTheSeals, Group=VehicleInspection}"
                             ValidState="{Binding InstitutionWhoPutTheSeals}"
                             ItemsSource="{Binding Institutions}"

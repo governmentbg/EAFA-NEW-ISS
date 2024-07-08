@@ -19,6 +19,8 @@ import { TransferFishingCapacityApplicationDTO } from '@app/models/generated/dto
 import { FishingCapacityStatisticsDTO } from '@app/models/generated/dtos/FishingCapacityStatistics';
 import { CapacityCertificateDuplicateApplicationDTO } from '@app/models/generated/dtos/CapacityCertificateDuplicateApplicationDTO';
 import { ExcelExporterRequestModel } from '@app/shared/components/data-table/models/excel-exporter-request-model.model';
+import { PaymentTariffDTO } from '@app/models/generated/dtos/PaymentTariffDTO';
+import { FreedCapacityTariffCalculationParameters } from '@app/components/common-app/ships-register/models/freed-capacity-tariff-calculation-parameters.model';
 
 export interface IFishingCapacityService extends IApplicationsActionsService, IBaseAuditService {
     getAllCapacityCertificates(request: GridRequestModel<FishingCapacityCertificatesFilters>): Observable<GridResultModel<FishingCapacityCertificateDTO>>;
@@ -46,6 +48,8 @@ export interface IFishingCapacityService extends IApplicationsActionsService, IB
     downloadFile(fileId: number, fileName: string): Observable<boolean>;
 
     getFishingCapacityStatistics(date: Date): Observable<FishingCapacityStatisticsDTO>;
+
+    calculateFreedCapacityAppliedTariffs(parameters: FreedCapacityTariffCalculationParameters): Observable<PaymentTariffDTO[]>;
 
     getFishingCapacityHolderAudit(id: number): Observable<SimpleAuditDTO>;
 }

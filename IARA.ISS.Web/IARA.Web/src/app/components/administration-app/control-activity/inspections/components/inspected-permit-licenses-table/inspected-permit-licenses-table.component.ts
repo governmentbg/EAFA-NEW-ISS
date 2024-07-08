@@ -12,6 +12,7 @@ import { TLDataTableComponent } from '@app/shared/components/data-table/tl-data-
 import { InspectionCheckDTO } from '@app/models/generated/dtos/InspectionCheckDTO';
 import { InspectionPermitDTO } from '@app/models/generated/dtos/InspectionPermitDTO';
 import { GridRow } from '@app/shared/components/data-table/models/row.model';
+import { CommonUtils } from '@app/shared/utils/common.utils';
 
 @Component({
     selector: 'inspected-permit-licenses-table',
@@ -23,12 +24,14 @@ export class InspectedPermitLicensesTableComponent extends CustomFormControl<Ins
     @Output()
     public permitOptionPicked: EventEmitter<number[]> = new EventEmitter<number[]>();
 
-    @ViewChild(TLDataTableComponent)
-    private datatable!: TLDataTableComponent;
-
     public permits: InspectedPermitTableModel[] = [];
 
+    public readonly icIconSize: number = CommonUtils.IC_ICON_SIZE;
+
     public readonly options: NomenclatureDTO<InspectionToggleTypesEnum>[];
+
+    @ViewChild(TLDataTableComponent)
+    private datatable!: TLDataTableComponent;
 
     private readonly translate: FuseTranslationLoaderService;
 

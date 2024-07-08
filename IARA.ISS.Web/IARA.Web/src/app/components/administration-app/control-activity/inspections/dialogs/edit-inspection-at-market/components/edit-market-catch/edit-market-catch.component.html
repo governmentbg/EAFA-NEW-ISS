@@ -14,7 +14,10 @@
                              label="{{ 'inspections.market-declaration-type' | tlTranslate }}">
             </tl-autocomplete>
 
-            <inspected-ship *ngIf="permitTypeSelected != null && permitTypeSelected !== declarationLogBookTypeEnum.Invoice && permitTypeSelected !== declarationLogBookTypeEnum.NNN && permitTypeSelected !== declarationLogBookTypeEnum.AquacultureLogBook"
+            <inspected-ship *ngIf="permitTypeSelected != null 
+                            && permitTypeSelected !== declarationLogBookTypeEnum.Invoice 
+                            && permitTypeSelected !== declarationLogBookTypeEnum.NNN 
+                            && permitTypeSelected !== declarationLogBookTypeEnum.AquacultureLogBook"
                             formControlName="shipControl"
                             [hasMap]="false"
                             [ships]="ships"
@@ -103,7 +106,8 @@
                         [validityChecker]="form"
                         [validityCheckerExtraCondition]="fishErrors.length === 0">
         <div fxLayout="row wrap"
-             fxLayoutGap="1em grid">
+             fxLayoutGap="1em grid"
+             fxLayoutAlign="start center">
             <tl-autocomplete fxFlex="33"
                              formControlName="typeControl"
                              [options]="fishes"
@@ -156,7 +160,10 @@
                              label="{{ 'inspections.market-catch-presentation' | tlTranslate }}">
             </tl-autocomplete>
 
-            <div *ngIf="permitTypeSelected != null && permitTypeSelected !== declarationLogBookTypeEnum.Invoice && permitTypeSelected !== declarationLogBookTypeEnum.NNN && permitTypeSelected !== declarationLogBookTypeEnum.AquacultureLogBook"
+            <div *ngIf="permitTypeSelected != null 
+                 && permitTypeSelected !== declarationLogBookTypeEnum.Invoice 
+                 && permitTypeSelected !== declarationLogBookTypeEnum.NNN 
+                 && permitTypeSelected !== declarationLogBookTypeEnum.AquacultureLogBook"
                  fxFlex="33"
                  fxLayout="row"
                  fxLayoutAlign="space-between center">

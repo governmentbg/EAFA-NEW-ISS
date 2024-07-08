@@ -24,8 +24,7 @@
     </ContentView.Resources>
     <tl:TLScrollView>
         <StackLayout Padding="10">
-            <sv:SectionView Text="{rt:Translate GeneralInfo, Group=DeclarationCatch}"
-                    IsExpanded="True">
+            <sv:SectionView Text="{rt:Translate GeneralInfo, Group=DeclarationCatch}" IsExpanded="True">
                 <StackLayout Padding="10">
                     <tl:TLNativePicker Title="{rt:Translate DeclarationType, Group=DeclarationCatch}"
                             ItemsSource="{Binding DeclarationTypes}"
@@ -35,7 +34,35 @@
                     <lc:InspectedShipDataView BindingContext="{Binding InspectedShip}"
                             ShipInRegisterLabel="{rt:Translate ShipInRegister, Group=DeclarationCatch}"
                             IsVisible="{Binding BindingContext.SubjectType, Converter={StaticResource IsSubjectShip}, Source={Reference dialog}}" />
-                    <lc:CustomInfinitePicker Title="{rt:Translate Aquaculture, Group=DeclarationCatch}"
+                    <tl:TLPicker Title="{rt:Translate PageNumber, Group=DeclarationCatch}"
+                            ValidState="{Binding LogBookPage}"
+                            Command="{Binding PageSelected}"
+                            ItemsSource="{Binding LogBookPages}"
+                            DisplayValue="DisplayValue"
+                            IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}" />
+                    <!--<tl:TLDatePicker Title="{rt:Translate SaleDate, Group=DeclarationCatch}" ValidState="{Binding LogBookPageDate}">
+                        <tl:TLDatePicker.IsEnabled>
+                            <MultiBinding Converter="{StaticResource All}">
+                                <Binding Converter="{StaticResource IsNotReview}" Path="DialogType" />
+                                <Binding Path="IsLogBookPageSelected" />
+                            </MultiBinding>
+                        </tl:TLDatePicker.IsEnabled>
+                    </tl:TLDatePicker>
+                    <tl:TLEntry Title="{rt:Translate LogBookNumber, Group=DeclarationCatch}"
+                            ValidState="{Binding LogBookNumber}"
+                            IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}" />
+                    <tl:TLEntry Title="{rt:Translate DocumentOriginNumber, Group=DeclarationCatch}"
+                            ValidState="{Binding DocumentOriginNumber}"
+                            IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}" />
+                    <tl:TLDatePicker Title="{rt:Translate DeclarationOriginDate, Group=DeclarationCatch}" ValidState="{Binding LogBookPageDate}">
+                        <tl:TLDatePicker.IsEnabled>
+                            <MultiBinding Converter="{StaticResource All}">
+                                <Binding Converter="{StaticResource IsNotReview}" Path="DialogType" />
+                                <Binding Path="IsLogBookPageSelected" />
+                            </MultiBinding>
+                        </tl:TLDatePicker.IsEnabled>
+                    </tl:TLDatePicker>-->
+                    <!--<lc:CustomInfinitePicker Title="{rt:Translate Aquaculture, Group=DeclarationCatch}"
                             ValidState="{Binding Aquaculture}"
                             DisplayValue="DisplayValue"
                             IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}"
@@ -67,13 +94,11 @@
                                 </MultiBinding>
                             </tl:TLDatePicker.IsEnabled>
                         </tl:TLDatePicker>
-                    </tl:TLFlex>
+                    </tl:TLFlex>-->
                 </StackLayout>
             </sv:SectionView>
-            <sv:SectionView Text="{rt:Translate Catch, Group=DeclarationCatch}"
-                    IsExpanded="True">
-                <tl:TLAutoGrid Padding="10"
-                        OverrideColumnWidth="250">
+            <sv:SectionView Text="{rt:Translate Catch, Group=DeclarationCatch}" IsExpanded="True">
+                <tl:TLAutoGrid Padding="10" OverrideColumnWidth="250">
                     <tl:TLPicker Title="{rt:Translate Type, Group=DeclarationCatch}"
                             ItemsSource="{Binding FishTypes}"
                             ValidState="{Binding FishType}"

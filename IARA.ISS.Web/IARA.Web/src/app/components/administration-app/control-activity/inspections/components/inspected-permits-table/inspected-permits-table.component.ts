@@ -10,6 +10,7 @@ import { TLDataTableComponent } from '@app/shared/components/data-table/tl-data-
 import { CustomFormControl } from '@app/shared/utils/custom-form-control';
 import { InspectionUtils } from '@app/shared/utils/inspection.utils';
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
+import { CommonUtils } from '@app/shared/utils/common.utils';
 import { InspectedPermitTableModel } from '../../models/inspected-permit-table.model';
 
 @Component({
@@ -22,12 +23,14 @@ export class InspectedPermitsTableComponent extends CustomFormControl<Inspection
     @Output()
     public permitOptionPicked: EventEmitter<number[]> = new EventEmitter<number[]>();
 
-    @ViewChild(TLDataTableComponent)
-    private datatable!: TLDataTableComponent;
-
     public permits: InspectedPermitTableModel[] = [];
 
+    public readonly icIconSize: number = CommonUtils.IC_ICON_SIZE;
+
     public readonly options: NomenclatureDTO<InspectionToggleTypesEnum>[];
+
+    @ViewChild(TLDataTableComponent)
+    private datatable!: TLDataTableComponent;
 
     private readonly translate: FuseTranslationLoaderService;
 

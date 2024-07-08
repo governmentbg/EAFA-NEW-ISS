@@ -1473,5 +1473,27 @@ namespace IARA.Mobile.Insp.Application.Transactions
                 return result;
             }
         }
+
+        public AuanViolatedRegulationDto GetLaw(int lawId)
+        {
+            using (IAppDbContext context = ContextBuilder.CreateContext())
+            {
+                return (from law in context.NLaws
+                        where law.Id == lawId
+                        select new AuanViolatedRegulationDto
+                        {
+                            Id = law.Id,
+                            Article = law.Article,
+                            Paragraph = law.Paragraph,
+                            Section = law.Section,
+                            Letter = law.Letter,
+                            SectionType = law.SectionType,
+                            LawSectionId = law.LawSectionId,
+                            Law = law.LawSection,
+                            LawText = law.LawText,
+                            Comments = law.Comments,
+                        }).First();
+            }
+        }
     }
 }

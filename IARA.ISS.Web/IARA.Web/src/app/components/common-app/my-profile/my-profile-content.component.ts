@@ -342,7 +342,12 @@ export class MyProfileContentComponent extends BasePageComponent implements OnIn
         personDoc.documentIssuedOn = form.controls.documentIssueDateControl?.value ?? undefined;
         personDoc.documentIssuedBy = form.controls.documentIssuerControl?.value ?? undefined;
 
-        this.userProfileModel.document = personDoc;
+        if (personDoc.documentTypeID !== undefined && personDoc.documentTypeID !== null) {
+            this.userProfileModel.document = personDoc;
+        }
+        else {
+            this.userProfileModel.document = undefined;
+        }
 
         const newsDistrictSubscriptions: UserNewsDistrictSubscriptionDTO[] = [];
         if (!CommonUtils.isNullOrEmpty(form.controls.districtsControl.value)) {

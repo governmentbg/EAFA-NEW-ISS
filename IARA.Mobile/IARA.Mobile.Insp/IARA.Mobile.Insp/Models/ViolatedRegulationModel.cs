@@ -1,4 +1,6 @@
-﻿namespace IARA.Mobile.Insp.Models
+﻿using IARA.Mobile.Insp.Application.DTObjects.Inspections;
+
+namespace IARA.Mobile.Insp.Models
 {
     public class ViolatedRegulationModel
     {
@@ -18,5 +20,21 @@
 
         public string Comments { get; set; }
         public string Law { get; set; }
+
+        public static implicit operator AuanViolatedRegulationDto(ViolatedRegulationModel model)
+        {
+            return new AuanViolatedRegulationDto
+            {
+                Id = model.Id,
+                Article = model.Article,
+                Paragraph = model.Paragraph,
+                Section = model.Section,
+                Letter = model.Letter,
+                LawSectionId = model.LawSectionId,
+                LawText = model.LawText,
+                Comments = model.Comments,
+                Law = model.Law
+            };
+        }
     }
 }

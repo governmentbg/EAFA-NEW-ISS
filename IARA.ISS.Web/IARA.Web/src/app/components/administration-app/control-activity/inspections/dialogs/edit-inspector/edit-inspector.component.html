@@ -22,11 +22,13 @@
                           formControlName="firstNameControl"
                           label="{{ 'inspections.first-name' | tlTranslate }}">
                 </tl-input>
+
                 <tl-input fxFlex="50"
                           formControlName="middleNameControl"
                           label="{{ 'inspections.middle-name' | tlTranslate }}">
                 </tl-input>
             </div>
+
             <div fxLayout="row"
                  fxLayoutGap="1em"
                  fxLayoutAlign="start center">
@@ -34,6 +36,7 @@
                           formControlName="lastNameControl"
                           label="{{ 'inspections.last-name' | tlTranslate }}">
                 </tl-input>
+
                 <tl-input fxFlex="50"
                           formControlName="cardNumControl"
                           label="{{ 'inspections.card-num' | tlTranslate }}">
@@ -41,20 +44,15 @@
             </div>
         </div>
 
-        <div fxLayout="row"
-             fxLayoutGap="1em"
-             fxLayoutAlign="start center">
-            <tl-autocomplete fxFlex="50"
-                             formControlName="countryControl"
-                             label="{{ 'inspections.country' | tlTranslate }}"
-                             [options]="countries">
-            </tl-autocomplete>
-            <tl-autocomplete fxFlex="50"
-                             formControlName="institutionControl"
-                             label="{{ 'inspections.institution' | tlTranslate }}"
-                             [options]="institutions">
-            </tl-autocomplete>
-        </div>
+        <tl-autocomplete formControlName="countryControl"
+                         label="{{ 'inspections.country' | tlTranslate }}"
+                         [options]="countries">
+        </tl-autocomplete>
+
+        <tl-autocomplete formControlName="institutionControl"
+                         label="{{ 'inspections.institution' | tlTranslate }}"
+                         [options]="institutions">
+        </tl-autocomplete>
 
         <tl-checkbox *ngIf="isFromRegister"
                      formControlName="headOfInspectionControl"

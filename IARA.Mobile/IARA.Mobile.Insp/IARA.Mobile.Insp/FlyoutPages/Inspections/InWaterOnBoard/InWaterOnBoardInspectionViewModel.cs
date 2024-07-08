@@ -286,6 +286,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.InWaterOnBoard
                         PermitLicenses = ShipChecks.PermitLicenses,
                         Permits = ShipChecks.Permits,
                         LastPortVisit = InspectedShip.LastHarbour,
+                        ViolatedRegulations = AdditionalInfo.ViolatedRegulations.ViolatedRegulations.Value.Select(x => (AuanViolatedRegulationDto)x).ToList(),
                     };
 
                     return InspectionsTransaction.HandleInspection(dto, submitType);
