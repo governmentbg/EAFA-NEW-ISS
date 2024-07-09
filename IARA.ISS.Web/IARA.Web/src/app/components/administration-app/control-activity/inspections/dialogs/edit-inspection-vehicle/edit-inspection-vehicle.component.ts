@@ -162,7 +162,22 @@ export class EditInspectionVehicleComponent extends BaseInspectionsComponent imp
 
                 this.form.get('driverControl')!.updateValueAndValidity({ emitEvent: false });
             }
-        })
+        });
+
+        this.form.get('ownerControl')!.valueChanges.subscribe({
+            next: (owner: InspectionSubjectPersonnelDTO) => {
+                const isLegal: boolean = owner.isLegal ?? false;
+
+                if (isLegal) {
+                    this.form.get('ownerIsDriverControl')!.setValue(false);
+                    this.form.get('ownerIsDriverControl')!.disable({ emitEvent: false });
+                }
+                else {
+                    this.form.get('ownerIsDriverControl')!.enable({ emitEvent: false });
+                    this.form.get('ownerIsDriverControl')!.setValue(false);
+                }
+            }
+        });
     }
 
     protected fillForm(): void {

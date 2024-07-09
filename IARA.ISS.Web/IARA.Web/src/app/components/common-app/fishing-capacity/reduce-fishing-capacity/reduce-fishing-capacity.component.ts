@@ -45,6 +45,11 @@ import { ShipsUtils } from '@app/shared/utils/ships.utils';
 import { TLError } from '@app/shared/components/input-controls/models/tl-error.model';
 import { GetControlErrorLabelTextCallback } from '@app/shared/components/input-controls/base-tl-control';
 import { TLSnackbar } from '@app/shared/components/snackbar/tl.snackbar';
+import { FreedCapacityTariffCalculationParameters } from '../../ships-register/models/freed-capacity-tariff-calculation-parameters.model';
+import { MAT_BUTTON_TOGGLE_DEFAULT_OPTIONS } from '@angular/material/button-toggle';
+import { PaymentSummaryDTO } from '@app/models/generated/dtos/PaymentSummaryDTO';
+import { PaymentTariffDTO } from '@app/models/generated/dtos/PaymentTariffDTO';
+import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
 
 @Component({
     selector: 'reduce-fishing-capacity',
@@ -358,6 +363,14 @@ export class ReduceFishingCapacityComponent implements OnInit, IDialogComponent 
 
                 this.form.get('reduceCapacityTonnageControl')!.updateValueAndValidity({ emitEvent: false });
                 this.form.get('reduceCapacityPowerControl')!.updateValueAndValidity({ emitEvent: false });
+
+                if ((ship instanceof NomenclatureDTO || ship === null || ship === undefined)
+                    && this.isPaid
+                    && !this.isReadonly
+                    && !this.viewMode
+                ) {
+                    this.updateFreedCapacityAppliedTariffs();
+                }
             }
         });
 
@@ -392,6 +405,13 @@ export class ReduceFishingCapacityComponent implements OnInit, IDialogComponent 
                 else {
                     this.willIssueCapacityCertificates = false;
                 }
+
+                if (this.isPaid
+                    && !this.isReadonly
+                    && !this.viewMode
+                ) {
+                    this.updateFreedCapacityAppliedTariffs();
+                }
             }
         });
     }
@@ -419,6 +439,12 @@ export class ReduceFishingCapacityComponent implements OnInit, IDialogComponent 
 
             if (this.isPaid === true) {
                 this.form.get('applicationPaymentInformationControl')!.setValue(this.model.paymentInformation);
+
+                if (!this.isReadonly && !this.viewMode) {
+                    setTimeout(() => {
+                        this.updateFreedCapacityAppliedTariffs();
+                    });
+                }
             }
 
             if (this.showRegiXData) {
@@ -548,6 +574,67 @@ export class ReduceFishingCapacityComponent implements OnInit, IDialogComponent 
 
             return null;
         };
+    }
+
+    private updateFreedCapacityAppliedTariffs(): void {
+        const paymentInformation: ApplicationPaymentInformationDTO | undefined = this.form.get('applicationPaymentInformationControl')?.value;
+
+        if (paymentInformation !== undefined && paymentInformation !== null) {
+            (this.model as ReduceFishingCapacityApplicationDTO).paymentInformation = paymentInformation;
+            const parameters: FreedCapacityTariffCalculationParameters = this.getFreedCapacityTariffCalculationParameters();
+
+            this.service.calculateFreedCapacityAppliedTariffs(parameters).subscribe({
+                next: (appliedTariffs: PaymentTariffDTO[]) => {
+                    if ((this.model as ReduceFishingCapacityApplicationDTO).paymentInformation!.paymentSummary !== null
+                        && (this.model as ReduceFishingCapacityApplicationDTO).paymentInformation!.paymentSummary !== undefined
+                    ) {
+                        (this.model as ReduceFishingCapacityApplicationDTO).paymentInformation!.paymentSummary!.tariffs = appliedTariffs;
+                        (this.model as ReduceFishingCapacityApplicationDTO).paymentInformation!.paymentSummary!.totalPrice = this.calculateAppliedTariffsTotalPrice(appliedTariffs);
+                    }
+                    else {
+                        (this.model as ReduceFishingCapacityApplicationDTO).paymentInformation!.paymentSummary = new PaymentSummaryDTO({
+                            tariffs: appliedTariffs,
+                            totalPrice: this.calculateAppliedTariffsTotalPrice(appliedTariffs)
+                        });
+                    }
+
+                    this.form.get('applicationPaymentInformationControl')!.setValue((this.model as ReduceFishingCapacityApplicationDTO).paymentInformation);
+                    this.hideBasicPaymentInfo = this.shouldHidePaymentData();
+                }
+            });
+        }
+    }
+
+    private calculateAppliedTariffsTotalPrice(appliedTariffs: PaymentTariffDTO[]): number {
+        return appliedTariffs.map(x => x.quantity! * x.unitPrice!).reduce((a, b) => a + b, 0);
+    }
+
+    private getFreedCapacityTariffCalculationParameters(): FreedCapacityTariffCalculationParameters {
+        const paymentIntormation: ApplicationPaymentInformationDTO = this.form.get('applicationPaymentInformationControl')!.value;
+
+        let excludedTariffsIds: number[] = [];
+
+        if (paymentIntormation.paymentSummary !== null
+            && paymentIntormation.paymentSummary !== undefined
+            && paymentIntormation.paymentSummary.tariffs !== null
+            && paymentIntormation.paymentSummary.tariffs !== undefined
+        ) {
+            excludedTariffsIds = paymentIntormation.paymentSummary.tariffs.filter(x => !x.isChecked).map(x => x.tariffId!);
+        }
+
+        const parameters: FreedCapacityTariffCalculationParameters = new FreedCapacityTariffCalculationParameters({
+            applicationId: this.applicationId,
+            hasFishingCapacity: true,
+            excludedTariffsIds: excludedTariffsIds
+        });
+
+        const actions: FishingCapacityFreedActionsDTO | undefined = this.form.get('actionsControl')?.value;
+        if (actions !== undefined && actions !== null && this.willIssueCapacityCertificates) {
+            parameters.action = actions.action;
+            parameters.holders = actions.holders?.filter(x => x.isActive != false) ?? [];
+        }
+
+        return parameters;
     }
 
     private shouldHidePaymentData(): boolean {

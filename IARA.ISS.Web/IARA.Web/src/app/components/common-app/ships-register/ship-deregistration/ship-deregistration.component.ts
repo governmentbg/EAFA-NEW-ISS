@@ -42,7 +42,13 @@ import { NomenclatureStore } from '@app/shared/utils/nomenclatures.store';
 import { ShipsUtils } from '@app/shared/utils/ships.utils';
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 import { Observable, Subject } from 'rxjs';
+import { FishingCapacityFreedActionsDTO } from '@app/models/generated/dtos/FishingCapacityFreedActionsDTO';
+import { PaymentSummaryDTO } from '@app/models/generated/dtos/PaymentSummaryDTO';
+import { PaymentTariffDTO } from '@app/models/generated/dtos/PaymentTariffDTO';
 import { NewCertificateData } from '../../fishing-capacity/acquired-fishing-capacity/acquired-fishing-capacity.component';
+import { FreedCapacityTariffCalculationParameters } from '../models/freed-capacity-tariff-calculation-parameters.model';
+import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
+import { ApplicationPaymentInformationDTO } from '@app/models/generated/dtos/ApplicationPaymentInformationDTO';
 
 
 @Component({
@@ -148,6 +154,25 @@ export class ShipDeregistrationComponent implements OnInit, IDialogComponent {
                     this.maxTonnage = 0;
                     this.maxPower = 0;
                     this.newCertificateData = undefined;
+                }
+
+                if ((ship instanceof NomenclatureDTO || ship === null || ship === undefined)
+                    && this.isPaid
+                    && !this.isReadonly
+                    && !this.viewMode
+                ) { //update applied tariffs based on ship and freed capacity actions
+                    this.updateFreedCapacityAppliedTariffs();
+                }
+            }
+        });
+
+        this.form.get('actionsControl')?.valueChanges.subscribe({
+            next: (value: FishingCapacityFreedActionsDTO | undefined) => {
+                if (this.isPaid
+                    && !this.isReadonly
+                    && !this.viewMode
+                ) { //update applied tariffs based on ship and freed capacity actions
+                    this.updateFreedCapacityAppliedTariffs();
                 }
             }
         });
@@ -389,6 +414,15 @@ export class ShipDeregistrationComponent implements OnInit, IDialogComponent {
                 this.form.get('applicationPaymentInformationControl')!.setValue(this.model.paymentInformation);
             }
 
+            if (this.isPaid
+                && !this.isReadonly
+                && !this.viewMode
+            ) {
+                setTimeout(() => {
+                    this.updateFreedCapacityAppliedTariffs();
+                });
+            }
+
             if (this.showRegiXData) {
                 this.fillFormRegiX();
             }
@@ -501,6 +535,68 @@ export class ShipDeregistrationComponent implements OnInit, IDialogComponent {
         else {
             return this.service.addApplication(this.model, this.pageCode);
         }
+    }
+
+    private updateFreedCapacityAppliedTariffs(): void {
+        const paymentInformation: ApplicationPaymentInformationDTO | undefined = this.form.get('applicationPaymentInformationControl')!.value;
+
+        if (paymentInformation !== undefined && paymentInformation !== null) {
+            (this.model as ShipDeregistrationApplicationDTO).paymentInformation = paymentInformation;
+            const parameters: FreedCapacityTariffCalculationParameters = this.getFreedCapacityTariffCalculationParameters();
+
+            this.service.calculateFreedCapacityAppliedTariffs(parameters).subscribe({
+                next: (appliedTariffs: PaymentTariffDTO[]) => {
+                    if ((this.model as ShipDeregistrationApplicationDTO).paymentInformation!.paymentSummary !== null
+                        && (this.model as ShipDeregistrationApplicationDTO).paymentInformation!.paymentSummary !== undefined
+                    ) {
+                        (this.model as ShipDeregistrationApplicationDTO).paymentInformation!.paymentSummary!.tariffs = appliedTariffs;
+                        (this.model as ShipDeregistrationApplicationDTO).paymentInformation!.paymentSummary!.totalPrice = this.calculateAppliedTariffsTotalPrice(appliedTariffs);
+                    }
+                    else {
+                        (this.model as ShipDeregistrationApplicationDTO).paymentInformation!.paymentSummary = new PaymentSummaryDTO({
+                            tariffs: appliedTariffs,
+                            totalPrice: this.calculateAppliedTariffsTotalPrice(appliedTariffs)
+                        });
+                    }
+
+                    this.form.get('applicationPaymentInformationControl')!.setValue((this.model as ShipDeregistrationApplicationDTO).paymentInformation);
+                    this.hideBasicPaymentInfo = this.shouldHidePaymentData();
+                }
+            });
+        }
+    }
+
+    private calculateAppliedTariffsTotalPrice(appliedTariffs: PaymentTariffDTO[]): number {
+        return appliedTariffs.map(x => x.quantity! * x.unitPrice!).reduce((a, b) => a + b, 0);
+    }
+
+    private getFreedCapacityTariffCalculationParameters(): FreedCapacityTariffCalculationParameters {
+        const paymentIntormation: ApplicationPaymentInformationDTO = this.form.get('applicationPaymentInformationControl')!.value;
+
+        let excludedTariffsIds: number[] = [];
+
+        if (paymentIntormation.paymentSummary !== null
+            && paymentIntormation.paymentSummary !== undefined
+            && paymentIntormation.paymentSummary.tariffs !== null
+            && paymentIntormation.paymentSummary.tariffs !== undefined
+        ) {
+            excludedTariffsIds = paymentIntormation.paymentSummary.tariffs.filter(x => !x.isChecked).map(x => x.tariffId!);
+        }
+
+        const parameters: FreedCapacityTariffCalculationParameters = new FreedCapacityTariffCalculationParameters({
+            applicationId: this.applicationId,
+            hasFishingCapacity: this.hasFishingCapacity,
+            excludedTariffsIds: excludedTariffsIds
+        });
+
+        const actions: FishingCapacityFreedActionsDTO | undefined = this.form.get('actionsControl')?.value;
+
+        if (actions !== undefined && actions !== null) {
+            parameters.action = actions.action;
+            parameters.holders = actions.holders?.filter(x => x.isActive != false) ?? [];
+        }
+
+        return parameters;
     }
 
     private shipValidator(): ValidatorFn {

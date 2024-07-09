@@ -78,6 +78,10 @@ import { DateUtils } from '@app/shared/utils/date.utils';
 import { NewCertificateData } from '../../fishing-capacity/acquired-fishing-capacity/acquired-fishing-capacity.component';
 import { GetControlErrorLabelTextCallback } from '@app/shared/components/input-controls/base-tl-control';
 import { TLSnackbar } from '@app/shared/components/snackbar/tl.snackbar';
+import { ApplicationPaymentInformationDTO } from '@app/models/generated/dtos/ApplicationPaymentInformationDTO';
+import { FreedCapacityTariffCalculationParameters } from '../models/freed-capacity-tariff-calculation-parameters.model';
+import { PaymentTariffDTO } from '@app/models/generated/dtos/PaymentTariffDTO';
+import { PaymentSummaryDTO } from '@app/models/generated/dtos/PaymentSummaryDTO';
 
 @Component({
     selector: 'edit-ship',
@@ -382,6 +386,10 @@ export class EditShipComponent extends CustomFormControl<ShipRegisterEditDTO | n
                         this.form.get('controlCardValidityCertificateDateControl')!.disable({ emitEvent: false });
                         this.form.get('controlCardDateOfLastAttestationControl')!.disable({ emitEvent: false });
                     }
+                    else if (this.isPaid) {
+                        //update applied tariffs based on fleet type and freed capacity actions
+                        this.updateFreedCapacityAppliedTariffs();
+                    }
                 }
             });
 
@@ -394,6 +402,17 @@ export class EditShipComponent extends CustomFormControl<ShipRegisterEditDTO | n
                         this.form.get('cfrControl')!.setValidators([Validators.required, TLValidators.cfr]);
                     }
                     this.form.get('cfrControl')!.updateValueAndValidity();
+                }
+            });
+
+            this.form.get('actionsControl')!.valueChanges.subscribe({
+                next: (value: FishingCapacityFreedActionsDTO | undefined) => {
+                    if (this.isPaid
+                        && !this.isReadonly
+                        && !this.viewMode
+                    ) { //update applied tariffs based on fleet type and freed capacity actions
+                        this.updateFreedCapacityAppliedTariffs();
+                    }
                 }
             });
         }
@@ -914,7 +933,7 @@ export class EditShipComponent extends CustomFormControl<ShipRegisterEditDTO | n
                                         this.hidePaymentInformation = this.shouldHidePaymentInformation();
                                         this.hideBasicPaymentInfo = this.shouldHidePaymentData();
                                         this.isDraft = this.isDraftMode();
-                                        
+
                                         this.fillForm();
                                     }
                                 });
@@ -1175,7 +1194,7 @@ export class EditShipComponent extends CustomFormControl<ShipRegisterEditDTO | n
         this.fillFormTechnicalData();
         this.fillFormOtherData();
         this.fillCancellationFormData();
-     
+
         if (this.model.owners !== undefined && this.model.owners !== null) {
             const owners: ShipOwnerDTO[] | ShipOwnerRegixDataDTO[] = this.model.owners;
 
@@ -1481,6 +1500,15 @@ export class EditShipComponent extends CustomFormControl<ShipRegisterEditDTO | n
 
                 if (this.isPaid === true && !this.hidePaymentInformation) {
                     this.form.get('applicationPaymentInformationControl')!.setValue(this.model.paymentInformation);
+                }
+
+                if (this.isPaid
+                    && !this.isReadonly
+                    && !this.viewMode
+                ) {
+                    setTimeout(() => {
+                        this.updateFreedCapacityAppliedTariffs();
+                    });
                 }
             }
             else {
@@ -2106,6 +2134,69 @@ export class EditShipComponent extends CustomFormControl<ShipRegisterEditDTO | n
                 owner.egnLncEik = owner.regixLegalData.eik;
             }
         }
+    }
+
+    private updateFreedCapacityAppliedTariffs(): void {
+        const paymentInformation: ApplicationPaymentInformationDTO | undefined = this.form.get('applicationPaymentInformationControl')!.value;
+
+        if (paymentInformation !== undefined && paymentInformation !== null) {
+            (this.model as ShipRegisterApplicationEditDTO).paymentInformation = paymentInformation;
+
+            const parameters: FreedCapacityTariffCalculationParameters = this.getTariffCalculationParameters();
+
+            this.service.calculateFreedCapacityAppliedTariffs(parameters).subscribe({
+                next: (tariffs: PaymentTariffDTO[]) => {
+                    if ((this.model as ShipRegisterApplicationEditDTO).paymentInformation!.paymentSummary !== null
+                        && (this.model as ShipRegisterApplicationEditDTO).paymentInformation!.paymentSummary !== undefined
+                    ) {
+                        (this.model as ShipRegisterApplicationEditDTO).paymentInformation!.paymentSummary!.tariffs = tariffs;
+                        (this.model as ShipRegisterApplicationEditDTO).paymentInformation!.paymentSummary!.totalPrice = this.calculateAppliedTariffsTotalPrice(tariffs);
+                    }
+                    else {
+                        (this.model as ShipRegisterApplicationEditDTO).paymentInformation!.paymentSummary = new PaymentSummaryDTO({
+                            tariffs: tariffs,
+                            totalPrice: this.calculateAppliedTariffsTotalPrice(tariffs)
+                        });
+                    }
+
+                    this.form.get('applicationPaymentInformationControl')!.setValue((this.model as ShipRegisterApplicationEditDTO).paymentInformation);
+                    this.hideBasicPaymentInfo = this.shouldHidePaymentData();
+                }
+            });
+        }
+    }
+
+    private calculateAppliedTariffsTotalPrice(appliedTariffs: PaymentTariffDTO[]): number {
+        return appliedTariffs.map(x => x.quantity! * x.unitPrice!).reduce((a, b) => a + b, 0);
+    }
+
+    private getTariffCalculationParameters(): FreedCapacityTariffCalculationParameters {
+        const paymentInformation: ApplicationPaymentInformationDTO = this.form.get('applicationPaymentInformationControl')!.value;
+
+        let excludedTariffIds: number[] = [];
+
+        if (paymentInformation.paymentSummary !== null
+            && paymentInformation.paymentSummary !== undefined
+            && paymentInformation.paymentSummary.tariffs !== null
+            && paymentInformation.paymentSummary.tariffs !== undefined
+        ) {
+            excludedTariffIds = paymentInformation.paymentSummary.tariffs.filter(x => !x.isChecked).map(x => x.tariffId!);
+        }
+
+        const parameters: FreedCapacityTariffCalculationParameters = new FreedCapacityTariffCalculationParameters({
+            applicationId: this.applicationId,
+            hasFishingCapacity: this.hasFishingCapacity,
+            excludedTariffsIds: excludedTariffIds
+        });
+
+        const actions: FishingCapacityFreedActionsDTO | undefined = this.form.get('actionsControl')!.value;
+
+        if (actions !== undefined && actions !== null) {
+            parameters.action = actions.action;
+            parameters.holders = actions.holders?.filter(x => x.isActive != false) ?? [];;
+        }
+
+        return parameters;
     }
 
     private shouldHidePaymentData(): boolean {

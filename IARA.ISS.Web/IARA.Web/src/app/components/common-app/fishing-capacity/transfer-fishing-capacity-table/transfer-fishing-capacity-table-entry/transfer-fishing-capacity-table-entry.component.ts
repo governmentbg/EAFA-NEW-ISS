@@ -158,10 +158,10 @@ export class TransferFishingCapacityTableEntryComponent implements OnInit, IDial
     }
 
     public downloadedLegalData(legal: LegalFullDataDTO): void {
-        this.form.get('regixDataControl')!.setValue(legal.legal);
+        this.form.get('legalRegixDataControl')!.setValue(legal.legal);
 
         if (legal.addresses && legal.addresses.length !== 0) {
-            this.form.get('addressControl')!.setValue(legal.addresses.find(x => x.addressType === this.companyHeadquartersType));
+            this.form.get('legalAddressControl')!.setValue(legal.addresses.find(x => x.addressType === this.companyHeadquartersType));
         }
     }
 
@@ -169,26 +169,45 @@ export class TransferFishingCapacityTableEntryComponent implements OnInit, IDial
         this.form = new FormGroup({
             typeControl: new FormControl(this.types[0]),
             regixDataControl: new FormControl(null),
-            addressControl: new FormControl(null)
+            addressControl: new FormControl(null),
+            legalRegixDataControl: new FormControl(null),
+            legalAddressControl: new FormControl(null)
         });
 
         if (!this.showOnlyRegiXData) {
             this.form.addControl('tonnageControl', new FormControl(null, [Validators.required, TLValidators.number(0, undefined, 2)]));
             this.form.addControl('powerControl', new FormControl(null, [Validators.required, TLValidators.number(0, undefined, 2)]));
         }
+
+        this.form.get('typeControl')!.valueChanges.subscribe((value: NomenclatureDTO<HolderType>) => {
+            if (value.value === 'Person') {
+                this.form.get('regixDataControl')!.enable();
+                this.form.get('addressControl')!.enable();
+
+                this.form.get('legalRegixDataControl')!.disable();
+                this.form.get('legalAddressControl')!.disable();
+            }
+            else {
+                this.form.get('legalRegixDataControl')!.enable();
+                this.form.get('legalAddressControl')!.enable();
+
+                this.form.get('regixDataControl')!.disable();
+                this.form.get('addressControl')!.disable();
+            }
+        });
     }
 
     private fillForm(): void {
         if (this.model.isHolderPerson === true) {
             this.form.get('typeControl')!.setValue(this.types.find(x => x.value === 'Person'));
             this.form.get('regixDataControl')!.setValue(this.model.person);
+            this.form.get('addressControl')!.setValue(this.model.addresses);
         }
         else {
             this.form.get('typeControl')!.setValue(this.types.find(x => x.value === 'Legal'));
-            this.form.get('regixDataControl')!.setValue(this.model.legal);
+            this.form.get('legalRegixDataControl')!.setValue(this.model.legal);
+            this.form.get('legalAddressControl')!.setValue(this.model.addresses);
         }
-
-        this.form.get('addressControl')!.setValue(this.model.addresses);
 
         if (!this.showOnlyRegiXData && this.model instanceof FishingCapacityHolderDTO) {
             this.form.get('tonnageControl')!.setValue(this.model.transferredTonnage?.toFixed(2));
@@ -201,14 +220,14 @@ export class TransferFishingCapacityTableEntryComponent implements OnInit, IDial
             this.model.isHolderPerson = true;
             this.model.legal = undefined;
             this.model.person = this.form.get('regixDataControl')!.value;
+            this.model.addresses = this.form.get('addressControl')!.value;
         }
         else {
             this.model.isHolderPerson = false;
             this.model.person = undefined;
-            this.model.legal = this.form.get('regixDataControl')!.value;
+            this.model.legal = this.form.get('legalRegixDataControl')!.value;
+            this.model.addresses = this.form.get('legalAddressControl')!.value;
         }
-
-        this.model.addresses = this.form.get('addressControl')!.value;
 
         if (!this.showOnlyRegiXData && this.model instanceof FishingCapacityHolderDTO) {
             this.model.transferredTonnage = this.form.get('tonnageControl')!.value;

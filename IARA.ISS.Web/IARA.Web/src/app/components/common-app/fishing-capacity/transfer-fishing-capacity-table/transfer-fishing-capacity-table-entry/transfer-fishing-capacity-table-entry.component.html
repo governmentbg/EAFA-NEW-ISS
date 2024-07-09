@@ -59,14 +59,14 @@
     </div>
 
     <ng-template #holderLegal>
-        <regix-data formControlName="regixDataControl"
+        <regix-data formControlName="legalRegixDataControl"
                     [isPerson]="false"
                     [isIdReadOnly]="isEgnLncReadOnly"
                     [expectedResults]="expectedResults?.legal"
                     (downloadDataBtnClicked)="downloadedLegalData($event)"
                     checkboxLabel="{{ 'fishing-capacity.has-bulgarian-address-registration' | tlTranslate }}">
         </regix-data>
-        <address-registration formControlName="addressControl"
+        <address-registration formControlName="legalAddressControl"
                               addressLabel="{{ 'common.company-headquarters-address' | tlTranslate : 'cap' }}"
                               [addressType]="companyHeadquartersType"
                               [expectedResults]="expectedResults?.addresses">

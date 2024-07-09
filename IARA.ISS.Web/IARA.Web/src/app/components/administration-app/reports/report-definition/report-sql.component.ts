@@ -61,8 +61,8 @@ export class ReportSqlComponent implements OnInit, ControlValueAccessor, Validat
         this.ngControl = ngControl;
         this.ngControl.valueAccessor = this;
 
-        this.onChanged = (value: string) => { return; }
-        this.onTouched = (value: string) => { return; }
+        this.onChanged = (value: string) => { return; };
+        this.onTouched = (value: string) => { return; };
 
         this.reportService = reportService;
         this.translateService = translateService;
@@ -146,36 +146,38 @@ export class ReportSqlComponent implements OnInit, ControlValueAccessor, Validat
             }
 
             this.reportInfo.sqlQuery = this.sqlQuery;
-            forkJoin(
-                this.reportService.getColumnNamesRawSql(this.reportInfo),
-                this.reportService.executeRawSql(this.reportInfo)
-            ).subscribe({
-                next: (results: (ReportSchema[] | ResultType[])[]) => {
-                    this.reportDisplayColumns = results[0] as ReportSchema[];
-                    setTimeout(() => {
-                        this.executeResults = results[1] as ResultType[];
+            this.reportService.getColumnNamesRawSql(this.reportInfo).subscribe({
+                next: (result: ReportSchema[]) => {
+                    this.reportDisplayColumns = result;
+
+                    this.reportService.executeRawSql(this.reportInfo!).subscribe({
+                        next: (result: ResultType[]) => {
+                            this.executeResults = result;
+                        },
+                        error: this.errorHandler
                     });
                 },
-                error: (response: HttpErrorResponse) => {
-                    if (response !== null && response !== undefined && response.error !== null && response.error !== undefined) {
-                        if (response.error.messages !== null && response.error.messages !== undefined) {
-                            const messages: string[] = response.error.messages;
-                            if (messages.length !== 0) {
-                                this.snackbar.errorModel(response.error as ErrorModel, RequestProperties.DEFAULT);
-                            }
-                            else {
-                                this.snackbar.error(this.translateService.getValue('service.an-error-occurred-in-the-app'), RequestProperties.DEFAULT.showExceptionDurationErr, RequestProperties.DEFAULT.showExceptionColorClassErr);
-                            }
-                        }
-                        if ((response.error as ErrorModel).code === ErrorCode.InvalidSqlQuery) {
-                            this.formGroup.get('editorControl')!.setErrors({ 'invalidSqlQuery': true });
-                        }
-                    }
-                }
+                error: this.errorHandler
             });
-
         }
 
         this.isExecuteResultClicked = true;
+    }
+
+    private errorHandler = (response: HttpErrorResponse): void => {
+        if (response !== null && response !== undefined && response.error !== null && response.error !== undefined) {
+            if (response.error.messages !== null && response.error.messages !== undefined) {
+                const messages: string[] = response.error.messages;
+                if (messages.length !== 0) {
+                    this.snackbar.errorModel(response.error as ErrorModel, RequestProperties.DEFAULT);
+                }
+                else {
+                    this.snackbar.error(this.translateService.getValue('service.an-error-occurred-in-the-app'), RequestProperties.DEFAULT.showExceptionDurationErr, RequestProperties.DEFAULT.showExceptionColorClassErr);
+                }
+            }
+            if ((response.error as ErrorModel).code === ErrorCode.InvalidSqlQuery) {
+                this.formGroup.get('editorControl')!.setErrors({ 'invalidSqlQuery': true });
+            }
+        }
     }
 }

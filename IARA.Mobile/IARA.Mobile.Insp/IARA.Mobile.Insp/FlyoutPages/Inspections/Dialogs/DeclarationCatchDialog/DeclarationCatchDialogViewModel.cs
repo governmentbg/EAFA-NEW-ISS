@@ -149,6 +149,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.DeclarationCatchDialo
         public ICommand Save { get; }
         public ICommand DeclarationSelected { get; }
         public ICommand AquacultureChosen { get; }
+        public ICommand PageSelected { get; }
 
         public void OnInit()
         {

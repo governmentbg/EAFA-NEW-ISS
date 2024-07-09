@@ -273,6 +273,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.AquacultureFarmInspection
                             AdditionalInfo.ObservationsOrViolations,
                         }.Where(f => !string.IsNullOrWhiteSpace(f.Text)).ToList(),
                         PatrolVehicles = PatrolVehicles,
+                        ViolatedRegulations = AdditionalInfo.ViolatedRegulations.ViolatedRegulations.Value.Select(x => (AuanViolatedRegulationDto)x).ToList(),
                     };
 
                     return InspectionsTransaction.HandleInspection(dto, submitType);

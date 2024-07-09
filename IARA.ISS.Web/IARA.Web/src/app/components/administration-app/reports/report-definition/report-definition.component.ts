@@ -145,6 +145,9 @@ export class ReportDefinitionComponent implements OnInit, AfterViewInit {
         this.allRoles = await this.reportService.getActiveRoles().toPromise();
         this.roles = this.allRoles;
 
+        // Хак за да се показва едитора, дори когато е празен
+        this.formGroup.get('queryControl')!.setValue("");
+
         const data: EditReportParamsModel = window.history.state?.data;
         if (data !== undefined && data !== null) {
             if (!data.isAdd) {

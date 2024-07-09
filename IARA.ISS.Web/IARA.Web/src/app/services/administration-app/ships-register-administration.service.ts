@@ -39,6 +39,8 @@ import { ExcelExporterRequestModel } from '@app/shared/components/data-table/mod
 import { ShipRegisterLogBookPagesFilters } from '@app/models/generated/filters/ShipRegisterLogBookPagesFilters';
 import { ShipRegisterLogBookPageDTO } from '@app/models/generated/dtos/ShipRegisterLogBookPageDTO';
 import { StatisticalFormDataDTO } from '@app/models/generated/dtos/StatisticalFormDataDTO';
+import { PaymentTariffDTO } from '@app/models/generated/dtos/PaymentTariffDTO';
+import { FreedCapacityTariffCalculationParameters } from '@app/components/common-app/ships-register/models/freed-capacity-tariff-calculation-parameters.model';
 
 @Injectable({
     providedIn: 'root'
@@ -298,6 +300,12 @@ export class ShipsRegisterAdministrationService extends ApplicationsRegisterAdmi
         return this.requestService.post(this.area, this.controller, 'ReportShipHistoryToFlux', undefined, {
             httpParams: params,
             successMessage: 'send-history-to-flux-success'
+        });
+    }
+
+    public calculateFreedCapacityAppliedTariffs(parameters: FreedCapacityTariffCalculationParameters): Observable<PaymentTariffDTO[]> {
+        return this.requestService.post(this.area, this.controller, 'CalculateFreedCapacityAppliedTariffs', parameters, {
+            responseTypeCtr: PaymentTariffDTO
         });
     }
 

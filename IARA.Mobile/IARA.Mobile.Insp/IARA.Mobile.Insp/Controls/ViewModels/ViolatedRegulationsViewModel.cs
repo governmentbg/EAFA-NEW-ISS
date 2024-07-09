@@ -27,6 +27,8 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
             ViewViolation = CommandBuilder.CreateFrom<ViolatedRegulationModel>(OnViewViolation);
             EditViolation = CommandBuilder.CreateFrom<ViolatedRegulationModel>(OnEditViolation);
             RemoveViolation = CommandBuilder.CreateFrom<ViolatedRegulationModel>(OnRemoveViolation);
+
+            this.AddValidation();
         }
 
         public InspectionPageViewModel Inspection { get; set; }

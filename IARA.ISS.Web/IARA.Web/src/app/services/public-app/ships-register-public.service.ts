@@ -20,6 +20,8 @@ import { IApplicationRegister } from '@app/interfaces/common-app/application-reg
 import { FleetTypeNomenclatureDTO } from '@app/models/generated/dtos/FleetTypeNomenclatureDTO';
 import { ExcelExporterRequestModel } from '@app/shared/components/data-table/models/excel-exporter-request-model.model';
 import { ShipsRegisterFilters } from '@app/models/generated/filters/ShipsRegisterFilters';
+import { PaymentTariffDTO } from '@app/models/generated/dtos/PaymentTariffDTO';
+import { FreedCapacityTariffCalculationParameters } from '@app/components/common-app/ships-register/models/freed-capacity-tariff-calculation-parameters.model';
 
 @Injectable({
     providedIn: 'root'
@@ -154,6 +156,12 @@ export class ShipsRegisterPublicService extends ApplicationsRegisterPublicBaseSe
         }
 
         throw new Error('Invalid page code for editApplication: ' + PageCodeEnum[pageCode]);
+    }
+
+    public calculateFreedCapacityAppliedTariffs(parameters: FreedCapacityTariffCalculationParameters): Observable<PaymentTariffDTO[]> {
+        return this.requestService.post(this.area, this.controller, 'CalculateFreedCapacityAppliedTariffs', parameters, {
+            responseTypeCtr: PaymentTariffDTO
+        });
     }
 
     // nomenclatures

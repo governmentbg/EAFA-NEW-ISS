@@ -25,7 +25,7 @@
                 <lc:CustomInfinitePicker Title="{rt:Translate ChooseRegulation, Group=GeneralInfo}"
                         ValidState="{Binding Regulation}"
                         Command="{Binding RegulationChosen}"
-                        DisplayValue="DisplayValue"
+                        DisplayValue="Law"
                         IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}">
                     <DataTemplate>
                         <Grid x:DataType="nom:AuanViolatedRegulationDto"

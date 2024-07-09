@@ -5,7 +5,6 @@ using IARA.Mobile.Insp.Domain.Enums;
 using IARA.Mobile.Insp.Helpers;
 using IARA.Mobile.Insp.Models;
 using IARA.Mobile.Insp.ViewModels.Models;
-using System;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -22,7 +21,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.ViolatedRegulationDia
         public ViolatedRegulationDialogViewModel()
         {
             Save = CommandBuilder.CreateFrom(OnSave);
-            RegulationChosen = CommandBuilder.CreateFrom<AuanViolatedRegulationDto>(OnRegulationChosaen);
+            RegulationChosen = CommandBuilder.CreateFrom<AuanViolatedRegulationDto>(OnRegulationChosen);
             this.AddValidation();
 
             Regulation.ItemsSource = new TLObservableCollection<AuanViolatedRegulationDto>();
@@ -52,20 +51,37 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.ViolatedRegulationDia
 
             if (Edit != null)
             {
-                Article.AssignFrom(Edit.Article);
-                Paragraph.AssignFrom(Edit.Paragraph);
-                Section.AssignFrom(Edit.Section);
-                Letter.AssignFrom(Edit.Letter);
-                Comments.AssignFrom(Edit.Comments);
-                LawText.AssignFrom(Edit.LawText);
+                if (Edit.LawSectionId != null)
+                {
+                    AuanViolatedRegulationDto violatedRegulation = DependencyService.Resolve<INomenclatureTransaction>().GetLaw(Edit.LawSectionId.Value);
+                    Regulation.Value = violatedRegulation;
+                    OnRegulationChosen(violatedRegulation);
+                }
+                else
+                {
+                    Article.AssignFrom(Edit.Article);
+                    Paragraph.AssignFrom(Edit.Paragraph);
+                    Section.AssignFrom(Edit.Section);
+                    Letter.AssignFrom(Edit.Letter);
+                    Comments.AssignFrom(Edit.Comments);
+                    LawText.AssignFrom(Edit.LawText);
+                }
             }
 
             return Task.CompletedTask;
         }
 
-        private void OnRegulationChosaen(AuanViolatedRegulationDto dto)
+        private void OnRegulationChosen(AuanViolatedRegulationDto dto)
         {
-            throw new NotImplementedException();
+            if (dto != null)
+            {
+                Article.AssignFrom(dto.Article);
+                Paragraph.AssignFrom(dto.Paragraph);
+                Section.AssignFrom(dto.Section);
+                Letter.AssignFrom(dto.Letter);
+                Comments.AssignFrom(dto.Comments);
+                LawText.AssignFrom(dto.LawText);
+            }
         }
 
         private Task OnSave()
@@ -78,7 +94,8 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.ViolatedRegulationDia
                 Section = Section.Value,
                 Letter = Letter.Value,
                 Comments = Comments.Value,
-                LawText = LawText.Value
+                LawText = LawText.Value,
+                LawSectionId = Regulation.Value?.Id,
             });
         }
     }

@@ -34,6 +34,12 @@ import { ApplicationDialogData, ApplicationUtils } from '@app/shared/utils/appli
 import { CommonUtils } from '@app/shared/utils/common.utils';
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 import { Observable, Subject } from 'rxjs';
+import { ApplicationPaymentInformationDTO } from '@app/models/generated/dtos/ApplicationPaymentInformationDTO';
+import { FreedCapacityTariffCalculationParameters } from '../../ships-register/models/freed-capacity-tariff-calculation-parameters.model';
+import { PaymentTariffDTO } from '@app/models/generated/dtos/PaymentTariffDTO';
+import { FishingCapacityRemainderActionEnum } from '@app/enums/fishing-capacity-remainder-action.enum';
+import { PaymentSummaryDTO } from '@app/models/generated/dtos/PaymentSummaryDTO';
+import { FishingCapacityHolderDTO } from '@app/models/generated/dtos/FishingCapacityHolderDTO';
 
 
 @Component({
@@ -240,6 +246,17 @@ export class TransferFishingCapacityComponent implements OnInit, AfterViewInit, 
                     }
                 }
             });
+
+            this.form.get('holdersControl')!.valueChanges.subscribe({
+                next: (holders: FishingCapacityHolderDTO[]) => {
+                    if (this.isPaid
+                        && !this.isReadonly
+                        && !this.viewMode
+                    ) {
+                        this.updateFreedCapacityAppliedTariffs();
+                    }
+                }
+            });
         }
     }
 
@@ -358,6 +375,12 @@ export class TransferFishingCapacityComponent implements OnInit, AfterViewInit, 
 
             if (this.isPaid === true) {
                 this.form.get('applicationPaymentInformationControl')!.setValue(this.model.paymentInformation);
+
+                if (!this.isReadonly && !this.viewMode) {
+                    setTimeout(() => {
+                        this.updateFreedCapacityAppliedTariffs();
+                    });
+                }
             }
 
             if (this.showRegiXData) {
@@ -468,6 +491,65 @@ export class TransferFishingCapacityComponent implements OnInit, AfterViewInit, 
     private markAllAsTouched(): void {
         this.form.markAllAsTouched();
         this.form.get('holdersControl')!.updateValueAndValidity();
+    }
+
+    private updateFreedCapacityAppliedTariffs(): void {
+        const paymentInformation: ApplicationPaymentInformationDTO | undefined = this.form.get('applicationPaymentInformationControl')!.value;
+
+        if (paymentInformation !== undefined && paymentInformation !== null) {
+            (this.model as TransferFishingCapacityApplicationDTO).paymentInformation = paymentInformation;
+            const parameters: FreedCapacityTariffCalculationParameters = this.getFreedCapacityTariffCalculationParameters();
+
+            this.service.calculateFreedCapacityAppliedTariffs(parameters).subscribe({
+                next: (appliedTariffs: PaymentTariffDTO[]) => {
+                    if ((this.model as TransferFishingCapacityApplicationDTO).paymentInformation!.paymentSummary !== null
+                        && (this.model as TransferFishingCapacityApplicationDTO).paymentInformation!.paymentSummary !== undefined
+                    ) {
+                        (this.model as TransferFishingCapacityApplicationDTO).paymentInformation!.paymentSummary!.tariffs = appliedTariffs;
+                        (this.model as TransferFishingCapacityApplicationDTO).paymentInformation!.paymentSummary!.totalPrice = this.calculateAppliedTariffsTotalPrice(appliedTariffs);
+                    }
+                    else {
+                        (this.model as TransferFishingCapacityApplicationDTO).paymentInformation!.paymentSummary = new PaymentSummaryDTO({
+                            tariffs: appliedTariffs,
+                            totalPrice: this.calculateAppliedTariffsTotalPrice(appliedTariffs)
+                        });
+                    }
+
+                    this.form.get('applicationPaymentInformationControl')!.setValue((this.model as TransferFishingCapacityApplicationDTO).paymentInformation);
+                    this.hideBasicPaymentInfo = this.shouldHidePaymentData();
+                }
+            })
+        }
+    }
+
+    private calculateAppliedTariffsTotalPrice(appliedTariffs: PaymentTariffDTO[]): number {
+        return appliedTariffs.map(x => x.quantity! * x.unitPrice!).reduce((a, b) => a + b, 0);
+    }
+
+    private getFreedCapacityTariffCalculationParameters(): FreedCapacityTariffCalculationParameters {
+        const paymentIntormation: ApplicationPaymentInformationDTO = this.form.get('applicationPaymentInformationControl')!.value;
+
+        let excludedTariffsIds: number[] = [];
+
+        if (paymentIntormation.paymentSummary !== null
+            && paymentIntormation.paymentSummary !== undefined
+            && paymentIntormation.paymentSummary.tariffs !== null
+            && paymentIntormation.paymentSummary.tariffs !== undefined
+        ) {
+            excludedTariffsIds = paymentIntormation.paymentSummary.tariffs.filter(x => !x.isChecked).map(x => x.tariffId!);
+        }
+
+        const holders: FishingCapacityHolderDTO[] = this.form.get('holdersControl')!.value;
+
+        const parameters: FreedCapacityTariffCalculationParameters = new FreedCapacityTariffCalculationParameters({
+            applicationId: this.applicationId,
+            hasFishingCapacity: true,
+            action: FishingCapacityRemainderActionEnum.Transfer,
+            holders: holders.filter(x => x.isActive != false) ?? [],
+            excludedTariffsIds: excludedTariffsIds
+        });
+
+        return parameters;
     }
 
     private shouldHidePaymentData(): boolean {
