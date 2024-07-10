@@ -2882,6 +2882,7 @@
         'delete-inspection-dialog-title': 'Премахване на инспекция',
         'delete-inspection-dialog-message': 'Сигурен ли сте, че искате да премахнете инспекцията?',
         'delete-inspection-dialog-ok-btn-label': 'Премахни',
+        'cannot-delete-inspection-with-auans': 'Не можете да изтриете инспекцията, тъй като към нея има издаден АУАН.',
 
         'market-catches-table-view': 'Преглед на улов',
         'market-catches-table-edit': 'Редактиране на улов',
@@ -5312,6 +5313,7 @@
         'delete-auan-dialog-title': 'Изтриване на АУАН',
         'delete-auan-dialog-message': 'Сигурни ли сте, че искате да изтриете този АУАН?',
         'delete-auan-dialog-ok-btn-label': 'Изтриване',
+        'cannot-delete-auan-with-penal-decrees': 'Не можете да изтриете този АУАН, тъй като към него има издадени наказателни постановления, предупреждения, споразумения и/или резолюции.',
         'print': 'Отпечатай',
         'save-print': 'Запази и отпечатай',
         'save-draft': 'Запази чернова',
@@ -5848,6 +5850,7 @@
         'delete-resolution-dialog-title': 'Изтриване на резолюция',
         'delete-resolution-dialog-message': 'Сигурни ли сте, че искате да изтриете това резолюция?',
         'delete-resolution-dialog-ok-btn-label': 'Изтриване',
+        'cannot-delete-decree-with-penal-points': 'Не можете да изтриете наказателното постановление, тъй като към него има присъдени точки.',
 
         'view-penal-decree-status-dialog-title': 'Преглед на статус на наказателно постановление',
         'edit-penal-decree-status-dialog-title': 'Редакция на статус на наказателно постановление',

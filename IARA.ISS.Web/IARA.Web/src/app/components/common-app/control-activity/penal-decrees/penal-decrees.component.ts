@@ -40,6 +40,10 @@ import { AuanDeliveryComponent } from '@app/components/administration-app/contro
 import { EditPenalDecreeDialogParams } from '@app/components/administration-app/control-activity/penal-decrees/models/edit-penal-decree-params.model';
 import { EditPenalDecreeStatusDialogParams } from '@app/components/administration-app/control-activity/penal-decrees/models/edit-penal-decree-status-params.model';
 import { InspDeliveryDataDialogParams } from '@app/components/administration-app/control-activity/auan-register/models/insp-delivery-data-dialog-params.model';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { HttpErrorResponse } from '@angular/common/http';
+import { ErrorCode, ErrorModel } from '@app/models/common/exception.model';
+import { RequestProperties } from '@app/shared/services/request-properties';
 
 @Component({
     selector: 'penal-decrees',
@@ -98,6 +102,7 @@ export class PenalDecreesComponent implements OnInit, AfterViewInit {
     private readonly editStatusDialog: TLMatDialog<EditPenalDecreeStatusComponent>;
     private readonly auanPickerDialog: TLMatDialog<EditPenalDecreeAuanPickerComponent>;
     private readonly inspDeliveryDialog: TLMatDialog<AuanDeliveryComponent>;
+    private readonly snackbar: MatSnackBar;
     private readonly auanService: AuanRegisterService;
 
     public constructor(
@@ -112,6 +117,7 @@ export class PenalDecreesComponent implements OnInit, AfterViewInit {
         editStatusDialog: TLMatDialog<EditPenalDecreeStatusComponent>,
         auanPickerDialog: TLMatDialog<EditPenalDecreeAuanPickerComponent>,
         inspDeliveryDialog: TLMatDialog<AuanDeliveryComponent>,
+        snackbar: MatSnackBar,
         permissions: PermissionsService,
         auanService: AuanRegisterService
     ) {
@@ -126,6 +132,7 @@ export class PenalDecreesComponent implements OnInit, AfterViewInit {
         this.editStatusDialog = editStatusDialog;
         this.auanPickerDialog = auanPickerDialog;
         this.inspDeliveryDialog = inspDeliveryDialog;
+        this.snackbar = snackbar;
         this.auanService = auanService;
 
         this.canAddRecords = permissions.has(PermissionsEnum.PenalDecreesAddRecords);
@@ -318,6 +325,16 @@ export class PenalDecreesComponent implements OnInit, AfterViewInit {
                     this.service.deletePenalDecree(decree.id!).subscribe({
                         next: () => {
                             this.grid.refreshData();
+                        },
+                        error: (errorResponse: HttpErrorResponse) => {
+                            if ((errorResponse.error as ErrorModel)?.code === ErrorCode.CannotDeleteDecreeWithPenalPoints) {
+                                //само към наказателните постановления може да има присъдени точки
+                                const message: string = this.translate.getValue('penal-decrees.cannot-delete-decree-with-penal-points');
+                                this.snackbar.open(message, undefined, {
+                                    duration: RequestProperties.DEFAULT.showExceptionDurationErr,
+                                    panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
+                                });
+                            }
                         }
                     });
                 }
@@ -580,7 +597,8 @@ export class PenalDecreesComponent implements OnInit, AfterViewInit {
         type: PenalDecreeTypeEnum,
         viewMode: boolean,
         rightButtons: IActionInfo[],
-        auditBtn: IHeaderAuditButton | undefined) {
+        auditBtn: IHeaderAuditButton | undefined
+    ) {
 
         if (type === PenalDecreeTypeEnum.PenalDecree) {
             let title: string;
@@ -593,6 +611,7 @@ export class PenalDecreesComponent implements OnInit, AfterViewInit {
             else {
                 title = this.translate.getValue('penal-decrees.add-penal-decree-dialog-title');
             }
+
             const dialog = this.penalDecreeDialog.openWithTwoButtons({
                 title: title,
                 TCtor: EditPenalDecreeComponent,
@@ -624,6 +643,7 @@ export class PenalDecreesComponent implements OnInit, AfterViewInit {
             else {
                 title = this.translate.getValue('penal-decrees.add-agreement-dialog-title');
             }
+
             const dialog = this.agreementDialog.openWithTwoButtons({
                 title: title,
                 TCtor: EditDecreeAgreementComponent,
@@ -655,6 +675,7 @@ export class PenalDecreesComponent implements OnInit, AfterViewInit {
             else {
                 title = this.translate.getValue('penal-decrees.add-warning-dialog-title');
             }
+
             const dialog = this.warningDialog.openWithTwoButtons({
                 title: title,
                 TCtor: EditDecreeWarningComponent,
@@ -686,6 +707,7 @@ export class PenalDecreesComponent implements OnInit, AfterViewInit {
             else {
                 title = this.translate.getValue('penal-decrees.add-resolution-dialog-title');
             }
+
             const dialog = this.resolutionDialog.openWithTwoButtons({
                 title: title,
                 TCtor: EditDecreeResolutionComponent,
