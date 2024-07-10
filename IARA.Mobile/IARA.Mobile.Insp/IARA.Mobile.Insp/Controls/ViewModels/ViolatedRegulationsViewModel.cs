@@ -47,17 +47,20 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
 
         public void OnEdit(List<AuanViolatedRegulationDto> violatedRegulations)
         {
-            ViolatedRegulations.Value.AddRange(violatedRegulations.Select(x => new ViolatedRegulationModel()
+            if (violatedRegulations != null)
             {
-                Id = x.Id,
-                Article = x.Article,
-                Paragraph = x.Paragraph,
-                Section = x.Section,
-                Letter = x.Letter,
-                LawSectionId = x.LawSectionId,
-                LawText = x.LawText,
-                Comments = x.Comments,
-            }).ToList());
+                ViolatedRegulations.Value.AddRange(violatedRegulations.Select(x => new ViolatedRegulationModel()
+                {
+                    Id = x.Id,
+                    Article = x.Article,
+                    Paragraph = x.Paragraph,
+                    Section = x.Section,
+                    Letter = x.Letter,
+                    LawSectionId = x.LawSectionId,
+                    LawText = x.LawText,
+                    Comments = x.Comments,
+                }).ToList());
+            }
         }
 
         private async Task OnAddViolation()

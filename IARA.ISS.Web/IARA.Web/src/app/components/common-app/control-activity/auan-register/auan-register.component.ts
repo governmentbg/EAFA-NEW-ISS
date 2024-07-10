@@ -31,6 +31,10 @@ import { EditAuanDialogParams } from '@app/components/administration-app/control
 import { AuanStatusEnum } from '@app/enums/auan-status.enum';
 import { IActionInfo } from '@app/shared/components/dialog-wrapper/interfaces/action-info.interface';
 import { SecurityService } from '@app/services/common-app/security.service';
+import { HttpErrorResponse } from '@angular/common/http';
+import { ErrorCode, ErrorModel } from '@app/models/common/exception.model';
+import { RequestProperties } from '@app/shared/services/request-properties';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
     selector: 'auan-register',
@@ -81,6 +85,7 @@ export class AuanRegisterComponent implements OnInit, AfterViewInit {
     private readonly editDialog: TLMatDialog<EditAuanComponent>;
     private readonly inspectionPickerDialog: TLMatDialog<EditAuanInspectionPickerComponent>;
     private readonly inspDeliveryDialog: TLMatDialog<AuanDeliveryComponent>;
+    private readonly snackbar: MatSnackBar;
 
     public constructor(
         service: AuanRegisterService,
@@ -90,6 +95,7 @@ export class AuanRegisterComponent implements OnInit, AfterViewInit {
         editDialog: TLMatDialog<EditAuanComponent>,
         inspectionPickerDialog: TLMatDialog<EditAuanInspectionPickerComponent>,
         inspDeliveryDialog: TLMatDialog<AuanDeliveryComponent>,
+        snackbar: MatSnackBar,
         permissions: PermissionsService,
         authService: SecurityService
     ) {
@@ -100,6 +106,7 @@ export class AuanRegisterComponent implements OnInit, AfterViewInit {
         this.editDialog = editDialog;
         this.inspDeliveryDialog = inspDeliveryDialog;
         this.inspectionPickerDialog = inspectionPickerDialog;
+        this.snackbar = snackbar;
 
         this.canAddRecords = permissions.has(PermissionsEnum.AuanRegisterAddRecords);
         this.canEditRecords = permissions.has(PermissionsEnum.AuanRegisterEditRecords);
@@ -360,6 +367,15 @@ export class AuanRegisterComponent implements OnInit, AfterViewInit {
                     this.service.deleteAuan(auan.id!).subscribe({
                         next: () => {
                             this.grid.refreshData();
+                        },
+                        error: (errorResponse: HttpErrorResponse) => {
+                            if ((errorResponse.error as ErrorModel)?.code === ErrorCode.CannotDeleteAuanWithDecrees) {
+                                const message: string = this.translate.getValue('auan-register.cannot-delete-auan-with-penal-decrees');
+                                this.snackbar.open(message, undefined, {
+                                    duration: RequestProperties.DEFAULT.showExceptionDurationErr,
+                                    panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
+                                });
+                            }
                         }
                     });
                 }

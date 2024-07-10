@@ -44,6 +44,10 @@ import { EditInspectionPersonComponent } from '@app/components/administration-ap
 import { EditCheckWaterObjectComponent } from '@app/components/administration-app/control-activity/inspections/dialogs/edit-check-water-object/edit-check-water-object.component';
 import { EditInspectionFishingGearComponent } from '@app/components/administration-app/control-activity/inspections/dialogs/edit-inspection-fishing-gear/edit-inspection-fishing-gear.component';
 import { ReviewOldInspectionComponent } from '@app/components/administration-app/control-activity/inspections/dialogs/review-old-inspection/review-old-inspection.component';
+import { HttpErrorResponse } from '@angular/common/http';
+import { ErrorCode, ErrorModel } from '@app/models/common/exception.model';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { RequestProperties } from '@app/shared/services/request-properties';
 
 @Component({
     selector: 'inspections-register',
@@ -108,6 +112,7 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
     private readonly matDialog: MatDialog;
     private readonly addDialog: TLMatDialog<InspectionSelectionComponent>;
     private readonly signDialog: TLMatDialog<SignInspectionComponent>;
+    private readonly snackbar: MatSnackBar;
 
     public constructor(
         service: InspectionsService,
@@ -117,6 +122,7 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
         confirmDialog: TLConfirmDialog,
         addDialog: TLMatDialog<InspectionSelectionComponent>,
         signDialog: TLMatDialog<SignInspectionComponent>,
+        snackbar: MatSnackBar,
         permissions: PermissionsService,
         authService: SecurityService,
         router: Router
@@ -126,6 +132,7 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
         this.translate = translate;
         this.matDialog = matDialog;
         this.confirmDialog = confirmDialog;
+        this.snackbar = snackbar;
         this.router = router;
 
         this.addDialog = addDialog;
@@ -364,23 +371,30 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
     }
 
     public deleteEntry(entry: InspectionDTO): void {
-        this.confirmDialog
-            .open({
-                title: this.translate.getValue('inspections.delete-inspection-dialog-title'),
-                message: this.translate.getValue('inspections.delete-inspection-dialog-message'),
-                okBtnLabel: this.translate.getValue('inspections.delete-inspection-dialog-ok-btn-label'),
-            })
-            .subscribe({
-                next: (ok: boolean) => {
-                    if (ok) {
-                        this.service.delete(entry.id!).subscribe({
-                            next: () => {
-                                this.gridManager.refreshData();
-                            },
-                        });
-                    }
-                },
-            });
+        this.confirmDialog.open({
+            title: this.translate.getValue('inspections.delete-inspection-dialog-title'),
+            message: this.translate.getValue('inspections.delete-inspection-dialog-message'),
+            okBtnLabel: this.translate.getValue('inspections.delete-inspection-dialog-ok-btn-label'),
+        }).subscribe({
+            next: (ok: boolean) => {
+                if (ok) {
+                    this.service.delete(entry.id!).subscribe({
+                        next: () => {
+                            this.gridManager.refreshData();
+                        },
+                        error: (errorResponse: HttpErrorResponse) => {
+                            if ((errorResponse.error as ErrorModel)?.code === ErrorCode.CannotDeleteInspectionWithAuans) {
+                                const message: string = this.translate.getValue('inspections.cannot-delete-inspection-with-auans');
+                                this.snackbar.open(message, undefined, {
+                                    duration: RequestProperties.DEFAULT.showExceptionDurationErr,
+                                    panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
+                                });
+                            }
+                        }
+                    });
+                }
+            },
+        });
     }
 
     public restoreEntry(entry: InspectionDTO): void {
@@ -400,19 +414,16 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
     public openAddSelectionDialog(): void {
         const title: string = this.translate.getValue('inspections.add-dialog');
 
-        const dialog = this.addDialog.open(
-            {
-                title: title,
-                TCtor: InspectionSelectionComponent,
-                headerAuditButton: undefined,
-                headerCancelButton: {
-                    cancelBtnClicked: this.closeDialogBtnClicked.bind(this),
-                },
-                componentData: undefined,
-                translteService: this.translate,
+        const dialog = this.addDialog.open({
+            title: title,
+            TCtor: InspectionSelectionComponent,
+            headerAuditButton: undefined,
+            headerCancelButton: {
+                cancelBtnClicked: this.closeDialogBtnClicked.bind(this),
             },
-            '50em'
-        );
+            componentData: undefined,
+            translteService: this.translate,
+        }, '50em');
 
         dialog.subscribe({
             next: (result: InspectionTypesEnum | undefined) => {
@@ -424,11 +435,7 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
         });
     }
 
-    public openEditDialog(
-        dialogInfo: EditDialogInfo,
-        entry: InspectionDTO | undefined,
-        readOnly: boolean = false
-    ): void {
+    public openEditDialog(dialogInfo: EditDialogInfo, entry: InspectionDTO | undefined, readOnly: boolean = false): void {
         let auditBtn: IHeaderAuditButton | undefined;
         let data: InspectionDialogParamsModel | undefined;
 
@@ -454,14 +461,13 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
 
                 if (entry.inspectionType !== InspectionTypesEnum.OTH) {
                     if (this.canDownloadRecords) {
-                        rightSideButtons.push(
-                            {
-                                id: 'print',
-                                color: 'primary',
-                                translateValue: 'inspections.print-inspection',
-                                isVisibleInViewMode: true,
-                            }
-                        ); //TODO Add export btn
+                        rightSideButtons.push({
+                            id: 'print',
+                            color: 'primary',
+                            translateValue: 'inspections.print-inspection',
+                            isVisibleInViewMode: true,
+                        });
+                        //TODO Add export btn
                     }
                 }
             }
@@ -470,7 +476,7 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
             if ((this.shipId === null || this.shipId === undefined)
                 && entry.inspectionState !== InspectionStatesEnum.Draft
                 && entry.inspectionType !== InspectionTypesEnum.OTH
-                && (this.canEditLockedInspections || (!entry.isReportLocked && entry.createdByUserId === this.userId)) 
+                && (this.canEditLockedInspections || (!entry.isReportLocked && entry.createdByUserId === this.userId))
             ) {
                 rightSideButtons.push({
                     id: 'more-corrections-needed',
@@ -480,7 +486,7 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
                     isVisibleInViewMode: true,
                 });
             }
-            
+
             data = new InspectionDialogParamsModel({
                 id: entry.id,
                 viewMode: readOnly,
@@ -498,33 +504,30 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
             });
         }
 
-        const dialog = dialogInfo.editDialog.open(
-            {
-                title: dialogInfo.viewTitle,
-                TCtor: dialogInfo.editDialogTCtor,
-                headerAuditButton: auditBtn,
-                headerCancelButton: {
-                    cancelBtnClicked: this.closeDialogBtnClicked.bind(this),
-                },
-                componentData: data,
-                translteService: this.translate,
-                disableDialogClose: true,
-                saveBtn: {
-                    id: 'save',
-                    color: 'accent',
-                    translateValue: this.translate.getValue('inspections.submit'),
-                },
-                cancelBtn: {
-                    id: 'cancel',
-                    color: 'primary',
-                    translateValue: this.translate.getValue('common.cancel'),
-                },
-                rightSideActionsCollection: rightSideButtons,
-                viewMode: readOnly,
-                defaultFullscreen: true
+        const dialog = dialogInfo.editDialog.open({
+            title: dialogInfo.viewTitle,
+            TCtor: dialogInfo.editDialogTCtor,
+            headerAuditButton: auditBtn,
+            headerCancelButton: {
+                cancelBtnClicked: this.closeDialogBtnClicked.bind(this),
             },
-            '120em'
-        );
+            componentData: data,
+            translteService: this.translate,
+            disableDialogClose: true,
+            saveBtn: {
+                id: 'save',
+                color: 'accent',
+                translateValue: this.translate.getValue('inspections.submit'),
+            },
+            cancelBtn: {
+                id: 'cancel',
+                color: 'primary',
+                translateValue: this.translate.getValue('common.cancel'),
+            },
+            rightSideActionsCollection: rightSideButtons,
+            viewMode: readOnly,
+            defaultFullscreen: true
+        }, '120em');
 
         dialog.subscribe({
             next: (result: InspectionDTO | undefined) => {
@@ -566,7 +569,8 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
         if (result.subjectIsLegal === true) {
             result.subjectEIK = filters.getValue('eikControl');
             result.subjectName = filters.getValue('legalNameControl');
-        } else {
+        }
+        else {
             result.subjectEGN = filters.getValue('egnControl');
             result.subjectName = filters.getValue('personNameControl');
         }
@@ -574,11 +578,7 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
         return result;
     }
 
-    private getEditDialogInfo(
-        inspectionCode: InspectionTypesEnum,
-        adding: boolean = false,
-        readonly: boolean = false
-    ): EditDialogInfo {
+    private getEditDialogInfo(inspectionCode: InspectionTypesEnum, adding: boolean = false, readonly: boolean = false): EditDialogInfo {
         let dialog: TLMatDialog<IDialogComponent> | undefined;
         let dialogTCtor: unknown | undefined;
         let title: string | undefined;
@@ -590,11 +590,14 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
                 {
                     dialog = new TLMatDialog<EditObservationAtSeaComponent>(this.matDialog);
                     dialogTCtor = EditObservationAtSeaComponent;
+
                     if (adding) {
                         title = this.translate.getValue('inspections.add-ofs-dialog-title');
-                    } else if (readonly) {
+                    }
+                    else if (readonly) {
                         title = this.translate.getValue('inspections.view-ofs-dialog-title');
-                    } else {
+                    }
+                    else {
                         title = this.translate.getValue('inspections.edit-ofs-dialog-title');
                     }
                 }
@@ -603,11 +606,14 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
                 {
                     dialog = new TLMatDialog<EditInspectionAtSeaComponent>(this.matDialog);
                     dialogTCtor = EditInspectionAtSeaComponent;
+
                     if (adding) {
                         title = this.translate.getValue('inspections.add-ibs-dialog-title');
-                    } else if (readonly) {
+                    }
+                    else if (readonly) {
                         title = this.translate.getValue('inspections.view-ibs-dialog-title');
-                    } else {
+                    }
+                    else {
                         title = this.translate.getValue('inspections.edit-ibs-dialog-title');
                     }
                 }
@@ -616,11 +622,14 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
                 {
                     dialog = new TLMatDialog<EditInspectionAtPortComponent>(this.matDialog);
                     dialogTCtor = EditInspectionAtPortComponent;
+
                     if (adding) {
                         title = this.translate.getValue('inspections.add-ibp-dialog-title');
-                    } else if (readonly) {
+                    }
+                    else if (readonly) {
                         title = this.translate.getValue('inspections.view-ibp-dialog-title');
-                    } else {
+                    }
+                    else {
                         title = this.translate.getValue('inspections.edit-ibp-dialog-title');
                     }
                 }
@@ -629,11 +638,14 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
                 {
                     dialog = new TLMatDialog<EditInspectionTransshipmentComponent>(this.matDialog);
                     dialogTCtor = EditInspectionTransshipmentComponent;
+
                     if (adding) {
                         title = this.translate.getValue('inspections.add-itb-dialog-title');
-                    } else if (readonly) {
+                    }
+                    else if (readonly) {
                         title = this.translate.getValue('inspections.view-itb-dialog-title');
-                    } else {
+                    }
+                    else {
                         title = this.translate.getValue('inspections.edit-itb-dialog-title');
                     }
                 }
@@ -642,11 +654,14 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
                 {
                     dialog = new TLMatDialog<EditInspectionVehicleComponent>(this.matDialog);
                     dialogTCtor = EditInspectionVehicleComponent;
+
                     if (adding) {
                         title = this.translate.getValue('inspections.add-ivh-dialog-title');
-                    } else if (readonly) {
+                    }
+                    else if (readonly) {
                         title = this.translate.getValue('inspections.view-ivh-dialog-title');
-                    } else {
+                    }
+                    else {
                         title = this.translate.getValue('inspections.edit-ivh-dialog-title');
                     }
                 }
@@ -655,11 +670,14 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
                 {
                     dialog = new TLMatDialog<EditInspectionAtMarketComponent>(this.matDialog);
                     dialogTCtor = EditInspectionAtMarketComponent;
+
                     if (adding) {
                         title = this.translate.getValue('inspections.add-ifs-dialog-title');
-                    } else if (readonly) {
+                    }
+                    else if (readonly) {
                         title = this.translate.getValue('inspections.view-ifs-dialog-title');
-                    } else {
+                    }
+                    else {
                         title = this.translate.getValue('inspections.edit-ifs-dialog-title');
                     }
                 }
@@ -668,11 +686,14 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
                 {
                     dialog = new TLMatDialog<EditInspectionAquacultureComponent>(this.matDialog);
                     dialogTCtor = EditInspectionAquacultureComponent;
+
                     if (adding) {
                         title = this.translate.getValue('inspections.add-iaq-dialog-title');
-                    } else if (readonly) {
+                    }
+                    else if (readonly) {
                         title = this.translate.getValue('inspections.view-iaq-dialog-title');
-                    } else {
+                    }
+                    else {
                         title = this.translate.getValue('inspections.edit-iaq-dialog-title');
                     }
                 }
@@ -681,11 +702,14 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
                 {
                     dialog = new TLMatDialog<EditInspectionPersonComponent>(this.matDialog);
                     dialogTCtor = EditInspectionPersonComponent;
+
                     if (adding) {
                         title = this.translate.getValue('inspections.add-ifp-dialog-title');
-                    } else if (readonly) {
+                    }
+                    else if (readonly) {
                         title = this.translate.getValue('inspections.view-ifp-dialog-title');
-                    } else {
+                    }
+                    else {
                         title = this.translate.getValue('inspections.edit-ifp-dialog-title');
                     }
                 }
@@ -694,11 +718,14 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
                 {
                     dialog = new TLMatDialog<EditCheckWaterObjectComponent>(this.matDialog);
                     dialogTCtor = EditCheckWaterObjectComponent;
+
                     if (adding) {
                         title = this.translate.getValue('inspections.add-cwo-report-dialog-title');
-                    } else if (readonly) {
+                    }
+                    else if (readonly) {
                         title = this.translate.getValue('inspections.view-cwo-report-dialog-title');
-                    } else {
+                    }
+                    else {
                         title = this.translate.getValue('inspections.edit-cwo-report-dialog-title');
                     }
                 }
@@ -707,11 +734,14 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
                 {
                     dialog = new TLMatDialog<EditInspectionFishingGearComponent>(this.matDialog);
                     dialogTCtor = EditInspectionFishingGearComponent;
+
                     if (adding) {
                         title = this.translate.getValue('inspections.add-igm-dialog-title');
-                    } else if (readonly) {
+                    }
+                    else if (readonly) {
                         title = this.translate.getValue('inspections.view-igm-dialog-title');
-                    } else {
+                    }
+                    else {
                         title = this.translate.getValue('inspections.edit-igm-dialog-title');
                     }
                 }
@@ -720,11 +750,14 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
                 {
                     dialog = new TLMatDialog<ReviewOldInspectionComponent>(this.matDialog);
                     dialogTCtor = ReviewOldInspectionComponent;
+
                     if (adding) {
                         title = this.translate.getValue('inspections.add-oth-dialog-title');
-                    } else if (readonly) {
+                    }
+                    else if (readonly) {
                         title = this.translate.getValue('inspections.view-oth-dialog-title');
-                    } else {
+                    }
+                    else {
                         title = this.translate.getValue('inspections.edit-oth-dialog-title');
                     }
                 }

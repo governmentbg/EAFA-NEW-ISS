@@ -2824,6 +2824,7 @@
         'delete-inspection-dialog-title': 'Remove inspection',
         'delete-inspection-dialog-message': 'Are you sure you want to remove the inspection?',
         'delete-inspection-dialog-ok-btn-label': 'Remove',
+        'cannot-delete-inspection-with-auans': 'You cannot delete an inspection with AUAN',
 
         'market-catches-table-view': 'Review catch',
         'market-catches-table-edit': 'Edit catch',
@@ -5257,6 +5258,7 @@
         'delete-auan-dialog-title': 'Delete AUAN',
         'delete-auan-dialog-message': 'Are you sure you wish to delete this AUAN?',
         'delete-auan-dialog-ok-btn-label': 'Delete',
+        'cannot-delete-auan-with-penal-decrees': 'You cannot delete AUAN with penal decrees.',
         'print': 'Print',
         'save-print': 'Save and print',
         'save-draft': 'Save draft',
@@ -5789,6 +5791,7 @@
         'delete-resolution-dialog-title': 'Delete resolution',
         'delete-resolution-dialog-message': 'Are you sure you wish to delete this resolution?',
         'delete-resolution-dialog-ok-btn-label': 'Delete',
+        'cannot-delete-decree-with-penal-points': 'You cannot delete a penal decree with penal points.',
 
         'view-penal-decree-status-dialog-title': 'View status of penal decree',
         'edit-penal-decree-status-dialog-title': 'Edit status of penal decree',
