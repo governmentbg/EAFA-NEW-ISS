@@ -41,8 +41,6 @@ export class EditMarketCatchComponent implements OnInit, IDialogComponent {
 
     public hasCatchType: boolean = true;
     public hasUndersizedCheck: boolean = false;
-    public hasUnloadedQuantity: boolean = true;
-    public isMapPopoverOpened: boolean = false;
     public hasDeclaration: boolean = false;
     public readOnly: boolean = false;
     public aquacultureRegistered: boolean = true;
@@ -57,7 +55,6 @@ export class EditMarketCatchComponent implements OnInit, IDialogComponent {
     public vesselTypes: NomenclatureDTO<number>[] = [];
     public fishes: NomenclatureDTO<number>[] = [];
     public types: NomenclatureDTO<number>[] = [];
-    public catchZones: NomenclatureDTO<number>[] = [];
     public presentations: NomenclatureDTO<number>[] = [];
     public permitTypes: NomenclatureDTO<DeclarationLogBookTypeEnum>[] = [];
     public aquacultures: NomenclatureDTO<number>[] = [];
@@ -65,17 +62,8 @@ export class EditMarketCatchComponent implements OnInit, IDialogComponent {
     public declarationPages: InspectionLogBookPageNomenclatureDTO[] = [];
     public fishErrors: TLError[] = [];
 
-    @ViewChild(TLMapViewerComponent)
-    private mapViewer!: TLMapViewerComponent;
-
-    @ViewChild(TLPopoverComponent)
-    private mapPopover!: TLPopoverComponent;
-
     @ViewChild(ValidityCheckerGroupDirective)
     private validityCheckerGroup!: ValidityCheckerGroupDirective;
-
-    private temporarySelectedGridSector: NomenclatureDTO<number> | undefined;
-    private logBookFishes: DeclarationLogBookPageFishDTO[] = [];
 
     private readonly service: InspectionsService;
     private readonly nomenclatures: CommonNomenclatures;
@@ -180,18 +168,12 @@ export class EditMarketCatchComponent implements OnInit, IDialogComponent {
         this.readOnly = data.readOnly;
         this.fishes = data.fishes;
         this.types = data.types;
-        this.catchZones = data.catchZones;
-        this.hasUnloadedQuantity = data.hasUnloadedQuantity;
         this.hasUndersizedCheck = data.hasUndersizedCheck;
         this.presentations = data.presentations;
         this.hasCatchType = data.hasCatchType;
 
         if (!data.hasCatchType) {
             this.form.get('catchTypeControl')!.disable();
-        }
-
-        if (!data.hasUnloadedQuantity) {
-            this.form.get('unloadedQuantityControl')!.disable();
         }
     }
 
@@ -219,44 +201,6 @@ export class EditMarketCatchComponent implements OnInit, IDialogComponent {
         dialogClose();
     }
 
-    public onPopoverToggled(isOpened: boolean): void {
-        this.isMapPopoverOpened = isOpened;
-
-        setTimeout(() => {
-            if (this.isMapPopoverOpened === true) {
-                this.mapViewer.selectedGridSectorsChangeEvent.subscribe({
-                    next: (selectedGridSectors: string[] | undefined) => {
-                        if (!CommonUtils.isNullOrEmpty(selectedGridSectors)) {
-                            this.temporarySelectedGridSector = this.catchZones.find(f => f.code === selectedGridSectors![0])!;
-                        }
-                    }
-                });
-
-                const quadrant: string | null | undefined = this.form.get('catchZoneControl')!.value;
-                if (quadrant !== null && quadrant !== undefined) {
-                    this.mapViewer.gridLayerIsRenderedEvent.subscribe({
-                        next: (isMapRendered: boolean) => {
-                            if (isMapRendered === true) {
-                                this.mapViewer.selectGridSectors([quadrant]);
-                            }
-                        }
-                    });
-                }
-            }
-        }, 1000);
-    }
-
-    public onQuadrantChosenBtnClicked(): void {
-        this.form.get('catchZoneControl')!.setValue(this.temporarySelectedGridSector);
-        this.mapPopover.closePopover(true);
-    }
-
-    public onMapPopoverCancelBtnClicked(): void {
-        this.temporarySelectedGridSector = undefined;
-        this.mapViewer.selectGridSectors([]);
-        this.mapPopover.closePopover(true);
-    }
-
     protected buildForm(): void {
         this.form = new FormGroup({
             permitControl: new FormControl(undefined, [Validators.required]),
@@ -265,8 +209,6 @@ export class EditMarketCatchComponent implements OnInit, IDialogComponent {
             catchTypeControl: new FormControl(undefined, [Validators.required]),
             quantityControl: new FormControl(undefined, [Validators.required, TLValidators.number(0)]),
             presentationControl: new FormControl(undefined, [Validators.required]),
-            unloadedQuantityControl: new FormControl(undefined, [Validators.required, TLValidators.number(0)]),
-            catchZoneControl: new FormControl(undefined, [Validators.required]),
             turbotSizeGroupControl: new FormControl(undefined),
             shipControl: new FormControl(undefined),
             aquacultureRegisteredControl: new FormControl(true),
@@ -298,24 +240,20 @@ export class EditMarketCatchComponent implements OnInit, IDialogComponent {
                     }
 
                     if (this.permitTypeSelected === DeclarationLogBookTypeEnum.AquacultureLogBook || this.permitTypeSelected === DeclarationLogBookTypeEnum.Invoice || this.permitTypeSelected === DeclarationLogBookTypeEnum.NNN) {
-                        this.form.get('catchZoneControl')!.disable();
                         this.form.get('shipControl')!.disable();
                     }
                     else if (!this.readOnly) {
-                        this.form.get('catchZoneControl')!.enable();
                         this.form.get('shipControl')!.enable();
                     }
                 }
-                else { 
+                else {
                     this.declarationPages = [];
-                    this.logBookFishes = [];
 
                     this.form.get('pageNumberControl')!.setValue(undefined);
                     this.form.get('pageNumberControl')!.updateValueAndValidity({ onlySelf: true });
 
                     this.form.get('shipControl')!.reset();
                     this.form.get('shipControl')!.disable();
-                    this.form.get('catchZoneControl')!.disable();
                 }
             }
         });
@@ -416,8 +354,6 @@ export class EditMarketCatchComponent implements OnInit, IDialogComponent {
             ?? this.presentations.find(f => f.code === 'WHL')
         );
 
-        this.form.get('unloadedQuantityControl')!.setValue(this.model.unloadedQuantity);
-        this.form.get('catchZoneControl')!.setValue(this.catchZones.find(f => f.value === this.model.catchZoneId));
         this.form.get('shipControl')!.setValue(this.model.originShip);
         this.form.get('permitControl')!.setValue(this.permitTypes.find(f => f.value === this.model.logBookType));
 
@@ -440,7 +376,6 @@ export class EditMarketCatchComponent implements OnInit, IDialogComponent {
     protected fillModel(): void {
         const catchCount = this.form.get('countControl')!.value;
         const catchQuantity = this.form.get('quantityControl')!.value;
-        const unloadedQuantity = this.form.get('unloadedQuantityControl')!.value;
         this.model.undersized = this.form.get('undersizedControl')!.value;
 
         if (this.hasUndersizedCheck) {
@@ -455,9 +390,7 @@ export class EditMarketCatchComponent implements OnInit, IDialogComponent {
         this.model.fishTypeId = this.form.get('typeControl')!.value?.value;
         this.model.catchCount = catchCount ? Number(catchCount) : undefined;
         this.model.catchQuantity = catchQuantity ? Number(catchQuantity) : undefined;
-        this.model.unloadedQuantity = unloadedQuantity ? Number(unloadedQuantity) : undefined;
         this.model.presentationId = this.form.get('presentationControl')!.value?.value;
-        this.model.catchZoneId = this.form.get('catchZoneControl')!.value?.value;
         this.model.originShip = this.form.get('shipControl')!.value;
         this.model.logBookType = this.form.get('permitControl')!.value?.value;
         this.model.aquacultureId = this.form.get('aquacultureControl')!.value?.value;
@@ -566,7 +499,11 @@ export class EditMarketCatchComponent implements OnInit, IDialogComponent {
     }
 
     private pullDeclarations(vessel: VesselDuringInspectionDTO | undefined = undefined): void {
-        if (this.permitTypeSelected !== DeclarationLogBookTypeEnum.Invoice && this.permitTypeSelected !== DeclarationLogBookTypeEnum.NNN) {
+        if (this.permitTypeSelected !== undefined
+            && this.permitTypeSelected !== null
+            && this.permitTypeSelected !== DeclarationLogBookTypeEnum.Invoice
+            && this.permitTypeSelected !== DeclarationLogBookTypeEnum.NNN
+        ) {
             let ship: VesselDuringInspectionDTO | undefined = this.form.get('shipControl')!.value;
             const aquaculture: number | undefined = this.form.get('aquacultureControl')!.value?.value;
 

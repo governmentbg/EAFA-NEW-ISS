@@ -110,7 +110,7 @@ export class InspectedPermitLicensesTableComponent extends CustomFormControl<Ins
         this.permitsFormGroup.get('optionsControl')!.enable();
 
         if (record) {
-            this.permitsFormGroup.get('optionsControl')!.setValue(record.checkValue);
+            this.permitsFormGroup.get('optionsControl')!.setValue(this.options.find(f => f.value === record.checkValue));
         }
     }
 
@@ -168,6 +168,7 @@ export class InspectedPermitLicensesTableComponent extends CustomFormControl<Ins
 
     private permitsValidator(): ValidatorFn {
         return (): ValidationErrors | null => {
+
             if (this.permits !== undefined && this.permits !== null) {
                 for (const permit of this.permits) {
                     if (permit.checkValue === null || permit.checkValue === undefined) {

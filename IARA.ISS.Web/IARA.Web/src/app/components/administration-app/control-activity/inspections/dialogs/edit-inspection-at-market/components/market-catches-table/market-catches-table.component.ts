@@ -42,16 +42,10 @@ export class MarketCatchesTableComponent extends CustomFormControl<InspectedDecl
     public hasUndersizedCheck: boolean = false;
 
     @Input()
-    public hasUnloadedQuantity: boolean = true;
-
-    @Input()
     public fishes: NomenclatureDTO<number>[] = [];
 
     @Input()
     public types: NomenclatureDTO<number>[] = [];
-
-    @Input()
-    public catchZones: NomenclatureDTO<number>[] = [];
 
     @Input()
     public presentations: NomenclatureDTO<number>[] = [];
@@ -107,12 +101,10 @@ export class MarketCatchesTableComponent extends CustomFormControl<InspectedDecl
             data = new MarketCatchTableParams({
                 model: inspectedCatch,
                 readOnly: readOnly,
-                catchZones: this.catchZones,
                 fishes: this.fishes,
                 presentations: this.presentations,
                 types: this.types,
                 hasCatchType: this.hasCatchType,
-                hasUnloadedQuantity: this.hasUnloadedQuantity,
                 hasUndersizedCheck: this.hasUndersizedCheck,
             });
 
@@ -125,7 +117,6 @@ export class MarketCatchesTableComponent extends CustomFormControl<InspectedDecl
         }
         else {
             data = new MarketCatchTableParams({
-                catchZones: this.catchZones,
                 fishes: this.fishes,
                 presentations: this.presentations,
                 types: this.types,
@@ -192,7 +183,7 @@ export class MarketCatchesTableComponent extends CustomFormControl<InspectedDecl
     private catchesValidator(): ValidatorFn {
         return (): ValidationErrors | null => {
             if (this.catches !== undefined && this.catches !== null) {
-                const result = groupBy(this.catches, ((o: InspectedCatchTableModel) => ([o.fishId, o.catchInspectionTypeId, o.catchZoneId, o.turbotSizeGroupId])));
+                const result = groupBy(this.catches, ((o: InspectedCatchTableModel) => ([o.fishId, o.catchInspectionTypeId, o.turbotSizeGroupId])));
 
                 if (result.find((f: any[]) => f.length > 1)) {
                     return { 'catchesMatch': true };

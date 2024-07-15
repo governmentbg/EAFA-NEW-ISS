@@ -108,7 +108,7 @@ export class InspectedPermitsTableComponent extends CustomFormControl<Inspection
         this.permitsFormGroup.get('optionsControl')!.enable();
 
         if (record) {
-            this.permitsFormGroup.get('optionsControl')!.setValue(record.checkValue);
+            this.permitsFormGroup.get('optionsControl')!.setValue(this.options.find(f => f.value === record.checkValue));
         }
     }
 
