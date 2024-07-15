@@ -14,9 +14,9 @@
                              label="{{ 'inspections.market-declaration-type' | tlTranslate }}">
             </tl-autocomplete>
 
-            <inspected-ship *ngIf="permitTypeSelected != null 
-                            && permitTypeSelected !== declarationLogBookTypeEnum.Invoice 
-                            && permitTypeSelected !== declarationLogBookTypeEnum.NNN 
+            <inspected-ship *ngIf="permitTypeSelected != null
+                            && permitTypeSelected !== declarationLogBookTypeEnum.Invoice
+                            && permitTypeSelected !== declarationLogBookTypeEnum.NNN
                             && permitTypeSelected !== declarationLogBookTypeEnum.AquacultureLogBook"
                             formControlName="shipControl"
                             [hasMap]="false"
@@ -139,13 +139,6 @@
                       label="{{ 'inspections.market-catch-quantity' | tlTranslate }}">
             </tl-input>
 
-            <tl-input *ngIf="hasUnloadedQuantity"
-                      fxFlex="33"
-                      formControlName="unloadedQuantityControl"
-                      type="number"
-                      label="{{ 'inspections.market-catch-unloaded-quantity' | tlTranslate }}">
-            </tl-input>
-
             <tl-autocomplete *ngIf="showTurbotControl"
                              fxFlex="33"
                              formControlName="turbotSizeGroupControl"
@@ -159,60 +152,6 @@
                              [options]="presentations"
                              label="{{ 'inspections.market-catch-presentation' | tlTranslate }}">
             </tl-autocomplete>
-
-            <div *ngIf="permitTypeSelected != null 
-                 && permitTypeSelected !== declarationLogBookTypeEnum.Invoice 
-                 && permitTypeSelected !== declarationLogBookTypeEnum.NNN 
-                 && permitTypeSelected !== declarationLogBookTypeEnum.AquacultureLogBook"
-                 fxFlex="33"
-                 fxLayout="row"
-                 fxLayoutAlign="space-between center">
-                <tl-autocomplete fxFlex="81"
-                                 formControlName="catchZoneControl"
-                                 [options]="catchZones"
-                                 label="{{ 'inspections.market-catch-zone' | tlTranslate }}">
-                </tl-autocomplete>
-
-                <div fxFlex="17"
-                     fxLayoutAlign="start start">
-                    <tl-popover-button *ngIf="readOnly === false"
-                                       iconClass="accent-color"
-                                       icon="fa-map-marker-alt"
-                                       (togglePopover)="onPopoverToggled($event)">
-                        <tl-card *ngIf="isMapPopoverOpened"
-                                 tooltipResourceName="inspections.catch-map-popover-helper">
-                            <tl-card-title>
-                                {{ 'inspections.catch-map-popover-title' | tlTranslate }}
-                            </tl-card-title>
-
-                            <tl-card-content fxFlexFill>
-                                <div fxLayout="column"
-                                     fxLayoutGap="1em">
-                                    <div class="fixed-map-size">
-                                        <tl-map-viewer [mapOptions]="mapOptions"></tl-map-viewer>
-                                    </div>
-
-                                    <div fxFlex="100"
-                                         fxLayout="row"
-                                         fxLayoutAlign="space-between center">
-                                        <button mat-raised-button
-                                                color="primary"
-                                                (click)="onMapPopoverCancelBtnClicked()">
-                                            {{ 'inspections.catch-map-popover-cancel' | tlTranslate }}
-                                        </button>
-
-                                        <button mat-raised-button
-                                                color="accent"
-                                                (click)="onQuadrantChosenBtnClicked()">
-                                            {{ 'inspections.catch-map-popover-save' | tlTranslate }}
-                                        </button>
-                                    </div>
-                                </div>
-                            </tl-card-content>
-                        </tl-card>
-                    </tl-popover-button>
-                </div>
-            </div>
 
             <tl-error [errors]="fishErrors"
                       fxFlexFill>

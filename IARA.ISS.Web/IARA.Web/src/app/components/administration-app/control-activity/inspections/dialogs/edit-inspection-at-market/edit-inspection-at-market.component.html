@@ -66,10 +66,8 @@
             <market-catches-table formControlName="catchesControl"
                                   [fishes]="fishes"
                                   [types]="catchTypes"
-                                  [catchZones]="catchZones"
                                   [presentations]="presentations"
-                                  [hasCatchType]="false"
-                                  [hasUnloadedQuantity]="false">
+                                  [hasCatchType]="false">
             </market-catches-table>
 
             <mat-error *ngIf="form.controls.catchesControl?.touched && form.errors?.atLeastOneCatchError === true">

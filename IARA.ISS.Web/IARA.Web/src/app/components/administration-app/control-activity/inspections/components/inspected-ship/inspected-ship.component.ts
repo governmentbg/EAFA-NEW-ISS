@@ -158,8 +158,6 @@ export class InspectedShipComponent extends CustomFormControl<VesselDuringInspec
             if (this.isFromRegister) {
                 this.selectedShip = new VesselDuringInspectionDTO(value);
                 setTimeout(() => {
-                    // Кода стига до тук преди angular да построи своя UI,
-                    // карайки [options]="ship" да не се е случило и стойността да не се покаже.
                     if (value.shipId !== undefined && value.shipId !== null) {
                         const ship: ShipNomenclatureDTO = ShipsUtils.get(this.ships, value.shipId)
                         this.form.get('shipControl')!.setValue(ship);
@@ -272,12 +270,10 @@ export class InspectedShipComponent extends CustomFormControl<VesselDuringInspec
         else {
             this.form.get('shipControl')!.clearValidators();
             this.form.get('nameControl')!.setValidators(this.isShipRequired ? [Validators.required, Validators.maxLength(500)] : [Validators.maxLength(500)]);
-            this.form.get('externalMarkControl')!.setValidators(this.isShipRequired ? [Validators.required, Validators.maxLength(50)] : [Validators.maxLength(50)]);
+            this.form.get('externalMarkControl')!.setValidators(Validators.maxLength(50));
             this.form.get('cfrControl')!.setValidators([Validators.maxLength(20)]);
-            this.form.get('flagControl')!.setValidators(this.isShipRequired ? [Validators.required] : []);
             this.form.get('uviControl')!.setValidators([Validators.maxLength(20)]);
             this.form.get('callsignControl')!.setValidators([Validators.maxLength(50)]);
-            this.form.get('shipTypeControl')!.setValidators(this.isShipRequired ? [Validators.required] : []);
             this.form.get('mmsiControl')!.setValidators([Validators.maxLength(20)]);
 
             this.form.get('nameControl')!.enable();
