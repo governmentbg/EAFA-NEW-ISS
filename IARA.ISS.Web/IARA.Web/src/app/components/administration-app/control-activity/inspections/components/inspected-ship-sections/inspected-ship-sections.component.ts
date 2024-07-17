@@ -26,13 +26,13 @@ import { VesselDuringInspectionDTO } from '@app/models/generated/dtos/VesselDuri
 import { ValidityCheckerDirective } from '@app/shared/directives/validity-checker/validity-checker.directive';
 import { ShipNomenclatureDTO } from '@app/models/generated/dtos/ShipNomenclatureDTO';
 import { InspectionCatchMeasureDTO } from '@app/models/generated/dtos/InspectionCatchMeasureDTO';
+import { ShipsUtils } from '@app/shared/utils/ships.utils';
 
 @Component({
     selector: 'inspected-ship-sections',
     templateUrl: './inspected-ship-sections.component.html'
 })
 export class InspectedShipSectionsComponent extends CustomFormControl<InspectedShipSectionsModel | undefined> implements OnInit, OnChanges {
-
     @Input()
     public toggles: InspectionCheckModel[] = [];
 
@@ -256,66 +256,72 @@ export class InspectedShipSectionsComponent extends CustomFormControl<InspectedS
             this.form.get('fishingGearsControl')!.setValue(undefined);
         }
         else {
-            if (ship.shipId !== undefined && ship.shipId !== null && ship.shipId !== this.shipId) {
-                const result = await forkJoin([
-                    this.service.getShipPermits(ship.shipId!),
-                    this.service.getShipPermitLicenses(ship.shipId!),
-                    this.service.getShipLogBooks(ship.shipId!),
-                    this.service.getShipFishingGears(ship.shipId!)
-                ]).toPromise();
+            if (ship.shipId !== undefined && ship.shipId !== null) {
+                const selectedShip: ShipNomenclatureDTO = ShipsUtils.get(this.ships, ship.shipId);
 
-                const permits: InspectionPermitLicenseDTO[] = result[0];
-                const permitLicenses: InspectionPermitLicenseDTO[] = result[1];
-                const logBooks: InspectionShipLogBookDTO[] = result[2];
-                const fishingGears: FishingGearDTO[] = result[3];
+                if (this.shipId === undefined || this.shipId === null || !selectedShip.shipIds?.includes(this.shipId)) {
+                    this.shipId = ship.shipId;
 
-                if (permits.length > 0) {
-                    const shipPermits: InspectionPermitDTO[] = permits.map(x => new InspectionPermitDTO({
-                        from: x.validFrom,
-                        to: x.validTo,
-                        permitNumber: x.permitNumber,
-                        permitLicenseId: x.value,
-                        typeId: x.typeId,
-                        typeName: x.typeName
-                    }));
+                    const result = await forkJoin([
+                        this.service.getShipPermits(ship.shipId!),
+                        this.service.getShipPermitLicenses(ship.shipId!),
+                        this.service.getShipLogBooks(ship.shipId!),
+                        this.service.getShipFishingGears(ship.shipId!)
+                    ]).toPromise();
 
-                    this.form.get('permitsControl')!.setValue(shipPermits);
-                }
+                    const permits: InspectionPermitLicenseDTO[] = result[0];
+                    const permitLicenses: InspectionPermitLicenseDTO[] = result[1];
+                    const logBooks: InspectionShipLogBookDTO[] = result[2];
+                    const fishingGears: FishingGearDTO[] = result[3];
 
-                if (permitLicenses.length > 0) {
-                    const shipPermitLicenses: InspectionPermitDTO[] = permitLicenses.map(x => new InspectionPermitDTO({
-                        from: x.validFrom,
-                        to: x.validTo,
-                        licenseNumber: x.licenseNumber,
-                        permitNumber: x.permitNumber,
-                        permitLicenseId: x.value,
-                        typeId: x.typeId,
-                        typeName: x.typeName
-                    }));
+                    if (permits.length > 0) {
+                        const shipPermits: InspectionPermitDTO[] = permits.map(x => new InspectionPermitDTO({
+                            from: x.validFrom,
+                            to: x.validTo,
+                            permitNumber: x.permitNumber,
+                            permitLicenseId: x.value,
+                            typeId: x.typeId,
+                            typeName: x.typeName
+                        }));
 
-                    this.permitIds = shipPermitLicenses.filter(x => x.permitLicenseId !== undefined && x.permitLicenseId !== null).map(x => x.permitLicenseId!);
-                    this.form.get('permitLicensesControl')!.setValue(shipPermitLicenses);
-                }
+                        this.form.get('permitsControl')!.setValue(shipPermits);
+                    }
 
-                if (logBooks.length > 0) {
-                    const shipLogBooks: InspectionShipLogBookDTO[] = logBooks.map(x => new InspectionLogBookDTO({
-                        endPage: x.endPage,
-                        from: x.issuedOn,
-                        logBookId: x.id,
-                        number: x.number,
-                        pages: x.pages ?? [],
-                        startPage: x.startPage
-                    }));
+                    if (permitLicenses.length > 0) {
+                        const shipPermitLicenses: InspectionPermitDTO[] = permitLicenses.map(x => new InspectionPermitDTO({
+                            from: x.validFrom,
+                            to: x.validTo,
+                            licenseNumber: x.licenseNumber,
+                            permitNumber: x.permitNumber,
+                            permitLicenseId: x.value,
+                            typeId: x.typeId,
+                            typeName: x.typeName
+                        }));
 
-                    this.form.get('logBooksControl')!.setValue(shipLogBooks);
-                }
+                        this.permitIds = shipPermitLicenses.filter(x => x.permitLicenseId !== undefined && x.permitLicenseId !== null).map(x => x.permitLicenseId!);
+                        this.form.get('permitLicensesControl')!.setValue(shipPermitLicenses);
+                    }
 
-                if (fishingGears.length > 0) {
-                    const permitFishingGears: InspectedFishingGearDTO[] = fishingGears.map(x => new InspectedFishingGearDTO({
-                        permittedFishingGear: x
-                    }));
+                    if (logBooks.length > 0) {
+                        const shipLogBooks: InspectionShipLogBookDTO[] = logBooks.map(x => new InspectionLogBookDTO({
+                            endPage: x.endPage,
+                            from: x.issuedOn,
+                            logBookId: x.id,
+                            number: x.number,
+                            pages: x.pages ?? [],
+                            startPage: x.startPage
+                        }));
 
-                    this.form.get('fishingGearsControl')!.setValue(permitFishingGears);
+                        this.form.get('logBooksControl')!.setValue(shipLogBooks);
+                    }
+
+                    if (fishingGears.length > 0) {
+                        const permitFishingGears: InspectedFishingGearDTO[] = fishingGears.map(x => new InspectedFishingGearDTO({
+                            permittedFishingGear: x
+                        }));
+
+                        this.form.get('fishingGearsControl')!.setValue(permitFishingGears);
+                    }
                 }
             }
         }
