@@ -309,7 +309,7 @@ export class InspectedShipComponent extends CustomFormControl<VesselDuringInspec
         this.shipSelected.emit(this.getValue());
     }
 
-    private async onShipChanged(value: InspectionShipNomenclatureDTO): Promise<void> {
+    private async onShipChanged(value: ShipNomenclatureDTO): Promise<void> {
         if (typeof value === 'string' || value === null || value === undefined || value.value === null || value.value === undefined) {
             this.shipSelected.emit(value);
         }

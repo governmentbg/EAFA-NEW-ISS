@@ -17,6 +17,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using TechnoLogica.Xamarin.Attributes;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Helpers;
 using TechnoLogica.Xamarin.ViewModels.Interfaces;
@@ -26,7 +27,6 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.HarbourInspection
 {
     public class HarbourInspectionViewModel : InspectionPageViewModel
     {
-        private bool _hasTranshipment;
         private string _transhippedCatch;
         private List<SelectNomenclatureDto> _countries;
         private InspectionTransboardingDto _edit;
@@ -56,7 +56,8 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.HarbourInspection
             this.AddValidation(
                 groups: new Dictionary<string, Func<bool>>
                 {
-                    { Group.IS_REQUIRED, () => false }
+                    { Group.IS_REQUIRED, () => false },
+                    { Group.IS_TRANSHIPMENT, () => HasTranshipment.Value }
                 },
                 others: new IValidatableViewModel[]
                 {
@@ -113,13 +114,10 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.HarbourInspection
         public ValidState CaptainComment { get; set; }
 
         [Required]
+        [ValidGroup(Group.IS_TRANSHIPMENT)]
         public ValidStateLocation Location { get; set; }
 
-        public bool HasTranshipment
-        {
-            get => _hasTranshipment;
-            set => SetProperty(ref _hasTranshipment, value);
-        }
+        public ValidStateBool HasTranshipment { get; set; }
 
         public string TranshippedCatch
         {
@@ -262,7 +260,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.HarbourInspection
 
                 if (Edit.SendingShipInspection?.InspectedShip != null)
                 {
-                    HasTranshipment = true;
+                    HasTranshipment.Value = true;
                     TransshippedShip.OnEdit(Edit.SendingShipInspection.InspectedShip);
                 }
 
@@ -328,8 +326,12 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.HarbourInspection
                 InspectionFiles,
                 (inspectionIdentifier, files) =>
                 {
-                    VesselDuringInspectionDto rransshippedShip = TransshippedShip;
-                    rransshippedShip.Location = Location;
+                    VesselDuringInspectionDto transshippedShip = TransshippedShip;
+
+                    if (transshippedShip != null)
+                    {
+                        transshippedShip.Location = Location;
+                    }
 
                     InspectionTransboardingDto dto = new InspectionTransboardingDto
                     {
@@ -373,9 +375,9 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.HarbourInspection
                                 .Concat((List<InspectionCheckDto>)ShipChecks)
                                 .ToList(),
                         },
-                        SendingShipInspection = rransshippedShip != null ? new InspectionTransboardingShipDto
+                        SendingShipInspection = transshippedShip != null ? new InspectionTransboardingShipDto
                         {
-                            InspectedShip = rransshippedShip,
+                            InspectedShip = transshippedShip,
                         } : null,
                         TransboardedCatchMeasures = TransshippedCatches,
                         FishingGears = ShipFishingGears.FishingGears,

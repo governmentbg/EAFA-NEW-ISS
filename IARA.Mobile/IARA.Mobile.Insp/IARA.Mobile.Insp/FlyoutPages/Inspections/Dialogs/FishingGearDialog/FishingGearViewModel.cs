@@ -154,7 +154,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.FishingGearDialog
             get
             {
                 Validation.Force();
-                return Validation.IsValid;
+                return Validation.IsValid || !IsEditable;
             }
         }
 

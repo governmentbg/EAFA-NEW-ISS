@@ -41,6 +41,8 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
             Ship.ItemsSource = new TLObservableCollection<ShipSelectNomenclatureDto>();
             Ship.GetMore = (int page, int pageSize, string search) => NomenclaturesTransaction.GetShips(page, pageSize, search);
 
+            Location.AddFakeValidation();
+
             if (canPickLocation)
             {
                 Location.HasAsterisk = true;
