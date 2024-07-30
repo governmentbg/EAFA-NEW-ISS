@@ -7,7 +7,8 @@
     <!-- Основни данни -->
     <tl-expansion-panel title="{{ 'inspections.general-info' | tlTranslate }}"
                         [validityChecker]="form"
-                        [validityCheckerExtraCondition]="reportNumAlreadyExistsError !== true || isInspectionLockedError !== true">
+                        [validityCheckerExtraCondition]="reportNumAlreadyExistsError !== true || isInspectionLockedError !== true"
+                        tooltipResourceName="inspections.general-info-helper">
         <div fxLayout="column"
              fxLayoutGap="1em"
              fxLayoutAlign="start stretch">
@@ -29,13 +30,15 @@
 
     <!-- Данни за юридическо лице, регистрирано по чл. 25 от ЗРА, за отглеждане на риба и други организми -->
     <tl-expansion-panel title="{{ 'inspections.aquaculture-data' | tlTranslate }}"
-                        [validityChecker]="form">
+                        [validityChecker]="form"
+                        tooltipResourceName="inspections.aquaculture-data-helper">
         <div fxLayout="column"
              fxLayoutGap="1em"
              fxLayoutAlign="start stretch">
             <tl-autocomplete formControlName="aquacultureControl"
                              [options]="aquacultures"
-                             label="{{ 'inspections.aquaculture' | tlTranslate }}">
+                             label="{{ 'inspections.aquaculture' | tlTranslate }}"
+                             tooltipResourceName="inspections.aquaculture-helper">
             </tl-autocomplete>
 
             <inspected-legal formControlName="ownerControl"
@@ -54,12 +57,12 @@
 
     <!-- Данни за инспекцията -->
     <tl-expansion-panel title="{{ 'inspections.aquaculture-catch' | tlTranslate }}"
-                        [validityChecker]="form">
+                        [validityChecker]="form"
+                        tooltipResourceName="inspections.aquaculture-catch-helper">
         <div fxLayout="column"
              fxLayoutGap="1em"
              fxLayoutAlign="start stretch">
             <inspected-catches-table formControlName="catchesControl"
-                                     [ships]="ships"
                                      [fishes]="fishes"
                                      [types]="catchTypes"
                                      [catchZones]="catchZones"
@@ -79,7 +82,8 @@
             </inspection-toggle-list>
 
             <tl-input formControlName="otherFishingGearControl"
-                      label="{{ 'inspections.other-fishing-gear' | tlTranslate }}">
+                      label="{{ 'inspections.other-fishing-gear' | tlTranslate }}"
+                      tooltipResourceName="inspections.other-fishing-gear-helper">
             </tl-input>
         </div>
     </tl-expansion-panel>
@@ -89,13 +93,15 @@
                                 [validityChecker]="form">
         <tl-textarea formControlName="representativeControl"
                      [minRows]="3"
-                     label="{{ 'inspections.representer-comment' | tlTranslate }}">
+                     label="{{ 'inspections.representer-comment' | tlTranslate }}"
+                     tooltipResourceName="inspections.representer-comment-helper">
         </tl-textarea>
     </inspection-additional-info>
 
     <!-- Файлове -->
     <tl-expansion-panel title="{{ 'inspections.edit-inspection-files' | tlTranslate }}"
-                        [validityChecker]="form">
+                        [validityChecker]="form"
+                        tooltipResourceName="inspections.edit-inspection-files-helper">
         <file-uploader-form-array formControlName="filesControl"
                                   [pageCode]="pageCode"
                                   [downloadFileMethod]="service.downloadFile.bind(this.service)">

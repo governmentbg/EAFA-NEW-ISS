@@ -53,9 +53,14 @@
                             ValidState="{Binding TrailerLicensePlateNum}"
                             IsEnabled="{Binding ActivityType, Converter={StaticResource IsNotReview}}" />
                 </tl:TLFlex>
-                <tl:TLCheckView Text="{rt:Translate OwnerIsDriver, Group=VehicleInspection}"
-                        IsChecked="{Binding OwnerIsDriver}"
-                        IsEnabled="{Binding ActivityType, Converter={StaticResource IsNotReview}}" />
+                <tl:TLCheckView Text="{rt:Translate OwnerIsDriver, Group=VehicleInspection}" IsChecked="{Binding OwnerIsDriver}">
+                    <tl:TLCheckView.IsEnabled>
+                        <MultiBinding Converter="{StaticResource All}">
+                            <Binding Converter="{StaticResource IsNotReview}" Path="ActivityType" />
+                            <Binding Converter="{StaticResource IsSubjectNotLegal}" Path="Owner.Action" />
+                        </MultiBinding>
+                    </tl:TLCheckView.IsEnabled>
+                </tl:TLCheckView>
                 <lc:SubjectView BindingContext="{Binding Owner}" Title="{rt:Translate Owner, Group=VehicleInspection}" />
                 <StackLayout IsVisible="{Binding OwnerIsDriver, Converter={StaticResource OppositeBool}}">
                     <lc:PersonView BindingContext="{Binding Driver}" Title="{rt:Translate Driver, Group=VehicleInspection}" />
@@ -80,12 +85,7 @@
                             ValidState="{Binding SealCondition}"
                             IsEnabled="{Binding ActivityType, Converter={StaticResource IsNotReview}}" />
                 </tl:TLFlex>
-                <tl:TLCheckView Text="{rt:Translate Buyer, Group=VehicleInspection}"
-                        IsChecked="{Binding HasBuyer}"
-                        IsEnabled="{Binding ActivityType, Converter={StaticResource IsNotReview}}" />
-                <lc:BuyerView BindingContext="{Binding Buyer}"
-                        Title="{rt:Translate Buyer, Group=VehicleInspection}"
-                        IsVisible="{Binding HasBuyer}" />
+                <lc:BuyerView BindingContext="{Binding Buyer}" Title="{rt:Translate Buyer, Group=VehicleInspection}" />
                 <tl:TLEntry Title="{rt:Translate TransportDestination, Group=VehicleInspection}"
                         ValidState="{Binding TransportDestination}"
                         IsEnabled="{Binding ActivityType, Converter={StaticResource IsNotReview}}" />

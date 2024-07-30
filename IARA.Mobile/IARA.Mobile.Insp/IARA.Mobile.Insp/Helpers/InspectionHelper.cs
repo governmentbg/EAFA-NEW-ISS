@@ -280,21 +280,25 @@ namespace IARA.Mobile.Insp.Helpers
                     {
                         fishingShip.ShipOwner.Person.Value = fishingShip.ShipOwner.People[0];
                         fishingShip.ShipOwner.PersonChosen.Execute(fishingShip.ShipOwner.People[0]);
+                        fishingShip.ShipOwner.Validation.Force();
                     }
                     if (fishingShip.ShipUser.People.Count == 1)
                     {
                         fishingShip.ShipUser.Person.Value = fishingShip.ShipUser.People[0];
                         fishingShip.ShipUser.PersonChosen.Execute(fishingShip.ShipUser.People[0]);
+                        fishingShip.ShipUser.Validation.Force();
                     }
                     if (fishingShip.ShipRepresentative.People.Count == 1)
                     {
                         fishingShip.ShipRepresentative.Person.Value = fishingShip.ShipRepresentative.People[0];
                         fishingShip.ShipRepresentative.PersonChosen.Execute(fishingShip.ShipRepresentative.People[0]);
+                        fishingShip.ShipRepresentative.Validation.Force();
                     }
                     if (fishingShip.ShipCaptain.People.Count == 1)
                     {
                         fishingShip.ShipCaptain.Person.Value = fishingShip.ShipCaptain.People[0];
                         fishingShip.ShipCaptain.PersonChosen.Execute(fishingShip.ShipCaptain.People[0]);
+                        fishingShip.ShipCaptain.Validation.Force();
                     }
 
                     await TLLoadingHelper.HideFullLoadingScreen();

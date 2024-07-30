@@ -520,7 +520,7 @@ export class EditFirstSaleLogBookPageComponent implements OnInit, AfterViewInit,
 
     private calculateProductsTotalPrice(products: LogBookPageProductDTO[] | undefined): number | undefined {
         if (products !== null && products !== undefined && products.length > 0) {
-            const totalPrice: number = products.reduce((sum, current) => sum + (current.quantityKg! * current.unitPrice!), 0);
+            const totalPrice: number = products.filter(x => x.isActive).reduce((sum, current) => sum + (current.quantityKg! * current.unitPrice!), 0);
             return totalPrice;
         }
         else {

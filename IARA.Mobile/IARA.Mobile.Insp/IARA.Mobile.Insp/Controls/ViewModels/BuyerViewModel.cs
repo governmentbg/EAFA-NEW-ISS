@@ -16,8 +16,9 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
     public class BuyerViewModel : ViewModel
     {
         private InspectionSubjectPersonnelDto _buyer;
+        private bool _isBuyerOptional;
 
-        public BuyerViewModel(InspectionPageViewModel inspection)
+        public BuyerViewModel(InspectionPageViewModel inspection, bool isBuyerOptional = false)
         {
             Inspection = inspection;
 
@@ -28,6 +29,14 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
             Buyer.ItemsSource = new TLObservableCollection<SelectNomenclatureDto>();
             Buyer.GetMore = (int page, int pageSize, string search) =>
                 NomenclaturesTransaction.GetBuyers(page, pageSize, search);
+
+            IsBuyerOptional = isBuyerOptional;
+            if (IsBuyerOptional)
+            {
+                Buyer.Validations.RemoveAt(Buyer.Validations.FindIndex(f => f.Name == nameof(RequiredAttribute)));
+                Buyer.HasAsterisk = false;
+                OnPropertyChanged(nameof(Buyer));
+            }
         }
 
         public InspectionPageViewModel Inspection { get; }
@@ -36,6 +45,12 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
         public ValidStateInfiniteSelect<SelectNomenclatureDto> Buyer { get; set; }
 
         public ICommand BuyerChosen { get; }
+
+        public bool IsBuyerOptional
+        {
+            get => _isBuyerOptional;
+            set => SetProperty(ref _isBuyerOptional, value);
+        }
 
         public void Init()
         {
@@ -66,6 +81,8 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
                 }
 
                 _buyer = buyer;
+                _buyer.Type = InspectedPersonType.RegBuyer;
+                _buyer.IsRegistered = true;
                 _buyer.Address = buyer.Address ?? buyer.RegisteredAddress.BuildAddress();
             }
         }

@@ -74,5 +74,9 @@ namespace IARA.Mobile.Insp.Application.Interfaces.Transactions
 
         Task<LegalFullDataDto> GetLegalFullData(string eik);
         InspectionDraftDto MapToDraftDto<TDto>(TDto dto) where TDto : InspectionEditDto;
+
+        string GetInspectionJson(int id);
+        void ReturnForEdit(int id);
+        int GetInspectionStateId(InspectionState inspectionState);
     }
 }

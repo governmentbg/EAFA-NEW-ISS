@@ -4,49 +4,66 @@
      [formGroup]="form"
      class="dialog-padding">
     <!-- Основни данни -->
-    <tl-expansion-panel title="{{ 'inspections.general-info' | tlTranslate }}">
+    <tl-expansion-panel title="{{ 'inspections.general-info' | tlTranslate }}"
+                        tooltipResourceName="inspections.general-info-helper">
         <div fxLayout="column" fxLayoutGap="1em" fxLayoutAlign="start stretch">
             <tl-input formControlName="numControl"
-                      label="{{ 'inspections.kp-num' | tlTranslate }}">
+                      label="{{ 'inspections.kp-num' | tlTranslate }}"
+                      tooltipResourceName="inspections.kp-num-helper">
             </tl-input>
+
             <tl-date formControlName="dateControl"
-                     label="{{ 'inspections.date' | tlTranslate }}">
+                     label="{{ 'inspections.date' | tlTranslate }}"
+                     tooltipResourceName="inspections.date-helper">
             </tl-date>
+
             <tl-input formControlName="locationControl"
-                      label="{{ 'inspections.location' | tlTranslate }}">
+                      label="{{ 'inspections.location' | tlTranslate }}"
+                      tooltipResourceName="inspections.location-helper">
             </tl-input>
+
             <tl-input formControlName="inspectorControl"
-                      label="{{ 'inspections.inspector' | tlTranslate }}">
+                      label="{{ 'inspections.inspector' | tlTranslate }}"
+                      tooltipResourceName="inspections.inspector-helper">
             </tl-input>
         </div>
     </tl-expansion-panel>
 
     <!-- Свидетели -->
-    <tl-expansion-panel title="{{ 'inspections.witnesses' | tlTranslate }}">
+    <tl-expansion-panel title="{{ 'inspections.witnesses' | tlTranslate }}"
+                        tooltipResourceName="inspections.witnesses-helper">
         <div fxLayout="column" fxLayoutGap="1em" fxLayoutAlign="start stretch">
             <tl-input formControlName="witness1Control"
-                      label="{{ 'inspections.witness-1' | tlTranslate }}">
+                      label="{{ 'inspections.witness-1' | tlTranslate }}"
+                      tooltipResourceName="inspections.witness-1-helper">
             </tl-input>
+
             <tl-input formControlName="witness2Control"
-                      label="{{ 'inspections.witness-2' | tlTranslate }}">
+                      label="{{ 'inspections.witness-2' | tlTranslate }}"
+                      tooltipResourceName="inspections.witness-2-helper">
             </tl-input>
         </div>
     </tl-expansion-panel>
 
     <!-- Информация на инспекцията -->
-    <tl-expansion-panel title="{{ 'inspections.inspection-info' | tlTranslate }}">
+    <tl-expansion-panel title="{{ 'inspections.inspection-info' | tlTranslate }}"
+                        tooltipResourceName="inspections.inspection-info-helper">
         <div fxLayout="column" fxLayoutGap="1em" fxLayoutAlign="start stretch">
             <tl-input formControlName="objectControl"
-                      label="{{ 'inspections.object' | tlTranslate }}">
+                      label="{{ 'inspections.object' | tlTranslate }}"
+                      tooltipResourceName="inspections.object-helper">
             </tl-input>
+
             <tl-input formControlName="inspectedPersonControl"
-                      label="{{ 'inspections.inspected-person' | tlTranslate }}">
+                      label="{{ 'inspections.inspected-person' | tlTranslate }}"
+                      tooltipResourceName="inspections.inspected-person-helper">
             </tl-input>
         </div>
     </tl-expansion-panel>
 
     <!-- Иззет улов -->
-    <tl-expansion-panel title="{{ 'inspections.catch-seized' | tlTranslate }}">
+    <tl-expansion-panel title="{{ 'inspections.catch-seized' | tlTranslate }}"
+                        tooltipResourceName="inspections.catch-seized-helper">
         <tl-data-table fxFlexFill
                        [rows]="catches"
                        [isRemote]="false"
@@ -85,7 +102,8 @@
     </tl-expansion-panel>
 
     <!-- Уреди -->
-    <tl-expansion-panel title="{{ 'inspections.fishing-gears' | tlTranslate }}">
+    <tl-expansion-panel title="{{ 'inspections.fishing-gears' | tlTranslate }}"
+                        tooltipResourceName="inspections.fishing-gears-helper">
         <tl-data-table fxFlexFill
                        [rows]="fishingGears"
                        [isRemote]="false"
@@ -122,13 +140,17 @@
     </tl-expansion-panel>
 
     <!-- Допълнителна информация -->
-    <tl-expansion-panel title="{{ 'inspections.additional-info' | tlTranslate }}">
+    <tl-expansion-panel title="{{ 'inspections.additional-info' | tlTranslate }}"
+                        tooltipResourceName="inspections.additional-info-helper">
         <div fxLayout="column" fxLayoutGap="1em" fxLayoutAlign="start stretch">
             <tl-input formControlName="inspectorCommentControl"
-                      label="{{ 'inspections.cp-inspector-comment' | tlTranslate }}">
+                      label="{{ 'inspections.cp-inspector-comment' | tlTranslate }}"
+                      tooltipResourceName="inspections.cp-inspector-comment-helper">
             </tl-input>
+
             <tl-input formControlName="actionsTakenControl"
-                      label="{{ 'inspections.cp-actions-taken' | tlTranslate }}">
+                      label="{{ 'inspections.cp-actions-taken' | tlTranslate }}"
+                      tooltipResourceName="inspections.cp-actions-taken-helper">
             </tl-input>
         </div>
     </tl-expansion-panel>

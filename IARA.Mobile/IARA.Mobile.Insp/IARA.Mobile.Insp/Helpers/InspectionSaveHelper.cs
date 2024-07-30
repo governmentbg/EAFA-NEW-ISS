@@ -139,6 +139,7 @@ namespace IARA.Mobile.Insp.Helpers
 
                 if (stateObj is IValidState validState)
                 {
+                    validState.ForceValidation();
                     return validState.IsValid;
                 }
                 else

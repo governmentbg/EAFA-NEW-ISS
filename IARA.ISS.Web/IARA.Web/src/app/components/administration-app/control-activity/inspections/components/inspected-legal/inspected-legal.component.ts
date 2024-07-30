@@ -55,13 +55,16 @@ export class InspectedLegalComponent extends CustomFormControl<InspectionSubject
                     name: value.firstName,
                 })
             );
-
+           
             this.form.get('addressControl')!.setValue(
                 InspectionUtils.buildAddress(value.registeredAddress, this.translate) ?? value.address
             );
+          
             this.form.get('countryControl')!.setValue(this.countries.find(f => f.value === value.citizenshipId));
         }
         else {
+            this.form.get('legalControl')!.setValue(null);
+            this.form.get('addressControl')!.setValue(null);
             this.form.get('countryControl')!.setValue(this.countries.find(f => f.code === CommonUtils.COUNTRIES_BG));
         }
     }
@@ -98,7 +101,7 @@ export class InspectedLegalComponent extends CustomFormControl<InspectionSubject
         if (person === null || person === undefined) {
             return undefined;
         }
-
+        
         return new InspectionSubjectPersonnelDTO({
             isRegistered: false,
             address: this.form.get('addressControl')!.value,

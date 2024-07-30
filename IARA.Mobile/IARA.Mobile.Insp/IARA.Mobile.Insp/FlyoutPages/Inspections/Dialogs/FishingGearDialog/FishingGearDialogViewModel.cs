@@ -139,7 +139,10 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.FishingGearDialog
             }
             else
             {
-                isDialogValid = InspectedFishingGear.IsValid && PermittedFishingGear.IsValid;
+                isDialogValid = PermittedFishingGear.IsValid && (
+                    InspectedFishingGear.IsValid
+                    || Corresponds.Value == nameof(InspectedFishingGearEnum.Y)
+                );
             }
 
             if (!isDialogValid)

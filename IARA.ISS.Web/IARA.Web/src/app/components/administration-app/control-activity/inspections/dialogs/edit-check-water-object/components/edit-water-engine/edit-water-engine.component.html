@@ -11,39 +11,52 @@
              fxLayoutAlign="start center">
             <tl-input fxFlex="33"
                       formControlName="modelControl"
-                      label="{{ 'inspections.water-engine-model' | tlTranslate }}">
+                      label="{{ 'inspections.water-engine-model' | tlTranslate }}"
+                      tooltipResourceName="inspections.water-engine-model-helper">
             </tl-input>
+
             <tl-input fxFlex="33"
                       formControlName="powerControl"
                       type="number"
-                      label="{{ 'inspections.water-engine-power' | tlTranslate }}">
+                      label="{{ 'inspections.water-engine-power' | tlTranslate }}"
+                      tooltipResourceName="inspections.water-engine-power-helper">
             </tl-input>
+
             <tl-input fxFlex="33"
                       formControlName="typeControl"
-                      label="{{ 'inspections.water-engine-type' | tlTranslate }}">
+                      label="{{ 'inspections.water-engine-type' | tlTranslate }}"
+                      tooltipResourceName="inspections.water-engine-type-helper">
             </tl-input>
         </div>
+
         <div fxLayout="row"
              fxLayoutGap="1em"
              fxLayoutAlign="start center">
             <tl-input fxFlex="32"
                       formControlName="totalCountControl"
                       type="number"
-                      label="{{ 'inspections.water-engine-total-count' | tlTranslate }}">
+                      label="{{ 'inspections.water-engine-total-count' | tlTranslate }}"
+                      tooltipResourceName="inspections.water-engine-total-count-helper">
             </tl-input>
+
             <tl-input fxFlex="66"
                       formControlName="colorControl"
-                      label="{{ 'inspections.water-engine-color' | tlTranslate }}">
+                      label="{{ 'inspections.water-engine-color' | tlTranslate }}"
+                      tooltipResourceName="inspections.water-engine-color-helper">
             </tl-input>
         </div>
+
         <tl-checkbox formControlName="takenControl"
                      label="{{ 'inspections.water-inspection-taken' | tlTranslate }}">
         </tl-checkbox>
+
         <tl-checkbox formControlName="storedControl"
                      label="{{ 'inspections.water-inspection-stored' | tlTranslate }}">
         </tl-checkbox>
+
         <tl-input formControlName="storageControl"
-                  label="{{ 'inspections.storage-location' | tlTranslate }}">
+                  label="{{ 'inspections.storage-location' | tlTranslate }}"
+                  tooltipResourceName="inspections.storage-location-helper">
         </tl-input>
     </div>
 </div>

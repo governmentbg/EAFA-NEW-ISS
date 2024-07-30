@@ -3,14 +3,18 @@ using IARA.Mobile.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Insp.Application.DTObjects.Inspections;
 using IARA.Mobile.Insp.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Insp.Base;
+using IARA.Mobile.Insp.FlyoutPages.Inspections.HarbourInspection;
 using IARA.Mobile.Insp.Helpers;
 using IARA.Mobile.Insp.ViewModels.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Reflection;
 using System.Windows.Input;
 using TechnoLogica.Xamarin.Attributes;
 using TechnoLogica.Xamarin.Helpers;
+using TechnoLogica.Xamarin.ViewModels.Interfaces;
 using TechnoLogica.Xamarin.ViewModels.Models;
 using Xamarin.CommunityToolkit.ObjectModel;
 
@@ -33,6 +37,15 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
                 {
                     { Group.REGISTERED, () => ShipInRegister.Value },
                     { Group.NOT_REGISTERED, () => !ShipInRegister.Value },
+                    { Group.IS_TRANSHIPMENT, () =>
+                    {
+                        if(HarbourInspectionViewModel.Static == null)
+                        {
+                            return true;
+                        }
+
+                        return HarbourInspectionViewModel.Static.HasTranshipment.Value;
+                    } }
                 }
             );
 
@@ -52,35 +65,43 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
                 Location.Validations.RemoveAt(Location.Validations.FindIndex(f => f.Name == nameof(RequiredAttribute)));
                 Location.HasAsterisk = false;
             }
+            RequiredValidStates = ReflectionHelper.GetAllRequiredValidStates(GetType());
         }
 
+        public List<PropertyInfo> RequiredValidStates { get; set; }
         public InspectionPageViewModel Inspection { get; }
 
         public ShipDto InspectedShip { get; set; }
 
         public bool CanPickLocation { get; }
+        public bool ValidStatesHaveRequiredAttribute { get; set; } = true;
 
         public ValidStateBool ShipInRegister { get; set; }
 
         [Required]
+        [ValidGroup(Group.IS_TRANSHIPMENT)]
         public ValidStateLocation Location { get; set; }
 
         [Required]
         [ValidGroup(Group.REGISTERED)]
+        [ValidGroup(Group.IS_TRANSHIPMENT)]
         public ValidStateInfiniteSelect<ShipSelectNomenclatureDto> Ship { get; set; }
 
         [Required]
         [MaxLength(500)]
         [ValidGroup(Group.NOT_REGISTERED)]
+        [ValidGroup(Group.IS_TRANSHIPMENT)]
         public ValidState Name { get; set; }
 
         [Required]
         [MaxLength(50)]
         [ValidGroup(Group.NOT_REGISTERED)]
+        [ValidGroup(Group.IS_TRANSHIPMENT)]
         public ValidState ExternalMarkings { get; set; }
 
         [Required]
         [ValidGroup(Group.NOT_REGISTERED)]
+        [ValidGroup(Group.IS_TRANSHIPMENT)]
         public ValidStateSelect<SelectNomenclatureDto> Flag { get; set; }
 
         [MaxLength(20)]
@@ -94,6 +115,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
 
         [Required]
         [ValidGroup(Group.NOT_REGISTERED)]
+        [ValidGroup(Group.IS_TRANSHIPMENT)]
         public ValidStateSelect<SelectNomenclatureDto> ShipType { get; set; }
 
         [MaxLength(20)]
@@ -126,6 +148,35 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
             Flags = flags;
             ShipTypes = shipTypes;
             Ship.ItemsSource.AddRange(NomenclaturesTransaction.GetShips(0, CommonGlobalVariables.PullItemsCount));
+        }
+
+        public void OnSwitchTransshipping(bool hasTransshipping)
+        {
+            if (hasTransshipping)
+            {
+                if (!ValidStatesHaveRequiredAttribute)
+                {
+                    foreach (PropertyInfo property in RequiredValidStates)
+                    {
+                        IValidState validState = property.GetValue(this) as IValidState;
+                        validState.Validations.Add(new TLValidator(new RequiredAttribute(), nameof(RequiredAttribute)));
+                    }
+                }
+            }
+            else
+            {
+                foreach (PropertyInfo property in RequiredValidStates)
+                {
+                    IValidState validState = property.GetValue(this) as IValidState;
+                    TLValidator validator = validState.Validations.Where(x => x.Name == nameof(RequiredAttribute)).FirstOrDefault();
+                    if (validator != null)
+                    {
+                        validState.Validations.Remove(validator);
+                    }
+                }
+            }
+
+            ValidStatesHaveRequiredAttribute = hasTransshipping;
         }
 
         public void OnEdit(VesselDuringInspectionDto dto)

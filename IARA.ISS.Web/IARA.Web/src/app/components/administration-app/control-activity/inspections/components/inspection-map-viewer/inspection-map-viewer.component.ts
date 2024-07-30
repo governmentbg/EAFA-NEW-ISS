@@ -116,7 +116,7 @@ export class InspectionMapViewerComponent extends CustomFormControl<LocationDTO 
         const long: string = this.form.get('longitudeControl')!.value;
         const lat: string = this.form.get('latitudeControl')!.value;
 
-        if (CommonUtils.isNullOrUndefined(long) || CommonUtils.isNullOrUndefined(lat)) {
+        if (!this.isLocationFormatingValid(long) || !this.isLocationFormatingValid(lat)) {
             return undefined;
         }
 
@@ -142,9 +142,28 @@ export class InspectionMapViewerComponent extends CustomFormControl<LocationDTO 
             CoordinateUtils.ConvertFromDMS(long.value),
             CoordinateUtils.ConvertFromDMS(lat.value),
         ];
+
         const pin: PinDef = new PinDef(coordinateNums, 'assets/map-icons/map-pin-red.png', undefined);
         this.mapViewer.clearPins();
         this.mapViewer.addPinsToMap([pin]);
+    }
+
+    private isLocationFormatingValid(location: string): boolean {
+        if (CommonUtils.isNullOrUndefined(location)) {
+            return false;
+        }
+
+        const coordinates: string[] = location.split(' ');
+
+        if (coordinates.length === 3) {
+            for (const part of coordinates) {
+                if (CommonUtils.isNullOrWhiteSpace(part)) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 
     private createCustomGridLayerStyle(): SimplePolygonStyleDef {

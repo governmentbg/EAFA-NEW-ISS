@@ -44,6 +44,7 @@ export class EditInspectionVehicleComponent extends BaseInspectionsComponent imp
     public presentations: NomenclatureDTO<number>[] = [];
 
     public hasSeal: boolean = true;
+    public isLegalOwner: boolean = false;
 
     public readonly inspectedPersonTypeEnum: typeof InspectedPersonTypeEnum = InspectedPersonTypeEnum;
 
@@ -89,7 +90,7 @@ export class EditInspectionVehicleComponent extends BaseInspectionsComponent imp
                 NomenclatureTypes.CatchPresentations, this.nomenclatures.getCatchPresentations.bind(this.nomenclatures), false
             ),
             this.service.getBuyers(),
-            this.service.getCheckTypesForInspection(InspectionTypesEnum.IVH),
+            this.service.getCheckTypesForInspection(InspectionTypesEnum.IVH)
         ]).toPromise();
 
         this.institutions = nomenclatureTables[0];
@@ -154,10 +155,8 @@ export class EditInspectionVehicleComponent extends BaseInspectionsComponent imp
         this.form.get('ownerIsDriverControl')!.valueChanges.subscribe({
             next: (yes: boolean) => {
                 if (yes) {
-                    this.form.get('driverControl')!.clearValidators();
-                }
-                else {
-                    this.form.get('driverControl')!.setValidators([Validators.required]);
+                    const driver: InspectionSubjectPersonnelDTO = this.form.get('ownerControl')!.value;
+                    this.form.get('driverControl')!.setValue(driver);
                 }
 
                 this.form.get('driverControl')!.updateValueAndValidity({ emitEvent: false });
@@ -166,16 +165,7 @@ export class EditInspectionVehicleComponent extends BaseInspectionsComponent imp
 
         this.form.get('ownerControl')!.valueChanges.subscribe({
             next: (owner: InspectionSubjectPersonnelDTO) => {
-                const isLegal: boolean = owner.isLegal ?? false;
-
-                if (isLegal) {
-                    this.form.get('ownerIsDriverControl')!.setValue(false);
-                    this.form.get('ownerIsDriverControl')!.disable({ emitEvent: false });
-                }
-                else {
-                    this.form.get('ownerIsDriverControl')!.enable({ emitEvent: false });
-                    this.form.get('ownerIsDriverControl')!.setValue(false);
-                }
+                this.isLegalOwner = owner.isLegal ?? false;
             }
         });
     }
@@ -197,7 +187,7 @@ export class EditInspectionVehicleComponent extends BaseInspectionsComponent imp
                 administrativeViolation: this.model.administrativeViolation,
                 inspectorComment: this.model.inspectorComment,
                 violation: this.model.observationTexts?.find(f => f.category === InspectionObservationCategoryEnum.AdditionalInfo),
-                violatedRegulations: this.model.violatedRegulations,
+                violatedRegulations: this.model.violatedRegulations
             }));
 
             this.form.get('mapControl')!.setValue(this.model.inspectionLocation);
@@ -228,9 +218,14 @@ export class EditInspectionVehicleComponent extends BaseInspectionsComponent imp
                     this.model.personnel.find(f => f.type === InspectedPersonTypeEnum.OwnerLegal || f.type === InspectedPersonTypeEnum.OwnerPers)
                 );
 
-                this.form.get('driverControl')!.setValue(
-                    this.model.personnel.find(f => f.type === InspectedPersonTypeEnum.Driver)
-                );
+                const driver = this.model.personnel.find(f => f.type === InspectedPersonTypeEnum.Driver);
+
+                if (driver !== undefined && driver !== null && driver.egnLnc !== null && driver.egnLnc !== undefined) {
+                    this.form.get('driverControl')!.setValue(driver);
+                }
+                else {
+                    this.form.get('ownerIsDriverControl')!.setValue(true);
+                }
 
                 const buyer = this.model.personnel.find(f => f.type === InspectedPersonTypeEnum.RegBuyer);
 
@@ -249,7 +244,7 @@ export class EditInspectionVehicleComponent extends BaseInspectionsComponent imp
                         lastName: buyer.lastName,
                         middleName: buyer.middleName,
                         value: buyer.id,
-                        type: InspectedPersonTypeEnum.RegBuyer,
+                        type: InspectedPersonTypeEnum.RegBuyer
                     }));
                 }
             }
@@ -296,7 +291,7 @@ export class EditInspectionVehicleComponent extends BaseInspectionsComponent imp
         });
 
         this.model.personnel = [];
-        const driver: InspectionSubjectPersonnelDTO | undefined = this.getDriver();
+        const driver: InspectionSubjectPersonnelDTO | undefined = this.form.get('driverControl')!.value;
 
         if (driver !== undefined && driver !== null) {
             this.model.personnel.push(driver);
@@ -329,6 +324,7 @@ export class EditInspectionVehicleComponent extends BaseInspectionsComponent imp
     private modifiedOwner(): InspectionSubjectPersonnelDTO {
         if (this.form.controls.ownerIsDriverControl.value) {
             const owner: InspectionSubjectPersonnelDTO = this.form.get('ownerControl')!.value;
+
             return new InspectionSubjectPersonnelDTO({
                 address: owner.address,
                 citizenshipId: owner.citizenshipId,
@@ -351,20 +347,5 @@ export class EditInspectionVehicleComponent extends BaseInspectionsComponent imp
         else {
             return this.form.get('ownerControl')!.value;
         }
-    }
-
-    private getDriver(): InspectionSubjectPersonnelDTO | undefined {
-        let driver: InspectionSubjectPersonnelDTO | undefined;
-        const ownerIsDriver: boolean = this.form.get('ownerIsDriverControl')!.value;
-
-        if (ownerIsDriver) {
-            driver = this.modifiedOwner();
-            driver.type = InspectedPersonTypeEnum.Driver;
-        }
-        else {
-            driver = this.form.get('driverControl')!.value;
-        }
-
-        return driver;
     }
 }

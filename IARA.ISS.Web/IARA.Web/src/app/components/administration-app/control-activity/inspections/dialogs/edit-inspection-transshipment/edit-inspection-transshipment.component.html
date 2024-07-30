@@ -7,7 +7,8 @@
     <!-- Основни данни -->
     <tl-expansion-panel title="{{ 'inspections.general-info' | tlTranslate }}"
                         [validityChecker]="form"
-                        [validityCheckerExtraCondition]="reportNumAlreadyExistsError !== true || isInspectionLockedError !== true">
+                        [validityCheckerExtraCondition]="reportNumAlreadyExistsError !== true || isInspectionLockedError !== true"
+                        tooltipResourceName="inspections.general-info-helper">
         <div fxLayout="column"
              fxLayoutGap="1em"
              fxLayoutAlign="start stretch">
@@ -76,7 +77,8 @@
 
     <!-- Трансбордиран улов -->
     <tl-expansion-panel title="{{ 'inspections.transshipment-catches' | tlTranslate }}"
-                        [validityChecker]="form">
+                        [validityChecker]="form"
+                        tooltipResourceName="inspections.general-info-helper">
         <div fxLayout="column"
              fxLayoutGap="1em"
              fxLayoutAlign="start stretch">
@@ -91,7 +93,8 @@
 
             <tl-textarea formControlName="transshipmentCatchViolationControl"
                          [minRows]="3"
-                         label="{{ 'inspections.violation' | tlTranslate }}">
+                         label="{{ 'inspections.violation' | tlTranslate }}"
+                         tooltipResourceName="inspections.violation-helper">
             </tl-textarea>
         </div>
     </tl-expansion-panel>
@@ -101,18 +104,21 @@
                                 [validityChecker]="form">
         <tl-textarea formControlName="sendingShipcaptainCommentControl"
                      [minRows]="3"
-                     label="{{ 'inspections.sending-ship-captain-comment' | tlTranslate }}">
+                     label="{{ 'inspections.sending-ship-captain-comment' | tlTranslate }}"
+                     tooltipResourceName="inspections.sending-ship-captain-comment-helper">
         </tl-textarea>
 
         <tl-textarea formControlName="receivingShipcaptainCommentControl"
                      [minRows]="3"
-                     label="{{ 'inspections.receiving-ship-captain-comment' | tlTranslate }}">
+                     label="{{ 'inspections.receiving-ship-captain-comment' | tlTranslate }}"
+                     tooltipResourceName="inspections.receiving-ship-captain-comment-helper">
         </tl-textarea>
     </inspection-additional-info>
 
     <!-- Файлове -->
     <tl-expansion-panel title="{{ 'inspections.edit-inspection-files' | tlTranslate }}"
-                        [validityChecker]="form">
+                        [validityChecker]="form"
+                        tooltipResourceName="inspections.edit-inspection-files-helper">
         <file-uploader-form-array formControlName="filesControl"
                                   [pageCode]="pageCode"
                                   [downloadFileMethod]="service.downloadFile.bind(this.service)">

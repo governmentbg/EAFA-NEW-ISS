@@ -10,5 +10,6 @@
             ValidState="{Binding Buyer}"
             Command="{Binding BuyerChosen}"
             DialogDisplayValue="DisplayValue"
-            IsEnabled="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}" />
+            IsEnabled="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}"
+            AllowEmptyDialog="{Binding IsBuyerOptional}" />
 </StackLayout>

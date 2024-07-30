@@ -30,7 +30,6 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.TranshipmentInspection
         {
             SaveDraft = CommandBuilder.CreateFrom(OnSaveDraft);
             Finish = CommandBuilder.CreateFrom(OnFinish);
-            ReturnForEdit = CommandBuilder.CreateFrom(OnReturnForEdit);
 
             InspectionGeneralInfo = new InspectionGeneralInfoViewModel(this);
             PatrolVehicles = new PatrolVehiclesViewModel(this, true);
@@ -263,10 +262,6 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.TranshipmentInspection
             return InspectionSaveHelper.Finish(Sections, Validation, Save);
         }
 
-        private Task OnReturnForEdit()
-        {
-            return Save(SubmitType.ReturnForEdit);
-        }
 
         private Task Save(SubmitType submitType)
         {

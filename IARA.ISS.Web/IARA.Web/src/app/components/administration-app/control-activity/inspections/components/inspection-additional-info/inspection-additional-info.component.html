@@ -1,30 +1,41 @@
 ﻿<div [formGroup]="form"
      validityCheckerGroup>
     <tl-expansion-panel title="{{ 'inspections.additional-info' | tlTranslate }}"
-                        [validityChecker]="form">
+                        [validityChecker]="form"
+                        tooltipResourceName="inspections.additional-info-helper">
         <div fxLayout="column"
              fxLayoutGap="1em"
              fxLayoutAlign="start stretch">
             <tl-textarea formControlName="violationControl"
                          [minRows]="3"
-                         label="{{ 'inspections.violation' | tlTranslate }}">
+                         label="{{ 'inspections.violation' | tlTranslate }}"
+                         tooltipResourceName="inspections.violation-helper">
             </tl-textarea>
+
             <ng-content></ng-content>
+
             <tl-textarea formControlName="inspectorCommentControl"
                          [minRows]="3"
-                         label="{{ 'inspections.inspector-comment' | tlTranslate }}">
+                         label="{{ 'inspections.inspector-comment' | tlTranslate }}"
+                         tooltipResourceName="inspections.inspector-comment-helper">
             </tl-textarea>
+
             <tl-textarea formControlName="actionsTakenControl"
                          [minRows]="3"
-                         label="{{ 'inspections.actions-taken' | tlTranslate }}">
+                         label="{{ 'inspections.actions-taken' | tlTranslate }}"
+                         tooltipResourceName="inspections.actions-taken-helper">
             </tl-textarea>
+
             <tl-checkbox formControlName="administrativeViolationControl"
-                         label="{{ 'inspections.administrative-violation' | tlTranslate }}">
+                         label="{{ 'inspections.administrative-violation' | tlTranslate }}"
+                         tooltipResourceName="inspections.administrative-violation-helper">
             </tl-checkbox>
 
             <!-- Нарушени разпоредби -->
-            <tl-card *ngIf="form.controls.administrativeViolationControl.value">
+            <tl-card *ngIf="form.controls.administrativeViolationControl.value"
+                     tooltipResourceName="inspections.edit-auan-violated-regulations-helper">
                 <tl-card-title>{{ 'inspections.edit-auan-violated-regulations' | tlTranslate }}</tl-card-title>
+
                 <tl-card-content>
                     <auan-violated-regulations formControlName="violatedRegulationsControl"
                                                [viewMode]="isDisabled"

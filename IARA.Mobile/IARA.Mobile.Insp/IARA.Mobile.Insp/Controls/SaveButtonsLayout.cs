@@ -1,5 +1,6 @@
 ﻿using IARA.Mobile.Domain.Enums;
 using IARA.Mobile.Insp.Base;
+using IARA.Mobile.Insp.Converters;
 using IARA.Mobile.Insp.Domain.Enums;
 using TechnoLogica.Xamarin.Extensions;
 using Xamarin.CommunityToolkit.Markup;
@@ -31,13 +32,19 @@ namespace IARA.Mobile.Insp.Controls
                     return state == InspectionState.Submitted || state == InspectionState.Signed;
                 }));
 
+            var multiBinding = new MultiBinding
+            {
+                Converter = new MultiBoolToVisibilityConverter()
+            };
+            multiBinding.Bindings.Add(new Binding(nameof(InspectionPageViewModel.InspectionState)));
+            multiBinding.Bindings.Add(new Binding(nameof(InspectionPageViewModel.CreatedByCurrentUser)));
             Children.Add(new Button
             {
                 BackgroundColor = App.GetResource<Color>("Secondary"),
                 Padding = new Thickness(15, 0),
             }.BindTranslation(Button.TextProperty, "ReturnForEdit", group)
                 .Bind(Button.CommandProperty, nameof(InspectionPageViewModel.ReturnForEdit))
-                .Bind(Button.IsVisibleProperty, nameof(InspectionPageViewModel.InspectionState), convert: (InspectionState state) => state == InspectionState.Submitted));
+                .Bind(Button.IsVisibleProperty, multiBinding));
 
             Children.Add(new Button
             {

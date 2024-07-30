@@ -13,7 +13,8 @@
         <tl-autocomplete *ngIf="isFromRegister"
                          formControlName="patrolVehicleControl"
                          label="{{ 'inspections.patrol-vehicle' | tlTranslate }}"
-                         [options]="patrolVehicles">
+                         [options]="patrolVehicles"
+                         tooltipResourceName="inspections.patrol-vehicle-helper">
         </tl-autocomplete>
 
         <div *ngIf="!isFromRegister"
@@ -22,19 +23,22 @@
              fxLayoutAlign="start center">
             <tl-input fxFlex="50"
                       formControlName="nameControl"
-                      label="{{ 'inspections.vehicle-name' | tlTranslate }}">
+                      label="{{ 'inspections.vehicle-name' | tlTranslate }}"
+                      tooltipResourceName="inspections.vehicle-name-helper">
             </tl-input>
 
             <tl-input *ngIf="isWaterVehicle"
                       fxFlex="50"
                       formControlName="cfrControl"
-                      label="{{ 'inspections.cfr' | tlTranslate }}">
+                      label="{{ 'inspections.cfr' | tlTranslate }}"
+                      tooltipResourceName="inspections.cfr-helper">
             </tl-input>
 
             <tl-input *ngIf="!isWaterVehicle"
                       fxFlex="50"
                       formControlName="cfrControl"
-                      label="{{ 'inspections.register-number' | tlTranslate }}">
+                      label="{{ 'inspections.register-number' | tlTranslate }}"
+                      tooltipResourceName="inspections.register-number-helper">
             </tl-input>
         </div>
 
@@ -44,28 +48,33 @@
              fxLayoutAlign="start center">
             <tl-input fxFlex="50"
                       formControlName="externalMarkControl"
-                      label="{{ 'inspections.external-mark' | tlTranslate }}">
+                      label="{{ 'inspections.external-mark' | tlTranslate }}"
+                      tooltipResourceName="inspections.external-mark-helper">
             </tl-input>
 
             <tl-input fxFlex="50"
                       formControlName="callsignControl"
-                      label="{{ 'inspections.callsign' | tlTranslate }}">
+                      label="{{ 'inspections.callsign' | tlTranslate }}"
+                      tooltipResourceName="inspections.callsign-helper">
             </tl-input>
         </div>
 
         <tl-autocomplete formControlName="countryControl"
                          label="{{ 'inspections.country' | tlTranslate }}"
-                         [options]="countries">
+                         [options]="countries"
+                         tooltipResourceName="inspections.country-helper">
         </tl-autocomplete>
 
         <tl-autocomplete formControlName="institutionControl"
                          label="{{ 'inspections.institution' | tlTranslate }}"
-                         [options]="institutions">
+                         [options]="institutions"
+                         tooltipResourceName="inspections.institution-helper">
         </tl-autocomplete>
 
         <tl-autocomplete formControlName="patrolVehicleTypeControl"
                          label="{{ 'inspections.patrol-vehicle-type' | tlTranslate }}"
-                         [options]="patrolVehicleTypes">
+                         [options]="patrolVehicleTypes"
+                         tooltipResourceName="inspections.patrol-vehicle-type-helper">
         </tl-autocomplete>
 
         <mat-error *ngIf="form.touched && patrolVehicleExists">

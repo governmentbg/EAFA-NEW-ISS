@@ -1,9 +1,13 @@
-﻿using IARA.Mobile.Domain.Enums;
+﻿using IARA.Mobile.Application.Interfaces.Utilities;
+using IARA.Mobile.Domain.Enums;
+using IARA.Mobile.Domain.Models;
 using IARA.Mobile.Insp.Application.DTObjects.Inspections;
 using IARA.Mobile.Insp.Application.Interfaces.Transactions;
 using IARA.Mobile.Insp.Domain.Enums;
+using IARA.Mobile.Insp.FlyoutPages.InspectionsPage;
 using IARA.Mobile.Insp.Helpers;
 using System;
+using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using TechnoLogica.Xamarin.Commands;
@@ -22,13 +26,16 @@ namespace IARA.Mobile.Insp.Base
             _inspectionState = InspectionState.Draft;
 
             Print = CommandBuilder.CreateFrom(OnPrint);
+            ReturnForEdit = CommandBuilder.CreateFrom(OnReturnForEdit);
         }
+
+
         protected InspectionEditDto ProtectedEdit { get; set; }
 
         public ViewActivityType ActivityType { get; set; }
         public SubmitType SubmitType { get; set; }
         public bool IsLocal { get; set; }
-
+        public bool CreatedByCurrentUser { get; set; }
         public string LocalIdentifier { get; set; }
 
         public InspectionState InspectionState
@@ -41,6 +48,30 @@ namespace IARA.Mobile.Insp.Base
         public ICommand Finish { get; protected set; }
         public ICommand Print { get; }
         public ICommand ReturnForEdit { get; protected set; }
+
+
+        private async Task OnReturnForEdit()
+        {
+            IInspectionsTransaction inspectionsTransaction = DependencyService.Resolve<IInspectionsTransaction>();
+
+            JsonNode jsonObject = JsonNode.Parse(inspectionsTransaction.GetInspectionJson(ProtectedEdit.Id.Value));
+            jsonObject["inspectionState"] = JsonValue.Create(inspectionsTransaction.GetInspectionStateId(InspectionState.Draft));
+
+            HttpResult result = await DependencyService.Resolve<IRestClient>().PostAsFormDataAsync("Inspections/SendForFurtherCorrections", new InspectionDraftDto()
+            {
+                Id = ProtectedEdit.Id.Value,
+                Json = jsonObject.ToJsonString()
+            });
+
+            if (result.IsSuccessful)
+            {
+                App.Current.SetMainPage(new InspectionsPage());
+            }
+            else
+            {
+                await TLSnackbar.Show(TranslateExtension.Translator[nameof(GroupResourceEnum.Common) + "/InspectionLocked"], App.GetResource<Color>("ErrorColor"));
+            }
+        }
 
         private async Task OnPrint()
         {

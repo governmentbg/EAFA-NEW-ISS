@@ -21,6 +21,7 @@ import { NomenclatureStore } from '@app/shared/utils/nomenclatures.store';
 import { NomenclatureTypes } from '@app/enums/nomenclature.types';
 import { ShipNomenclatureDTO } from '@app/models/generated/dtos/ShipNomenclatureDTO';
 import { TLConfirmDialog } from '@app/shared/components/confirmation-dialog/tl-confirm-dialog';
+import { InspectionSubjectPersonnelDTO } from '../../../../../../models/generated/dtos/InspectionSubjectPersonnelDTO';
 
 @Component({
     selector: 'edit-inspection-aquaculture',
@@ -33,7 +34,6 @@ export class EditInspectionAquacultureComponent extends BaseInspectionsComponent
 
     public institutions: NomenclatureDTO<number>[] = [];
     public countries: NomenclatureDTO<number>[] = [];
-    public ships: ShipNomenclatureDTO[] = [];
     public fishes: NomenclatureDTO<number>[] = [];
     public catchTypes: NomenclatureDTO<number>[] = [];
     public catchZones: NomenclatureDTO<number>[] = [];
@@ -67,9 +67,6 @@ export class EditInspectionAquacultureComponent extends BaseInspectionsComponent
                 NomenclatureTypes.Countries, this.nomenclatures.getCountries.bind(this.nomenclatures), false
             ),
             NomenclatureStore.instance.getNomenclature(
-                NomenclatureTypes.Ships, this.nomenclatures.getShips.bind(this.nomenclatures), false
-            ),
-            NomenclatureStore.instance.getNomenclature(
                 NomenclatureTypes.Fishes, this.nomenclatures.getFishTypes.bind(this.nomenclatures), false
             ),
             NomenclatureStore.instance.getNomenclature(
@@ -90,15 +87,14 @@ export class EditInspectionAquacultureComponent extends BaseInspectionsComponent
 
         this.institutions = nomenclatureTables[0];
         this.countries = nomenclatureTables[1];
-        this.ships = nomenclatureTables[2];
-        this.fishes = nomenclatureTables[3];
-        this.catchTypes = nomenclatureTables[4];
-        this.catchZones = nomenclatureTables[5];
-        this.fishSex = nomenclatureTables[6];
-        this.turbotSizeGroups = nomenclatureTables[7];
-        this.aquacultures = nomenclatureTables[8];
+        this.fishes = nomenclatureTables[2];
+        this.catchTypes = nomenclatureTables[3];
+        this.catchZones = nomenclatureTables[4];
+        this.fishSex = nomenclatureTables[5];
+        this.turbotSizeGroups = nomenclatureTables[6];
+        this.aquacultures = nomenclatureTables[7];
 
-        this.catchToggles = nomenclatureTables[9].map(f => new InspectionCheckModel(f));
+        this.catchToggles = nomenclatureTables[8].map(x => new InspectionCheckModel(x));
 
         if (this.id !== null && this.id !== undefined) {
             this.service.get(this.id, this.inspectionCode).subscribe({
@@ -134,8 +130,10 @@ export class EditInspectionAquacultureComponent extends BaseInspectionsComponent
         });
 
         this.form.get('aquacultureControl')!.valueChanges.subscribe({
-            next: this.onAquacultureChanged.bind(this)
-        })
+            next: (aqua: NomenclatureDTO<number> | undefined) => {
+                this.onAquacultureChanged(aqua);
+            }
+        });
     }
 
     protected fillForm(): void {
@@ -159,17 +157,11 @@ export class EditInspectionAquacultureComponent extends BaseInspectionsComponent
             }));
 
             this.form.get('mapControl')!.setValue(this.model.location);
-
             this.form.get('aquacultureControl')!.setValue(this.aquacultures.find(f => f.value === this.model.aquacultureId));
-
             this.form.get('catchTogglesControl')!.setValue(this.model.checks);
-
             this.form.get('catchesControl')!.setValue(this.model.catchMeasures);
-
             this.form.get('representativeControl')!.setValue(this.model.representativeComment);
-
             this.form.get('patrolVehiclesControl')!.setValue(this.model.patrolVehicles);
-
             this.form.get('otherFishingGearControl')!.setValue(this.model.otherFishingGear);
 
             if (this.model.personnel !== null && this.model.personnel !== undefined) {
@@ -217,11 +209,16 @@ export class EditInspectionAquacultureComponent extends BaseInspectionsComponent
         });
     }
 
-    private async onAquacultureChanged(aqua: NomenclatureDTO<number>): Promise<void> {
-        if (aqua?.value !== null && aqua?.value !== undefined) {
-            const owner = await this.service.getAquacultureOwner(aqua.value!).toPromise();
-
-            this.form.get('ownerControl')!.setValue(owner);
+    private onAquacultureChanged(aqua: NomenclatureDTO<number> | undefined): void {
+        if (aqua !== undefined && aqua !== null && aqua instanceof NomenclatureDTO) {
+            this.service.getAquacultureOwner(aqua.value!).subscribe({
+                next: (owner: InspectionSubjectPersonnelDTO | undefined) => {
+                    this.form.get('ownerControl')!.setValue(owner);
+                }
+            });
+        }
+        else {
+            this.form.get('ownerControl')!.setValue(undefined);
         }
     }
 }

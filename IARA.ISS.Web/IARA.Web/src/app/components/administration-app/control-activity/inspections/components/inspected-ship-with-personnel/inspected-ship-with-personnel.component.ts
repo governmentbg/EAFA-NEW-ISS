@@ -224,7 +224,7 @@ export class InspectedShipWithPersonnelComponent extends CustomFormControl<ShipW
             shipCaptainControl: new FormControl(undefined, Validators.required),
             togglesControl: new FormControl([]),
             portControl: new FormControl(undefined),
-            observationControl: new FormControl(undefined)
+            observationControl: new FormControl(undefined, Validators.maxLength(4000))
         });
 
         return form;

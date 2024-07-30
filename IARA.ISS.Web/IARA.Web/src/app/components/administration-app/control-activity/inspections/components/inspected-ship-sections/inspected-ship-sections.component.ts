@@ -1,5 +1,5 @@
 ﻿import { Component, Input, OnChanges, OnInit, Self, SimpleChanges } from '@angular/core';
-import { AbstractControl, FormControl, FormGroup, NgControl } from '@angular/forms';
+import { AbstractControl, FormControl, FormGroup, NgControl, Validators } from '@angular/forms';
 import { forkJoin } from 'rxjs';
 
 import { CustomFormControl } from '@app/shared/utils/custom-form-control';
@@ -385,9 +385,9 @@ export class InspectedShipSectionsComponent extends CustomFormControl<InspectedS
             catchTogglesControl: new FormControl(undefined),
             fishingGearsControl: new FormControl(undefined),
             fishingGearTogglesControl: new FormControl(undefined),
-            checkObservationControl: new FormControl(undefined),
-            catchObservationControl: new FormControl(undefined),
-            fishingGearObservationControl: new FormControl(undefined)
+            checkObservationControl: new FormControl(undefined, Validators.maxLength(4000)),
+            catchObservationControl: new FormControl(undefined, Validators.maxLength(4000)),
+            fishingGearObservationControl: new FormControl(undefined, Validators.maxLength(4000))
         }, InspectionUtils.atLeastOneCatchValidator());
 
         form.get('opMembershipControl')!.valueChanges.subscribe({
@@ -463,6 +463,7 @@ export class InspectedShipSectionsComponent extends CustomFormControl<InspectedS
 
     private onOPMembershipChanged(check: InspectionCheckDTO | undefined): void {
         if (check?.checkValue !== InspectionToggleTypesEnum.Y) {
+            this.form.get('opMembershipAssociationControl')!.setValue(null);
             this.form.get('opMembershipAssociationControl')!.disable();
         }
         else if (!this.isDisabled) {
@@ -472,13 +473,20 @@ export class InspectedShipSectionsComponent extends CustomFormControl<InspectedS
 
     private onPreliminaryNoticeChanged(check: InspectionCheckDTO | undefined): void {
         if (check?.checkValue !== InspectionToggleTypesEnum.Y) {
+            this.form.get('preliminaryNoticeNumberControl')!.setValue(null);
+            this.form.get('preliminaryNoticePurposeControl')!.setValue(null);
             this.form.get('preliminaryNoticeNumberControl')!.disable();
             this.form.get('preliminaryNoticePurposeControl')!.disable();
         }
         else if (!this.isDisabled) {
             this.form.get('preliminaryNoticeNumberControl')!.enable();
             this.form.get('preliminaryNoticePurposeControl')!.enable();
+            this.form.get('preliminaryNoticeNumberControl')!.setValidators(Validators.maxLength(50));
+            this.form.get('preliminaryNoticePurposeControl')!.setValidators(Validators.maxLength(200));
         }
+
+        this.form.get('preliminaryNoticeNumberControl')!.updateValueAndValidity({ emitEvent: false });
+        this.form.get('preliminaryNoticePurposeControl')!.updateValueAndValidity({ emitEvent: false });
     }
 
     private mapModelToShipWithPersonnel(model: InspectedShipSectionsModel): ShipWithPersonnelModel {

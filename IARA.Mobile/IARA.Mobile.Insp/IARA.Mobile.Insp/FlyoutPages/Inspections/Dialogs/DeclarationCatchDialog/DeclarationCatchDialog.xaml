@@ -20,7 +20,9 @@
     <ContentView.Resources>
         <conv:IsSubjectPoundnetConverter x:Key="IsSubjectPoundnet" />
         <conv:IsSubjectShipConverter x:Key="IsSubjectShip" />
+        <conv:IsSubjectAquacultureConverter x:Key="IsSubjectAquaculture" />
         <conv:IsSubjectNotNNNConverter x:Key="IsSubjectNotNNN" />
+        <conv:IsSubjectInvoiceConverter x:Key="IsSubjectInvoice" />
     </ContentView.Resources>
     <tl:TLScrollView>
         <StackLayout Padding="10">
@@ -34,67 +36,73 @@
                     <lc:InspectedShipDataView BindingContext="{Binding InspectedShip}"
                             ShipInRegisterLabel="{rt:Translate ShipInRegister, Group=DeclarationCatch}"
                             IsVisible="{Binding BindingContext.SubjectType, Converter={StaticResource IsSubjectShip}, Source={Reference dialog}}" />
-                    <tl:TLPicker Title="{rt:Translate PageNumber, Group=DeclarationCatch}"
-                            ValidState="{Binding LogBookPage}"
-                            Command="{Binding PageSelected}"
-                            ItemsSource="{Binding LogBookPages}"
-                            DisplayValue="DisplayValue"
-                            IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}" />
-                    <!--<tl:TLDatePicker Title="{rt:Translate SaleDate, Group=DeclarationCatch}" ValidState="{Binding LogBookPageDate}">
-                        <tl:TLDatePicker.IsEnabled>
-                            <MultiBinding Converter="{StaticResource All}">
-                                <Binding Converter="{StaticResource IsNotReview}" Path="DialogType" />
-                                <Binding Path="IsLogBookPageSelected" />
-                            </MultiBinding>
-                        </tl:TLDatePicker.IsEnabled>
-                    </tl:TLDatePicker>
-                    <tl:TLEntry Title="{rt:Translate LogBookNumber, Group=DeclarationCatch}"
-                            ValidState="{Binding LogBookNumber}"
-                            IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}" />
-                    <tl:TLEntry Title="{rt:Translate DocumentOriginNumber, Group=DeclarationCatch}"
-                            ValidState="{Binding DocumentOriginNumber}"
-                            IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}" />
-                    <tl:TLDatePicker Title="{rt:Translate DeclarationOriginDate, Group=DeclarationCatch}" ValidState="{Binding LogBookPageDate}">
-                        <tl:TLDatePicker.IsEnabled>
-                            <MultiBinding Converter="{StaticResource All}">
-                                <Binding Converter="{StaticResource IsNotReview}" Path="DialogType" />
-                                <Binding Path="IsLogBookPageSelected" />
-                            </MultiBinding>
-                        </tl:TLDatePicker.IsEnabled>
-                    </tl:TLDatePicker>-->
-                    <!--<lc:CustomInfinitePicker Title="{rt:Translate Aquaculture, Group=DeclarationCatch}"
-                            ValidState="{Binding Aquaculture}"
-                            DisplayValue="DisplayValue"
-                            IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}"
-                            IsVisible="{Binding SubjectType, Converter={StaticResource IsSubjectPoundnet}}" />
-                    <tl:TLCheckView Text="{rt:Translate IsDeclarationRegistered, Group=DeclarationCatch}"
-                            IsChecked="{Binding IsDeclarationRegistered}"
-                            IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}"
-                            IsVisible="{Binding OnlyUnregisteredDeclaration, Converter={StaticResource OppositeBool}}" />
-                    <tl:TLFlex GrowUnit="250"
-                            IsVisible="{Binding SubjectType, Converter={StaticResource IsSubjectNotNNN}}">
-                        <tl:TLPicker Title="{rt:Translate DeclarationNumber, Group=DeclarationCatch}"
+
+                    <StackLayout IsVisible="{Binding IsDeclarationSelected}">
+
+                        <StackLayout IsVisible="{Binding BindingContext.SubjectType, Converter={StaticResource IsSubjectAquaculture}, Source={Reference dialog}}">
+                            <tl:TLCheckView Text="{rt:Translate IsAquacultureRegistered, Group=DeclarationCatch}"
+                                    ValidState="{Binding IsAquacultureInRegistered}"
+                                    IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}" />
+                            <lc:CustomInfinitePicker Title="{rt:Translate Aquaculture, Group=DeclarationCatch}"
+                                    ValidState="{Binding Aquaculture}"
+                                    DisplayValue="DisplayValue"
+                                    Command="{Binding AquacultureChosen}"
+                                    IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}"
+                                    IsVisible="{Binding IsAquacultureInRegistered.Value}" />
+                            <tl:TLEntry Title="{rt:Translate Aquaculture, Group=DeclarationCatch}"
+                                    ValidState="{Binding UnregisteredAquaculture}"
+                                    IsVisible="{Binding IsAquacultureInRegistered.Value, Converter={StaticResource OppositeBool}}"
+                                    IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}" />
+                        </StackLayout>
+
+                        <tl:TLPicker Title="{rt:Translate PageNumber, Group=DeclarationCatch}"
                                 ValidState="{Binding LogBookPage}"
+                                Command="{Binding PageSelected}"
                                 ItemsSource="{Binding LogBookPages}"
-                                DisplayValue="Num"
+                                DisplayValue="DisplayValue"
                                 IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}"
-                                IsVisible="{Binding IsDeclarationRegistered}" />
-                        <tl:TLEntry Title="{rt:Translate DeclarationNumber, Group=DeclarationCatch}"
-                                ValidState="{Binding LogBookPageNum}"
-                                IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}"
-                                IsVisible="{Binding IsDeclarationRegistered, Converter={StaticResource OppositeBool}}" />
-                        <tl:TLDatePicker Title="{rt:Translate DeclarationDate, Group=DeclarationCatch}"
-                                ValidState="{Binding LogBookPageDate}">
+                                AllowEmptyDialog="True"
+                                IsVisible="{Binding BindingContext.SubjectType, Converter={StaticResource IsSubjectNotNNN}, Source={Reference dialog}}"
+                                DialogAddButtonText="{rt:Translate Add, Group=Common}"
+                                DialogAddCommand="{Binding AddPage}" />
+
+                        <tl:TLDatePicker Title="{rt:Translate SaleDate, Group=DeclarationCatch}"
+                                ValidState="{Binding LogBookPageDate}"
+                                IsVisible="{Binding BindingContext.SubjectType, Converter={StaticResource IsSubjectNotNNN}, Source={Reference dialog}}">
                             <tl:TLDatePicker.IsEnabled>
                                 <MultiBinding Converter="{StaticResource All}">
-                                    <Binding Converter="{StaticResource IsNotReview}"
-                                            Path="DialogType" />
-                                    <Binding Converter="{StaticResource OppositeBool}"
-                                            Path="IsDeclarationRegistered" />
+                                    <Binding Converter="{StaticResource IsNotReview}" Path="DialogType" />
+                                    <Binding Path="IsLogBookPageSelected" Converter="{StaticResource OppositeBool}" />
                                 </MultiBinding>
                             </tl:TLDatePicker.IsEnabled>
                         </tl:TLDatePicker>
-                    </tl:TLFlex>-->
+                        <tl:TLEntry Title="{rt:Translate LogBookNumber, Group=DeclarationCatch}"
+                                ValidState="{Binding LogBookNum}"
+                                IsVisible="{Binding BindingContext.SubjectType, Converter={StaticResource IsSubjectNotNNN}, Source={Reference dialog}}">
+                            <tl:TLEntry.IsEnabled>
+                                <MultiBinding Converter="{StaticResource All}">
+                                    <Binding Converter="{StaticResource IsNotReview}" Path="DialogType" />
+                                    <Binding Path="IsLogBookPageSelected" Converter="{StaticResource OppositeBool}" />
+                                </MultiBinding>
+                            </tl:TLEntry.IsEnabled>
+                        </tl:TLEntry>
+
+
+                        <tl:TLEntry Title="{rt:Translate DocumentOriginNumber, Group=DeclarationCatch}"
+                                ValidState="{Binding DocumentOriginNumber}"
+                                IsEnabled="False"
+                                IsVisible="{Binding IsLogBookPageSelected}" />
+                        <tl:TLDatePicker Title="{rt:Translate DeclarationOriginDate, Group=DeclarationCatch}"
+                                ValidState="{Binding LogBookPageOriginDate}"
+                                IsEnabled="False"
+                                IsVisible="{Binding IsLogBookPageSelected}" />
+
+
+                        <tl:TLEditor Title="{rt:Translate InvoiceInformation, Group=DeclarationCatch}"
+                                ValidState="{Binding InvoiceInformation}"
+                                IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}"
+                                IsVisible="{Binding BindingContext.SubjectType, Converter={StaticResource IsSubjectInvoice}, Source={Reference dialog}}" />
+                    </StackLayout>
                 </StackLayout>
             </sv:SectionView>
             <sv:SectionView Text="{rt:Translate Catch, Group=DeclarationCatch}" IsExpanded="True">
@@ -114,28 +122,19 @@
                             DisplayValue="DisplayValue"
                             IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}"
                             IsVisible="{Binding HasCatchType}" />
-                    <tl:TLCheckView Text="{rt:Translate UndersizedFish, Group=DeclarationCatch}"
-                            ValidState="{Binding UndersizedFish}"
-                            IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}"
-                            IsVisible="{Binding HasUndersizedCheck}" />
                     <tl:TLEntry Title="{rt:Translate CatchQuantity, Group=DeclarationCatch}"
                             ValidState="{Binding CatchQuantity}"
                             Keyboard="Numeric"
                             IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}" />
-                    <tl:TLEntry Title="{rt:Translate UnloadedQuantity, Group=DeclarationCatch}"
-                            ValidState="{Binding UnloadedQuantity}"
-                            Keyboard="Numeric"
-                            IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}"
-                            IsVisible="{Binding HasUnloadedQuantity}" />
                     <tl:TLPicker Title="{rt:Translate Presentation, Group=DeclarationCatch}"
                             ItemsSource="{Binding Presentations}"
                             ValidState="{Binding Presentation}"
                             DisplayValue="DisplayValue"
                             IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}" />
-                    <tl:TLPicker Title="{rt:Translate CatchZone, Group=DeclarationCatch}"
-                            ItemsSource="{Binding CatchZones}"
-                            ValidState="{Binding CatchZone}"
-                            IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}" />
+                    <tl:TLCheckView Text="{rt:Translate UndersizedFish, Group=DeclarationCatch}"
+                            ValidState="{Binding UndersizedFish}"
+                            IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}"
+                                    IsVisible="{Binding HasUndersizedFishControl}"/>
                 </tl:TLAutoGrid>
             </sv:SectionView>
             <Button Command="{Binding Save}"

@@ -34,6 +34,9 @@ export class VesselDTO {
     @StrictlyTyped(String)
     public mmsi?: string;
 
+    @StrictlyTyped(String)
+    public registrationNumber?: string;
+
     @StrictlyTyped(Number)
     public flagCountryId?: number;
 

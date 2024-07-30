@@ -23,13 +23,13 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
     {
         private string _summary;
         private List<SelectNomenclatureDto> _fishTypes;
-
-        public DeclarationCatchesViewModel(InspectionPageViewModel inspection, bool hasCatchType = true, bool hasUndersizedCheck = false, bool hasUnloadedQuantity = true)
+        public DeclarationCatchesViewModel(InspectionPageViewModel inspection, bool hasCatchType = true, bool hasUndersizedCheck = false, bool hasUnloadedQuantity = true, bool hasUndersizedFishControl = true)
         {
             Inspection = inspection;
             HasCatchType = hasCatchType;
             HasUndersizedCheck = hasUndersizedCheck;
             HasUnloadedQuantity = hasUnloadedQuantity;
+            HasUndersizedFishControl = hasUndersizedFishControl;
 
             Review = CommandBuilder.CreateFrom<DeclarationCatchModel>(OnReview);
             Add = CommandBuilder.CreateFrom(OnAdd);
@@ -50,8 +50,8 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
         public bool HasCatchType { get; }
         public bool HasUndersizedCheck { get; }
         public bool HasUnloadedQuantity { get; }
+        public bool HasUndersizedFishControl { get; set; }
 
-        [DuplicateCatches]
         [ListMinLength(1)]
         public ValidStateTable<DeclarationCatchModel> Catches { get; set; }
 
@@ -86,12 +86,12 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
 
         private Task OnReview(DeclarationCatchModel model)
         {
-            return TLDialogHelper.ShowDialog(new DeclarationCatchDialog(this, Inspection, HasCatchType, HasUndersizedCheck, HasUnloadedQuantity, ViewActivityType.Review, model));
+            return TLDialogHelper.ShowDialog(new DeclarationCatchDialog(this, Inspection, HasCatchType, HasUndersizedCheck, HasUnloadedQuantity, ViewActivityType.Review, model, HasUndersizedFishControl));
         }
 
         private async Task OnAdd()
         {
-            DeclarationCatchModel result = await TLDialogHelper.ShowDialog(new DeclarationCatchDialog(this, Inspection, HasCatchType, HasUndersizedCheck, HasUnloadedQuantity, ViewActivityType.Add));
+            DeclarationCatchModel result = await TLDialogHelper.ShowDialog(new DeclarationCatchDialog(this, Inspection, HasCatchType, HasUndersizedCheck, HasUnloadedQuantity, ViewActivityType.Add, null, HasUndersizedFishControl));
 
             if (result != null && result.Dto != null)
             {
@@ -126,7 +126,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
 
         private async Task OnEdit(DeclarationCatchModel model)
         {
-            DeclarationCatchModel result = await TLDialogHelper.ShowDialog(new DeclarationCatchDialog(this, Inspection, HasCatchType, HasUndersizedCheck, HasUnloadedQuantity, ViewActivityType.Edit, model));
+            DeclarationCatchModel result = await TLDialogHelper.ShowDialog(new DeclarationCatchDialog(this, Inspection, HasCatchType, HasUndersizedCheck, HasUnloadedQuantity, ViewActivityType.Edit, model, HasUndersizedFishControl));
 
             if (result != null && result.Dto != null)
             {

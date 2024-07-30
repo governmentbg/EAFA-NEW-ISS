@@ -20,20 +20,7 @@
             ValidState="{Binding InRegister}"
             IsVisible="{Binding InRegister.Value, Converter={StaticResource OppositeBool}}"
             IsEnabled="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}" />
-    <tl:TLFlex GrowUnit="200" IsVisible="{Binding InRegister.Value, Converter={StaticResource OppositeBool}}">
-        <tl:TLEntry Title="{rt:Translate Name, Group=Common}"
-                ValidState="{Binding Name}"
-                IsEnabled="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}" />
-        <tl:TLEntry Title="{rt:Translate EIK, Group=Common}"
-                ValidState="{Binding EIK}"
-                IsEnabled="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}" />
-        <tl:TLEntry tl:TLFlex.Grow="2"
-                Title="{rt:Translate Address, Group=Common}"
-                ValidState="{Binding Address}"
-                IsEnabled="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}" />
-        <tl:TLPicker Title="{rt:Translate Country, Group=Common}"
-                ValidState="{Binding Nationality}"
-                ItemsSource="{Binding Nationalities}"
-                IsEnabled="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}" />
-    </tl:TLFlex>
+    <StackLayout IsVisible="{Binding InRegister.Value, Converter={StaticResource OppositeBool}}">
+        <lc:SubjectView BindingContext="{Binding Owner}" Title="{rt:Translate Owner, Group=FirstSaleInspection}" />
+    </StackLayout>
 </StackLayout>

@@ -1,13 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using IARA.Mobile.Domain.Enums;
+﻿using IARA.Mobile.Domain.Enums;
 using IARA.Mobile.Insp.Application.DTObjects.Inspections;
 using IARA.Mobile.Insp.Base;
 using IARA.Mobile.Insp.Helpers;
 using IARA.Mobile.Insp.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows.Input;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Helpers;
 using TechnoLogica.Xamarin.ResourceTranslator;
@@ -51,7 +51,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
                 };
 
                 model.Corresponds.Value = f.CheckValue?.ToString();
-                model.Number.AssignFrom(f.LicenseNumber);
+                model.Number.AssignFrom(f.LicenseNumber ?? "NotAdded");
                 model.Description.AssignFrom(f.Description);
 
                 return model;
@@ -94,7 +94,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
                             ? (CheckTypeEnum?)checkType
                             : null,
                         Description = f.Description,
-                        LicenseNumber = f.Number,
+                        LicenseNumber = f.Number.Value == "NotAdded" ? null : f.Number.Value,
                         From = f.Dto.From,
                         Id = f.Dto.Id,
                         PermitLicenseId = f.Dto.PermitLicenseId,

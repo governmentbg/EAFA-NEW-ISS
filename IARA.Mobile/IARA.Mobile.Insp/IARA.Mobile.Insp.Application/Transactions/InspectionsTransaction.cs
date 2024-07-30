@@ -56,7 +56,8 @@ namespace IARA.Mobile.Insp.Application.Transactions
                             CatchQuantity = c.Quantity,
                             UnloadedQuantity = c.UnloadedQuantity,
                             TurbotSizeGroupId = c.TurbotSizeGroupId,
-                            CatchZoneId = c.CatchZoneId
+                            CatchZoneId = c.CatchZoneId,
+                            LogBookId = logBookId,
                         }).ToList();
                 }
             }
@@ -72,7 +73,8 @@ namespace IARA.Mobile.Insp.Application.Transactions
                 CatchQuantity = c.Quantity,
                 UnloadedQuantity = c.UnloadedQuantity,
                 TurbotSizeGroupId = c.TurbotSizeGroupId,
-                CatchZoneId = c.CatchZoneId
+                CatchZoneId = c.CatchZoneId,
+                LogBookId = logBookId,
             }
             ).ToList();
         }
@@ -362,13 +364,14 @@ namespace IARA.Mobile.Insp.Application.Transactions
                             {
                                 // Ако инспекцията от сървъра е приключена, тогава искаме да я изтрием локално.
                                 // Ако тази локално е приключена също отново ще бъде изтрита.
-                                if (inspection.InspectionState != InspectionState.Draft)
-                                {
-                                    toRemove.Add((dbInsp.Id, dbInsp.Identifier));
-                                }
+                                //if (inspection.InspectionState != InspectionState.Draft)
+                                //{
+                                //    toRemove.Add((dbInsp.Id, dbInsp.Identifier));
+                                //}
+
                                 // Ако локалната инспекция все още не е качена искаме да не я трием / заменяме с тази от сървъра.
                                 // Това ни оказва че имаме промяна която е само на устройството и не искаме да я загубим.
-                                else if (dbInsp.IsLocal)
+                                if (dbInsp.IsLocal)
                                 {
                                     idsToNotAdd.Add(dbInsp.Id);
                                 }
@@ -1059,9 +1062,9 @@ namespace IARA.Mobile.Insp.Application.Transactions
             return null;
         }
 
-        public async Task<List<DeclarationLogBookPageDto>> GetDeclarationLogBookPages(DeclarationLogBookType type, int shipUid)
+        public async Task<List<DeclarationLogBookPageDto>> GetDeclarationLogBookPages(DeclarationLogBookType type, int shipUId)
         {
-            HttpResult<List<DeclarationLogBookPageDto>> result = await RestClient.GetAsync<List<DeclarationLogBookPageDto>>("InspectionData/GetDeclarationLogBookPages", new { type, shipUid });
+            HttpResult<List<DeclarationLogBookPageDto>> result = await RestClient.GetAsync<List<DeclarationLogBookPageDto>>("InspectionData/GetDeclarationLogBookPages", new { type, shipUId });
 
             if (result.IsSuccessful)
             {
@@ -1309,6 +1312,47 @@ namespace IARA.Mobile.Insp.Application.Transactions
                 .Select(f => $"{f.FirstName} {(f.MiddleName == null ? string.Empty : f.MiddleName + " ")}{f.LastName}")
                 .ToArray()
             ) : string.Empty;
+        }
+
+        public string GetInspectionJson(int id)
+        {
+            using (IAppDbContext context = ContextBuilder.CreateContext())
+            {
+                return (
+                    from insp in context.Inspections
+                    where insp.Id == id
+                    select insp.JsonContent
+                ).First();
+            }
+        }
+
+        public void ReturnForEdit(int id)
+        {
+            using (IAppDbContext context = ContextBuilder.CreateContext())
+            {
+                Inspection localInspection = (
+                            from insp in context.Inspections
+                            where insp.Id == id
+                            select insp
+                        ).FirstOrDefault();
+
+                if (localInspection != null)
+                {
+                    localInspection.InspectionState = InspectionState.Draft;
+                    context.Inspections.Update(localInspection);
+                }
+            }
+        }
+
+        public int GetInspectionStateId(InspectionState inspectionState)
+        {
+            string code = inspectionState.ToString();
+            using (IAppDbContext context = ContextBuilder.CreateContext())
+            {
+                return (from state in context.NInspectionStates
+                        where state.Code == code
+                        select state.Id).First();
+            }
         }
     }
 }

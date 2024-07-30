@@ -1,8 +1,4 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using IARA.Mobile.Application;
+﻿using IARA.Mobile.Application;
 using IARA.Mobile.Application.DTObjects.Common;
 using IARA.Mobile.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Domain.Enums;
@@ -12,6 +8,10 @@ using IARA.Mobile.Insp.Domain.Enums;
 using IARA.Mobile.Insp.Helpers;
 using IARA.Mobile.Shared.Attributes;
 using IARA.Mobile.Shared.ViewModels.Models;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
+using System.Windows.Input;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Helpers;
 using TechnoLogica.Xamarin.ResourceTranslator;
@@ -23,7 +23,6 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
     {
         private SelectNomenclatureDto _action;
         private List<SelectNomenclatureDto> _nationalities;
-
         public SubjectViewModel(InspectionPageViewModel inspection, InspectedPersonType personType, InspectedPersonType legalType, bool isRequired = true)
         {
             Inspection = inspection;
@@ -115,6 +114,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
 
         public ICommand SearchPerson { get; }
         public ICommand SearchLegal { get; }
+        public ICommand SubjectChosen { get; set; }
 
         public void Init(List<SelectNomenclatureDto> nationalities)
         {

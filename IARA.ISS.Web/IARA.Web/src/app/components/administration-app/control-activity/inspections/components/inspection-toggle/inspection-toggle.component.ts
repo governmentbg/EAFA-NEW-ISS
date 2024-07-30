@@ -12,7 +12,6 @@ import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureD
     templateUrl: './inspection-toggle.component.html'
 })
 export class InspectionToggleComponent extends CustomFormControl<InspectionCheckDTO | undefined> implements OnInit, OnChanges {
-
     @Input()
     public toggle!: InspectionCheckModel;
 
@@ -118,9 +117,11 @@ export class InspectionToggleComponent extends CustomFormControl<InspectionCheck
                 this.form.get('toggleTextControl')!.disable();
             }
             else if (value === InspectionToggleTypesEnum.Y) {
+                this.form.get('toggleTextControl')!.setValidators(Validators.maxLength(200))
                 this.form.get('toggleTextControl')!.enable();
             }
             else {
+                this.form.get('toggleTextControl')!.setValue(null);
                 this.form.get('toggleTextControl')!.disable();
             }
 

@@ -11,7 +11,8 @@
         <tl-autocomplete *ngIf="isFromRegister"
                          formControlName="inspectorControl"
                          label="{{ 'inspections.inspector' | tlTranslate }}"
-                         [options]="inspectors">
+                         [options]="inspectors"
+                         tooltipResourceName="inspections.inspector-helper">
         </tl-autocomplete>
 
         <div *ngIf="!isFromRegister" fxLayout="column" fxLayoutGap="1em" fxLayoutAlign="start stretch">
@@ -20,12 +21,14 @@
                  fxLayoutAlign="start center">
                 <tl-input fxFlex="50"
                           formControlName="firstNameControl"
-                          label="{{ 'inspections.first-name' | tlTranslate }}">
+                          label="{{ 'inspections.first-name' | tlTranslate }}"
+                          tooltipResourceName="inspections.first-name-helper">
                 </tl-input>
 
                 <tl-input fxFlex="50"
                           formControlName="middleNameControl"
-                          label="{{ 'inspections.middle-name' | tlTranslate }}">
+                          label="{{ 'inspections.middle-name' | tlTranslate }}"
+                          tooltipResourceName="inspections.middle-name-helper">
                 </tl-input>
             </div>
 
@@ -34,24 +37,28 @@
                  fxLayoutAlign="start center">
                 <tl-input fxFlex="50"
                           formControlName="lastNameControl"
-                          label="{{ 'inspections.last-name' | tlTranslate }}">
+                          label="{{ 'inspections.last-name' | tlTranslate }}"
+                          tooltipResourceName="inspections.last-name-helper">
                 </tl-input>
 
                 <tl-input fxFlex="50"
                           formControlName="cardNumControl"
-                          label="{{ 'inspections.card-num' | tlTranslate }}">
+                          label="{{ 'inspections.card-num' | tlTranslate }}"
+                          tooltipResourceName="inspections.card-num-helper">
                 </tl-input>
             </div>
         </div>
 
         <tl-autocomplete formControlName="countryControl"
                          label="{{ 'inspections.country' | tlTranslate }}"
-                         [options]="countries">
+                         [options]="countries"
+                         tooltipResourceName="inspections.country-helper">
         </tl-autocomplete>
 
         <tl-autocomplete formControlName="institutionControl"
                          label="{{ 'inspections.institution' | tlTranslate }}"
-                         [options]="institutions">
+                         [options]="institutions"
+                         tooltipResourceName="inspections.institution-helper">
         </tl-autocomplete>
 
         <tl-checkbox *ngIf="isFromRegister"

@@ -75,6 +75,7 @@ export class InspectedPersonComponent extends CustomFormControl<InspectionSubjec
             this.form.get('addressControl')!.setValue(
                 InspectionUtils.buildAddress(value.registeredAddress, this.translate) ?? value.address
             );
+
             this.form.get('countryControl')!.setValue(this.countries.find(f => f.value === value.citizenshipId));
         }
         else {

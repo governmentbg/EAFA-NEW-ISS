@@ -7,7 +7,8 @@
     <!-- Основни данни -->
     <tl-expansion-panel title="{{ 'inspections.general-info' | tlTranslate }}"
                         [validityChecker]="form"
-                        [validityCheckerExtraCondition]="reportNumAlreadyExistsError !== true || isInspectionLockedError !== true">
+                        [validityCheckerExtraCondition]="reportNumAlreadyExistsError !== true || isInspectionLockedError !== true"
+                        tooltipResourceName="inspections.general-info-helper">
         <div fxLayout="column"
              fxLayoutGap="1em"
              fxLayoutAlign="start stretch">
@@ -29,14 +30,16 @@
 
             <tl-input *ngIf="hasOnBoardOtherSelected"
                       formControlName="otherOnBoardObservationToolsControl"
-                      label="{{ 'inspections.other-on-board-observation-tools' | tlTranslate }}">
+                      label="{{ 'inspections.other-on-board-observation-tools' | tlTranslate }}"
+                      tooltipResourceName="inspections.other-on-board-observation-tools-helper">
             </tl-input>
         </div>
     </tl-expansion-panel>
 
     <!-- Данни за риболовния кораб -->
     <tl-expansion-panel title="{{ 'inspections.ship-data' | tlTranslate }}"
-                        [validityChecker]="form">
+                        [validityChecker]="form"
+                        tooltipResourceName="inspections.ship-data-helper">
         <div fxLayout="column"
              fxLayoutGap="1em"
              fxLayoutAlign="start stretch">
@@ -52,13 +55,15 @@
                  fxLayoutAlign="start center">
                 <tl-input fxFlex="50"
                           formControlName="courseControl"
-                          label="{{ 'inspections.course' | tlTranslate }}">
+                          label="{{ 'inspections.course' | tlTranslate }}"
+                          tooltipResourceName="inspections.course-helper">
                 </tl-input>
 
                 <tl-input fxFlex="50"
                           formControlName="speedControl"
                           type="number"
-                          label="{{ 'inspections.speed' | tlTranslate }}">
+                          label="{{ 'inspections.speed' | tlTranslate }}"
+                          tooltipResourceName="inspections.speed-helper">
                 </tl-input>
             </div>
 
@@ -69,7 +74,8 @@
 
             <tl-input *ngIf="hasCenterOtherSelected"
                       formControlName="otherCenterObservationToolsControl"
-                      label="{{ 'inspections.other-center-observation-tools' | tlTranslate }}">
+                      label="{{ 'inspections.other-center-observation-tools' | tlTranslate }}"
+                      tooltipResourceName="inspections.other-center-observation-tools-helper">
             </tl-input>
 
             <tl-checkbox formControlName="hasShipContactControl"
@@ -87,7 +93,8 @@
 
             <tl-input *ngIf="otherActivitySelected"
                       formControlName="otherOnBoardActivitiesControl"
-                      label="{{ 'inspections.other-on-board-activities' | tlTranslate }}">
+                      label="{{ 'inspections.other-on-board-activities' | tlTranslate }}"
+                      tooltipResourceName="inspections.other-on-board-activities-helper">
             </tl-input>
 
             <check-box-list *ngIf="fishingActivitySelected"
@@ -98,7 +105,8 @@
 
             <tl-input *ngIf="fishingActivitySelected && otherFishingActivitySelected"
                       formControlName="otherFishingActivitiesControl"
-                      label="{{ 'inspections.other-fishing-activities' | tlTranslate }}">
+                      label="{{ 'inspections.other-fishing-activities' | tlTranslate }}"
+                      tooltipResourceName="inspections.other-fishing-activities-helper">
             </tl-input>
         </div>
     </tl-expansion-panel>
@@ -108,13 +116,15 @@
                                 [validityChecker]="form">
         <tl-textarea formControlName="shipCommunicationControl"
                      [minRows]="3"
-                     label="{{ 'inspections.ship-communication-description' | tlTranslate }}">
+                     label="{{ 'inspections.ship-communication-description' | tlTranslate }}"
+                     tooltipResourceName="inspections.ship-communication-description-helper">
         </tl-textarea>
     </inspection-additional-info>
 
     <!-- Файлове -->
     <tl-expansion-panel title="{{ 'inspections.edit-inspection-files' | tlTranslate }}"
-                        [validityChecker]="form">
+                        [validityChecker]="form"
+                        tooltipResourceName="inspections.edit-inspection-files-helper">
         <file-uploader-form-array formControlName="filesControl"
                                   [pageCode]="pageCode"
                                   [downloadFileMethod]="service.downloadFile.bind(this.service)">

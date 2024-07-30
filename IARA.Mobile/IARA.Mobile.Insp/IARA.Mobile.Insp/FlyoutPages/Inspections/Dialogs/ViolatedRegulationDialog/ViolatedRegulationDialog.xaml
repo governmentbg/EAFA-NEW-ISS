@@ -18,96 +18,157 @@
         IconColor="White"
         TitleBackgroundColor="{StaticResource Primary}"
         TitleColor="White">
-    <StackLayout Padding="10">
-        <sv:SectionView Image="{FontImage FontFamily=FA, Glyph={Static h:IconFont.File}, Color=White, Size=100}" Text="{rt:Translate ValidatedRegulationInformationSectionTitle, Group=GeneralInfo}">
-            <StackLayout Padding="10">
+    <ScrollView>
 
-                <lc:CustomInfinitePicker Title="{rt:Translate ChooseRegulation, Group=GeneralInfo}"
-                        ValidState="{Binding Regulation}"
-                        Command="{Binding RegulationChosen}"
-                        DisplayValue="Law"
-                        IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}">
-                    <DataTemplate>
-                        <Grid x:DataType="nom:AuanViolatedRegulationDto"
-                                RowDefinitions="Auto,Auto,1"
-                                RowSpacing="0">
-                            <StackLayout Orientation="Horizontal" Margin="5">
-                                <tl:TLRichLabel>
-                                    <Span Text="{Binding Law}" />
-                                    <Span Text=" " />
-                                </tl:TLRichLabel>
+        <StackLayout Padding="10">
+            <sv:SectionView Image="{FontImage FontFamily=FA, Glyph={Static h:IconFont.File}, Color=White, Size=100}" Text="{rt:Translate ValidatedRegulationInformationSectionTitle, Group=GeneralInfo}">
+                <StackLayout Padding="10">
+                    <tl:TLCheckView Text="{rt:Translate RegulationExists, Group=GeneralInfo}"
+                            ValidState="{Binding RegulationExists}"
+                            IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}"
+                            Command="{Binding SwitchRegulationExists}" />
 
-                                <tl:TLRichLabel>
-                                    <Span Text="{rt:Translate Article, Group=GeneralInfo}" />
-                                    <Span Text=": " />
-                                    <Span Text="{Binding Article}" />
-                                    <Span Text=" " />
-                                </tl:TLRichLabel>
+                    <lc:CustomInfinitePicker Title="{rt:Translate ChooseRegulation, Group=GeneralInfo}"
+                            ValidState="{Binding Regulation}"
+                            Command="{Binding RegulationChosen}"
+                            DisplayValue="Law"
+                            IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}"
+                            IsVisible="{Binding RegulationExists.Value}">
+                        <DataTemplate>
+                            <Grid x:DataType="nom:AuanViolatedRegulationDto"
+                                    RowDefinitions="Auto,Auto,1"
+                                    RowSpacing="0">
+                                <StackLayout Orientation="Horizontal" Margin="5">
+                                    <tl:TLRichLabel>
+                                        <Span Text="{Binding Law}" />
+                                        <Span Text=" " />
+                                    </tl:TLRichLabel>
 
-                                <tl:TLRichLabel IsVisible="{Binding Paragraph, Converter={StaticResource NotEmptyOrNotNull}}">
+                                    <tl:TLRichLabel>
+                                        <Span Text="{rt:Translate Article, Group=GeneralInfo}" />
+                                        <Span Text=": " />
+                                        <Span Text="{Binding Article}" />
+                                        <Span Text=" " />
+                                    </tl:TLRichLabel>
 
-                                    <Span Text="{rt:Translate Paragraph, Group=GeneralInfo}" />
-                                    <Span Text=": " />
-                                    <Span Text="{Binding Paragraph}" />
-                                    <Span Text=" " />
-                                </tl:TLRichLabel>
+                                    <tl:TLRichLabel IsVisible="{Binding Paragraph, Converter={StaticResource NotEmptyOrNotNull}}">
 
-                                <tl:TLRichLabel IsVisible="{Binding Section, Converter={StaticResource NotEmptyOrNotNull}}">
-                                    <Span Text="{rt:Translate Section, Group=GeneralInfo}" />
-                                    <Span Text=": " />
-                                    <Span Text="{Binding Section}" />
-                                    <Span Text=" " />
-                                </tl:TLRichLabel>
+                                        <Span Text="{rt:Translate Paragraph, Group=GeneralInfo}" />
+                                        <Span Text=": " />
+                                        <Span Text="{Binding Paragraph}" />
+                                        <Span Text=" " />
+                                    </tl:TLRichLabel>
 
-                                <tl:TLRichLabel IsVisible="{Binding Letter, Converter={StaticResource NotEmptyOrNotNull}}">
-                                    <Span Text="{rt:Translate Letter, Group=GeneralInfo}" />
-                                    <Span Text=": " />
-                                    <Span Text="{Binding Letter}" />
-                                </tl:TLRichLabel>
-                            </StackLayout>
-                            <StackLayout Grid.Row="1"
-                                    Orientation="Horizontal"
-                                    Margin="5,0,5,10">
-                                <tl:TLRichLabel>
-                                    <Span Text="{Binding LawText}" />
-                                </tl:TLRichLabel>
-                            </StackLayout>
-                            <BoxView Grid.Row="2"
-                                    Margin="5,0"
-                                    Color="LightGray" />
-                        </Grid>
-                    </DataTemplate>
-                </lc:CustomInfinitePicker>
+                                    <tl:TLRichLabel IsVisible="{Binding Section, Converter={StaticResource NotEmptyOrNotNull}}">
+                                        <Span Text="{rt:Translate Section, Group=GeneralInfo}" />
+                                        <Span Text=": " />
+                                        <Span Text="{Binding Section}" />
+                                        <Span Text=" " />
+                                    </tl:TLRichLabel>
 
+                                    <tl:TLRichLabel IsVisible="{Binding Letter, Converter={StaticResource NotEmptyOrNotNull}}">
+                                        <Span Text="{rt:Translate Letter, Group=GeneralInfo}" />
+                                        <Span Text=": " />
+                                        <Span Text="{Binding Letter}" />
+                                    </tl:TLRichLabel>
+                                </StackLayout>
+                                <StackLayout Grid.Row="1"
+                                        Orientation="Horizontal"
+                                        Margin="5,0,5,10">
+                                    <tl:TLRichLabel>
+                                        <Span Text="{Binding LawText}" />
+                                    </tl:TLRichLabel>
+                                </StackLayout>
+                                <BoxView Grid.Row="2"
+                                        Margin="5,0"
+                                        Color="LightGray" />
+                            </Grid>
+                        </DataTemplate>
+                    </lc:CustomInfinitePicker>
 
-                <tl:TLEntry Title="{rt:Translate Article, Group=GeneralInfo}"
-                        ValidState="{Binding Article}"
-                        IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}" />
+                    <StackLayout>
+                        <StackLayout.IsVisible>
+                            <MultiBinding Converter="{StaticResource Any}">
+                                <Binding Path="RegulationExists.Value" Converter="{StaticResource OppositeBool}" />
+                                <Binding Path="IsRegulationChosen" />
+                            </MultiBinding>
+                        </StackLayout.IsVisible>
+                        <tl:TLEntry Title="{rt:Translate Article, Group=GeneralInfo}" ValidState="{Binding Article}">
+                            <tl:TLEntry.IsEnabled>
+                                <MultiBinding Converter="{StaticResource All}">
+                                    <Binding Path="DialogType" Converter="{StaticResource IsNotReview}" />
+                                    <MultiBinding Converter="{StaticResource Any}">
+                                        <Binding Path="IsRegulationChosen" Converter="{StaticResource OppositeBool}" />
+                                        <Binding Path="RegulationExists.Value" Converter="{StaticResource OppositeBool}" />
+                                    </MultiBinding>
+                                </MultiBinding>
+                            </tl:TLEntry.IsEnabled>
+                        </tl:TLEntry>
 
-                <tl:TLEntry Title="{rt:Translate Paragraph, Group=GeneralInfo}"
-                        ValidState="{Binding Paragraph}"
-                        IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}" />
+                        <tl:TLEntry Title="{rt:Translate Paragraph, Group=GeneralInfo}" ValidState="{Binding Paragraph}">
+                            <tl:TLEntry.IsEnabled>
+                                <MultiBinding Converter="{StaticResource All}">
+                                    <Binding Path="DialogType" Converter="{StaticResource IsNotReview}" />
+                                    <MultiBinding Converter="{StaticResource Any}">
+                                        <Binding Path="IsRegulationChosen" Converter="{StaticResource OppositeBool}" />
+                                        <Binding Path="RegulationExists.Value" Converter="{StaticResource OppositeBool}" />
+                                    </MultiBinding>
+                                </MultiBinding>
+                            </tl:TLEntry.IsEnabled>
+                        </tl:TLEntry>
 
-                <tl:TLEntry Title="{rt:Translate Section, Group=GeneralInfo}"
-                        ValidState="{Binding Section}"
-                        IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}" />
+                        <tl:TLEntry Title="{rt:Translate Section, Group=GeneralInfo}" ValidState="{Binding Section}">
+                            <tl:TLEntry.IsEnabled>
+                                <MultiBinding Converter="{StaticResource All}">
+                                    <Binding Path="DialogType" Converter="{StaticResource IsNotReview}" />
+                                    <MultiBinding Converter="{StaticResource Any}">
+                                        <Binding Path="IsRegulationChosen" Converter="{StaticResource OppositeBool}" />
+                                        <Binding Path="RegulationExists.Value" Converter="{StaticResource OppositeBool}" />
+                                    </MultiBinding>
+                                </MultiBinding>
+                            </tl:TLEntry.IsEnabled>
+                        </tl:TLEntry>
 
-                <tl:TLEntry Title="{rt:Translate Letter, Group=GeneralInfo}"
-                        ValidState="{Binding Letter}"
-                        IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}" />
+                        <tl:TLEntry Title="{rt:Translate Letter, Group=GeneralInfo}" ValidState="{Binding Letter}">
+                            <tl:TLEntry.IsEnabled>
+                                <MultiBinding Converter="{StaticResource All}">
+                                    <Binding Path="DialogType" Converter="{StaticResource IsNotReview}" />
+                                    <MultiBinding Converter="{StaticResource Any}">
+                                        <Binding Path="IsRegulationChosen" Converter="{StaticResource OppositeBool}" />
+                                        <Binding Path="RegulationExists.Value" Converter="{StaticResource OppositeBool}" />
+                                    </MultiBinding>
+                                </MultiBinding>
+                            </tl:TLEntry.IsEnabled>
+                        </tl:TLEntry>
+                        <tl:TLEntry Title="{rt:Translate Comments, Group=GeneralInfo}" ValidState="{Binding Comments}">
+                            <tl:TLEntry.IsEnabled>
+                                <MultiBinding Converter="{StaticResource All}">
+                                    <Binding Path="DialogType" Converter="{StaticResource IsNotReview}" />
+                                    <MultiBinding Converter="{StaticResource Any}">
+                                        <Binding Path="IsRegulationChosen" Converter="{StaticResource OppositeBool}" />
+                                        <Binding Path="RegulationExists.Value" Converter="{StaticResource OppositeBool}" />
+                                    </MultiBinding>
+                                </MultiBinding>
+                            </tl:TLEntry.IsEnabled>
+                        </tl:TLEntry>
 
-                <tl:TLEntry Title="{rt:Translate Comments, Group=GeneralInfo}"
-                        ValidState="{Binding Comments}"
-                        IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}" />
-
-                <tl:TLEntry Title="{rt:Translate LawText, Group=GeneralInfo}"
-                        ValidState="{Binding LawText}"
-                        IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}" />
-            </StackLayout>
-        </sv:SectionView>
-        <Button Text="{rt:Translate Save, Group=Common}"
-                Command="{Binding Save}"
-                IsVisible="{Binding DialogType, Converter={StaticResource IsNotReview}}" />
-    </StackLayout>
-
+                        <tl:TLEditor Title="{rt:Translate LawText, Group=GeneralInfo}" ValidState="{Binding LawText}">
+                            <tl:TLEditor.IsEnabled>
+                                <MultiBinding Converter="{StaticResource All}">
+                                    <Binding Path="DialogType" Converter="{StaticResource IsNotReview}" />
+                                    <MultiBinding Converter="{StaticResource Any}">
+                                        <Binding Path="IsRegulationChosen" Converter="{StaticResource OppositeBool}" />
+                                        <Binding Path="RegulationExists.Value" Converter="{StaticResource OppositeBool}" />
+                                    </MultiBinding>
+                                </MultiBinding>
+                            </tl:TLEditor.IsEnabled>
+                        </tl:TLEditor>
+                    </StackLayout>
+                </StackLayout>
+            </sv:SectionView>
+            <Button Text="{rt:Translate Save, Group=Common}"
+                    Command="{Binding Save}"
+                    IsVisible="{Binding DialogType, Converter={StaticResource IsNotReview}}" />
+        </StackLayout>
+    </ScrollView>
 </tl:TLBaseDialog>
