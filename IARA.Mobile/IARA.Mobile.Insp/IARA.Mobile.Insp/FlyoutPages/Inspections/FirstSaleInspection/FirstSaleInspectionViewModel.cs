@@ -32,7 +32,6 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FirstSaleInspection
         {
             SaveDraft = CommandBuilder.CreateFrom(OnSaveDraft);
             Finish = CommandBuilder.CreateFrom(OnFinish);
-            ReturnForEdit = CommandBuilder.CreateFrom(OnReturnForEdit);
 
             InspectionGeneralInfo = new InspectionGeneralInfoViewModel(this);
             Owner = new InspectedBuyerViewModel(this)
@@ -40,7 +39,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FirstSaleInspection
                 BuyerChosen = CommandBuilder.CreateFrom<SelectNomenclatureDto>(OnBuyerChosen)
             };
             Representative = new PersonViewModel(this, InspectedPersonType.ReprsPers, false);
-            Catches = new DeclarationCatchesViewModel(this);
+            Catches = new DeclarationCatchesViewModel(this, hasUndersizedFishControl: false);
             Importer = new LegalViewModel(this, InspectedPersonType.Importer);
             InspectionFiles = new InspectionFilesViewModel(this);
             AdditionalInfo = new AdditionalInfoViewModel(this);
@@ -194,7 +193,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FirstSaleInspection
         private void OnBuyerChosen(SelectNomenclatureDto buyer)
         {
             Owner.SelectedBuyer = NomenclaturesTransaction.GetBuyer(buyer.Id);
-            Owner.OnEdit(Owner.SelectedBuyer, false);
+            Owner.OnEditBuyer(Owner.SelectedBuyer, false);
 
             BuyerUtilityDto buyerUtility = NomenclaturesTransaction.GetBuyerUtility(buyer.Id);
 
@@ -213,11 +212,6 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FirstSaleInspection
         private Task OnFinish()
         {
             return InspectionSaveHelper.Finish(Sections, Validation, Save);
-        }
-
-        private Task OnReturnForEdit()
-        {
-            return Save(SubmitType.ReturnForEdit);
         }
 
         private Task Save(SubmitType submitType)

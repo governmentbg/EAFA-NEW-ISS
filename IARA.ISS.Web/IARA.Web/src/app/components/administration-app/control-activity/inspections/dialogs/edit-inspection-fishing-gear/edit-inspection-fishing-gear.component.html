@@ -7,7 +7,8 @@
     <!-- Основни данни -->
     <tl-expansion-panel title="{{ 'inspections.general-info' | tlTranslate }}"
                         [validityChecker]="form"
-                        [validityCheckerExtraCondition]="reportNumAlreadyExistsError !== true || isInspectionLockedError !== true">
+                        [validityCheckerExtraCondition]="reportNumAlreadyExistsError !== true || isInspectionLockedError !== true"
+                        tooltipResourceName="inspections.general-info-helper">
         <div fxLayout="column"
              fxLayoutGap="1em"
              fxLayoutAlign="start stretch">
@@ -23,7 +24,8 @@
 
     <!-- Данни за Кораб / Далян -->
     <tl-expansion-panel title="{{ 'inspections.fishing-gear-inspection-data' | tlTranslate }}"
-                        [validityChecker]="form">
+                        [validityChecker]="form"
+                        tooltipResourceName="inspections.fishing-gear-inspection-data-helper">
         <div fxLayout="column"
              fxLayoutGap="1em"
              fxLayoutAlign="start stretch">
@@ -67,7 +69,8 @@
                  fxLayoutAlign="start stretch">
                 <tl-autocomplete formControlName="dalyanControl"
                                  [options]="dalyans"
-                                 label="{{ 'inspections.dalyan' | tlTranslate }}">
+                                 label="{{ 'inspections.dalyan' | tlTranslate }}"
+                                 tooltipResourceName="inspections.dalyan-helper">
                 </tl-autocomplete>
             </div>
 
@@ -77,26 +80,30 @@
                 <tl-autocomplete fxFlex="50"
                                  formControlName="markReasonControl"
                                  [options]="markReasons"
-                                 label="{{ 'inspections.mark-reason' | tlTranslate }}">
+                                 label="{{ 'inspections.mark-reason' | tlTranslate }}"
+                                 tooltipResourceName="inspections.mark-reason-helper">
                 </tl-autocomplete>
 
                 <tl-autocomplete fxFlex="50"
                                  formControlName="remarkReasonControl"
                                  [options]="remarkReasons"
-                                 label="{{ 'inspections.remark-reason' | tlTranslate }}">
+                                 label="{{ 'inspections.remark-reason' | tlTranslate }}"
+                                 tooltipResourceName="inspections.remark-reason-helper">
                 </tl-autocomplete>
             </div>
 
             <tl-input *ngIf="otherRemarkReasonSelected"
                       formControlName="otherRemarkReasonControl"
-                      label="{{ 'inspections.other-remark-reason' | tlTranslate }}">
+                      label="{{ 'inspections.other-remark-reason' | tlTranslate }}"
+                      tooltipResourceName="inspections.other-remark-reason-helper">
             </tl-input>
         </div>
     </tl-expansion-panel>
 
     <!-- Данни от извършената проверка -->
     <tl-expansion-panel title="{{ 'inspections.inspected-fishing-gears' | tlTranslate }}"
-                        [validityChecker]="form">
+                        [validityChecker]="form"
+                        tooltipResourceName="inspections.inspected-fishing-gears-helper">
         <div fxLayout="column"
              fxLayoutGap="1em"
              fxLayoutAlign="start stretch">
@@ -109,7 +116,8 @@
             <tl-autocomplete *ngIf="form.controls.permitTypeControl.value?.value === inspectionPermitTypeEnum.Registered"
                              formControlName="permitControl"
                              [options]="permits"
-                             label="{{ 'inspections.permit' | tlTranslate }}">
+                             label="{{ 'inspections.permit' | tlTranslate }}"
+                             tooltipResourceName="inspections.permit-helper">
             </tl-autocomplete>
 
             <div *ngIf="form.controls.permitTypeControl.value?.value === inspectionPermitTypeEnum.Unregistered"
@@ -118,7 +126,8 @@
                  fxLayoutAlign="start center">
                 <tl-input fxFlex="50"
                           formControlName="unregisteredPermitControl"
-                          label="{{ 'inspections.permit' | tlTranslate }}">
+                          label="{{ 'inspections.permit' | tlTranslate }}"
+                          tooltipResourceName="inspections.permit-helper">
                 </tl-input>
 
                 <tl-date-year fxFlex="50"
@@ -142,13 +151,15 @@
                                 [validityChecker]="form">
         <tl-textarea formControlName="ownerCommentControl"
                      [minRows]="3"
-                     label="{{ 'inspections.owner-comment' | tlTranslate }}">
+                     label="{{ 'inspections.owner-comment' | tlTranslate }}"
+                     tooltipResourceName="inspections.owner-comment-helper">
         </tl-textarea>
     </inspection-additional-info>
 
     <!-- Файлове -->
     <tl-expansion-panel title="{{ 'inspections.edit-inspection-files' | tlTranslate }}"
-                        [validityChecker]="form">
+                        [validityChecker]="form"
+                        tooltipResourceName="inspections.edit-inspection-files-helper">
         <file-uploader-form-array formControlName="filesControl"
                                   [pageCode]="pageCode"
                                   [downloadFileMethod]="service.downloadFile.bind(this.service)">

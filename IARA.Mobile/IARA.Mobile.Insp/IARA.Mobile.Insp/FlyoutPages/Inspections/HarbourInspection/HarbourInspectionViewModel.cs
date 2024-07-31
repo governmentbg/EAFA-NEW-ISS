@@ -17,6 +17,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using TechnoLogica.Xamarin.Attributes;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Helpers;
@@ -51,7 +52,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.HarbourInspection
 
             SaveDraft = CommandBuilder.CreateFrom(OnSaveDraft);
             Finish = CommandBuilder.CreateFrom(OnFinish);
-            ReturnForEdit = CommandBuilder.CreateFrom(OnReturnForEdit);
+            SwitchTransshipping = CommandBuilder.CreateFrom<bool>(OnSwitchTransshipping);
 
             this.AddValidation(
                 groups: new Dictionary<string, Func<bool>>
@@ -92,6 +93,8 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.HarbourInspection
                 ProtectedEdit = value;
             }
         }
+
+        public ICommand SwitchTransshipping { get; set; }
 
         public TLForwardSections Sections { get; set; }
 
@@ -261,7 +264,12 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.HarbourInspection
                 if (Edit.SendingShipInspection?.InspectedShip != null)
                 {
                     HasTranshipment.Value = true;
+                    SwitchTransshipping.Execute(true);
                     TransshippedShip.OnEdit(Edit.SendingShipInspection.InspectedShip);
+                }
+                else
+                {
+                    SwitchTransshipping.Execute(false);
                 }
 
                 InspectedShip.ObservationsOrViolations.AssignFrom(Edit.ObservationTexts);
@@ -269,6 +277,10 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.HarbourInspection
                 ShipCatches.ObservationsOrViolations.AssignFrom(Edit.ObservationTexts);
                 ShipFishingGears.ObservationsOrViolations.AssignFrom(Edit.ObservationTexts);
                 TransshipmentObservation.AssignFrom(Edit.ObservationTexts);
+            }
+            else
+            {
+                SwitchTransshipping.Execute(false);
             }
 
             if (ActivityType == ViewActivityType.Review)
@@ -280,6 +292,28 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.HarbourInspection
             }
 
             await TLLoadingHelper.HideFullLoadingScreen();
+        }
+
+        private void OnSwitchTransshipping(bool hasTransshipping)
+        {
+            TLValidator validator = Location.Validations.Where(f => f.Name == nameof(RequiredAttribute)).FirstOrDefault();
+            if (hasTransshipping)
+            {
+                if (validator == null)
+                {
+                    Location.Validations.Add(new TLValidator(new RequiredAttribute(), nameof(RequiredAttribute)));
+                }
+            }
+            else
+            {
+                if (validator != null)
+                {
+                    Location.Validations.Remove(validator);
+                }
+            }
+
+            TransshippedShip.OnSwitchTransshipping(hasTransshipping);
+            TransshippedCatches.OnSwitchTransshipping(hasTransshipping);
         }
 
         private Task OnShipSelected(ShipSelectNomenclatureDto nom)
@@ -313,11 +347,6 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.HarbourInspection
         private Task OnFinish()
         {
             return InspectionSaveHelper.Finish(Sections, Validation, Save);
-        }
-
-        private Task OnReturnForEdit()
-        {
-            return Save(SubmitType.ReturnForEdit);
         }
 
         private Task Save(SubmitType submitType)

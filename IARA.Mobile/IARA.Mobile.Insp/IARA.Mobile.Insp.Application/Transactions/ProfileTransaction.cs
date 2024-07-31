@@ -1,6 +1,4 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
-using IARA.Mobile.Application.DTObjects.Profile.API;
+﻿using IARA.Mobile.Application.DTObjects.Profile.API;
 using IARA.Mobile.Application.DTObjects.Users;
 using IARA.Mobile.Application.Extensions;
 using IARA.Mobile.Application.Interfaces.Transactions;
@@ -8,6 +6,8 @@ using IARA.Mobile.Domain.Models;
 using IARA.Mobile.Insp.Application.Interfaces.Database;
 using IARA.Mobile.Insp.Application.Interfaces.Transactions;
 using IARA.Mobile.Insp.Application.Transactions.Base;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace IARA.Mobile.Insp.Application.Transactions
 {
@@ -69,8 +69,7 @@ namespace IARA.Mobile.Insp.Application.Transactions
         {
             using (IAppDbContext context = ContextBuilder.CreateContext())
             {
-
-                return context.NPermissions.Select(p=>p.Permission).Contains(permission);
+                return context.NPermissions.Select(p => p.Permission).Contains(permission);
             }
         }
     }

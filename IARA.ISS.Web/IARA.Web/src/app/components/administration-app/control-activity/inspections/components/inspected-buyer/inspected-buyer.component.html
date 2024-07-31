@@ -11,14 +11,17 @@
     <tl-autocomplete *ngIf="isFromRegister"
                      formControlName="buyerControl"
                      [label]="title"
-                     [options]="buyers">
+                     [options]="buyers"
+                     tooltipResourceName="inspections.edit-inspection-buyer-helper">
     </tl-autocomplete>
 
     <ng-container *ngIf="!isFromRegister">
         <div fxLayout="column"
              fxLayoutGap="1em">
             <tl-checkbox formControlName="isLegalControl"
-                         label="{{ 'inspections.buyer-is-legal' | tlTranslate }}"></tl-checkbox>
+                         label="{{ 'inspections.buyer-is-legal' | tlTranslate }}">
+            </tl-checkbox>
+
             <regix-data *ngIf="!isLegal"
                         formControlName="personControl"
                         [isPerson]="true"
@@ -29,6 +32,7 @@
                         (downloadDataBtnClicked)="downloadedPersonData($event)"
                         checkboxLabel="{{ 'catches-and-sales.log-book-page-person-has-bulgarian-address-registration' | tlTranslate }}">
             </regix-data>
+
             <regix-data *ngIf="isLegal"
                         formControlName="legalControl"
                         [isPerson]="false"
@@ -47,12 +51,15 @@
          fxLayoutAlign="start center">
         <tl-input fxFlex="50"
                   formControlName="addressControl"
-                  label="{{ 'inspections.address' | tlTranslate }}">
+                  label="{{ 'inspections.address' | tlTranslate }}"
+                  tooltipResourceName="inspections.address-helper">
         </tl-input>
+
         <tl-autocomplete fxFlex="50"
                          formControlName="countryControl"
                          label="{{ 'inspections.country' | tlTranslate }}"
-                         [options]="countries">
+                         [options]="countries"
+                         tooltipResourceName="inspections.country-helper">
         </tl-autocomplete>
     </div>
 </div>

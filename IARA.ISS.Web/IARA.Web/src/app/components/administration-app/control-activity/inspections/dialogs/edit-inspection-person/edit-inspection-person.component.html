@@ -7,7 +7,8 @@
     <!-- Основни данни -->
     <tl-expansion-panel title="{{ 'inspections.general-info' | tlTranslate }}"
                         [validityChecker]="form"
-                        [validityCheckerExtraCondition]="reportNumAlreadyExistsError !== true || isInspectionLockedError !== true">
+                        [validityCheckerExtraCondition]="reportNumAlreadyExistsError !== true || isInspectionLockedError !== true"
+                        tooltipResourceName="inspections.general-info-helper">
         <div fxLayout="column"
              fxLayoutGap="1em"
              fxLayoutAlign="start stretch">
@@ -25,14 +26,16 @@
             </inspection-map-viewer>
 
             <tl-input formControlName="addressControl"
-                      label="{{ 'inspections.address' | tlTranslate }}">
+                      label="{{ 'inspections.address' | tlTranslate }}"
+                      tooltipResourceName="inspections.address-helper">
             </tl-input>
         </div>
     </tl-expansion-panel>
 
     <!-- Данни за лицето, извършващо любителски риболов -->
     <tl-expansion-panel title="{{ 'inspections.fisherman-data' | tlTranslate }}"
-                        [validityChecker]="form">
+                        [validityChecker]="form"
+                        tooltipResourceName="inspections.fisherman-data-helper">
         <div fxLayout="column"
              fxLayoutGap="1em"
              fxLayoutAlign="start stretch">
@@ -47,7 +50,8 @@
             </tl-checkbox>
 
             <tl-input formControlName="ticketControl"
-                      label="{{ 'inspections.fishing-ticket-number' | tlTranslate }}">
+                      label="{{ 'inspections.fishing-ticket-number' | tlTranslate }}"
+                      tooltipResourceName="inspections.fishing-ticket-number-helper">
             </tl-input>
 
             <div fxLayout="row"
@@ -56,13 +60,15 @@
                 <tl-input fxFlex="50"
                           formControlName="fishingGearCountControl"
                           type="number"
-                          label="{{ 'inspections.fishing-gears-count' | tlTranslate }}">
+                          label="{{ 'inspections.fishing-gears-count' | tlTranslate }}"
+                          tooltipResourceName="inspections.fishing-gears-count-helper">
                 </tl-input>
 
                 <tl-input fxFlex="50"
                           formControlName="hookCountControl"
                           type="number"
-                          label="{{ 'inspections.hooks-count' | tlTranslate }}">
+                          label="{{ 'inspections.hooks-count' | tlTranslate }}"
+                          tooltipResourceName="inspections.hooks-count-helper">
                 </tl-input>
             </div>
         </div>
@@ -70,7 +76,8 @@
 
     <!-- Данни за инспекцията -->
     <tl-expansion-panel title="{{ 'inspections.aquaculture-catch' | tlTranslate }}"
-                        [validityChecker]="form">
+                        [validityChecker]="form"
+                        tooltipResourceName="inspections.aquaculture-catch-helper">
         <div fxLayout="column"
              fxLayoutGap="1em"
              fxLayoutAlign="start stretch">
@@ -101,13 +108,15 @@
                                 [validityChecker]="form">
         <tl-textarea formControlName="fishermanCommentControl"
                      [minRows]="3"
-                     label="{{ 'inspections.fisherman-comment' | tlTranslate }}">
+                     label="{{ 'inspections.fisherman-comment' | tlTranslate }}"
+                     tooltipResourceName="inspections.fisherman-comment-helper">
         </tl-textarea>
     </inspection-additional-info>
 
     <!-- Файлове -->
     <tl-expansion-panel title="{{ 'inspections.edit-inspection-files' | tlTranslate }}"
-                        [validityChecker]="form">
+                        [validityChecker]="form"
+                        tooltipResourceName="inspections.edit-inspection-files-helper">
         <file-uploader-form-array formControlName="filesControl"
                                   [pageCode]="pageCode"
                                   [downloadFileMethod]="service.downloadFile.bind(this.service)">

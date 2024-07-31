@@ -37,7 +37,6 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FishermanInspection
             OpenTicketReport = CommandBuilder.CreateFrom(OnOpenTicketReport);
             SaveDraft = CommandBuilder.CreateFrom(OnSaveDraft);
             Finish = CommandBuilder.CreateFrom(OnFinish);
-            ReturnForEdit = CommandBuilder.CreateFrom(OnReturnForEdit);
 
             InspectionGeneralInfo = new InspectionGeneralInfoViewModel(this);
             PatrolVehicles = new PatrolVehiclesViewModel(this, false);
@@ -220,11 +219,6 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FishermanInspection
             List<SelectNomenclatureDto> fileTypes = DependencyService.Resolve<INomenclatureTransaction>().GetFileTypes();
 
             return InspectionSaveHelper.Finish(Sections, Validation, Save);
-        }
-
-        private Task OnReturnForEdit()
-        {
-            return Save(SubmitType.ReturnForEdit);
         }
 
         private Task Save(SubmitType submitType)

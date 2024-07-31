@@ -106,10 +106,13 @@ export class EditInspectionAtMarketComponent extends BaseInspectionsComponent im
     }
 
     public onBuyerSelected(buyer: InspectedBuyerNomenclatureDTO): void {
-        if (buyer !== null && buyer !== undefined) {
+        if (buyer !== null && buyer !== undefined && buyer instanceof NomenclatureDTO) {
             if (buyer.hasUtility === true) {
                 this.form.get('marketNameControl')!.setValue(buyer.utilityName);
             }
+        }
+        else {
+            this.form.get('marketNameControl')!.setValue(undefined);
         }
     }
 

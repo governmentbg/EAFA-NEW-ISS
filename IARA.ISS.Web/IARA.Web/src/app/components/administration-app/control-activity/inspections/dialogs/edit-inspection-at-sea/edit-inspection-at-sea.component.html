@@ -7,7 +7,8 @@
     <!-- Основни данни -->
     <tl-expansion-panel title="{{ 'inspections.general-info' | tlTranslate }}"
                         [validityChecker]="form"
-                        [validityCheckerExtraCondition]="reportNumAlreadyExistsError !== true || isInspectionLockedError !== true">
+                        [validityCheckerExtraCondition]="reportNumAlreadyExistsError !== true || isInspectionLockedError !== true"
+                        tooltipResourceName="inspections.general-info-helper">
         <div fxLayout="column"
              fxLayoutGap="1em"
              fxLayoutAlign="start stretch">
@@ -46,13 +47,15 @@
                                 validityChecker>
         <tl-textarea formControlName="captainCommentControl"
                      [minRows]="3"
-                     label="{{ 'inspections.captain-comment' | tlTranslate }}">
+                     label="{{ 'inspections.captain-comment' | tlTranslate }}"
+                     tooltipResourceName="inspections.captain-comment-helper">
         </tl-textarea>
     </inspection-additional-info>
 
     <!-- Файлове -->
     <tl-expansion-panel title="{{ 'inspections.edit-inspection-files' | tlTranslate }}"
-                        [validityChecker]="form">
+                        [validityChecker]="form"
+                        tooltipResourceName="inspections.edit-inspection-files-helper">
         <file-uploader-form-array formControlName="filesControl"
                                   [pageCode]="pageCode"
                                   [downloadFileMethod]="service.downloadFile.bind(this.service)">

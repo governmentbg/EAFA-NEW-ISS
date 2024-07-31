@@ -8,12 +8,13 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FishermanInspection
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class FishermanInspectionPage : BasePage<FishermanInspectionViewModel>
     {
-        public FishermanInspectionPage(SubmitType submitType = SubmitType.Draft, ViewActivityType activityType = ViewActivityType.Add, InspectionFisherDto dto = null, bool isLocal = false)
+        public FishermanInspectionPage(SubmitType submitType = SubmitType.Draft, ViewActivityType activityType = ViewActivityType.Add, InspectionFisherDto dto = null, bool isLocal = false, bool createdByCurrentUser = true)
         {
             ViewModel.SubmitType = submitType;
             ViewModel.ActivityType = activityType;
             ViewModel.Edit = dto;
             ViewModel.IsLocal = isLocal;
+            ViewModel.CreatedByCurrentUser = createdByCurrentUser;
             InitializeComponent();
             ViewModel.Sections = forwardSections;
         }

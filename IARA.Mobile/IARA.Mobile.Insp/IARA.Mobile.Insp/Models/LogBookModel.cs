@@ -8,6 +8,7 @@ using IARA.Mobile.Insp.Controls.ViewModels;
 using IARA.Mobile.Insp.Helpers;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using TechnoLogica.Xamarin.Commands;
@@ -93,7 +94,7 @@ namespace IARA.Mobile.Insp.Models
         }
         private async Task OnPageSelected(LogBookPageDto dto)
         {
-            _shipCatches.Catches.Catches.Value.Clear();
+            _shipCatches.Catches.Catches.Value.RemoveRange(_shipCatches.Catches.Catches.Value.Where(x => x.LogBookId == dto.LogBookId).ToList());
             await _shipCatches.Catches.AddCatches(dto);
         }
     }

@@ -48,7 +48,7 @@ export class InspectionAdditionalInfoComponent extends CustomFormControl<Inspect
 
     protected buildForm(): AbstractControl {
         return new FormGroup({
-            violationControl: new FormControl(undefined),
+            violationControl: new FormControl(undefined, Validators.maxLength(4000)),
             inspectorCommentControl: new FormControl(undefined, Validators.maxLength(4000)),
             actionsTakenControl: new FormControl(undefined, Validators.maxLength(4000)),
             administrativeViolationControl: new FormControl(false),

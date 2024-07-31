@@ -12,47 +12,64 @@
             <tl-autocomplete fxFlex="33"
                              formControlName="typeControl"
                              [options]="vesselTypes"
-                             label="{{ 'inspections.water-vessel-type' | tlTranslate }}">
+                             label="{{ 'inspections.water-vessel-type' | tlTranslate }}"
+                             tooltipResourceName="inspections.water-vessel-type-helper">
             </tl-autocomplete>
+
             <tl-input fxFlex="33"
                       formControlName="numberControl"
-                      label="{{ 'inspections.water-vessel-number' | tlTranslate }}">
+                      label="{{ 'inspections.water-vessel-number' | tlTranslate }}"
+                      tooltipResourceName="inspections.water-vessel-number-helper">
             </tl-input>
+
             <tl-input fxFlex="33"
                       formControlName="colorControl"
-                      label="{{ 'inspections.water-vessel-color' | tlTranslate }}">
+                      label="{{ 'inspections.water-vessel-color' | tlTranslate }}"
+                      tooltipResourceName="inspections.water-vessel-color-helper">
             </tl-input>
         </div>
+
         <div fxLayout="row"
              fxLayoutGap="1em"
              fxLayoutAlign="start center">
             <tl-input fxFlex="33"
                       formControlName="lengthControl"
                       type="number"
-                      label="{{ 'inspections.water-vessel-length' | tlTranslate }}">
+                      label="{{ 'inspections.water-vessel-length' | tlTranslate }}"
+                      tooltipResourceName="inspections.water-vessel-length-helper">
             </tl-input>
+
             <tl-input fxFlex="33"
                       formControlName="widthControl"
                       type="number"
-                      label="{{ 'inspections.water-vessel-width' | tlTranslate }}">
+                      label="{{ 'inspections.water-vessel-width' | tlTranslate }}"
+                      tooltipResourceName="inspections.water-vessel-width-helper">
             </tl-input>
+
             <tl-input fxFlex="33"
                       formControlName="totalControl"
                       type="number"
-                      label="{{ 'inspections.water-vessel-total-count' | tlTranslate }}">
+                      label="{{ 'inspections.water-vessel-total-count' | tlTranslate }}"
+                      tooltipResourceName="inspections.water-vessel-total-count-helper">
             </tl-input>
         </div>
+
         <tl-checkbox formControlName="takenControl"
                      label="{{ 'inspections.water-inspection-taken' | tlTranslate }}">
         </tl-checkbox>
+
         <tl-checkbox formControlName="storedControl"
                      label="{{ 'inspections.water-inspection-stored' | tlTranslate }}">
         </tl-checkbox>
+
         <tl-input formControlName="storageControl"
-                  label="{{ 'inspections.storage-location' | tlTranslate }}">
+                  label="{{ 'inspections.storage-location' | tlTranslate }}"
+                  tooltipResourceName="inspections.storage-location-helper">
         </tl-input>
+
         <tl-textarea formControlName="descriptionControl"
-                     label="{{ 'inspections.vessel-description' | tlTranslate }}">
+                     label="{{ 'inspections.vessel-description' | tlTranslate }}"
+                     tooltipResourceName="inspections.vessel-description-helper">
         </tl-textarea>
     </div>
 </div>

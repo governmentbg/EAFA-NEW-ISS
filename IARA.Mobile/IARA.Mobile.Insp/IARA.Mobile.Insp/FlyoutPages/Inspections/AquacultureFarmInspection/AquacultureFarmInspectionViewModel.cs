@@ -33,7 +33,6 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.AquacultureFarmInspection
             AquacultureChosen = CommandBuilder.CreateFrom<SelectNomenclatureDto>(OnAquacultureChosen);
             SaveDraft = CommandBuilder.CreateFrom(OnSaveDraft);
             Finish = CommandBuilder.CreateFrom(OnFinish);
-            ReturnForEdit = CommandBuilder.CreateFrom(OnReturnForEdit);
             InspectionGeneralInfo = new InspectionGeneralInfoViewModel(this);
             PatrolVehicles = new PatrolVehiclesViewModel(this, false);
             LegalEntity = new LegalViewModel(this, InspectedPersonType.LicUsrLgl)
@@ -226,11 +225,6 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.AquacultureFarmInspection
         private Task OnFinish()
         {
             return InspectionSaveHelper.Finish(Sections, Validation, Save);
-        }
-
-        private Task OnReturnForEdit()
-        {
-            return Save(SubmitType.ReturnForEdit);
         }
 
         private Task Save(SubmitType submitType)

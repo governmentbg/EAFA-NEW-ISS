@@ -7,7 +7,8 @@
     <!-- Основни данни -->
     <tl-expansion-panel title="{{ 'inspections.general-info' | tlTranslate }}"
                         [validityChecker]="form"
-                        [validityCheckerExtraCondition]="reportNumAlreadyExistsError !== true || isInspectionLockedError !== true">
+                        [validityCheckerExtraCondition]="reportNumAlreadyExistsError !== true || isInspectionLockedError !== true"
+                        tooltipResourceName="inspections.general-info-helper">
         <div fxLayout="column"
              fxLayoutGap="1em"
              fxLayoutAlign="start stretch">
@@ -23,14 +24,16 @@
             </inspection-map-viewer>
 
             <tl-input formControlName="addressControl"
-                      label="{{ 'inspections.address' | tlTranslate }}">
+                      label="{{ 'inspections.address' | tlTranslate }}"
+                      tooltipResourceName="inspections.address-helper">
             </tl-input>
         </div>
     </tl-expansion-panel>
 
     <!-- Данни за инспектирано превозно средство -->
     <tl-expansion-panel title="{{ 'inspections.vehicle-data' | tlTranslate }}"
-                        [validityChecker]="form">
+                        [validityChecker]="form"
+                        tooltipResourceName="inspections.general-info-helper">
         <div fxLayout="column"
              fxLayoutGap="1em"
              fxLayoutAlign="start stretch">
@@ -40,39 +43,48 @@
                 <tl-autocomplete fxFlex="33"
                                  formControlName="typeControl"
                                  [options]="vehicleTypes"
-                                 label="{{ 'inspections.transport-vehicle-type' | tlTranslate }}">
+                                 label="{{ 'inspections.transport-vehicle-type' | tlTranslate }}"
+                                 tooltipResourceName="inspections.transport-vehicle-type-helper">
                 </tl-autocomplete>
 
                 <tl-autocomplete fxFlex="33"
                                  formControlName="countryControl"
                                  [options]="countries"
-                                 label="{{ 'inspections.transport-vehicle-country' | tlTranslate }}">
+                                 label="{{ 'inspections.transport-vehicle-country' | tlTranslate }}"
+                                 tooltipResourceName="inspections.transport-vehicle-country-helper">
                 </tl-autocomplete>
 
                 <tl-input fxFlex="33"
                           formControlName="vehicleRegNumControl"
-                          label="{{ 'inspections.transport-vehicle-registration-number' | tlTranslate }}">
+                          label="{{ 'inspections.transport-vehicle-registration-number' | tlTranslate }}"
+                          tooltipResourceName="inspections.transport-vehicle-registration-number-helper">
                 </tl-input>
             </div>
+
             <div fxLayout="row"
                  fxLayoutGap="1em"
                  fxLayoutAlign="start center">
                 <tl-input fxFlex="33"
                           formControlName="vehicleModelControl"
-                          label="{{ 'inspections.transport-vehicle-mark' | tlTranslate }}">
+                          label="{{ 'inspections.transport-vehicle-mark' | tlTranslate }}"
+                          tooltipResourceName="inspections.transport-vehicle-mark-helper">
                 </tl-input>
 
                 <tl-input fxFlex="33"
                           formControlName="vehicleMarkControl"
-                          label="{{ 'inspections.transport-vehicle-model' | tlTranslate }}">
+                          label="{{ 'inspections.transport-vehicle-model' | tlTranslate }}"
+                          tooltipResourceName="inspections.transport-vehicle-model-helper">
                 </tl-input>
 
                 <tl-input fxFlex="33"
                           formControlName="vehicleTrailerNumControl"
-                          label="{{ 'inspections.transport-vehicle-trailer-number' | tlTranslate }}">
+                          label="{{ 'inspections.transport-vehicle-trailer-number' | tlTranslate }}"
+                          tooltipResourceName="inspections.transport-vehicle-trailer-number-helper">
                 </tl-input>
             </div>
-            <tl-checkbox formControlName="ownerIsDriverControl"
+
+            <tl-checkbox *ngIf="!isLegalOwner"
+                         formControlName="ownerIsDriverControl"
                          label="{{ 'inspections.owner-is-driver' | tlTranslate }}">
             </tl-checkbox>
 
@@ -83,8 +95,7 @@
                                title="{{ 'inspections.owner' | tlTranslate }}">
             </inspected-subject>
 
-            <inspected-person *ngIf="!form.controls.ownerIsDriverControl.value"
-                              formControlName="driverControl"
+            <inspected-person formControlName="driverControl"
                               [countries]="countries"
                               [personType]="inspectedPersonTypeEnum.Driver"
                               title="{{ 'inspections.driver' | tlTranslate }}">
@@ -95,7 +106,8 @@
     <!-- Инспекция на улова при превозно средство -->
     <tl-expansion-panel title="{{ 'inspections.vehicle-catch' | tlTranslate }}"
                         [validityChecker]="form"
-                        [validityCheckerExtraCondition]="form.errors?.atLeastOneCatchError !== true">
+                        [validityCheckerExtraCondition]="form.errors?.atLeastOneCatchError !== true"
+                        tooltipResourceName="inspections.vehicle-catch-helper">
         <div fxLayout="column"
              fxLayoutGap="1em"
              fxLayoutAlign="start stretch">
@@ -126,22 +138,26 @@
                 <tl-autocomplete fxFlex="50"
                                  formControlName="sealInstitutionControl"
                                  [options]="institutions"
-                                 label="{{ 'inspections.institution-who-put-seal' | tlTranslate }}">
+                                 label="{{ 'inspections.institution-who-put-seal' | tlTranslate }}"
+                                 tooltipResourceName="inspections.institution-who-put-seal-helper">
                 </tl-autocomplete>
 
                 <tl-input fxFlex="50"
                           formControlName="sealConditionControl"
-                          label="{{ 'inspections.seal-condition' | tlTranslate }}">
+                          label="{{ 'inspections.seal-condition' | tlTranslate }}"
+                          tooltipResourceName="inspections.seal-condition-helper">
                 </tl-input>
             </div>
 
             <tl-autocomplete formControlName="buyerControl"
                              [options]="buyers"
-                             label="{{ 'inspections.registered-buyer' | tlTranslate }}">
+                             label="{{ 'inspections.registered-buyer' | tlTranslate }}"
+                             tooltipResourceName="inspections.registered-buyer-helper">
             </tl-autocomplete>
 
             <tl-input formControlName="destinationControl"
-                      label="{{ 'inspections.destination' | tlTranslate }}">
+                      label="{{ 'inspections.destination' | tlTranslate }}"
+                      tooltipResourceName="inspections.destination-helper">
             </tl-input>
         </div>
     </tl-expansion-panel>
@@ -151,13 +167,15 @@
                                 [validityChecker]="form">
         <tl-textarea formControlName="transporterCommentControl"
                      [minRows]="3"
-                     label="{{ 'inspections.transporter-comment' | tlTranslate }}">
+                     label="{{ 'inspections.transporter-comment' | tlTranslate }}"
+                     tooltipResourceName="inspections.transporter-comment-helper">
         </tl-textarea>
     </inspection-additional-info>
 
     <!-- Файлове -->
     <tl-expansion-panel title="{{ 'inspections.edit-inspection-files' | tlTranslate }}"
-                        [validityChecker]="form">
+                        [validityChecker]="form"
+                        tooltipResourceName="inspections.edit-inspection-files-helper">
         <file-uploader-form-array formControlName="filesControl"
                                   [pageCode]="pageCode"
                                   [downloadFileMethod]="service.downloadFile.bind(this.service)">

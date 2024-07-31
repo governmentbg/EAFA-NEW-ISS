@@ -18,10 +18,12 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.ViolatedRegulationDia
 {
     public class ViolatedRegulationDialogViewModel : TLBaseDialogViewModel<ViolatedRegulationModel>
     {
+        private bool _isRegulationChosen;
         public ViolatedRegulationDialogViewModel()
         {
             Save = CommandBuilder.CreateFrom(OnSave);
             RegulationChosen = CommandBuilder.CreateFrom<AuanViolatedRegulationDto>(OnRegulationChosen);
+            SwitchRegulationExists = CommandBuilder.CreateFrom<bool>(OnSwitchRegulationExists);
             this.AddValidation();
 
             Regulation.ItemsSource = new TLObservableCollection<AuanViolatedRegulationDto>();
@@ -31,6 +33,12 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.ViolatedRegulationDia
 
         public ViolatedRegulationModel Edit { get; set; }
         public ViewActivityType DialogType { get; set; }
+        public bool IsRegulationChosen
+        {
+            get => _isRegulationChosen;
+            set => SetProperty(ref _isRegulationChosen, value);
+        }
+
 
         [Required]
         public ValidState Article { get; set; }
@@ -40,15 +48,17 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.ViolatedRegulationDia
         public ValidState Comments { get; set; }
         public ValidState LawText { get; set; }
 
+        public ValidStateBool RegulationExists { get; set; }
         public ValidStateInfiniteSelect<AuanViolatedRegulationDto> Regulation { get; set; }
 
         public ICommand Save { get; set; }
         public ICommand RegulationChosen { get; set; }
+        public ICommand SwitchRegulationExists { get; set; }
 
         public override Task Initialize(object sender)
         {
             Regulation.ItemsSource.AddRange(DependencyService.Resolve<INomenclatureTransaction>().GetLaws(0, CommonGlobalVariables.PullItemsCount));
-
+            RegulationExists.AssignFrom(true);
             if (Edit != null)
             {
                 if (Edit.LawSectionId != null)
@@ -65,10 +75,26 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.ViolatedRegulationDia
                     Letter.AssignFrom(Edit.Letter);
                     Comments.AssignFrom(Edit.Comments);
                     LawText.AssignFrom(Edit.LawText);
+                    RegulationExists.AssignFrom(false);
                 }
             }
 
             return Task.CompletedTask;
+        }
+
+        private void OnSwitchRegulationExists(bool regulationExists)
+        {
+            if (regulationExists)
+            {
+                Regulation.Value = null;
+                Article.Value = null;
+                Paragraph.Value = null;
+                Section.Value = null;
+                Letter.Value = null;
+                Comments.Value = null;
+                LawText.Value = null;
+                IsRegulationChosen = false;
+            }
         }
 
         private void OnRegulationChosen(AuanViolatedRegulationDto dto)
@@ -81,11 +107,21 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.ViolatedRegulationDia
                 Letter.AssignFrom(dto.Letter);
                 Comments.AssignFrom(dto.Comments);
                 LawText.AssignFrom(dto.LawText);
+                IsRegulationChosen = true;
+
+                Validation.Force();
             }
         }
 
         private Task OnSave()
         {
+            Validation.Force();
+
+            if (!Validation.IsValid)
+            {
+                return Task.CompletedTask;
+            }
+
             return HideDialog(new ViolatedRegulationModel()
             {
                 Id = Edit == null ? null : Edit.Id,

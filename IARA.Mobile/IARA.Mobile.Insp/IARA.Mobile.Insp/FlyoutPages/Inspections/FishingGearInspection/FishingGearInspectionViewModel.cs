@@ -52,7 +52,6 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FishingGearInspection
             PermitChosen = CommandBuilder.CreateFrom<SelectNomenclatureDto>(OnPermitChosen);
             SaveDraft = CommandBuilder.CreateFrom(OnSaveDraft);
             Finish = CommandBuilder.CreateFrom(OnFinish);
-            ReturnForEdit = CommandBuilder.CreateFrom(OnReturnForEdit);
 
             ShipData = new InspectedShipDataViewModel(this, canPickLocation: false)
             {
@@ -523,11 +522,6 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FishingGearInspection
         private Task OnFinish()
         {
             return InspectionSaveHelper.Finish(Sections, Validation, Save);
-        }
-
-        private Task OnReturnForEdit()
-        {
-            return Save(SubmitType.ReturnForEdit);
         }
 
         private Task Save(SubmitType submitType)

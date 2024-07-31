@@ -22,5 +22,6 @@
         public const string IS_TRANSHIPMENT_ALLOWED = "IsTranshipmentAllowed";
         public const string IS_TRANSHIPMENT = "IsTranshipment";
         public const string IS_WATER_VEHICLE = nameof(IS_WATER_VEHICLE);
+        public const string IS_BUYER_LEGAL = nameof(IS_BUYER_LEGAL);
     }
 }

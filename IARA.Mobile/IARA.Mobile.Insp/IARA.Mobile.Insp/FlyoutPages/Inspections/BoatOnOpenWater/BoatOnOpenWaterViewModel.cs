@@ -47,7 +47,6 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.BoatOnOpenWater
 
             Finish = CommandBuilder.CreateFrom(OnFinish);
             SaveDraft = CommandBuilder.CreateFrom(OnSaveDraft);
-            ReturnForEdit = CommandBuilder.CreateFrom(OnReturnForEdit);
 
             this.AddValidation(others: new IValidatableViewModel[]
             {
@@ -312,11 +311,6 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.BoatOnOpenWater
         private Task OnFinish()
         {
             return InspectionSaveHelper.Finish(Sections, Validation, Save);
-        }
-
-        private Task OnReturnForEdit()
-        {
-            return Save(SubmitType.ReturnForEdit);
         }
 
         private Task Save(SubmitType submitType)

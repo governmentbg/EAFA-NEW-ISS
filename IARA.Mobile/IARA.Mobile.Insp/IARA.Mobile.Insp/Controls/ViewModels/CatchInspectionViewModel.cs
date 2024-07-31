@@ -20,6 +20,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
     {
         private string _shipText;
         private bool _isUnloadedQuantityRequired;
+        public int LogBookId { get; set; }
         public CatchInspectionViewModel(InspectionPageViewModel inspection, CatchInspectionsViewModel catchInspections, bool isUnloadedQuantityRequired = false)
         {
             Inspection = inspection;

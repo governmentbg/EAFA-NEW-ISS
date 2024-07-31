@@ -7,7 +7,8 @@
     <!-- Основни данни -->
     <tl-expansion-panel title="{{ 'inspections.general-info' | tlTranslate }}"
                         [validityChecker]="form"
-                        [validityCheckerExtraCondition]="reportNumAlreadyExistsError !== true || isInspectionLockedError !== true">
+                        [validityCheckerExtraCondition]="reportNumAlreadyExistsError !== true || isInspectionLockedError !== true"
+                        tooltipResourceName="inspections.general-info-helper">
         <div fxLayout="column"
              fxLayoutGap="1em"
              fxLayoutAlign="start stretch">
@@ -47,7 +48,8 @@
     <!-- Трансбордиране -->
     <tl-expansion-panel title="{{ 'inspections.transshipment' | tlTranslate }}"
                         [validityChecker]="form"
-                        [validityCheckerExtraCondition]="form.errors?.atLeastOneCatchError !== true">
+                        [validityCheckerExtraCondition]="form.errors?.atLeastOneCatchError !== true"
+                        tooltipResourceName="inspections.transshipment-helper">
         <div fxLayout="column"
              fxLayoutGap="1em"
              fxLayoutAlign="start stretch">
@@ -62,8 +64,10 @@
                             [countries]="countries">
             </inspected-ship>
 
-            <tl-card *ngIf="hasTransshipment">
+            <tl-card *ngIf="hasTransshipment"
+                     tooltipResourceName="inspections.transshipment-catches-helper">
                 <tl-card-title>{{ 'inspections.transshipment-catches' | tlTranslate }}</tl-card-title>
+
                 <tl-card-content fxLayoutGap="1em">
                     <inspected-catches-table formControlName="catchesControl"
                                              [ships]="ships"
@@ -83,28 +87,33 @@
             <tl-textarea *ngIf="hasTransshipment"
                          formControlName="transshipmentViolationControl"
                          [minRows]="3"
-                         label="{{ 'inspections.violation' | tlTranslate }}">
+                         label="{{ 'inspections.violation' | tlTranslate }}"
+                         tooltipResourceName="inspections.violation-helper">
             </tl-textarea>
         </div>
     </tl-expansion-panel>
 
     <!-- Допълнителна информация -->
     <inspection-additional-info formControlName="additionalInfoControl"
-                                [validityChecker]="form">
+                                [validityChecker]="form"
+                                tooltipResourceName="inspections.general-info-helper">
         <tl-textarea formControlName="nnnShipStatusControl"
                      [minRows]="3"
-                     label="{{ 'inspections.nnn-ship-status' | tlTranslate }}">
+                     label="{{ 'inspections.nnn-ship-status' | tlTranslate }}"
+                     tooltipResourceName="inspections.nnn-ship-status-helper">
         </tl-textarea>
 
         <tl-textarea formControlName="captainCommentControl"
                      [minRows]="3"
-                     label="{{ 'inspections.captain-comment' | tlTranslate }}">
+                     label="{{ 'inspections.captain-comment' | tlTranslate }}"
+                     tooltipResourceName="inspections.captain-comment-helper">
         </tl-textarea>
     </inspection-additional-info>
 
     <!-- Файлове -->
     <tl-expansion-panel title="{{ 'inspections.edit-inspection-files' | tlTranslate }}"
-                        [validityChecker]="form">
+                        [validityChecker]="form"
+                        tooltipResourceName="inspections.edit-inspection-files-helper">
         <file-uploader-form-array formControlName="filesControl"
                                   [pageCode]="pageCode"
                                   [downloadFileMethod]="service.downloadFile.bind(this.service)">

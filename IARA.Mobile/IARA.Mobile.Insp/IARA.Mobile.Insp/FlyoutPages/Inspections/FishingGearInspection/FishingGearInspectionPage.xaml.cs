@@ -8,12 +8,13 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FishingGearInspection
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class FishingGearInspectionPage : BasePage<FishingGearInspectionViewModel>
     {
-        public FishingGearInspectionPage(SubmitType submitType = SubmitType.Draft, ViewActivityType activityType = ViewActivityType.Add, InspectionCheckToolMarkDto dto = null, bool isLocal = false)
+        public FishingGearInspectionPage(SubmitType submitType = SubmitType.Draft, ViewActivityType activityType = ViewActivityType.Add, InspectionCheckToolMarkDto dto = null, bool isLocal = false, bool createdByCurrentUser = true)
         {
             ViewModel.SubmitType = submitType;
             ViewModel.ActivityType = activityType;
             ViewModel.Edit = dto;
             ViewModel.IsLocal = isLocal;
+            ViewModel.CreatedByCurrentUser = createdByCurrentUser;
             InitializeComponent();
             ViewModel.Sections = forwardSections;
         }

@@ -12,7 +12,8 @@
         <tl-autocomplete *ngIf="isFromRegister"
                          formControlName="shipControl"
                          label="{{ 'inspections.ship' | tlTranslate }}"
-                         [options]="ships">
+                         [options]="ships"
+                         tooltipResourceName="inspections.ship-helper">
         </tl-autocomplete>
 
         <div *ngIf="!isFromRegister"
@@ -21,17 +22,20 @@
              fxLayoutAlign="space-between center">
             <tl-input fxFlex="33"
                       formControlName="nameControl"
-                      label="{{ 'inspections.ship-name' | tlTranslate }}">
+                      label="{{ 'inspections.ship-name' | tlTranslate }}"
+                      tooltipResourceName="inspections.ship-name-helper">
             </tl-input>
 
             <tl-input fxFlex="33"
                       formControlName="externalMarkControl"
-                      label="{{ 'inspections.external-mark' | tlTranslate }}">
+                      label="{{ 'inspections.external-mark' | tlTranslate }}"
+                      tooltipResourceName="inspections.external-mark-helper">
             </tl-input>
 
             <tl-input fxFlex="33"
                       formControlName="cfrControl"
-                      label="{{ 'inspections.cfr' | tlTranslate }}">
+                      label="{{ 'inspections.cfr' | tlTranslate }}"
+                      tooltipResourceName="inspections.cfr-helper">
             </tl-input>
 
         </div>
@@ -42,28 +46,33 @@
             <tl-autocomplete fxFlex="20"
                              formControlName="flagControl"
                              label="{{ 'inspections.flag' | tlTranslate }}"
-                             [options]="countries">
+                             [options]="countries"
+                             tooltipResourceName="inspections.flag-helper">
             </tl-autocomplete>
 
             <tl-input fxFlex="20"
                       formControlName="uviControl"
-                      label="{{ 'inspections.uvi' | tlTranslate }}">
+                      label="{{ 'inspections.uvi' | tlTranslate }}"
+                      tooltipResourceName="inspections.uvi-helper">
             </tl-input>
 
             <tl-input fxFlex="20"
                       formControlName="callsignControl"
-                      label="{{ 'inspections.callsign' | tlTranslate }}">
+                      label="{{ 'inspections.callsign' | tlTranslate }}"
+                      tooltipResourceName="inspections.callsign-helper">
             </tl-input>
 
             <tl-autocomplete fxFlex="20"
                              formControlName="shipTypeControl"
                              label="{{ 'inspections.ship-type' | tlTranslate }}"
-                             [options]="vesselTypes">
+                             [options]="vesselTypes"
+                             tooltipResourceName="inspections.ship-type-helper">
             </tl-autocomplete>
 
             <tl-input fxFlex="20"
                       formControlName="mmsiControl"
-                      label="{{ 'inspections.mmsi' | tlTranslate }}">
+                      label="{{ 'inspections.mmsi' | tlTranslate }}"
+                      tooltipResourceName="inspections.mmsi-helper">
             </tl-input>
         </div>
     </div>

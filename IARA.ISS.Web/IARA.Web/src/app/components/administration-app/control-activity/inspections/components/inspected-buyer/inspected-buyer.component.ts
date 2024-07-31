@@ -112,9 +112,12 @@ export class InspectedBuyerComponent extends CustomFormControl<InspectionSubject
             this.form.get('addressControl')!.setValue(
                 InspectionUtils.buildAddress(value.registeredAddress, this.translate) ?? value.address
             );
+
             this.form.get('countryControl')!.setValue(this.countries.find(f => f.value === value.citizenshipId));
         }
         else {
+            this.form.get('buyerControl')!.setValue(null);
+            this.form.get('addressControl')!.setValue(null);
             this.form.get('countryControl')!.setValue(this.countries.find(f => f.code === CommonUtils.COUNTRIES_BG));
         }
     }
@@ -296,8 +299,8 @@ export class InspectedBuyerComponent extends CustomFormControl<InspectionSubject
                 this.form.get('addressControl')!.setValue(InspectionUtils.buildAddress(value.address, this.translate) ?? value.description);
                 this.form.get('countryControl')!.setValue(this.countries.find(f => f.value === value.countryId));
             }
-
-            this.buyerSelected.emit(value);
         }
+
+        this.buyerSelected.emit(value);
     }
 }

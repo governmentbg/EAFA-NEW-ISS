@@ -13,6 +13,7 @@
             FontAttributes="Bold"
             FontSize="24" />
     <tl:TLRadioButtonListView ItemsSource="{Binding Actions}"
+            Command="{Binding SubjectChosen}"
             SelectedItem="{Binding Action}"
             IsLabelVisible="False"
             IsEnabled="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}" />

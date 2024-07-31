@@ -9,7 +9,8 @@
     <tl-autocomplete *ngIf="isFromRegister"
                      formControlName="portControl"
                      label="{{ 'inspections.port' | tlTranslate }}"
-                     [options]="ports">
+                     [options]="ports"
+                     tooltipResourceName="inspections.port-helper">
     </tl-autocomplete>
 
     <div *ngIf="!isFromRegister"
@@ -18,17 +19,21 @@
          fxLayoutAlign="start center">
         <tl-input fxFlex="50"
                   formControlName="nameControl"
-                  label="{{ 'inspections.port-name' | tlTranslate }}">
+                  label="{{ 'inspections.port-name' | tlTranslate }}"
+                  tooltipResourceName="inspections.port-name-helper">
         </tl-input>
+
         <tl-autocomplete fxFlex="50"
                          formControlName="countryControl"
                          label="{{ 'inspections.country' | tlTranslate }}"
-                         [options]="countries">
+                         [options]="countries"
+                         tooltipResourceName="inspections.country-helper">
         </tl-autocomplete>
     </div>
 
     <tl-date *ngIf="hasDate"
              formControlName="dateControl"
-             label="{{ 'inspections.port-date' | tlTranslate }}">
+             label="{{ 'inspections.port-date' | tlTranslate }}"
+             tooltipResourceName="inspections.port-date-helper">
     </tl-date>
 </div>

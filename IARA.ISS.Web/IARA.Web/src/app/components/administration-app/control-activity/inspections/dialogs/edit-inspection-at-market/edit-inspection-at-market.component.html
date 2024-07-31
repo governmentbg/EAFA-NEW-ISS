@@ -7,7 +7,8 @@
     <!-- Основни данни -->
     <tl-expansion-panel title="{{ 'inspections.general-info' | tlTranslate }}"
                         [validityChecker]="form"
-                        [validityCheckerExtraCondition]="reportNumAlreadyExistsError !== true || isInspectionLockedError !== true">
+                        [validityCheckerExtraCondition]="reportNumAlreadyExistsError !== true || isInspectionLockedError !== true"
+                        tooltipResourceName="inspections.general-info-helper">
         <div fxLayout="column"
              fxLayoutGap="1em"
              fxLayoutAlign="start stretch">
@@ -22,7 +23,8 @@
 
     <!-- Данни за инспекция на пазар / помещение -->
     <tl-expansion-panel title="{{ 'inspections.market-data' | tlTranslate }}"
-                        [validityChecker]="form">
+                        [validityChecker]="form"
+                        tooltipResourceName="inspections.market-data-helper">
         <div fxLayout="column"
              fxLayoutGap="1em"
              fxLayoutAlign="start stretch">
@@ -31,12 +33,14 @@
                  fxLayoutAlign="start center">
                 <tl-input fxFlex="50"
                           formControlName="marketNameControl"
-                          label="{{ 'inspections.market-name' | tlTranslate }}">
+                          label="{{ 'inspections.market-name' | tlTranslate }}"
+                          tooltipResourceName="inspections.market-name-helper">
                 </tl-input>
 
                 <tl-input fxFlex="50"
                           formControlName="addressControl"
-                          label="{{ 'inspections.address' | tlTranslate }}">
+                          label="{{ 'inspections.address' | tlTranslate }}"
+                          tooltipResourceName="inspections.address-helper">
                 </tl-input>
             </div>
 
@@ -59,7 +63,8 @@
     <!-- Данни за инспектираните продукти от риболов -->
     <tl-expansion-panel title="{{ 'inspections.market-catch' | tlTranslate }}"
                         [validityChecker]="form"
-                        [validityCheckerExtraCondition]="form.errors?.atLeastOneCatchError !== true">
+                        [validityCheckerExtraCondition]="form.errors?.atLeastOneCatchError !== true"
+                        tooltipResourceName="inspections.market-catch-helper">
         <div fxLayout="column"
              fxLayoutGap="1em"
              fxLayoutAlign="start stretch">
@@ -91,7 +96,8 @@
 
             <tl-textarea formControlName="catchViolationControl"
                          [minRows]="3"
-                         label="{{ 'inspections.violation' | tlTranslate }}">
+                         label="{{ 'inspections.violation' | tlTranslate }}"
+                         tooltipResourceName="inspections.violation-helper">
             </tl-textarea>
         </div>
     </tl-expansion-panel>
@@ -101,13 +107,15 @@
                                 [validityChecker]="form">
         <tl-textarea formControlName="representativeCommentControl"
                      [minRows]="3"
-                     label="{{ 'inspections.representative-comment' | tlTranslate }}">
+                     label="{{ 'inspections.representative-comment' | tlTranslate }}"
+                     tooltipResourceName="inspections.representative-comment-helper">
         </tl-textarea>
     </inspection-additional-info>
 
     <!-- Файлове -->
     <tl-expansion-panel title="{{ 'inspections.edit-inspection-files' | tlTranslate }}"
-                        [validityChecker]="form">
+                        [validityChecker]="form"
+                        tooltipResourceName="inspections.edit-inspection-files-helper">
         <file-uploader-form-array formControlName="filesControl"
                                   [pageCode]="pageCode"
                                   [downloadFileMethod]="service.downloadFile.bind(this.service)">

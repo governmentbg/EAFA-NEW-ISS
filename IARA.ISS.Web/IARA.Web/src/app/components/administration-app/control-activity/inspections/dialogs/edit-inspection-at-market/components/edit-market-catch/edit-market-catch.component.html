@@ -6,12 +6,14 @@
      class="dialog-padding">
     <!-- Основна информация -->
     <tl-expansion-panel title="{{ 'inspections.market-catch-info' | tlTranslate }}"
-                        [validityChecker]="form">
+                        [validityChecker]="form"
+                        tooltipResourceName="inspections.market-catch-info-helper">
         <div fxLayout="column"
              fxLayoutGap="1em">
             <tl-autocomplete formControlName="permitControl"
                              [options]="permitTypes"
-                             label="{{ 'inspections.market-declaration-type' | tlTranslate }}">
+                             label="{{ 'inspections.market-declaration-type' | tlTranslate }}"
+                             tooltipResourceName="inspections.market-declaration-type-helper">
             </tl-autocomplete>
 
             <inspected-ship *ngIf="permitTypeSelected != null
@@ -37,12 +39,14 @@
                 <tl-autocomplete *ngIf="aquacultureRegistered"
                                  formControlName="aquacultureControl"
                                  [options]="aquacultures"
-                                 label="{{ 'inspections.aquaculture' | tlTranslate }}">
+                                 label="{{ 'inspections.aquaculture' | tlTranslate }}"
+                                 tooltipResourceName="inspections.aquaculture-helper">
                 </tl-autocomplete>
 
                 <tl-input *ngIf="!aquacultureRegistered"
                           formControlName="aquacultureTextControl"
-                          label="{{ 'inspections.aquaculture' | tlTranslate }}">
+                          label="{{ 'inspections.aquaculture' | tlTranslate }}"
+                          tooltipResourceName="inspections.aquaculture-helper">
                 </tl-input>
             </div>
 
@@ -54,12 +58,14 @@
                                  formControlName="pageNumberControl"
                                  [hasSelectedValueFromDropdownValidator]="false"
                                  [options]="declarationPages"
-                                 label="{{ 'inspections.market-page-num' | tlTranslate }}">
+                                 label="{{ 'inspections.market-page-num' | tlTranslate }}"
+                                 tooltipResourceName="inspections.market-page-num-helper">
                 </tl-autocomplete>
 
                 <tl-date fxFlex="50"
                          formControlName="pageDateControl"
-                         label="{{ pageDateLabel }}">
+                         label="{{ pageDateLabel }}"
+                         tooltipResourceName="inspections.page-date-helper">
                 </tl-date>
             </div>
 
@@ -69,7 +75,8 @@
                  fxLayoutAlign="space-between center">
                 <tl-input fxFlex="50"
                           formControlName="logBookNumberControl"
-                          label="{{ 'inspections.market-log-book-num' | tlTranslate }}">
+                          label="{{ 'inspections.market-log-book-num' | tlTranslate }}"
+                          tooltipResourceName="inspections.market-log-book-num-helper">
                 </tl-input>
 
                 <div fxFlex="50"></div>
@@ -85,18 +92,21 @@
                  fxLayoutAlign="space-between center">
                 <tl-input fxFlex="50"
                           formControlName="declarationNumberControl"
-                          label="{{ 'inspections.market-declaration-number' | tlTranslate }}">
+                          label="{{ 'inspections.market-declaration-number' | tlTranslate }}"
+                          tooltipResourceName="inspections.market-declaration-number-helper">
                 </tl-input>
 
                 <tl-date fxFlex="50"
                          formControlName="declarationDateControl"
-                         label="{{ 'inspections.market-declaration-date' | tlTranslate }}">
+                         label="{{ 'inspections.market-declaration-date' | tlTranslate }}"
+                         tooltipResourceName="inspections.market-declaration-date-helper">
                 </tl-date>
             </div>
 
             <tl-input *ngIf="form.controls.permitControl.value && form.controls.permitControl.value.value === declarationLogBookTypeEnum.Invoice"
                       formControlName="invoiceDataControl"
-                      label="{{ 'inspections.invoice-data' | tlTranslate }}">
+                      label="{{ 'inspections.invoice-data' | tlTranslate }}"
+                      tooltipResourceName="inspections.invoice-data-helper">
             </tl-input>
         </div>
     </tl-expansion-panel>
@@ -104,27 +114,31 @@
     <!-- Улов -->
     <tl-expansion-panel title="{{ 'inspections.market-catch-data' | tlTranslate }}"
                         [validityChecker]="form"
-                        [validityCheckerExtraCondition]="fishErrors.length === 0">
+                        [validityCheckerExtraCondition]="fishErrors.length === 0"
+                        tooltipResourceName="inspections.market-catch-data-helper">
         <div fxLayout="row wrap"
              fxLayoutGap="1em grid"
              fxLayoutAlign="start center">
             <tl-autocomplete fxFlex="33"
                              formControlName="typeControl"
                              [options]="fishes"
-                             label="{{ 'inspections.market-catch-fish' | tlTranslate }}">
+                             label="{{ 'inspections.market-catch-fish' | tlTranslate }}"
+                             tooltipResourceName="inspections.market-catch-fish-helper">
             </tl-autocomplete>
 
             <tl-input fxFlex="33"
                       formControlName="countControl"
                       type="number"
-                      label="{{ 'inspections.market-catch-count' | tlTranslate }}">
+                      label="{{ 'inspections.market-catch-count' | tlTranslate }}"
+                      tooltipResourceName="inspections.market-catch-count-helper">
             </tl-input>
 
             <tl-autocomplete *ngIf="hasCatchType"
                              fxFlex="33"
                              formControlName="catchTypeControl"
                              [options]="types"
-                             label="{{ 'inspections.market-catch-type' | tlTranslate }}">
+                             label="{{ 'inspections.market-catch-type' | tlTranslate }}"
+                             tooltipResourceName="inspections.market-catch-type-helper">
             </tl-autocomplete>
 
             <tl-checkbox *ngIf="hasUndersizedCheck"
@@ -136,21 +150,23 @@
             <tl-input fxFlex="33"
                       formControlName="quantityControl"
                       type="number"
-                      label="{{ 'inspections.market-catch-quantity' | tlTranslate }}">
+                      label="{{ 'inspections.market-catch-quantity' | tlTranslate }}"
+                      tooltipResourceName="inspections.market-catch-quantity-helper">
             </tl-input>
 
             <tl-autocomplete *ngIf="showTurbotControl"
                              fxFlex="33"
                              formControlName="turbotSizeGroupControl"
                              label="{{ 'inspections.market-catch-turbot-size-group' | tlTranslate }}"
-                             tooltipResourceName="inspections.market-catch-turbot-size-group-helper"
-                             [options]="turbotSizeGroups">
+                             [options]="turbotSizeGroups"
+                             tooltipResourceName="inspections.market-catch-turbot-size-group-helper">
             </tl-autocomplete>
 
             <tl-autocomplete fxFlex="33"
                              formControlName="presentationControl"
                              [options]="presentations"
-                             label="{{ 'inspections.market-catch-presentation' | tlTranslate }}">
+                             label="{{ 'inspections.market-catch-presentation' | tlTranslate }}"
+                             tooltipResourceName="inspections.market-catch-presentation-helper">
             </tl-autocomplete>
 
             <tl-error [errors]="fishErrors"

@@ -30,24 +30,23 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.VehicleInspection
         private List<SelectNomenclatureDto> _institutions;
         private InspectionTransportVehicleDto _edit;
         private bool _ownerIsDriver;
-        private bool _hasBuyer;
 
         public VehicleInspectionViewModel()
         {
-            _hasBuyer = true;
 
             SaveDraft = CommandBuilder.CreateFrom(OnSaveDraft);
             Finish = CommandBuilder.CreateFrom(OnFinish);
-            ReturnForEdit = CommandBuilder.CreateFrom(OnReturnForEdit);
 
             InspectionGeneralInfo = new InspectionGeneralInfoViewModel(this);
             Owner = new SubjectViewModel(this, InspectedPersonType.OwnerPers, InspectedPersonType.OwnerLegal);
             Driver = new PersonViewModel(this, InspectedPersonType.Driver);
-            Buyer = new BuyerViewModel(this);
+            Buyer = new BuyerViewModel(this, true);
             Catches = new DeclarationCatchesViewModel(this, false);
             InspectionFiles = new InspectionFilesViewModel(this);
             AdditionalInfo = new AdditionalInfoViewModel(this);
             Signatures = new SignaturesViewModel(this);
+
+            Owner.SubjectChosen = CommandBuilder.CreateFrom(OnSubjectChosen);
 
             this.AddValidation(others: new IValidatableViewModel[]
             {
@@ -61,14 +60,12 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.VehicleInspection
                 Signatures,
             }, groups: new Dictionary<string, System.Func<bool>>
             {
-                { "OwnerIsDriverCheck", () => !OwnerIsDriver },
-                { "HasBuyerCheck", () => HasBuyer }
+                { "OwnerIsDriverCheck", () => !OwnerIsDriver }
             });
 
-            Owner.Validation.GlobalGroups = new List<string> { "OwnerIsDriverCheck" };
-            Buyer.Validation.GlobalGroups = new List<string> { "HasBuyerCheck" };
+            Driver.Validation.GlobalGroups = new List<string> { "OwnerIsDriverCheck" };
 
-            IsSealed.Value = true;
+            IsSealed.AssignFrom(true);
         }
 
         public InspectionTransportVehicleDto Edit
@@ -130,15 +127,18 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.VehicleInspection
         [MaxLength(4000)]
         public ValidState TransportDestination { get; set; }
 
+        private bool _isOwnerIsDriverCheckBoxEnabled;
+
+        public bool IsOwnerIsDriverCheckBoxEnabled
+        {
+            get => _isOwnerIsDriverCheckBoxEnabled;
+            set => SetProperty(ref _isOwnerIsDriverCheckBoxEnabled, value);
+        }
+
         public bool OwnerIsDriver
         {
             get => _ownerIsDriver;
             set => SetProperty(ref _ownerIsDriver, value);
-        }
-        public bool HasBuyer
-        {
-            get => _hasBuyer;
-            set => SetProperty(ref _hasBuyer, value);
         }
         public List<SelectNomenclatureDto> VehicleTypes
         {
@@ -259,9 +259,12 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.VehicleInspection
             return InspectionSaveHelper.Finish(Sections, Validation, Save);
         }
 
-        private Task OnReturnForEdit()
+        private void OnSubjectChosen()
         {
-            return Save(SubmitType.ReturnForEdit);
+            if (Owner.Action.Code == nameof(SubjectType.Legal))
+            {
+                OwnerIsDriver = false;
+            }
         }
 
         private Task Save(SubmitType submitType)

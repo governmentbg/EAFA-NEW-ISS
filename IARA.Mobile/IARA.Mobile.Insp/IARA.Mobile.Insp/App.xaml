@@ -13,6 +13,7 @@
         <ResourceDictionary>
             <!--  CONVERTERS  -->
             <xct:VariableMultiValueConverter x:Key="All" ConditionType="All" />
+            <xct:VariableMultiValueConverter x:Key="Any" ConditionType="Any" />
             <converters:ReviewToWidthConverter x:Key="ReviewToWidth" />
             <converters:IsNotEmptyOrNotNullConverter x:Key="NotEmptyOrNotNull" />
             <converters:ReviewDialogToWidthConverter x:Key="ReviewDialogToWidth" />
@@ -22,6 +23,7 @@
             <xct:NotEqualConverter x:Key="NotEqual" />
             <converters:IsReviewConverter x:Key="IsReview" />
             <converters:IsNotReviewConverter x:Key="IsNotReview" />
+            <converters:IsSubjectNotLegalConverter x:Key="IsSubjectNotLegal" />
             <tlConverters:DateTimeToStringConverter x:Key="DateTimeToString" />
             <tlConverters:DateToStringConverter x:Key="DateToString" />
             <tlConverters:OppositeBoolConverter x:Key="OppositeBool" />

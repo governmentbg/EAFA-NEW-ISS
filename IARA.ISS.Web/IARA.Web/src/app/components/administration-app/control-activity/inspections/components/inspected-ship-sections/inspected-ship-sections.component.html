@@ -38,7 +38,8 @@
 
                 <tl-autocomplete formControlName="opMembershipAssociationControl"
                                  [options]="associations"
-                                 label="{{ 'inspections.op-membership-association' | tlTranslate }}">
+                                 label="{{ 'inspections.op-membership-association' | tlTranslate }}"
+                                 tooltipResourceName="inspections.op-membership-association-helper">
                 </tl-autocomplete>
             </div>
 
@@ -55,12 +56,14 @@
                      fxLayoutAlign="start stretch">
                     <tl-input fxFlex="50"
                               formControlName="preliminaryNoticeNumberControl"
-                              label="{{ 'inspections.preliminary-notice-number' | tlTranslate }}">
+                              label="{{ 'inspections.preliminary-notice-number' | tlTranslate }}"
+                              tooltipResourceName="inspections.preliminary-notice-number-helper">
                     </tl-input>
 
                     <tl-input fxFlex="50"
                               formControlName="preliminaryNoticePurposeControl"
-                              label="{{ 'inspections.preliminary-notice-purpose' | tlTranslate }}">
+                              label="{{ 'inspections.preliminary-notice-purpose' | tlTranslate }}"
+                              tooltipResourceName="inspections.preliminary-notice-purpose-helper">
                     </tl-input>
                 </div>
             </div>
@@ -78,7 +81,8 @@
 
             <tl-textarea formControlName="checkObservationControl"
                          [minRows]="3"
-                         label="{{ 'inspections.violation' | tlTranslate }}">
+                         label="{{ 'inspections.violation' | tlTranslate }}"
+                         tooltipResourceName="inspections.violation-helper">
             </tl-textarea>
         </div>
     </tl-expansion-panel>
@@ -110,7 +114,8 @@
 
             <tl-textarea formControlName="catchObservationControl"
                          [minRows]="3"
-                         label="{{ 'inspections.violation' | tlTranslate }}">
+                         label="{{ 'inspections.violation' | tlTranslate }}"
+                         tooltipResourceName="inspections.violation-helper">
             </tl-textarea>
         </div>
     </tl-expansion-panel>
@@ -133,7 +138,8 @@
 
             <tl-textarea formControlName="fishingGearObservationControl"
                          [minRows]="3"
-                         label="{{ 'inspections.violation' | tlTranslate }}">
+                         label="{{ 'inspections.violation' | tlTranslate }}"
+                         tooltipResourceName="inspections.violation-helper">
             </tl-textarea>
         </div>
     </tl-expansion-panel>

@@ -11,6 +11,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Windows.Input;
 using TechnoLogica.Xamarin.Attributes;
 using TechnoLogica.Xamarin.Helpers;
+using TechnoLogica.Xamarin.ViewModels.Interfaces;
 using TechnoLogica.Xamarin.ViewModels.Models;
 
 namespace IARA.Mobile.Insp.Controls.ViewModels
@@ -18,28 +19,36 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
     public class InspectedBuyerViewModel : ViewModel
     {
         private ICommand _buyerChosen;
-        private List<SelectNomenclatureDto> _nationalities;
         private List<SelectNomenclatureDto> _buyers;
 
         public InspectedBuyerViewModel(InspectionPageViewModel inspection, InspectedPersonType buyerLegalType = InspectedPersonType.RegBuyer)
         {
             Inspection = inspection;
             BuyerLegalType = buyerLegalType;
+            Owner = new SubjectViewModel(inspection, buyerLegalType, buyerLegalType);
 
-            this.AddValidation(groups: new Dictionary<string, Func<bool>>
-            {
-                { Group.REGISTERED, () => InRegister },
-                { Group.NOT_REGISTERED, () => !InRegister }
-            });
+            this.AddValidation(
+                others: new IValidatableViewModel[]
+                {
+                    Owner
+                },
+                groups: new Dictionary<string, Func<bool>>
+                {
+                    { Group.REGISTERED, () => InRegister },
+                    { Group.NOT_REGISTERED, () => !InRegister }
+                });
 
             InRegister.Value = true;
 
             Buyer.ItemsSource = new TLObservableCollection<SelectNomenclatureDto>();
             Buyer.GetMore = (int page, int pageSize, string search) =>
                 NomenclaturesTransaction.GetBuyers(page, pageSize, search);
+
+            Owner.Validation.GlobalGroups = new List<string> { Group.NOT_REGISTERED };
         }
 
         public InspectionPageViewModel Inspection { get; }
+        public SubjectViewModel Owner { get; }
         public InspectedPersonType BuyerLegalType { get; }
 
         public InspectionSubjectPersonnelDto SelectedBuyer { get; set; }
@@ -50,26 +59,6 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
         [ValidGroup(Group.REGISTERED)]
         public ValidStateInfiniteSelect<SelectNomenclatureDto> Buyer { get; set; }
 
-        [MaxLength(200)]
-        [ValidGroup(Group.NOT_REGISTERED)]
-        public ValidState Name { get; set; }
-
-        [MaxLength(20)]
-        [ValidGroup(Group.NOT_REGISTERED)]
-        public ValidState EIK { get; set; }
-
-        [MaxLength(4000)]
-        [ValidGroup(Group.NOT_REGISTERED)]
-        public ValidState Address { get; set; }
-
-        [ValidGroup(Group.NOT_REGISTERED)]
-        public ValidStateSelect<SelectNomenclatureDto> Nationality { get; set; }
-
-        public List<SelectNomenclatureDto> Nationalities
-        {
-            get => _nationalities;
-            private set => SetProperty(ref _nationalities, value);
-        }
         public List<SelectNomenclatureDto> Buyers
         {
             get => _buyers;
@@ -84,53 +73,42 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
 
         public void Init(List<SelectNomenclatureDto> nationalities)
         {
-            Nationalities = nationalities;
-
-            Nationality.Value = nationalities.Find(f => f.Code == CommonConstants.NomenclatureBulgaria);
-
+            Owner.Init(nationalities);
             Buyer.ItemsSource.AddRange(NomenclaturesTransaction.GetBuyers(0, CommonGlobalVariables.PullItemsCount));
         }
 
         public void OnEdit(List<InspectionSubjectPersonnelDto> personnel)
         {
-            InspectionSubjectPersonnelDto subject = personnel?.Find(f => f.Type == BuyerLegalType);
-
-            OnEdit(subject);
+            OnEditBuyer(personnel?.Find(f => f.Type == BuyerLegalType || f.Type == InspectedPersonType.OwnerPers || f.Type == InspectedPersonType.OwnerLegal));
         }
 
-        public void OnEdit(InspectionSubjectPersonnelDto buyer, bool assignBuyer = true)
+        public void OnEditBuyer(InspectionSubjectPersonnelDto buyer, bool assignBuyer = true)
         {
-            SelectedBuyer = buyer;
-
-            if (buyer != null)
+            if (buyer.EntryId.HasValue)
             {
+                SelectedBuyer = buyer;
                 string name = buyer.FirstName
                     + (buyer.MiddleName != null ? " " + buyer.MiddleName : "")
                     + (buyer.LastName != null ? " " + buyer.LastName : "");
 
                 if (assignBuyer)
                 {
-                    if (buyer.Id.HasValue)
+                    InRegister.Value = true;
+                    Buyer.Value = new SelectNomenclatureDto
                     {
-                        Buyer.Value = new SelectNomenclatureDto
-                        {
-                            Id = buyer.Id.Value,
-                            Code = buyer.Eik,
-                            Name = name
-                        };
-
-                        InRegister.Value = true;
-                    }
-                    else
-                    {
-                        InRegister.Value = false;
-                    }
+                        Id = buyer.EntryId.Value,
+                        Code = buyer.Eik,
+                        Name = name
+                    };
                 }
-
-                Name.Value = name;
-                EIK.AssignFrom(buyer.Eik);
-                Address.Value = buyer.Address ?? buyer.RegisteredAddress.BuildAddress();
-                Nationality.AssignFrom(buyer.CitizenshipId, Nationalities);
+            }
+            else
+            {
+                if (assignBuyer)
+                {
+                    InRegister.Value = false;
+                    Owner.OnEdit(buyer);
+                }
             }
         }
 
@@ -138,15 +116,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
         {
             if (!viewModel.InRegister)
             {
-                return new InspectionSubjectPersonnelDto
-                {
-                    Type = viewModel.BuyerLegalType,
-                    Address = viewModel.Address,
-                    CitizenshipId = viewModel.Nationality.Value,
-                    FirstName = viewModel.Name,
-                    Eik = viewModel.EIK,
-                    IsRegistered = false,
-                };
+                return viewModel.Owner;
             }
             else if (viewModel.SelectedBuyer != null)
             {

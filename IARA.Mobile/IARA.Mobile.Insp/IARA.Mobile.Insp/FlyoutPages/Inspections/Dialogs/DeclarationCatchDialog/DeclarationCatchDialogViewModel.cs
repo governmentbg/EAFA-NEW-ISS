@@ -14,6 +14,7 @@ using IARA.Mobile.Insp.ViewModels.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using TechnoLogica.Xamarin.Attributes;
@@ -37,13 +38,19 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.DeclarationCatchDialo
         private List<DeclarationLogBookPageDto> _logBookPages;
         private bool _isDeclarationRegistered;
         private bool _onlyUnregisteredDeclaration;
+        private bool _isLogBookPageSelected;
+        private bool _doDeclarationRequireCatchZone;
+        private bool _isDeclarationSelected;
+        private bool _hasUndersizedFishControl;
         private DeclarationLogBookType _subjectType;
 
         public DeclarationCatchDialogViewModel()
         {
             Save = CommandBuilder.CreateFrom(OnSave);
             DeclarationSelected = CommandBuilder.CreateFrom<SelectNomenclatureDto>(OnDeclarationSelected);
-            AquacultureChosen = CommandBuilder.CreateFrom(OnAquacultureChosen);
+            PageSelected = CommandBuilder.CreateFrom<DeclarationLogBookPageDto>(OnPageSelected);
+            AquacultureChosen = CommandBuilder.CreateFrom<SelectNomenclatureDto>(OnAquacultureChosen);
+            AddPage = CommandBuilder.CreateFrom<string>(OnAddPage);
             SubjectType = DeclarationLogBookType.NNN;
             _onlyUnregisteredDeclaration = true;
         }
@@ -53,7 +60,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.DeclarationCatchDialo
         public bool HasCatchType { get; set; }
         public bool HasUndersizedCheck { get; set; }
         public bool HasUnloadedQuantity { get; set; }
-
+        public bool IsCatchZoneKnown { get; set; }
         public DeclarationCatchesViewModel Catches { get; set; }
         public InspectionPageViewModel Inspection { get; set; }
         public ViewActivityType DialogType { get; set; }
@@ -62,7 +69,14 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.DeclarationCatchDialo
 
         [Required]
         [ValidGroup("IsAquaculture")]
+        [ValidGroup("IsAquacultureRegistered")]
         public ValidStateInfiniteSelect<SelectNomenclatureDto> Aquaculture { get; set; }
+
+        [Required]
+        [ValidGroup("IsAquaculture")]
+        public ValidState UnregisteredAquaculture { get; set; }
+
+        public ValidStateBool IsAquacultureInRegistered { get; set; }
 
         [Required]
         public ValidStateSelect<SelectNomenclatureDto> FishType { get; set; }
@@ -77,27 +91,26 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.DeclarationCatchDialo
 
         [Required]
         [TLRange(1, 10000, true)]
-        [ValidGroup("IsNNN")]
         public ValidState CatchQuantity { get; set; }
-
-        [Required]
-        [TLRange(0, 10000, true)]
-        public ValidState UnloadedQuantity { get; set; }
 
         [Required]
         public ValidStateSelect<SelectNomenclatureDto> Presentation { get; set; }
 
         [Required]
-        [ValidGroup("IsNNN")]
-        public ValidStateSelect<CatchZoneNomenclatureDto> CatchZone { get; set; }
-
         public ValidStateSelect<SelectNomenclatureDto> DeclarationType { get; set; }
 
         public ValidStateSelect<DeclarationLogBookPageDto> LogBookPage { get; set; }
 
-        public ValidState LogBookPageNum { get; set; }
+        public ValidState LogBookNum { get; set; }
 
         public ValidStateDate LogBookPageDate { get; set; }
+
+        public ValidState DocumentOriginNumber { get; set; }
+
+        public ValidStateDate LogBookPageOriginDate { get; set; }
+
+        [MaxLength(4000)]
+        public ValidState InvoiceInformation { get; set; }
 
         public bool IsDeclarationRegistered
         {
@@ -109,6 +122,27 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.DeclarationCatchDialo
             get => _onlyUnregisteredDeclaration;
             set => SetProperty(ref _onlyUnregisteredDeclaration, value);
         }
+        public bool DoDeclarationRequireCatchZone
+        {
+            get => _doDeclarationRequireCatchZone;
+            set => SetProperty(ref _doDeclarationRequireCatchZone, value);
+        }
+        public bool IsDeclarationSelected
+        {
+            get => _isDeclarationSelected;
+            set => SetProperty(ref _isDeclarationSelected, value);
+        }
+        public bool IsLogBookPageSelected
+        {
+            get => _isLogBookPageSelected;
+            set => SetProperty(ref _isLogBookPageSelected, value);
+        }
+        public bool HasUndersizedFishControl
+        {
+            get => _hasUndersizedFishControl;
+            set => SetProperty(ref _hasUndersizedFishControl, value);
+        }
+
         public DeclarationLogBookType SubjectType
         {
             get => _subjectType;
@@ -150,6 +184,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.DeclarationCatchDialo
         public ICommand DeclarationSelected { get; }
         public ICommand AquacultureChosen { get; }
         public ICommand PageSelected { get; }
+        public ICommand AddPage { get; set; }
 
         public void OnInit()
         {
@@ -171,7 +206,8 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.DeclarationCatchDialo
                         || SubjectType == DeclarationLogBookType.TransportationLogBook
                         || SubjectType == DeclarationLogBookType.AdmissionLogBook
                 },
-                { "IsNNN", () => SubjectType == DeclarationLogBookType.NNN }
+                { "IsNNN", () => SubjectType == DeclarationLogBookType.NNN },
+                { "IsAquacultureRegistered", () => IsAquacultureInRegistered.Value == true }
             });
 
             InspectedShip.Validation.GlobalGroups = new List<string> { "IsShip" };
@@ -183,8 +219,9 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.DeclarationCatchDialo
             }
 
             Aquaculture.ItemsSource = new TLObservableCollection<SelectNomenclatureDto>();
+            LogBookPages = new List<DeclarationLogBookPageDto>();
             Aquaculture.GetMore = (int page, int pageSize, string search) =>
-                DependencyService.Get<INomenclatureTransaction>().GetAquacultures(page, pageSize, search);
+                DependencyService.Resolve<INomenclatureTransaction>().GetAquacultures(page, pageSize, search);
         }
 
         public override async Task Initialize(object sender)
@@ -219,17 +256,19 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.DeclarationCatchDialo
             }
 
             DeclarationTypes = declarationTypes;
+            IsAquacultureInRegistered.AssignFrom(true);
 
             if (Edit != null)
             {
                 CatchCount.AssignFrom(Edit.Dto.CatchCount);
                 CatchQuantity.AssignFrom(Edit.Dto.CatchQuantity);
                 CatchType.AssignFrom(Edit.Dto.CatchTypeId, CatchTypes);
-                CatchZone.AssignFrom(Edit.Dto.CatchZoneId, CatchZones);
                 FishType.AssignFrom(Edit.Dto.FishTypeId, FishTypes);
                 Presentation.AssignFrom(Edit.Dto.PresentationId, Presentations);
-                UnloadedQuantity.AssignFrom(Edit.Dto.UnloadedQuantity);
                 UndersizedFish.AssignFrom(Edit.Dto.Undersized);
+                DeclarationType.AssignFrom(Edit.Dto.LogBookType.ToString(), DeclarationTypes);
+                await OnDeclarationSelected(DeclarationType.Value);
+                SubjectType = Edit.Dto.LogBookType.Value;
 
                 if (Edit.Dto.OriginShip != null)
                 {
@@ -243,42 +282,37 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.DeclarationCatchDialo
                         if (ship != null)
                         {
                             await OnShipSelected(ship);
-
-                            DeclarationType.AssignFrom(Edit.Dto.LogBookType?.ToString(), DeclarationTypes);
-
-                            await OnDeclarationSelected(DeclarationType.Value);
-
-                            LogBookPageNum.AssignFrom(Edit.Dto.UnregisteredPageNum);
-                            LogBookPageDate.AssignFrom(Edit.Dto.UnregisteredPageDate ?? DateTime.Now);
-
-                            if (LogBookPages != null && Edit.Dto.LogBookPageId != null)
-                            {
-                                LogBookPage.Value = LogBookPages.Find(f => f.Id == Edit.Dto.LogBookPageId.Value);
-                            }
                         }
-                    }
-                    else
-                    {
-                        DeclarationType.AssignFrom(Edit.Dto.LogBookType?.ToString(), DeclarationTypes);
-                        LogBookPageNum.AssignFrom(Edit.Dto.UnregisteredPageNum);
-                        LogBookPageDate.AssignFrom(Edit.Dto.UnregisteredPageDate ?? DateTime.Now);
                     }
                 }
                 else if (Edit.Dto.AquacultureId != null)
                 {
-                    Aquaculture.Value = nomTransaction.GetAquaculture(Edit.Dto.AquacultureId.Value);
-                    DeclarationType.AssignFrom(Edit.Dto.LogBookType?.ToString(), DeclarationTypes);
-                    LogBookPageNum.AssignFrom(Edit.Dto.UnregisteredPageNum);
-                    LogBookPageDate.AssignFrom(Edit.Dto.UnregisteredPageDate ?? DateTime.Now);
-
-                    SubjectType = Edit.Dto.LogBookType.Value;
+                    IsAquacultureInRegistered.AssignFrom(true);
+                    SelectNomenclatureDto aquaculture = nomTransaction.GetAquaculture(Edit.Dto.AquacultureId.Value);
+                    Aquaculture.Value = aquaculture;
+                    await OnAquacultureChosen(aquaculture);
+                }
+                else if (Edit.Dto.LogBookType == DeclarationLogBookType.AquacultureLogBook)
+                {
+                    IsAquacultureInRegistered.AssignFrom(false);
+                    UnregisteredAquaculture.AssignFrom(Edit.Dto.UnregisteredEntityData);
+                }
+                else
+                {
+                    InvoiceInformation.AssignFrom(Edit.Dto.UnregisteredEntityData);
                 }
 
-                if (Edit.Dto.LogBookType != null)
+                if (LogBookPages != null && Edit.Dto.LogBookPageId != null)
                 {
-                    SubjectType = Edit.Dto.LogBookType.Value;
-                    //OnlyUnregisteredDeclaration = false;
-                    //IsDeclarationRegistered = LogBookPages.Count > 0;
+                    DeclarationLogBookPageDto declaration = LogBookPages.Find(f => f.Id == Edit.Dto.LogBookPageId.Value);
+                    LogBookPage.Value = declaration;
+                    OnPageSelected(declaration);
+                }
+                else
+                {
+                    OnAddPage(Edit.Dto.UnregisteredPageNum);
+                    LogBookNum.AssignFrom(Edit.Dto.UnregisteredLogBookNum);
+                    LogBookPageDate.AssignFrom(Edit.Dto.UnregisteredPageDate);
                 }
 
                 if (DialogType == ViewActivityType.Edit)
@@ -291,6 +325,34 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.DeclarationCatchDialo
                 Presentation.Value = Presentations.Find(f => f.Code == "WHL");
             }
         }
+
+
+        private void OnAddPage(string text)
+        {
+            var newPage = new DeclarationLogBookPageDto
+            {
+                Num = text
+            };
+            LogBookPages.Add(newPage);
+            LogBookPage.Value = newPage;
+        }
+
+
+        private void OnPageSelected(DeclarationLogBookPageDto dto)
+        {
+            if (dto != null)
+            {
+                if (dto.Id != null)
+                {
+                    IsLogBookPageSelected = true;
+                    LogBookNum.AssignFrom(dto.LogBookNumber);
+                    LogBookPageDate.AssignFrom(dto.Date);
+                    DocumentOriginNumber.AssignFrom(dto.LogBookPageOrigin);
+                    LogBookPageOriginDate.AssignFrom(dto.LogBookPageOriginDate);
+                }
+            }
+        }
+
 
         private async Task OnShipSelected(ShipSelectNomenclatureDto ship)
         {
@@ -317,8 +379,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.DeclarationCatchDialo
             InspectedShip.ShipType.AssignFrom(chosenShip.ShipTypeId, InspectedShip.ShipTypes);
 
             LogBookPage.Value = null;
-            LogBookPageNum.Value = null;
-            LogBookPageDate.Value = DateTime.Now;
+            LogBookNum.Value = null;
 
             if (DeclarationType.Value != null)
             {
@@ -335,6 +396,14 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.DeclarationCatchDialo
         private async Task OnDeclarationSelected(SelectNomenclatureDto declarationType)
         {
             SubjectType = ParseHelper.ParseEnum<DeclarationLogBookType>(declarationType.Code).Value;
+            IsDeclarationSelected = true;
+            IsLogBookPageSelected = false;
+            LogBookNum.AssignFrom("");
+            LogBookPageDate.AssignFrom(null);
+            DocumentOriginNumber.AssignFrom("");
+            LogBookPageOriginDate.AssignFrom(null);
+            LogBookPage.Value = null;
+            LogBookPages.Clear();
 
             switch (SubjectType)
             {
@@ -355,6 +424,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.DeclarationCatchDialo
 
                         OnlyUnregisteredDeclaration = false;
                         IsDeclarationRegistered = LogBookPages.Count > 0;
+                        DoDeclarationRequireCatchZone = true;
                         break;
                     }
                 case DeclarationLogBookType.AquacultureLogBook:
@@ -371,6 +441,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.DeclarationCatchDialo
 
                         OnlyUnregisteredDeclaration = false;
                         IsDeclarationRegistered = LogBookPages.Count > 0;
+                        DoDeclarationRequireCatchZone = false;
                         break;
                     }
                 case DeclarationLogBookType.Invoice:
@@ -378,40 +449,41 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.DeclarationCatchDialo
                     {
                         OnlyUnregisteredDeclaration = true;
                         IsDeclarationRegistered = false;
+                        DoDeclarationRequireCatchZone = false;
                         break;
                     }
             }
         }
 
-        private async Task OnAquacultureChosen()
+        private async Task OnAquacultureChosen(SelectNomenclatureDto dto)
         {
             LogBookPage.Value = null;
-            LogBookPageNum.Value = null;
-            LogBookPageDate.Value = DateTime.Now;
+            LogBookNum.Value = null;
 
             if (DeclarationType.Value != null)
             {
                 IInspectionsTransaction inspTransaction = DependencyService.Resolve<IInspectionsTransaction>();
 
-                LogBookPages = await inspTransaction.GetDeclarationLogBookPages(ParseHelper.ParseEnum<DeclarationLogBookType>(DeclarationType.Value.Code).Value, ShipUid.Value)
+                LogBookPages = await inspTransaction.GetDeclarationLogBookPages(ParseHelper.ParseEnum<DeclarationLogBookType>(DeclarationType.Value.Code).Value, dto.Id)
                     ?? new List<DeclarationLogBookPageDto>();
 
                 OnlyUnregisteredDeclaration = false;
                 IsDeclarationRegistered = LogBookPages.Count > 0;
+
+                UnregisteredAquaculture.AssignFrom(dto.DisplayValue);
             }
         }
 
         private Task OnSave()
         {
             Validation.Force();
-
+            var a = Validation.ValidStates.Where(x => x.Value.IsValid == false);
             if (Validation.IsValid)
             {
                 return HideDialog(new DeclarationCatchModel
                 {
                     Type = FishType.Value?.DisplayValue,
                     CatchType = CatchType.Value?.DisplayValue,
-                    CatchZone = CatchZone.Value?.Name,
                     Presentation = Presentation.Value?.Name,
                     Dto = new InspectedDeclarationCatchDto
                     {
@@ -421,16 +493,16 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.DeclarationCatchDialo
                         CatchTypeId = HasUndersizedCheck
                             ? (UndersizedFish ? CatchTypes.Find(f => f.Code == nameof(CatchSizeCodesEnum.BMS))?.Id : CatchTypes.Find(f => f.Code == nameof(CatchSizeCodesEnum.LSC))?.Id)
                             : CatchType.Value,
-                        CatchZoneId = CatchZone.Value,
                         FishTypeId = FishType.Value,
                         PresentationId = Presentation.Value,
-                        UnloadedQuantity = ParseHelper.ParseDecimal(UnloadedQuantity.Value),
-                        AquacultureId = Aquaculture.Value?.Id,
                         OriginShip = InspectedShip,
                         LogBookType = ParseHelper.ParseEnum<DeclarationLogBookType>(DeclarationType.Value?.Code),
                         LogBookPageId = LogBookPage.Value?.Id,
-                        UnregisteredPageNum = LogBookPageNum.Value,
+                        UnregisteredPageNum = LogBookPage.Value?.Num,
                         UnregisteredPageDate = LogBookPageDate.Value,
+                        UnregisteredLogBookNum = LogBookNum.Value,
+                        AquacultureId = Aquaculture.Value?.Id,
+                        UnregisteredEntityData = SubjectType == DeclarationLogBookType.AquacultureLogBook ? UnregisteredAquaculture.Value : InvoiceInformation.Value,
                         Undersized = UndersizedFish,
                     }
                 });

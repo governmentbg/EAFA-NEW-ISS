@@ -4,11 +4,14 @@ using IARA.Mobile.Insp.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Insp.Attributes;
 using IARA.Mobile.Insp.Base;
 using IARA.Mobile.Insp.Domain.Enums;
+using IARA.Mobile.Insp.FlyoutPages.Inspections.HarbourInspection;
 using IARA.Mobile.Insp.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using TechnoLogica.Xamarin.Attributes;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Helpers;
 using TechnoLogica.Xamarin.ViewModels.Models;
@@ -50,7 +53,11 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
             AddCatch = CommandBuilder.CreateFrom(OnAddCatch);
             RemoveCatch = CommandBuilder.CreateFrom<CatchInspectionViewModel>(OnRemoveCatch);
 
-            this.AddValidation();
+            this.AddValidation(
+                groups: new Dictionary<string, Func<bool>>
+                {
+                    { Group.IS_TRANSHIPMENT, () => HarbourInspectionViewModel.Static.HasTranshipment.Value }
+                });
         }
 
         public InspectionPageViewModel Inspection { get; }
@@ -66,7 +73,27 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
 
         [DuplicateMarketCatches]
         [AtLeastOne(ErrorMessageResourceName = "AtLeastOneCatch")]
+        [ValidGroup(Group.IS_TRANSHIPMENT)]
         public ValidStateValidatableTable<CatchInspectionViewModel> Catches { get; set; }
+
+        public void OnSwitchTransshipping(bool hasTransshipping)
+        {
+            TLValidator validator = Catches.Validations.Where(f => f.Name == nameof(AtLeastOneAttribute)).FirstOrDefault();
+            if (hasTransshipping)
+            {
+                if (validator == null)
+                {
+                    Catches.Validations.Add(new TLValidator(new AtLeastOneAttribute(), nameof(AtLeastOneAttribute)));
+                }
+            }
+            else
+            {
+                if (validator != null)
+                {
+                    Catches.Validations.Remove(validator);
+                }
+            }
+        }
 
         public bool IsUnloadedQuantityRequired { get; set; }
 
@@ -142,7 +169,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
                 viewModel.CatchCount.AssignFrom(f.CatchCount);
                 viewModel.TurbotSizeGroup.AssignFrom(f.TurbotSizeGroupId, TurbotSizeGroups);
                 viewModel.UndersizedFish.AssignFrom(f.Undersized);
-
+                viewModel.LogBookId = f.LogBookId;
                 if (f.OriginShip != null)
                 {
                     viewModel.Ship = f.OriginShip;
