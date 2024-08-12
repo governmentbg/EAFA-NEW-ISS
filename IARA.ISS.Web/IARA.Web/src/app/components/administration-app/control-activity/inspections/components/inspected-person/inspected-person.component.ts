@@ -10,6 +10,7 @@ import { CommonUtils } from '@app/shared/utils/common.utils';
 import { InspectionUtils } from '@app/shared/utils/inspection.utils';
 import { InspectedPersonTypeEnum } from '@app/enums/inspected-person-type.enum';
 import { PersonFullDataDTO } from '@app/models/generated/dtos/PersonFullDataDTO';
+import { EgnLncDTO } from '@app/models/generated/dtos/EgnLncDTO';
 
 @Component({
     selector: 'inspected-person',
@@ -33,6 +34,9 @@ export class InspectedPersonComponent extends CustomFormControl<InspectionSubjec
 
     @Output()
     public deletePanelBtnClicked: EventEmitter<void> = new EventEmitter<void>();
+
+    @Output()
+    public downloadPersonDataBtnClicked: EventEmitter<EgnLncDTO> = new EventEmitter<EgnLncDTO>();
 
     private readonly translate: FuseTranslationLoaderService;
 
@@ -97,6 +101,8 @@ export class InspectedPersonComponent extends CustomFormControl<InspectionSubjec
             this.form.get('addressControl')!.setValue(null);
             this.form.get('countryControl')!.setValue(null);
         }
+
+        this.downloadPersonDataBtnClicked.emit(person.person?.egnLnc);
     }
 
     public deletePanel(): void {

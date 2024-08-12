@@ -25,7 +25,7 @@ import { FormControlDataLoader } from '@app/shared/utils/form-control-data-loade
 import { RecordChangedEventArgs } from '@app/shared/components/data-table/models/record-changed-event.model';
 import { FishNomenclatureDTO } from '@app/models/generated/dtos/FishNomenclatureDTO';
 import { TLConfirmDialog } from '@app/shared/components/confirmation-dialog/tl-confirm-dialog';
-import { FishGroupedQuantitiesModel } from '../../models/fish-grouped-quantities.model';
+import { ProductGroupedQuantitiesModel } from './models/product-grouped-quantities.model';
 
 @Component({
     selector: 'log-book-page-products',
@@ -63,6 +63,10 @@ export class LogBookPageProductsComponent extends CustomFormControl<LogBookPageP
     public turbotSizeGroups: NomenclatureDTO<number>[] = [];
 
     public products: LogBookPageProductDTO[] = [];
+
+    //гридът не е йерархичен само за страниците от дневници за аквакултурни стопанства
+    public productsForTable: (LogBookPageProductDTO | ProductGroupedQuantitiesModel)[] = [];
+
     public fishQuantities: Map<string, string> = new Map<string, string>();
     public fishQuantityText: string | undefined;
 
@@ -125,7 +129,7 @@ export class LogBookPageProductsComponent extends CustomFormControl<LogBookPageP
                     for (const product of value) {
                         product.totalPrice = LogBookPageProductUtils.formatTotalProductPrice(
                             this.currencyPipe,
-                            product.unitCount ?? product.quantityKg,
+                            this.logBookType !== LogBookTypesEnum.Aquaculture ? product.quantityKg : product.unitCount ?? product.quantityKg,
                             product.unitPrice
                         ) ?? undefined;
                     }
@@ -140,6 +144,7 @@ export class LogBookPageProductsComponent extends CustomFormControl<LogBookPageP
         else {
             setTimeout(() => {
                 this.products = [];
+                this.productsForTable = [];
                 this.recalculateFishQuantitySums();
             });
         }
@@ -165,68 +170,70 @@ export class LogBookPageProductsComponent extends CustomFormControl<LogBookPageP
         this.control.updateValueAndValidity({ emitEvent: false, onlySelf: true });
     }
 
-    public addEditProduct(product?: LogBookPageProductDTO, viewMode: boolean = false): void {
-        let data: EditLogBookPageProductDialogParamsModel | undefined;
-        let headerAuditBtn: IHeaderAuditButton | undefined;
-        let title: string = '';
+    public addEditProduct(product?: LogBookPageProductDTO, viewMode: boolean = false, openDialog: boolean = true): void {
+        if (openDialog) {   //за да не се отваря при activeRecordChanged, когато гридът е йерархичен
+            let data: EditLogBookPageProductDialogParamsModel | undefined;
+            let headerAuditBtn: IHeaderAuditButton | undefined;
+            let title: string = '';
 
-        if (product !== null && product !== undefined) {
-            data = new EditLogBookPageProductDialogParamsModel({
-                model: product,
-                viewMode: this.isReadonly || viewMode,
-                service: this.service,
-                logBookType: this.logBookType,
-                hasPrice: this.hasPrice
-            });
+            if (product !== null && product !== undefined) {
+                data = new EditLogBookPageProductDialogParamsModel({
+                    model: product,
+                    viewMode: this.isReadonly || viewMode,
+                    service: this.service,
+                    logBookType: this.logBookType,
+                    hasPrice: this.hasPrice
+                });
 
-            if (product.id !== null && product.id !== undefined) {
-                headerAuditBtn = {
-                    id: product.id,
-                    getAuditRecordData: this.service.getLogBookPageProductAudit.bind(this.service),
-                    tableName: 'LogBookPageProduct'
-                };
-            }
-
-            if (this.isReadonly || viewMode) {
-                title = this.translate.getValue('catches-and-sales.page-product-view-product-dialog-title');
-            }
-            else {
-                title = this.translate.getValue('catches-and-sales.page-product-edit-product-dialog-title');
-            }
-        }
-        else if (!this.isReadonly) {
-            data = new EditLogBookPageProductDialogParamsModel({
-                service: this.service,
-                logBookType: this.logBookType,
-                viewMode: false,
-                hasPrice: this.hasPrice
-            });
-
-            title = this.translate.getValue('catches-and-sales.page-product-add-product-dialog-title');
-        }
-
-        this.openLogBookPageProductDialog(product, title, headerAuditBtn, data, viewMode || this.isReadonly)
-            .subscribe({
-                next: (result: LogBookPageProductDTO | null | undefined) => {
-                    if (result !== null && result !== undefined) {
-                        result.hasMissingProperties = false;
-
-                        if (product !== null && product !== undefined) {
-                            product = result;
-                        }
-                        else {
-                            this.products.push(result);
-                        }
-
-                        this.products = this.products.slice();
-                        this.onChanged(this.products);
-                        this.recalculateFishQuantitySums();
-
-                        this.isTouched = true;
-                        this.control.updateValueAndValidity({ emitEvent: false, onlySelf: true });
-                    }
+                if (product.id !== null && product.id !== undefined) {
+                    headerAuditBtn = {
+                        id: product.id,
+                        getAuditRecordData: this.service.getLogBookPageProductAudit.bind(this.service),
+                        tableName: 'LogBookPageProduct'
+                    };
                 }
-            });
+
+                if (this.isReadonly || viewMode) {
+                    title = this.translate.getValue('catches-and-sales.page-product-view-product-dialog-title');
+                }
+                else {
+                    title = this.translate.getValue('catches-and-sales.page-product-edit-product-dialog-title');
+                }
+            }
+            else if (!this.isReadonly) {
+                data = new EditLogBookPageProductDialogParamsModel({
+                    service: this.service,
+                    logBookType: this.logBookType,
+                    viewMode: false,
+                    hasPrice: this.hasPrice
+                });
+
+                title = this.translate.getValue('catches-and-sales.page-product-add-product-dialog-title');
+            }
+
+            this.openLogBookPageProductDialog(product, title, headerAuditBtn, data, viewMode || this.isReadonly)
+                .subscribe({
+                    next: (result: LogBookPageProductDTO | null | undefined) => {
+                        if (result !== null && result !== undefined) {
+                            result.hasMissingProperties = false;
+
+                            if (product !== null && product !== undefined) {
+                                product = result;
+                            }
+                            else {
+                                this.products.push(result);
+                            }
+
+                            this.products = this.products.slice();
+                            this.onChanged(this.products);
+                            this.recalculateFishQuantitySums();
+
+                            this.isTouched = true;
+                            this.control.updateValueAndValidity({ emitEvent: false, onlySelf: true });
+                        }
+                    }
+                });
+        }
     }
 
     public copyProduct(product: LogBookPageProductDTO): void {
@@ -280,7 +287,7 @@ export class LogBookPageProductsComponent extends CustomFormControl<LogBookPageP
         }).subscribe({
             next: (ok: boolean) => {
                 if (ok) {
-                    this.productsTable.softDelete(row);
+                    row.data.isActive = false;
                     this.handleChangedProductsTable();
                 }
             }
@@ -291,7 +298,7 @@ export class LogBookPageProductsComponent extends CustomFormControl<LogBookPageP
         this.confirmDialog.open().subscribe({
             next: (ok: boolean) => {
                 if (ok) {
-                    this.productsTable.softUndoDelete(row);
+                    row.data.isActive = true;
                     this.handleChangedProductsTable();
                 }
             }
@@ -359,7 +366,8 @@ export class LogBookPageProductsComponent extends CustomFormControl<LogBookPageP
     }
 
     private handleChangedProductsTable(): void {
-        this.products = this.productsTable.rows;
+        this.products = this.products.slice();
+
         this.onChanged(this.products);
         this.recalculateFishQuantitySums();
 
@@ -406,7 +414,6 @@ export class LogBookPageProductsComponent extends CustomFormControl<LogBookPageP
                     return { 'missingProperties': true };
                 }
 
-
                 for (const product of this.products) {
                     if (product.hasMissingProperties) {
                         return { 'missingProperties': true };
@@ -446,18 +453,18 @@ export class LogBookPageProductsComponent extends CustomFormControl<LogBookPageP
                 return null;
             }
 
-            const originalProductsGrouped: FishGroupedQuantitiesModel[] = this.getProductQuantitiesGrouped(this.originProducts);
-            const productsGrouped: FishGroupedQuantitiesModel[] = this.getProductQuantitiesGrouped(this.products.filter(x => x.isActive));
+            const originalProductsGrouped: ProductGroupedQuantitiesModel[] = this.getProductQuantitiesGrouped(this.originProducts);
+            const productsGrouped: ProductGroupedQuantitiesModel[] = this.getProductQuantitiesGrouped(this.products.filter(x => x.isActive));
 
             for (const product of productsGrouped) {
                 const fishId: number = Number(product.fishId);
-                const productQuantity: number = Number(product.quantity);
+                const productQuantity: number = Number(product.quantityKg);
 
-                const originalProduct: FishGroupedQuantitiesModel | undefined = originalProductsGrouped.find(x => x.fishId === fishId
+                const originalProduct: ProductGroupedQuantitiesModel | undefined = originalProductsGrouped.find(x => x.fishId === fishId
                     && (((x.turbotSizeGroupId === undefined || x.turbotSizeGroupId === null) && (product.turbotSizeGroupId === undefined || product.turbotSizeGroupId === null)) || Number(x.turbotSizeGroupId) === Number(product.turbotSizeGroupId)));
 
                 if (originalProduct !== null && originalProduct !== undefined) {
-                    const originalProductQuantity: number = Number(originalProduct.quantity);
+                    const originalProductQuantity: number = Number(originalProduct.quantityKg);
 
                     if (productQuantity > originalProductQuantity) {
                         return { 'productsQuantityNotMatch': true };
@@ -474,11 +481,25 @@ export class LogBookPageProductsComponent extends CustomFormControl<LogBookPageP
         const quantityKg: string = this.translate.getValue('catches-and-sales.ship-page-declaration-kg');
         const continentalCatch: string = this.translate.getValue('catches-and-sales.ship-page-catch-record-is-continental-catch');
 
-        const productsGroupedByCatchZone: Record<number, LogBookPageProductDTO[]> = CommonUtils.groupBy(this.products.filter(x => x.isActive), x => (x.catchLocation!));
+        const productsGroupedByCatchZone: Record<number, LogBookPageProductDTO[]> = CommonUtils.groupBy(this.products, x => (x.catchLocation!));
+
         this.fishQuantities.clear();
 
+        if (this.logBookType !== LogBookTypesEnum.Aquaculture) {
+            this.productsForTable = [];
+        }
+        else {
+            this.productsForTable = this.products;
+        }
+
         for (const catchZone in productsGroupedByCatchZone) {
-            const productsGrouped: FishGroupedQuantitiesModel[] = this.getProductQuantitiesGrouped(productsGroupedByCatchZone[catchZone]).filter(x => x.quantity! > 0);
+            if (this.logBookType !== LogBookTypesEnum.Aquaculture) {
+                const products: ProductGroupedQuantitiesModel[] = this.getProductsGrouped(productsGroupedByCatchZone[catchZone]);
+                this.productsForTable.push(...products);
+            }
+
+            const products: LogBookPageProductDTO[] = productsGroupedByCatchZone[catchZone].filter(x => x.isActive);
+            const productsGrouped: ProductGroupedQuantitiesModel[] = this.getProductQuantitiesGrouped(products).filter(x => x.quantityKg! > 0);
 
             if (productsGrouped.length > 0) {
                 const catchLocation: string = CommonUtils.isNullOrEmpty(catchZone) ? continentalCatch : catchZone;
@@ -486,8 +507,8 @@ export class LogBookPageProductsComponent extends CustomFormControl<LogBookPageP
                 const fishQuantityText: string = productsGrouped.map(x =>
                     `${x.fishName}
                      ${x.turbotSizeGroupName !== undefined && x.turbotSizeGroupName !== null ? ` - ${x.turbotSizeGroupName}` : ''}:
-                     ${x.turbotCount !== undefined && x.turbotCount !== null ? ` ${x.turbotCount} ${count} - ` : ''}
-                     ${x.quantity?.toFixed(2)} ${quantityKg}`
+                     ${x.unitCount !== undefined && x.unitCount !== null && x.unitCount > 0 ? ` ${x.unitCount} ${count} - ` : ''}
+                     ${x.quantityKg?.toFixed(2)} ${quantityKg}`
                 ).join('; ');
 
                 this.fishQuantities.set(catchLocation, fishQuantityText);
@@ -495,26 +516,28 @@ export class LogBookPageProductsComponent extends CustomFormControl<LogBookPageP
         }
     }
 
-    private getProductQuantitiesGrouped(fishes: LogBookPageProductDTO[]): FishGroupedQuantitiesModel[] {
-        const result: FishGroupedQuantitiesModel[] = [];
+    private getProductQuantitiesGrouped(fishes: LogBookPageProductDTO[]): ProductGroupedQuantitiesModel[] {
+        const result: ProductGroupedQuantitiesModel[] = [];
 
         for (const fish of fishes) {
             const index: number = result.findIndex(x => x.fishId === fish.fishId
-                && (((x.turbotSizeGroupId === undefined || x.turbotSizeGroupId === null) && (fish.turbotSizeGroupId === undefined || fish.turbotSizeGroupId === null)) || Number(x.turbotSizeGroupId) === Number(fish.turbotSizeGroupId)));
+                && (((x.turbotSizeGroupId === undefined || x.turbotSizeGroupId === null)
+                    && (fish.turbotSizeGroupId === undefined || fish.turbotSizeGroupId === null))
+                    || Number(x.turbotSizeGroupId) === Number(fish.turbotSizeGroupId)));
 
             if (index !== -1) {
-                result[index].quantity! += (fish.quantityKg ?? 0);
+                result[index].quantityKg! += (fish.quantityKg ?? 0);
 
-                if (fish.unitCount !== undefined && fish.unitCount !== null) {
-                    result[index].turbotCount! += (fish.unitCount ?? 0);
+                if (fish.unitCount !== undefined && fish.unitCount !== null && fish.unitCount > 0) {
+                    result[index].unitCount! += (fish.unitCount ?? 0);
                 }
             }
             else {
-                const product: FishGroupedQuantitiesModel = new FishGroupedQuantitiesModel({
+                const product: ProductGroupedQuantitiesModel = new ProductGroupedQuantitiesModel({
                     fishId: fish.fishId,
                     turbotSizeGroupId: fish.turbotSizeGroupId,
-                    turbotCount: fish.unitCount,
-                    quantity: (fish.quantityKg ?? 0),
+                    unitCount: fish.unitCount,
+                    quantityKg: (fish.quantityKg ?? 0),
                     fishName: this.fishTypes.find(x => x.value === fish.fishId)!.displayName,
                     turbotSizeGroupName: this.turbotSizeGroups.find(x => x.value === fish.turbotSizeGroupId)?.displayName
                 });
@@ -523,7 +546,96 @@ export class LogBookPageProductsComponent extends CustomFormControl<LogBookPageP
             }
         }
 
-        return result.filter(x => x.quantity !== undefined && x.quantity !== null);
+        return result.filter(x => x.quantityKg !== undefined && x.quantityKg !== null);
+    }
+
+    private getProductsGrouped(fishes: LogBookPageProductDTO[]): ProductGroupedQuantitiesModel[] {
+        const result: ProductGroupedQuantitiesModel[] = [];
+
+        for (const fish of fishes) {
+            const index: number = result.findIndex(x => x.fishId === fish.fishId
+                && (((x.turbotSizeGroupId === undefined || x.turbotSizeGroupId === null)
+                    && (fish.turbotSizeGroupId === undefined || fish.turbotSizeGroupId === null))
+                    || Number(x.turbotSizeGroupId) === Number(fish.turbotSizeGroupId)));
+
+            if (index !== -1) {
+                if (fish.isActive) {
+                    result[index].quantityKg! += (fish.quantityKg ?? 0);
+
+                    if (fish.unitCount !== undefined && fish.unitCount !== null && fish.unitCount > 0) {
+                        if (result[index].unitCount !== undefined && result[index].unitCount !== null) {
+                            result[index].unitCount! += (fish.unitCount ?? 0);
+                        }
+                        else {
+                            result[index].unitCount = fish.unitCount;
+                        }
+                    }
+
+                    if (fish.unitPrice !== undefined && fish.unitPrice !== null && this.hasPrice) {
+                        result[index].price! += LogBookPageProductUtils.calculateTotalPrice(fish.quantityKg, fish.unitPrice) ?? 0;
+                    }
+
+                    // ако има поне един продукт с липсващи задължителни полета, целият ред да се отбелязва като невалиден
+                    if (fish.hasMissingProperties) {
+                        result[index].hasMissingProperties = fish.hasMissingProperties;
+                    }
+
+                    if (result[index].products?.filter(x => x.isActive).length === 0) {
+                        result[index].isActive = true;
+                    }
+                }
+
+                result[index].products.push(fish);
+            }
+            else {
+                const product: ProductGroupedQuantitiesModel = new ProductGroupedQuantitiesModel({
+                    fishId: fish.fishId,
+                    turbotSizeGroupId: fish.turbotSizeGroupId,
+                    quantityKg: fish.isActive ? (fish.quantityKg ?? 0) : 0,
+                    fishName: this.fishTypes.find(x => x.value === fish.fishId)!.displayName,
+                    turbotSizeGroupName: this.turbotSizeGroups.find(x => x.value === fish.turbotSizeGroupId)?.displayName,
+                    catchLocation: fish.catchLocation,
+                    productFreshnessId: fish.productFreshnessId,
+                    productPresentationId: fish.productPresentationId,
+                    productPurposeId: fish.productPurposeId,
+                    isActive: fish.isActive,
+                    hasMissingProperties: fish.hasMissingProperties
+                });
+
+                if (fish.isActive && fish.unitCount !== undefined && fish.unitCount !== null && fish.unitCount > 0) {
+                    product.unitCount = fish.unitCount;
+                }
+                else {
+                    product.unitCount = undefined;
+                    fish.unitCount = undefined;
+                }
+
+                if (this.hasPrice) {
+                    if (fish.isActive) {
+                        product.price = LogBookPageProductUtils.calculateTotalPrice(fish.quantityKg, fish.unitPrice) ?? 0;
+                    }
+                    else {
+                        product.price = 0;
+                    }
+                }
+
+                product.products.push(fish);
+                result.push(product);
+            }
+        }
+
+        if (this.hasPrice) {
+            for (const product of result) {
+                if (product.price !== undefined && product.price !== null) {
+                    //the price is already calculated
+                    product.totalPrice = LogBookPageProductUtils.formatTotalProductPrice(
+                        this.currencyPipe, 1, product.price
+                    ) ?? undefined;
+                }
+            }
+        }
+
+        return result;
     }
 
     private closeEditLogBookPageProductDialogBtnClicked(closeFn: HeaderCloseFunction): void {

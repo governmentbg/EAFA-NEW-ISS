@@ -229,7 +229,7 @@ export class EditAdmissionLogBookPageComponent implements OnInit, IDialogCompone
     public saveBtnClicked(actionInfo: IActionInfo, dialogClose: DialogCloseCallback): void {
         this.form.markAllAsTouched();
         this.validityCheckerGroup.validate();
-        
+
         if (this.isFormValid()) {
             this.fillModel();
             this.model = CommonUtils.sanitizeModelStrings(this.model);
@@ -272,7 +272,7 @@ export class EditAdmissionLogBookPageComponent implements OnInit, IDialogCompone
         if (controlName === 'handoverDateControl') {
             if (errorCode === 'logBookPageDateLocked' || errorCode === 'logBookPageDatePeriodLocked') {
                 const message: string = this.translationService.getValue('catches-and-sales.admission-page-date-cannot-be-chosen-error');
-                if (this.isLogBookPageDateLockedError) {
+                if (this.isLogBookPageDateLockedError || errorCode === 'logBookPageDatePeriodLocked') {
                     return new TLError({ text: message, type: 'error' });
                 }
                 else {
@@ -328,9 +328,9 @@ export class EditAdmissionLogBookPageComponent implements OnInit, IDialogCompone
         this.form.get('acceptingPersonControl')!.setValue(this.model.acceptingPerson);
         this.form.get('productsControl')!.setValue(this.model.products);
         this.form.get('filesControl')!.setValue(this.model.files);
-        
+
         this.isCommonLogBookPageDataReadonly = this.model.commonData?.originDeclarationNumber?.includes('missing data') !== true;
-       
+
         if (!this.isAdd) {
             this.form.get('statusControl')!.setValue(this.model.status);
         }

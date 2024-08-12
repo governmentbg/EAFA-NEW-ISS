@@ -2,6 +2,7 @@
 using IARA.Mobile.Application.Attributes;
 using IARA.Mobile.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Domain.Enums;
+using IARA.Mobile.Domain.Models;
 using IARA.Mobile.Insp.Application;
 using IARA.Mobile.Insp.Application.DTObjects.Inspections;
 using IARA.Mobile.Insp.Application.DTObjects.Nomenclatures;
@@ -528,7 +529,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FishingGearInspection
         {
             return this.Save(Edit,
                 InspectionFiles,
-                (inspectionIdentifier, files) =>
+                async (inspectionIdentifier, files) =>
                 {
                     InspectionCheckToolMarkDto dto = new InspectionCheckToolMarkDto
                     {
@@ -581,8 +582,12 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FishingGearInspection
                     {
                         dto.InspectedShip = ShipData;
                     }
-
-                    return InspectionsTransaction.HandleInspection(dto, submitType);
+                    List<FileModel> signatures = null;
+                    if (submitType == SubmitType.Finish)
+                    {
+                        signatures = await InspectionSaveHelper.GetSignatures(dto.Inspectors);
+                    }
+                    return await InspectionsTransaction.HandleInspection(dto, submitType, signatures);
                 }
             );
         }

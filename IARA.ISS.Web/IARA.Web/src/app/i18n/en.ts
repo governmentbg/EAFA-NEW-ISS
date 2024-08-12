@@ -1280,6 +1280,8 @@
 
         'association-blocked-until': 'Issuing tickets at this moment is not allowed. You will be able to issue tickets after',
 
+        'total-paid-price-error': 'Total paid price is less than ticket price',
+
         'online-ticket-number': 'Ticket no.',
         'enter-online-ticket-number-button': 'Enter ticket no.',
         'enter-online-ticket-number-dialog-title': 'Enter ticket no.',
@@ -2689,6 +2691,7 @@
         'fisherman-comment': 'Comment from an the fisherman',
         'fisherman-data': 'Fisherman',
         'has-ticket': 'The person has a ticket',
+        'person-has-no-valid-fiching-tickets': 'The person has no valid fishing tickets',
         'fishing-ticket-number': 'Ticket number',
         'fishing-gears-count': 'Fishing gears count',
         'hooks-count': 'Hooks count',

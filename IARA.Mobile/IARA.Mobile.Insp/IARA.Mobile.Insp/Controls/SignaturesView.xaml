@@ -6,6 +6,7 @@
         xmlns:sv="clr-namespace:IARA.Mobile.Shared.Views;assembly=IARA.Mobile.Shared"
         xmlns:rt="clr-namespace:TechnoLogica.Xamarin.ResourceTranslator;assembly=TechnoLogica.Xamarin"
         xmlns:vm="clr-namespace:IARA.Mobile.Insp.Controls.ViewModels"
+        xmlns:sm="clr-namespace:IARA.Mobile.Insp.ViewModels.Models"
         xmlns:h="clr-namespace:TechnoLogica.Xamarin.Helpers;assembly=TechnoLogica.Xamarin"
         x:Class="IARA.Mobile.Insp.Controls.SignaturesView"
         x:DataType="vm:SignaturesViewModel"
@@ -20,14 +21,12 @@
     </sv:SectionView.IsVisible>
     <sv:SectionView.InnerContent>
         <StackLayout Padding="10">
-            <tl:TLFlex GrowUnit="400">
-                <lc:SignatureView CaptionText="{rt:Translate InspectorSignature, Group=GeneralInfo}"
-                        Model="{Binding Inspector}"
-                        IsEnabled="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}" />
-                <lc:SignatureView CaptionText="{rt:Translate InspectedPersonSignature, Group=GeneralInfo}"
-                        Model="{Binding InspectedPerson}"
-                        IsEnabled="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}"
-                        IsVisible="{Binding HasInspectedPerson}" />
+            <tl:TLFlex GrowUnit="400" BindableLayout.ItemsSource="{Binding Inspectors}">
+                <BindableLayout.ItemTemplate>
+                    <DataTemplate x:DataType="sm:SignatureModel">
+                        <lc:SignatureView Model="{Binding}" CaptionText="{Binding SignatureType}" />
+                    </DataTemplate>
+                </BindableLayout.ItemTemplate>
             </tl:TLFlex>
         </StackLayout>
     </sv:SectionView.InnerContent>

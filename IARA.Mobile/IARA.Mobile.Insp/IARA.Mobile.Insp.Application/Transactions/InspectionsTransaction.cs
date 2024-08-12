@@ -550,9 +550,11 @@ namespace IARA.Mobile.Insp.Application.Transactions
             return Get<InspectionConstativeProtocolDto>(id, isLocal, InspectionType.OTH);
         }
 
-        public async Task<PostEnum> HandleInspection<TDto>(TDto dto, SubmitType submitType, bool fromOffline = false)
+        public async Task<PostEnum> HandleInspection<TDto>(TDto dto, SubmitType submitType, List<FileModel> signatures, bool fromOffline = false)
             where TDto : InspectionEditDto
         {
+            int localId = dto.Id ?? 0;
+            PostEnum postEnum;
             Task<HttpResult<int>> taskResult;
 
             if (submitType == SubmitType.Draft || (dto.IsOfflineOnly && submitType == SubmitType.Edit))
@@ -652,7 +654,7 @@ namespace IARA.Mobile.Insp.Application.Transactions
 
                 SaveInspectionInspectors(dto.Inspectors);
 
-                return PostEnum.Success;
+                postEnum = PostEnum.Success;
             }
             else if (result.Error?.Code == ErrorCode.AlreadySubmitted)
             {
@@ -671,7 +673,7 @@ namespace IARA.Mobile.Insp.Application.Transactions
                     }
                 }
 
-                return PostEnum.Success;
+                postEnum = PostEnum.Success;
             }
             else if (CommonGlobalVariables.InternetStatus == InternetStatus.Disconnected && !fromOffline)
             {
@@ -725,6 +727,7 @@ namespace IARA.Mobile.Insp.Application.Transactions
 
                         dto.Id = id > 0 ? -1 : id - 1;
 
+                        string inspectionState = submitType == SubmitType.Finish ? InspectionState.Signed.ToString() : dto.InspectionState.ToString();
                         context.Inspections.Add(new Inspection
                         {
                             Id = dto.Id.Value,
@@ -733,8 +736,8 @@ namespace IARA.Mobile.Insp.Application.Transactions
                             HasJsonContent = true,
                             Identifier = dto.LocalIdentifier,
                             SubmitType = submitType,
-                            InspectionState = dto.InspectionState,
-                            InspectionStateId = inspectionStates.Find(s => s.Code == dto.InspectionState.ToString()).Id,
+                            InspectionState = submitType == SubmitType.Finish ? InspectionState.Signed : dto.InspectionState,
+                            InspectionStateId = inspectionStates.Find(s => s.Code == inspectionState).Id,
                             InspectionType = dto.InspectionType,
                             InspectionTypeId = inspectionTypes.Find(s => s.Code == dto.InspectionType.ToString()).Id,
                             ReportNr = dto.ReportNum,
@@ -753,12 +756,74 @@ namespace IARA.Mobile.Insp.Application.Transactions
 
                 SaveInspectionInspectors(dto.Inspectors);
 
-                return PostEnum.Offline;
+                postEnum = PostEnum.Offline;
             }
             else
             {
-                return PostEnum.Failed;
+                postEnum = PostEnum.Failed;
             }
+
+            if (submitType == SubmitType.Finish)
+            {
+                if (postEnum == PostEnum.Success)
+                {
+                    if (fromOffline)
+                    {
+                        using (IAppDbContext context = ContextBuilder.CreateContext())
+                        {
+                            List<FileModel> savedSignatures = context.InspectionFiles.Where(x => x.InspectionId == localId)
+                                .Select(f => new FileModel
+                                {
+                                    Name = f.Name,
+                                    Description = f.Description,
+                                    FullPath = f.FullPath,
+                                    Size = f.Size,
+                                    ContentType = f.ContentType,
+                                    UploadedOn = f.UploadedOn,
+                                    FileTypeId = f.FileTypeId,
+                                    Deleted = f.Deleted,
+                                    StoreOriginal = f.StoreOriginal
+                                }).ToList();
+                            if (savedSignatures.Count != 0)
+                            {
+                                await SignInspection(result.Content, savedSignatures, localId);
+                                context.InspectionFiles.RemoveRange(context.InspectionFiles.Where(x => x.InspectionId == localId));
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (signatures != null)
+                        {
+                            await SignInspection(result.Content, signatures, dto.Id.Value);
+                        }
+                    }
+                }
+                else if (postEnum == PostEnum.Offline)
+                {
+                    if (signatures != null)
+                    {
+                        using (IAppDbContext context = ContextBuilder.CreateContext())
+                        {
+                            context.InspectionFiles.AddRange(signatures.Select(f => new InspectionFiles
+                            {
+                                Name = f.Name,
+                                Description = f.Description,
+                                FullPath = f.FullPath,
+                                Size = f.Size,
+                                ContentType = f.ContentType,
+                                UploadedOn = f.UploadedOn,
+                                FileTypeId = f.FileTypeId,
+                                Deleted = f.Deleted,
+                                StoreOriginal = f.StoreOriginal,
+                                InspectionId = dto.Id.Value
+                            }));
+                        }
+                    }
+                }
+            }
+
+            return postEnum;
         }
 
         public async Task PostOfflineInspections()
@@ -823,7 +888,7 @@ namespace IARA.Mobile.Insp.Application.Transactions
 
                     if (dto != null)
                     {
-                        postTasks[i] = HandleInspection(dto, inspection.SubmitType, true);
+                        postTasks[i] = HandleInspection(dto, inspection.SubmitType, null, true);
                     }
                     else
                     {
@@ -862,14 +927,21 @@ namespace IARA.Mobile.Insp.Application.Transactions
 
         public Task<bool> DeleteInspection(int id)
         {
-            bool deletedLocally = LocallyDeleteInspection(id);
-
-            if (!deletedLocally)
+            if (CommonGlobalVariables.InternetStatus == InternetStatus.Connected)
             {
-                return RestClient.DeleteAsync(UrlPrefix + "Delete", new { id }).IsSuccessfulResult();
-            }
+                bool deletedLocally = LocallyDeleteInspection(id);
 
-            return Task.FromResult(deletedLocally);
+                if (!deletedLocally)
+                {
+                    return RestClient.DeleteAsync(UrlPrefix + "Delete", new { id }).IsSuccessfulResult();
+                }
+
+                return Task.FromResult(deletedLocally);
+            }
+            else
+            {
+                return Task.FromResult(false);
+            }
         }
 
         public List<FishingGearDto> GetFishingGearsForShip(int shipUid, int? permitId = null)
@@ -1074,12 +1146,25 @@ namespace IARA.Mobile.Insp.Application.Transactions
             return null;
         }
 
-        public async Task<bool> SignInspection(int inspectionId, List<FileModel> files)
+        public async Task<bool> SignInspection(int inspectionId, List<FileModel> files, int localInspectionId)
         {
             HttpResult result = await RestClient.PostAsFormDataAsync("Inspections/Sign", new InspectionSignDto
             {
                 Files = files
             }, new { inspectionId });
+
+            if (result.IsSuccessful)
+            {
+                using (IAppDbContext context = ContextBuilder.CreateContext())
+                {
+                    Inspection inspection = context.Inspections.First(f => f.Id == localInspectionId);
+                    inspection.InspectionState = InspectionState.Signed;
+                    string inspectionStateCode = InspectionState.Signed.ToString();
+                    inspection.InspectionStateId = context.NInspectionStates
+                                                        .Where(s => s.Code == inspectionStateCode)
+                                                        .First().Id;
+                }
+            }
 
             return result.IsSuccessful;
         }

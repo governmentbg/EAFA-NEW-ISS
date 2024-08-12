@@ -1,13 +1,13 @@
 ﻿<div fxFlexFill fxLayout="column" fxLayoutGap="1em">
-    <tl-data-table fxFlexFill
-                   #productsTable
-                   [rows]="products"
+    <tl-data-table #productsTable
+                   fxFlexFill
+                   [rows]="productsForTable"
                    [isRemote]="false"
                    [isSoftDeletable]="true"
                    [showAddButton]="showAddButton && !isReadonly"
                    [showInactiveRecords]="true"
                    (addButtonClicked)="addEditProduct()"
-                   (activeRecordChanged)="addEditProduct($event, !$event.isActive)">
+                   (activeRecordChanged)="addEditProduct($event, !$event.isActive, logBookType === logBookTypesEnum.Aquaculture)">
         <div *ngIf="!showAddButton && !isReadonly" datatable-add-buttons fxLayout="row" fxLayoutGap="1em">
             <button mat-raised-button
                     color="accent"
@@ -16,6 +16,115 @@
                 {{ 'catches-and-sales.page-product-generate-products-from-origin-catch' | tlTranslate }}
             </button>
         </div>
+        <row-detail *ngIf="logBookType !== logBookTypesEnum.Aquaculture">
+            <ng-template let-row="row" ngx-datatable-row-detail-template>
+                <tl-card>
+                    <tl-card-title>{{ 'catches-and-sales.ship-page-catch-records-fishes-card-title' | tlTranslate }}</tl-card-title>
+                    <tl-card-content>
+                        <tl-data-table [isRemote]="false"
+                                       [isSoftDeletable]="true"
+                                       [showInactiveRecords]="true"
+                                       [showAddButton]="false"
+                                       [rows]="row.data.products"
+                                       (activeRecordChanged)="addEditProduct($event, !$event.isActive)">
+                            <data-column [flexRate]="0.2"
+                                         propertyName="fishId"
+                                         dataType="nomenclature"
+                                         [options]="fishTypes"
+                                         columnName="{{ 'catches-and-sales.page-product-aquatic-organism-type' | tlTranslate }}">
+                            </data-column>
+                            <data-column [flexRate]="0.2"
+                                         propertyName="catchLocation"
+                                         columnName="{{ 'catches-and-sales.page-product-catch-location' | tlTranslate }}">
+                            </data-column>
+                            <data-column [flexRate]="0.2"
+                                         propertyName="productPresentationId"
+                                         dataType="nomenclature"
+                                         [options]="productPresentations"
+                                         columnName="{{ 'catches-and-sales.page-product-presentation' | tlTranslate }}">
+                            </data-column>
+                            <data-column [flexRate]="0.2"
+                                         propertyName="productFreshnessId"
+                                         dataType="nomenclature"
+                                         [options]="productFreshness"
+                                         columnName="{{ 'catches-and-sales.page-product-freshness' | tlTranslate }}">
+                            </data-column>
+                            <data-column [flexRate]="0.3"
+                                         propertyName="productPurposeId"
+                                         dataType="nomenclature"
+                                         [options]="productPurposes"
+                                         columnName="{{ 'catches-and-sales.page-product-purpose' | tlTranslate }}">
+                            </data-column>
+                            <data-column [flexRate]="0.2"
+                                         propertyName="quantityKg"
+                                         columnName="{{ 'catches-and-sales.page-product-quantity-kg' | tlTranslate }}">
+                            </data-column>
+                            <data-column [flexRate]="0.2"
+                                         propertyName="unitCount"
+                                         columnName="{{ 'catches-and-sales.page-product-unit-count' | tlTranslate }}">
+                            </data-column>
+                            <data-column *ngIf="hasPrice"
+                                         [flexRate]="0.2"
+                                         propertyName="unitPrice"
+                                         columnName="{{ 'catches-and-sales.page-product-unit-price' | tlTranslate }}">
+                            </data-column>
+                            <data-column *ngIf="hasPrice"
+                                         [flexRate]="0.2"
+                                         propertyName="totalPrice"
+                                         columnName="{{ 'catches-and-sales.page-product-total-price' | tlTranslate }}">
+                            </data-column>
+                            <data-template-column [flexRate]="0.5" [cellClass]="'justify-center'">
+                                <ng-template let-row="row" ngx-datatable-cell-template>
+                                    <div fxLayout="row wrap" fxLayoutAlign="end center">
+                                        <tl-icon *ngIf="isTouched && (row.data.hasMissingProperties === true || row.data.quantityKg === 0)"
+                                                 icon="ic-exclamation"
+                                                 iconClass="error-color"
+                                                 [size]="icIconSize">
+                                        </tl-icon>
+                                        <tl-icon-button icon="visibility"
+                                                        (buttonClicked)="addEditProduct(row.data, true)"
+                                                        iconClass="accent-color"
+                                                        tooltipText="{{ 'catches-and-sales.page-product-view-product' | tlTranslate }}">
+                                        </tl-icon-button>
+                                        <tl-icon-button *ngIf="row.data.isActive && !isReadonly"
+                                                        icon="edit"
+                                                        (buttonClicked)="addEditProduct(row.data)"
+                                                        iconClass="accent-color"
+                                                        tooltipText="{{ 'catches-and-sales.page-product-edit-product' | tlTranslate }}">
+                                        </tl-icon-button>
+                                        <tl-icon-button *ngIf="row.data.isActive && !isReadonly && logBookType !== logBookTypesEnum.Aquaculture"
+                                                        icon="ic-copy"
+                                                        (buttonClicked)="copyProduct(row.data)"
+                                                        iconClass="accent-color"
+                                                        tooltipText="{{ 'catches-and-sales.page-product-copy-product' | tlTranslate }}"
+                                                        [size]="icIconSize">
+                                        </tl-icon-button>
+                                        <tl-icon-button *ngIf="row.data.id !== null && row.data.id !== undefined && softDeleteRecords && row.data.isActive && !isReadonly"
+                                                        icon="delete"
+                                                        (buttonClicked)="deleteProduct(row)"
+                                                        iconClass="accent-color"
+                                                        tooltipText="{{ 'catches-and-sales.page-product-delete-product' | tlTranslate }}">
+                                        </tl-icon-button>
+                                        <tl-icon-button *ngIf="(row.data.id === null || row.data.id === undefined || !softDeleteRecords) && row.data.isActive && !isReadonly"
+                                                        icon="remove"
+                                                        (buttonClicked)="removeProduct(row)"
+                                                        iconClass="accent-color"
+                                                        tooltipText="{{ 'catches-and-sales.page-product-remove-product' | tlTranslate }}">
+                                        </tl-icon-button>
+                                        <tl-icon-button *ngIf="!row.data.isActive && !isReadonly"
+                                                        icon="restore"
+                                                        (buttonClicked)="undoDeleteLogBook(row)"
+                                                        iconClass="accent-color"
+                                                        tooltipText="{{ 'catches-and-sales.page-product-restore-product' | tlTranslate }}">
+                                        </tl-icon-button>
+                                    </div>
+                                </ng-template>
+                            </data-template-column>
+                        </tl-data-table>
+                    </tl-card-content>
+                </tl-card>
+            </ng-template>
+        </row-detail>
         <data-column [flexRate]="0.2"
                      propertyName="fishId"
                      dataType="nomenclature"
@@ -40,7 +149,8 @@
                      [options]="productFreshness"
                      columnName="{{ 'catches-and-sales.page-product-freshness' | tlTranslate }}">
         </data-column>
-        <data-column [flexRate]="0.3"
+        <data-column *ngIf="logBookType === logBookTypesEnum.Aquaculture"
+                     [flexRate]="0.3"
                      propertyName="productPurposeId"
                      dataType="nomenclature"
                      [options]="productPurposes"
@@ -54,7 +164,7 @@
                      propertyName="unitCount"
                      columnName="{{ 'catches-and-sales.page-product-unit-count' | tlTranslate }}">
         </data-column>
-        <data-column *ngIf="hasPrice"
+        <data-column *ngIf="hasPrice && logBookType === logBookTypesEnum.Aquaculture"
                      [flexRate]="0.2"
                      propertyName="unitPrice"
                      columnName="{{ 'catches-and-sales.page-product-unit-price' | tlTranslate }}">
@@ -64,7 +174,18 @@
                      propertyName="totalPrice"
                      columnName="{{ 'catches-and-sales.page-product-total-price' | tlTranslate }}">
         </data-column>
-        <data-template-column [flexRate]="0.5" [cellClass]="'justify-center'">
+        <data-template-column *ngIf="logBookType !== logBookTypesEnum.Aquaculture" [flexRate]="0.1" [cellClass]="'justify-center'">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+                <div fxLayout="row wrap" fxLayoutAlign="end center">
+                    <tl-icon *ngIf="isTouched && (row.data.hasMissingProperties === true || row.data.quantityKg === 0)"
+                             icon="ic-exclamation"
+                             iconClass="error-color"
+                             [size]="icIconSize">
+                    </tl-icon>
+                </div>
+            </ng-template>
+        </data-template-column>
+        <data-template-column *ngIf="logBookType === logBookTypesEnum.Aquaculture" [flexRate]="0.5" [cellClass]="'justify-center'">
             <ng-template let-row="row" ngx-datatable-cell-template>
                 <div fxLayout="row wrap" fxLayoutAlign="end center">
                     <tl-icon *ngIf="isTouched && (row.data.hasMissingProperties === true || row.data.quantityKg === 0)"

@@ -42,6 +42,7 @@
             <inspected-person formControlName="personControl"
                               [countries]="countries"
                               [personType]="inspectedPersonTypeEnum.CaptFshmn"
+                              (downloadPersonDataBtnClicked)="downloadPersonDataBtnClicked($event)"
                               title="{{ 'inspections.inspected-person' | tlTranslate }}">
             </inspected-person>
 
@@ -49,10 +50,16 @@
                          label="{{ 'inspections.has-ticket' | tlTranslate }}">
             </tl-checkbox>
 
-            <tl-input formControlName="ticketControl"
-                      label="{{ 'inspections.fishing-ticket-number' | tlTranslate }}"
-                      tooltipResourceName="inspections.fishing-ticket-number-helper">
-            </tl-input>
+            <mat-error *ngIf="!hasValidTickets" class="warn-orange-color">
+                {{ 'inspections.person-has-no-valid-fiching-tickets' | tlTranslate }}
+            </mat-error>
+
+            <tl-autocomplete formControlName="ticketControl"
+                             [options]="tickets"
+                             [hasSelectedValueFromDropdownValidator]="false"
+                             label="{{ 'inspections.fishing-ticket-number' | tlTranslate }}"
+                             tooltipResourceName="inspections.fishing-ticket-number-helper">
+            </tl-autocomplete>
 
             <div fxLayout="row"
                  fxLayoutGap="1em"

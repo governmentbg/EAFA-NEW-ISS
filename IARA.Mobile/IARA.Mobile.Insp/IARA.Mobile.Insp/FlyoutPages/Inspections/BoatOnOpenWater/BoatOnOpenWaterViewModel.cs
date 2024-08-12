@@ -2,6 +2,7 @@
 using IARA.Mobile.Application.Attributes;
 using IARA.Mobile.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Domain.Enums;
+using IARA.Mobile.Domain.Models;
 using IARA.Mobile.Insp.Application;
 using IARA.Mobile.Insp.Application.DTObjects.Inspections;
 using IARA.Mobile.Insp.Application.DTObjects.Nomenclatures;
@@ -317,7 +318,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.BoatOnOpenWater
         {
             return this.Save(Edit,
                 InspectionFiles,
-                (inspectionIdentifier, files) =>
+                async (inspectionIdentifier, files) =>
                 {
                     ObservationAtSeaDto dto = new ObservationAtSeaDto
                     {
@@ -350,8 +351,12 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.BoatOnOpenWater
                         }.Where(f => !string.IsNullOrWhiteSpace(f.Text)).ToList(),
                         ViolatedRegulations = AdditionalInfo.ViolatedRegulations.ViolatedRegulations.Value.Select(x => (AuanViolatedRegulationDto)x).ToList(),
                     };
-
-                    return InspectionsTransaction.HandleInspection(dto, submitType);
+                    List<FileModel> signatures = null;
+                    if (submitType == SubmitType.Finish)
+                    {
+                        signatures = await InspectionSaveHelper.GetSignatures(dto.Inspectors, false);
+                    }
+                    return await InspectionsTransaction.HandleInspection(dto, submitType, signatures);
                 }
             );
         }

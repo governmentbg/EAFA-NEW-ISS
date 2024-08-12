@@ -23,5 +23,6 @@
         public const string IS_TRANSHIPMENT = "IsTranshipment";
         public const string IS_WATER_VEHICLE = nameof(IS_WATER_VEHICLE);
         public const string IS_BUYER_LEGAL = nameof(IS_BUYER_LEGAL);
+        public const string CAN_PICK_LOCATION = nameof(CAN_PICK_LOCATION);
     }
 }

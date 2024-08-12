@@ -1269,6 +1269,8 @@
 
         'association-blocked-until': 'Системата за издаване на билети към този момент не е налична. Ще можете да издавате билети след',
 
+        'total-paid-price-error': 'Общата платена сума е по-малка от общата цена на билетите',
+
         'online-ticket-number': 'Номер на билета',
         'enter-online-ticket-number-button': 'Въвеждане на номер на билета',
         'enter-online-ticket-number-dialog-title': 'Въвеждане на номер на билета',
@@ -2744,6 +2746,7 @@
         'fisherman-comment': 'Коментар на лице, извършващо любителски риболов',
         'fisherman-data': 'Данни за лицето, извършващо любителски риболов',
         'has-ticket': 'Лицето притежава билет',
+        'person-has-no-valid-fiching-tickets': 'Лицето няма валидни билети за риболов',
         'fishing-ticket-number': 'Номер на билета',
         'fishing-gears-count': 'Брой въдици',
         'hooks-count': 'Брой куки',

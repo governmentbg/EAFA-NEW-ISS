@@ -1,6 +1,6 @@
-﻿using System;
-using IARA.Mobile.Domain.Interfaces;
+﻿using IARA.Mobile.Domain.Interfaces;
 using SQLite;
+using System;
 
 namespace IARA.Mobile.Insp.Domain.Entities.Inspections
 {
@@ -8,6 +8,7 @@ namespace IARA.Mobile.Insp.Domain.Entities.Inspections
     {
         [PrimaryKey]
         public int Id { get; set; }
+        public int FishermanId { get; set; }
         public int ShipUid { get; set; }
         public int? PersonId { get; set; }
         public int? LegalId { get; set; }

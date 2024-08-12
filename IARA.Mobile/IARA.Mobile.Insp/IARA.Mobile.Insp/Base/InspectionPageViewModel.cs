@@ -7,7 +7,7 @@ using IARA.Mobile.Insp.Domain.Enums;
 using IARA.Mobile.Insp.FlyoutPages.InspectionsPage;
 using IARA.Mobile.Insp.Helpers;
 using System;
-using System.Text.Json.Nodes;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using TechnoLogica.Xamarin.Commands;
@@ -53,14 +53,11 @@ namespace IARA.Mobile.Insp.Base
         private async Task OnReturnForEdit()
         {
             IInspectionsTransaction inspectionsTransaction = DependencyService.Resolve<IInspectionsTransaction>();
-
-            JsonNode jsonObject = JsonNode.Parse(inspectionsTransaction.GetInspectionJson(ProtectedEdit.Id.Value));
-            jsonObject["inspectionState"] = JsonValue.Create(inspectionsTransaction.GetInspectionStateId(InspectionState.Draft));
-
+            ProtectedEdit.InspectionState = InspectionState.Draft;
             HttpResult result = await DependencyService.Resolve<IRestClient>().PostAsFormDataAsync("Inspections/SendForFurtherCorrections", new InspectionDraftDto()
             {
                 Id = ProtectedEdit.Id.Value,
-                Json = jsonObject.ToJsonString()
+                Json = JsonSerializer.Serialize(ProtectedEdit)
             });
 
             if (result.IsSuccessful)
