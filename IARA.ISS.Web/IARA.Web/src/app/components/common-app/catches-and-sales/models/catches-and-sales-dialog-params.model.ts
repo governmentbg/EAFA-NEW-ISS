@@ -17,6 +17,7 @@ export class CatchesAndSalesDialogParamsModel {
     public pageStatus: LogBookPageStatusesEnum | undefined;
     /** Needed only for admission and transportation log book pages, when the log books are for Person/Legal */
     public logBookPermitLicenseId: number | undefined;
+    public canEditCommonDataPermission: boolean = false;
 
     public constructor(obj?: Partial<CatchesAndSalesDialogParamsModel>) {
         Object.assign(this, obj);

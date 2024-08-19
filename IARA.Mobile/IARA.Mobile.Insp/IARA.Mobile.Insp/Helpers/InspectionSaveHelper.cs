@@ -2,6 +2,7 @@
 using IARA.Mobile.Domain.Enums;
 using IARA.Mobile.Domain.Models;
 using IARA.Mobile.Insp.Application.DTObjects.Inspections;
+using IARA.Mobile.Insp.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Insp.Application.Interfaces.Transactions;
 using IARA.Mobile.Insp.Base;
 using IARA.Mobile.Insp.Controls;
@@ -30,7 +31,7 @@ namespace IARA.Mobile.Insp.Helpers
 {
     public static class InspectionSaveHelper
     {
-        public static async Task<List<FileModel>> GetSignatures(List<InspectorDuringInspectionDto> Inspectors, bool showInspectedPersonSignature = true)
+        public static async Task<List<FileModel>> GetSignatures(List<InspectorDuringInspectionDto> Inspectors, List<InspectionSubjectPersonnelDto> inspectedPeople = null)
         {
             List<SelectNomenclatureDto> fileTypes = DependencyService.Resolve<INomenclatureTransaction>().GetFileTypes();
             List<SignatureSaveModel> signatures = new List<SignatureSaveModel>();
@@ -45,13 +46,29 @@ namespace IARA.Mobile.Insp.Helpers
                 });
             }
 
-            if (showInspectedPersonSignature)
+            if (inspectedPeople != null)
             {
-                signatures.Add(new SignatureSaveModel
+                foreach (InspectionSubjectPersonnelDto person in inspectedPeople)
                 {
-                    Caption = TranslateExtension.Translator[nameof(GroupResourceEnum.GeneralInfo) + "/InspectedPersonSignature"],
-                    FileTypeId = fileTypes.Find(f => f.Code == Constants.InspectedPersonSignature).Id
-                });
+                    if (string.IsNullOrEmpty(person.FirstName) && string.IsNullOrEmpty(person.LastName))
+                    {
+                        signatures.Add(new SignatureSaveModel
+                        {
+                            Caption = TranslateExtension.Translator[nameof(GroupResourceEnum.GeneralInfo) + "/InspectedPersonSignature"],
+                            FileTypeId = fileTypes.Find(f => f.Code == Constants.InspectedPersonSignature).Id
+                        });
+                    }
+                    else
+                    {
+                        signatures.Add(new SignatureSaveModel
+                        {
+                            Caption = string.Join(" - ", TranslateExtension.Translator[nameof(GroupResourceEnum.GeneralInfo) + "/InspectedPersonSignature"],
+                                                         string.Join(" ", person.FirstName, person.MiddleName, person.LastName)),
+                            FileTypeId = fileTypes.Find(f => f.Code == Constants.InspectedPersonSignature).Id
+                        });
+                    }
+                }
+
             }
 
             bool finish = await TLDialogHelper.ShowDialog(new SaveInspectionView(signatures));

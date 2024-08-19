@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace IARA.Mobile.Insp.Application.Filters
 {
@@ -7,6 +8,10 @@ namespace IARA.Mobile.Insp.Application.Filters
         public DateTime? DateFrom { get; set; }
         public DateTime? DateTo { get; set; }
         public DateTime? UpdatedAfter { get; set; }
+        public List<int> StateIds { get; set; }
+        public string ReportNumber { get; set; }
+        public bool? ShowOnlyUserInspections { get; set; }
+
         public bool ShowInactiveRecords { get; set; }
     }
 }

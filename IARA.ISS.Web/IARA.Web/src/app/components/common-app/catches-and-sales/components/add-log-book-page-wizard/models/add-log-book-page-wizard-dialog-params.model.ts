@@ -9,6 +9,7 @@ export class AddLogBookPageDialogParams {
     public logBookTypeId!: number;
     public pageNumber: number | undefined;
     public pageStatus: LogBookPageStatusesEnum | undefined;
+    public editLogBookPageBasicInfo: boolean = false;
 
     public constructor(obj?: Partial<AddLogBookPageDialogParams>) {
         Object.assign(this, obj);

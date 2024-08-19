@@ -35,6 +35,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { ErrorCode, ErrorModel } from '@app/models/common/exception.model';
 import { RequestProperties } from '@app/shared/services/request-properties';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { AuanDrafterNomenclatureDTO } from '@app/models/generated/dtos/AuanDrafterNomenclatureDTO';
 
 @Component({
     selector: 'auan-register',
@@ -50,7 +51,7 @@ export class AuanRegisterComponent implements OnInit, AfterViewInit {
     public translate: FuseTranslationLoaderService;
     public form!: FormGroup;
 
-    public drafters: NomenclatureDTO<number>[] = [];
+    public drafters: AuanDrafterNomenclatureDTO[] = [];
     public territoryUnits: NomenclatureDTO<number>[] = [];
     public inspectionTypes: NomenclatureDTO<number>[] = [];
     public fishes: NomenclatureDTO<number>[] = [];
@@ -181,7 +182,7 @@ export class AuanRegisterComponent implements OnInit, AfterViewInit {
         });
 
         this.service.getAllDrafters().subscribe({
-            next: (drafters: NomenclatureDTO<number>[]) => {
+            next: (drafters: AuanDrafterNomenclatureDTO[]) => {
                 this.drafters = drafters;
             }
         });

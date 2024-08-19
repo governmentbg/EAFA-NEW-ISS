@@ -9,16 +9,23 @@
         xmlns:rt="clr-namespace:TechnoLogica.Xamarin.ResourceTranslator;assembly=TechnoLogica.Xamarin"
         xmlns:tl="clr-namespace:TechnoLogica.Xamarin.Controls;assembly=TechnoLogica.Xamarin"
         xmlns:local="clr-namespace:IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.OffenderDialog"
-        xmlns:m="clr-namespace:IARA.Mobile.Insp.Models"
+        xmlns:m="clr-namespace:IARA.Mobile.Insp.Application.DTObjects.Nomenclatures;assembly=IARA.Mobile.Insp.Application"
         x:Name="dialog"
         x:DataType="local:OffenderDialogViewModel"
-        x:TypeArguments="local:OffenderDialogViewModel, m:OffenderModel"
-        Title="{rt:Translate InspectorDialogTitle, Group=GeneralInfo}"
+        x:TypeArguments="local:OffenderDialogViewModel, m:InspectionSubjectPersonnelDto"
+        Title="{rt:Translate Offender, Group=InspectionWater}"
         BackgroundColor="White"
         IconColor="White"
         TitleBackgroundColor="{StaticResource Primary}"
         TitleColor="White">
-    <sv:SectionView>
-        <StackLayout Padding="10" />
-    </sv:SectionView>
+    <ScrollView>
+        <StackLayout Padding="10">
+            <lc:PersonView BindingContext="{Binding Offender}"
+                    Margin="0,0,0,5"
+                    IsTitleVisible="False" />
+            <Button Command="{Binding Save}"
+                    IsVisible="{Binding DialogType, Converter={StaticResource IsNotReview}}"
+                    Text="{rt:Translate Save, Group=Common}" />
+        </StackLayout>
+    </ScrollView>
 </tl:TLBaseDialog>

@@ -472,22 +472,16 @@ namespace IARA.Mobile.Insp.Application.Transactions
                 }
                 else
                 {
-                    if (filters.DateTo != null && filters.DateFrom != null)
-                    {
-                        count = context.Inspections.Where(x => x.StartDate >= filters.DateFrom.Value && x.StartDate <= filters.DateTo.Value).Count();
-                    }
-                    else if (filters.DateTo != null)
-                    {
-                        count = context.Inspections.Where(x => x.StartDate <= filters.DateTo.Value).Count();
-                    }
-                    else if (filters.DateFrom != null)
-                    {
-                        count = context.Inspections.Where(x => x.StartDate >= filters.DateFrom.Value).Count();
-                    }
-                    else
-                    {
-                        count = context.Inspections.Count();
-                    }
+                    count = (
+                        from insp in context.Inspections
+                        join inspType in context.NInspectionTypes on insp.InspectionTypeId equals inspType.Id
+                        where filters == null ? true : ((filters.DateFrom == null ? true : (insp.StartDate.Date >= filters.DateFrom.Value.Date))
+                                                     && (filters.DateTo == null ? true : (insp.StartDate.Date <= filters.DateTo.Value.Date))
+                                                     && (filters.StateIds == null ? true : (insp.InspectionStateId == filters.StateIds.First()))
+                                                     && (string.IsNullOrEmpty(filters.ReportNumber) ? true : insp.ReportNr.Contains(filters.ReportNumber))
+                                                     && (filters.ShowOnlyUserInspections == null ? true : insp.CreatedByCurrentUser))
+                        select insp
+                    ).Count();
                 }
                 double pageSize = CommonGlobalVariables.PullItemsCount;
 
@@ -1266,8 +1260,12 @@ namespace IARA.Mobile.Insp.Application.Transactions
                 return (
                     from insp in context.Inspections
                     join inspType in context.NInspectionTypes on insp.InspectionTypeId equals inspType.Id
-                    where (filters == null ? true : (filters.DateFrom == null ? true : (insp.StartDate.Date >= filters.DateFrom.Value.Date))
-                        && (filters.DateTo == null ? true : (insp.StartDate.Date <= filters.DateTo.Value.Date)))
+                    where filters == null ? true : ((filters.DateFrom == null ? true : (insp.StartDate.Date >= filters.DateFrom.Value.Date))
+                                                 && (filters.DateTo == null ? true : (insp.StartDate.Date <= filters.DateTo.Value.Date))
+                                                 && (filters.StateIds == null ? true : (insp.InspectionStateId == filters.StateIds.First()))
+                                                 && (string.IsNullOrEmpty(filters.ReportNumber) ? true : insp.ReportNr.Contains(filters.ReportNumber))
+                                                 && (filters.ShowOnlyUserInspections == null ? true : insp.CreatedByCurrentUser))
+
                     orderby insp.StartDate descending
                     select new InspectionDto
                     {
@@ -1437,6 +1435,17 @@ namespace IARA.Mobile.Insp.Application.Transactions
                 return (from state in context.NInspectionStates
                         where state.Code == code
                         select state.Id).First();
+            }
+        }
+
+        public int GetUnsignedInspectionCount()
+        {
+            int unsignedInspectionStateId = GetInspectionStateId(InspectionState.Submitted);
+            using (IAppDbContext context = ContextBuilder.CreateContext())
+            {
+                return (from insp in context.Inspections
+                        where insp.CreatedByCurrentUser && insp.InspectionStateId == unsignedInspectionStateId
+                        select insp.Id).Count();
             }
         }
     }

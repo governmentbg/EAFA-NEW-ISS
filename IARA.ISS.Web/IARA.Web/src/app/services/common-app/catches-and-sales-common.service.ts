@@ -250,8 +250,11 @@ export class CatchesAndSalesCommonService {
         }));;
     }
 
-    public getCommonLogBookPageData(area: AreaTypes, controller: string, parameters: CommonLogBookPageDataParameters): Observable<CommonLogBookPageDataDTO> {
+    public getCommonLogBookPageData(area: AreaTypes, controller: string, parameters: CommonLogBookPageDataParameters, isEditing: boolean = false): Observable<CommonLogBookPageDataDTO> {
+        const params: HttpParams = new HttpParams().append('isEditing', isEditing.toString());
+
         return this.http.post(area, controller, 'GetCommonLogBookPageData', parameters, {
+            httpParams: params,
             responseTypeCtr: CommonLogBookPageDataDTO
         });
     }
@@ -314,7 +317,7 @@ export class CatchesAndSalesCommonService {
 
     public getCommonLogBookPageDataByOriginDeclarationNumber(area: AreaTypes, controller: string, originDeclarationNumber: string): Observable<CommonLogBookPageDataDTO> {
         const params: HttpParams = new HttpParams().append('originDeclarationNumber', originDeclarationNumber.toString());
-      
+
         return this.http.get(area, controller, 'GetCommonLogBookPageDataByOriginDeclarationNumber', {
             httpParams: params,
             responseTypeCtr: CommonLogBookPageDataDTO
@@ -337,6 +340,30 @@ export class CatchesAndSalesCommonService {
     public getPossibleProducts(area: AreaTypes, controller: string, shipLogBookPageId: number, documentType: LogBookPageDocumentTypesEnum): Observable<LogBookPageProductDTO[]> {
         const params: HttpParams = new HttpParams().append('shipLogBookPageId', shipLogBookPageId.toString()).append('documentType', documentType.toString());
         return this.http.get(area, controller, 'GetPossibleProducts', {
+            httpParams: params,
+            responseTypeCtr: LogBookPageProductDTO
+        });
+    }
+
+    public getPossibleProductsByOriginDeclarationId(area: AreaTypes, controller: string, originDeclarationId: number, documentType: LogBookPageDocumentTypesEnum): Observable<LogBookPageProductDTO[]> {
+        const params: HttpParams = new HttpParams().append('originDeclarationId', originDeclarationId.toString()).append('documentType', documentType.toString());
+        return this.http.get(area, controller, 'GetPossibleProductsByOriginDeclarationId', {
+            httpParams: params,
+            responseTypeCtr: LogBookPageProductDTO
+        });
+    }
+
+    public getPossibleProductsByTransportationDocument(area: AreaTypes, controller: string, transportationDocumentId: number, documentType: LogBookPageDocumentTypesEnum): Observable<LogBookPageProductDTO[]> {
+        const params: HttpParams = new HttpParams().append('transportationDocumentId', transportationDocumentId.toString()).append('documentType', documentType.toString());
+        return this.http.get(area, controller, 'GetPossibleProductsByTransportationDocument', {
+            httpParams: params,
+            responseTypeCtr: LogBookPageProductDTO
+        });
+    }
+
+    public getPossibleProductsByAdmissionDocument(area: AreaTypes, controller: string, admissionDocumentId: number, documentType: LogBookPageDocumentTypesEnum): Observable<LogBookPageProductDTO[]> {
+        const params: HttpParams = new HttpParams().append('admissionDocumentId', admissionDocumentId.toString()).append('documentType', documentType.toString());
+        return this.http.get(area, controller, 'GetPossibleProductsByAdmissionDocument', {
             httpParams: params,
             responseTypeCtr: LogBookPageProductDTO
         });

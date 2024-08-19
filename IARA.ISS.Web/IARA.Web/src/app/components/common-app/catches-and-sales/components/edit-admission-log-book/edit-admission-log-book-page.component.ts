@@ -34,6 +34,10 @@ import { TLError } from '@app/shared/components/input-controls/models/tl-error.m
 import { LogBookPageEditExceptionDTO } from '@app/models/generated/dtos/LogBookPageEditExceptionDTO';
 import { SecurityService } from '@app/services/common-app/security.service';
 import { DatePipe } from '@angular/common';
+import { TLMatDialog } from '@app/shared/components/dialog-wrapper/tl-mat-dialog';
+import { AddLogBookPageWizardComponent } from '../add-log-book-page-wizard/add-log-book-page-wizard.component';
+import { AddLogBookPageDialogParams } from '../add-log-book-page-wizard/models/add-log-book-page-wizard-dialog-params.model';
+import { HeaderCloseFunction } from '@app/shared/components/dialog-wrapper/interfaces/header-cancel-button.interface';
 
 @Component({
     selector: 'edit-admission-log-book-page',
@@ -53,6 +57,7 @@ export class EditAdmissionLogBookPageComponent implements OnInit, IDialogCompone
     public noAvailableProducts: boolean = false;
     public isLogBookPageDateLockedError: boolean = false;
     public isCommonLogBookPageDataReadonly: boolean = true;
+    public hasEditCommonDataPermission: boolean = false;
 
     public getControlErrorLabelTextMethod: GetControlErrorLabelTextCallback = this.getControlErrorLabelText.bind(this);
 
@@ -80,6 +85,7 @@ export class EditAdmissionLogBookPageComponent implements OnInit, IDialogCompone
     private readonly snackbar: MatSnackBar;
     private readonly confirmDialog: TLConfirmDialog;
     private readonly datePipe: DatePipe;
+    private readonly editBasicInformationDialog: TLMatDialog<AddLogBookPageWizardComponent>;
     private readonly systemParametersService: SystemParametersService;
 
     public constructor(
@@ -87,6 +93,7 @@ export class EditAdmissionLogBookPageComponent implements OnInit, IDialogCompone
         snackbar: MatSnackBar,
         confirmDialog: TLConfirmDialog,
         datePipe: DatePipe,
+        editBasicInformationDialog: TLMatDialog<AddLogBookPageWizardComponent>,
         systemParametersService: SystemParametersService,
         authService: SecurityService
     ) {
@@ -94,6 +101,7 @@ export class EditAdmissionLogBookPageComponent implements OnInit, IDialogCompone
         this.snackbar = snackbar;
         this.confirmDialog = confirmDialog;
         this.datePipe = datePipe;
+        this.editBasicInformationDialog = editBasicInformationDialog;
         this.systemParametersService = systemParametersService;
 
         this.currentUserId = authService.User!.userId;
@@ -206,6 +214,7 @@ export class EditAdmissionLogBookPageComponent implements OnInit, IDialogCompone
         this.pageStatus = data.pageStatus;
         this.commonLogBookPageData = data.commonData;
         this.logBookPermitLicenseId = data.logBookPermitLicenseId;
+        this.hasEditCommonDataPermission = data.canEditCommonDataPermission;
 
         if (this.pageStatus === LogBookPageStatusesEnum.Missing) {
             this.isAdd = false;
@@ -291,6 +300,75 @@ export class EditAdmissionLogBookPageComponent implements OnInit, IDialogCompone
         }
 
         return undefined;
+    }
+
+    public editBasicInformation(): void {
+        const title: string = this.translationService.getValue('catches-and-sales.edit-admission-page-basic-information-dialog-title');
+
+        if (this.hasEditCommonDataPermission) {
+            this.editBasicInformationDialog.open({
+                title: title,
+                TCtor: AddLogBookPageWizardComponent,
+                translteService: this.translationService,
+                viewMode: false,
+                headerCancelButton: {
+                    cancelBtnClicked: this.closeEditBasicInformationDialogBtnClicked.bind(this)
+                },
+                saveBtn: {
+                    id: 'save',
+                    color: 'accent',
+                    translateValue: this.translationService.getValue('catches-and-sales.edit-admission-page-basic-information-ok-btn')
+                },
+                cancelBtn: {
+                    id: 'cancel',
+                    color: 'primary',
+                    translateValue: this.translationService.getValue('common.cancel'),
+                },
+                componentData: new AddLogBookPageDialogParams({
+                    service: this.service,
+                    logBookType: this.logBookType,
+                    logBookId: this.logBookId,
+                    logBookTypeId: this.logBookTypeId,
+                    pageNumber: this.pageNumber,
+                    editLogBookPageBasicInfo: true
+                }),
+                disableDialogClose: true
+            }, '1500px').subscribe({
+                next: (result: CommonLogBookPageDataDTO | undefined) => {
+                    if (result !== undefined && result !== null) {
+                        this.form.get('commonLogBookPageDataControl')!.setValue(result);
+                        this.form.get('productsControl')!.setValue([]);
+
+                        if (result.transportationDocumentId !== undefined && result.transportationDocumentId !== null) {
+                            this.service.getPossibleProductsByTransportationDocument(result.transportationDocumentId, LogBookPageDocumentTypesEnum.AdmissionDocument).subscribe({
+                                next: (products: LogBookPageProductDTO[]) => {
+                                    this.originPossibleProducts = products;
+                                    this.model.originalPossibleProducts = [];
+
+                                    this.form.get('productsControl')!.setValue(products);
+                                }
+                            });
+                        }
+                        else if (result.originDeclarationId !== undefined && result.originDeclarationId !== null) {
+                            this.service.getPossibleProductsByOriginDeclarationId(result.originDeclarationId, LogBookPageDocumentTypesEnum.AdmissionDocument).subscribe({
+                                next: (products: LogBookPageProductDTO[]) => {
+                                    this.originPossibleProducts = products;
+                                    this.model.originalPossibleProducts = [];
+
+                                    this.form.get('productsControl')!.setValue(products);
+                                }
+                            });
+                        }
+                        else {
+                            this.originPossibleProducts = [];
+                            this.model.originalPossibleProducts = [];
+
+                            this.form.get('productsControl')!.setValue([]);
+                        }
+                    }
+                }
+            });
+        }
     }
 
     private buildForm(): void {
@@ -587,5 +665,9 @@ export class EditAdmissionLogBookPageComponent implements OnInit, IDialogCompone
 
             return Object.keys(errors).length === 0 ? true : false;
         }
+    }
+
+    private closeEditBasicInformationDialogBtnClicked(closeFn: HeaderCloseFunction): void {
+        closeFn();
     }
 }

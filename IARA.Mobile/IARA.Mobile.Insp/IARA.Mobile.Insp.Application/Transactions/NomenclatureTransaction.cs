@@ -1161,7 +1161,7 @@ namespace IARA.Mobile.Insp.Application.Transactions
                 return (
                     from logBook in context.LogBooks
                     where logBook.ShipUid == shipUid
-                    orderby logBook.Id
+                    orderby logBook.Number descending
                     select new LogBookDto
                     {
                         Id = logBook.Id,

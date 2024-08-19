@@ -62,24 +62,12 @@ export class EditInspectionAtMarketComponent extends BaseInspectionsComponent im
         }
 
         const nomenclatureTables = await forkJoin([
-            NomenclatureStore.instance.getNomenclature(
-                NomenclatureTypes.Institutions, this.nomenclatures.getInstitutions.bind(this.nomenclatures), false
-            ),
-            NomenclatureStore.instance.getNomenclature(
-                NomenclatureTypes.Countries, this.nomenclatures.getCountries.bind(this.nomenclatures), false
-            ),
-            NomenclatureStore.instance.getNomenclature(
-                NomenclatureTypes.Fishes, this.nomenclatures.getFishTypes.bind(this.nomenclatures), false
-            ),
-            NomenclatureStore.instance.getNomenclature(
-                NomenclatureTypes.CatchTypes, this.nomenclatures.getCatchInspectionTypes.bind(this.nomenclatures), false
-            ),
-            NomenclatureStore.instance.getNomenclature(
-                NomenclatureTypes.CatchZones, this.nomenclatures.getCatchZones.bind(this.nomenclatures), false
-            ),
-            NomenclatureStore.instance.getNomenclature(
-                NomenclatureTypes.CatchPresentations, this.nomenclatures.getCatchPresentations.bind(this.nomenclatures), false
-            ),
+            NomenclatureStore.instance.getNomenclature(NomenclatureTypes.Institutions, this.nomenclatures.getInstitutions.bind(this.nomenclatures), false),
+            NomenclatureStore.instance.getNomenclature(NomenclatureTypes.Countries, this.nomenclatures.getCountries.bind(this.nomenclatures), false),
+            NomenclatureStore.instance.getNomenclature(NomenclatureTypes.Fishes, this.nomenclatures.getFishTypes.bind(this.nomenclatures), false),
+            NomenclatureStore.instance.getNomenclature(NomenclatureTypes.CatchTypes, this.nomenclatures.getCatchInspectionTypes.bind(this.nomenclatures), false),
+            NomenclatureStore.instance.getNomenclature(NomenclatureTypes.CatchZones, this.nomenclatures.getCatchZones.bind(this.nomenclatures), false),
+            NomenclatureStore.instance.getNomenclature(NomenclatureTypes.CatchPresentations, this.nomenclatures.getCatchPresentations.bind(this.nomenclatures), false),
             this.service.getBuyers(),
             this.service.getCheckTypesForInspection(InspectionTypesEnum.IFS),
         ]).toPromise();
@@ -163,8 +151,6 @@ export class EditInspectionAtMarketComponent extends BaseInspectionsComponent im
                 byEmergencySignal: this.model.byEmergencySignal,
             }));
 
-            this.form.get('filesControl')!.setValue(this.model.files);
-
             this.form.get('additionalInfoControl')!.setValue(new InspectionAdditionalInfoModel({
                 actionsTaken: this.model.actionsTaken,
                 administrativeViolation: this.model.administrativeViolation,
@@ -174,29 +160,20 @@ export class EditInspectionAtMarketComponent extends BaseInspectionsComponent im
             }));
 
             this.form.get('representativeCommentControl')!.setValue(this.model.representativeComment);
-
             this.form.get('catchTogglesControl')!.setValue(this.model.checks);
-
             this.form.get('catchesControl')!.setValue(this.model.catchMeasures);
-
             this.form.get('marketNameControl')!.setValue(this.model.subjectName);
-
             this.form.get('addressControl')!.setValue(this.model.subjectAddress);
-
-            this.form.get('catchViolationControl')!.setValue(
-                this.model.observationTexts?.find(f => f.category === InspectionObservationCategoryEnum.Catch)?.text
-            );
+            this.form.get('filesControl')!.setValue(this.model.files);
+            this.form.get('catchViolationControl')!.setValue(this.model.observationTexts?.find(x => x.category === InspectionObservationCategoryEnum.Catch)?.text);
 
             if (this.model.personnel !== null && this.model.personnel !== undefined) {
-                this.form.get('buyerControl')!.setValue(
-                    this.model.personnel.find(f => f.type === InspectedPersonTypeEnum.RegBuyer)
-                );
-                this.form.get('representativeControl')!.setValue(
-                    this.model.personnel.find(f => f.type === InspectedPersonTypeEnum.ReprsPers)
-                );
-                const importer = this.model.personnel.find(f => f.type === InspectedPersonTypeEnum.Importer);
+                this.form.get('buyerControl')!.setValue(this.model.personnel.find(x => x.type === InspectedPersonTypeEnum.RegBuyer));
+                this.form.get('representativeControl')!.setValue(this.model.personnel.find(x => x.type === InspectedPersonTypeEnum.ReprsPers));
 
+                const importer = this.model.personnel.find(x => x.type === InspectedPersonTypeEnum.Importer);
                 this.hasImporter = importer !== null && importer !== undefined;
+
                 this.form.get('hasImporterControl')!.setValue(this.hasImporter);
 
                 if (this.hasImporter) {
@@ -211,38 +188,38 @@ export class EditInspectionAtMarketComponent extends BaseInspectionsComponent im
         const additionalInfo: InspectionAdditionalInfoModel = this.form.get('additionalInfoControl')!.value;
         const catchViolation: string = this.form.get('catchViolationControl')!.value;
 
-        this.model = new InspectionFirstSaleDTO({
-            id: this.model.id,
-            startDate: generalInfo.startDate,
-            endDate: generalInfo.endDate,
-            inspectors: generalInfo.inspectors,
-            reportNum: generalInfo.reportNum,
-            files: this.form.get('filesControl')!.value,
-            actionsTaken: additionalInfo?.actionsTaken,
-            administrativeViolation: additionalInfo?.administrativeViolation === true,
-            byEmergencySignal: generalInfo.byEmergencySignal,
-            inspectionType: InspectionTypesEnum.IFS,
-            inspectorComment: additionalInfo?.inspectorComment,
-            violatedRegulations: additionalInfo?.violatedRegulations,
-            isActive: true,
-            representativeComment: this.form.get('representativeCommentControl')!.value,
-            catchMeasures: this.form.get('catchesControl')!.value,
-            checks: this.form.get('catchTogglesControl')!.value,
-            subjectName: this.form.get('marketNameControl')!.value,
-            subjectAddress: this.form.get('addressControl')!.value,
-            observationTexts: [
-                additionalInfo?.violation,
-                !CommonUtils.isNullOrWhiteSpace(catchViolation)
-                    ? new InspectionObservationTextDTO({
-                        category: InspectionObservationCategoryEnum.Catch,
-                        text: catchViolation
-                    }) : undefined
-            ].filter(f => f !== null && f !== undefined) as InspectionObservationTextDTO[],
-            personnel: [
-                this.form.get('buyerControl')!.value,
-                this.form.get('representativeControl')!.value,
-                this.hasImporter ? this.form.get('importerControl')!.value : null,
-            ].filter(f => f !== null && f !== undefined),
-        });
+        this.model.isActive = true;
+        this.model.inspectionType = InspectionTypesEnum.IFS;
+        this.model.startDate = generalInfo?.startDate;
+        this.model.endDate = generalInfo?.endDate;
+        this.model.inspectors = generalInfo?.inspectors;
+        this.model.reportNum = generalInfo?.reportNum;
+        this.model.byEmergencySignal = generalInfo?.byEmergencySignal;
+        this.model.actionsTaken = additionalInfo?.actionsTaken;
+        this.model.administrativeViolation = additionalInfo?.administrativeViolation === true;
+        this.model.inspectorComment = additionalInfo?.inspectorComment;
+        this.model.violatedRegulations = additionalInfo?.violatedRegulations;
+
+        this.model.files = this.form.get('filesControl')!.value;
+        this.model.representativeComment = this.form.get('representativeCommentControl')!.value;
+        this.model.catchMeasures = this.form.get('catchesControl')!.value;
+        this.model.checks = this.form.get('catchTogglesControl')!.value;
+        this.model.subjectName = this.form.get('marketNameControl')!.value;
+        this.model.subjectAddress = this.form.get('addressControl')!.value;
+
+        this.model.observationTexts = [
+            additionalInfo?.violation,
+            !CommonUtils.isNullOrWhiteSpace(catchViolation)
+                ? new InspectionObservationTextDTO({
+                    category: InspectionObservationCategoryEnum.Catch,
+                    text: catchViolation
+                }) : undefined
+        ].filter(x => x !== null && x !== undefined) as InspectionObservationTextDTO[];
+
+        this.model.personnel = [
+            this.form.get('buyerControl')!.value,
+            this.form.get('representativeControl')!.value,
+            this.hasImporter ? this.form.get('importerControl')!.value : null,
+        ].filter(x => x !== null && x !== undefined);
     }
 }

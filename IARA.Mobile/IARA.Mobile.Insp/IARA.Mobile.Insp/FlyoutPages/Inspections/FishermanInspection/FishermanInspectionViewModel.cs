@@ -1,6 +1,7 @@
 ﻿using IARA.Mobile.Application.Attributes;
 using IARA.Mobile.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Application.DTObjects.Reports;
+using IARA.Mobile.Application.Interfaces.Utilities;
 using IARA.Mobile.Domain.Enums;
 using IARA.Mobile.Domain.Models;
 using IARA.Mobile.Insp.Application;
@@ -32,16 +33,17 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FishermanInspection
     public class FishermanInspectionViewModel : InspectionPageViewModel
     {
         private InspectionFisherDto _edit;
-
+        private List<SelectNomenclatureDto> _fishingTickets;
         public FishermanInspectionViewModel()
         {
             OpenTicketReport = CommandBuilder.CreateFrom(OnOpenTicketReport);
             SaveDraft = CommandBuilder.CreateFrom(OnSaveDraft);
             Finish = CommandBuilder.CreateFrom(OnFinish);
+            AddTicket = CommandBuilder.CreateFrom<string>(OnAddTicket);
 
             InspectionGeneralInfo = new InspectionGeneralInfoViewModel(this);
             PatrolVehicles = new PatrolVehiclesViewModel(this, false);
-            InspectedPerson = new PersonViewModel(this, InspectedPersonType.CaptFshmn, false);
+            InspectedPerson = new PersonViewModel(this, InspectedPersonType.CaptFshmn, false, GetPersonTickets);
             Catches = new CatchInspectionsViewModel(this,
                 showCatchArea: false,
                 showAllowedDeviation: false,
@@ -52,6 +54,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FishermanInspection
             InspectionFiles = new InspectionFilesViewModel(this);
             AdditionalInfo = new AdditionalInfoViewModel(this);
             Signatures = new SignaturesViewModel(this);
+            FishingTickets = new List<SelectNomenclatureDto>();
 
             this.AddValidation(others: new IValidatableViewModel[]
             {
@@ -64,7 +67,6 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FishermanInspection
                 Signatures,
             });
 
-            TicketNumber.HasAsterisk = true;
             HasTicket.Value = true;
         }
 
@@ -77,7 +79,11 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FishermanInspection
                 ProtectedEdit = value;
             }
         }
-
+        public List<SelectNomenclatureDto> FishingTickets
+        {
+            get { return _fishingTickets; }
+            set { _fishingTickets = value; }
+        }
         public TLForwardSections Sections { get; set; }
 
         public InspectionGeneralInfoViewModel InspectionGeneralInfo { get; }
@@ -96,8 +102,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FishermanInspection
         public ValidStateBool HasTicket { get; set; }
 
         [RequiredIfBooleanEquals(nameof(HasTicket), false, ErrorMessageResourceName = "Required")]
-        [MaxLength(100)]
-        public ValidState TicketNumber { get; set; }
+        public ValidStateSelect<SelectNomenclatureDto> TicketNumberSelect { get; set; }
 
         [Required]
         [TLRange(0, 10000)]
@@ -113,6 +118,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FishermanInspection
         public ValidState FishermanComment { get; set; }
 
         public ICommand OpenTicketReport { get; }
+        public ICommand AddTicket { get; }
 
         public override void OnDisappearing()
         {
@@ -174,10 +180,15 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FishermanInspection
 
                 Address.AssignFrom(Edit.InspectionAddress);
                 Location.AssignFrom(Edit.InspectionLocation);
-                TicketNumber.AssignFrom(Edit.TicketNum);
                 FishingRodsCount.AssignFrom(Edit.FishingRodsCount);
                 FishingHooksCount.AssignFrom(Edit.FishingHooksCount);
                 FishermanComment.AssignFrom(Edit.FishermanComment);
+
+                FishingTickets.Add(new SelectNomenclatureDto()
+                {
+                    Name = Edit.TicketNum
+                });
+                TicketNumberSelect.AssignFrom(0, FishingTickets);
             }
 
             if (ActivityType == ViewActivityType.Review)
@@ -191,6 +202,34 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FishermanInspection
             await TLLoadingHelper.HideFullLoadingScreen();
         }
 
+        private async void GetPersonTickets(IdentifierTypeEnum identifierType, string egn)
+        {
+            if (string.IsNullOrWhiteSpace(egn))
+            {
+                return;
+            }
+
+            HttpResult<List<NomenclatureDto>> result = await DependencyService.Resolve<IRestClient>().GetAsync<List<NomenclatureDto>>("Inspections/GetValidFishingTicketsByEgn", new { egn });
+
+            if (result.IsSuccessful)
+            {
+                FishingTickets.Clear();
+                FishingTickets.AddRange(result.Content.Select(x => new SelectNomenclatureDto()
+                {
+                    Name = x.DisplayName,
+                }).ToList());
+                TicketNumberSelect.Value = null;
+            }
+        }
+        private void OnAddTicket(string ticketNumber)
+        {
+            FishingTickets.Add(new SelectNomenclatureDto()
+            {
+                Name = ticketNumber
+            });
+            TicketNumberSelect.AssignFrom(FishingTickets.Count - 1, FishingTickets);
+        }
+
         private async Task OnOpenTicketReport()
         {
             await TLLoadingHelper.ShowFullLoadingScreen();
@@ -201,7 +240,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FishermanInspection
                 List<(string, object)> defaultValues = new List<(string, object)>
                 {
                     (Constants.EgnReportParameter, InspectedPerson.EGN.Value),
-                    (Constants.TicketNumReportParameter, TicketNumber.Value),
+                    (Constants.TicketNumReportParameter, TicketNumberSelect.Value?.Name),
                 };
 
                 await MainNavigator.Current.GoToPageAsync(new ReportPage(report, defaultValues));
@@ -252,7 +291,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FishermanInspection
                         FishermanComment = FishermanComment,
                         FishingHooksCount = ParseHelper.ParseInteger(FishingHooksCount),
                         FishingRodsCount = ParseHelper.ParseInteger(FishingRodsCount),
-                        TicketNum = HasTicket.Value ? TicketNumber.Value : null,
+                        TicketNum = HasTicket.Value ? TicketNumberSelect.Value.Name : null,
                         Personnel = new InspectionSubjectPersonnelDto[]
                         {
                             InspectedPerson
@@ -269,7 +308,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FishermanInspection
                     List<FileModel> signatures = null;
                     if (submitType == SubmitType.Finish)
                     {
-                        signatures = await InspectionSaveHelper.GetSignatures(dto.Inspectors);
+                        signatures = await InspectionSaveHelper.GetSignatures(dto.Inspectors, DefaultInspecterPerson);
                     }
                     return await InspectionsTransaction.HandleInspection(dto, submitType, signatures);
                 }

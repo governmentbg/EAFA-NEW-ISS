@@ -120,8 +120,8 @@ export abstract class BaseInspectionsComponent implements IDialogComponent {
                                 this.model.id = id;
                                 dialogClose(dialogClose);
                             },
-                            error: (err: HttpErrorResponse) => {
-                                this.handleErrorResponse(err);
+                            error: (errorResponse: HttpErrorResponse) => {
+                                this.handleSubmitErrorResponse(errorResponse);
                             }
                         });
                     }
@@ -155,6 +155,9 @@ export abstract class BaseInspectionsComponent implements IDialogComponent {
                         this.id = id;
                         this.model.id = id;
                         dialogClose(this.model);
+                    },
+                    error: (errorResponse: HttpErrorResponse) => {
+                        this.handleErrorResponse(errorResponse);
                     }
                 });
             }
@@ -174,13 +177,16 @@ export abstract class BaseInspectionsComponent implements IDialogComponent {
         else if (actionInfo.id === 'flux') {
             this.service.downloadFluxXml(this.id!, this.model.inspectionType!).subscribe();
         }
-        else if (actionInfo.id === 'more-corrections-needed') { 
+        else if (actionInfo.id === 'more-corrections-needed') {
             this.model.id = this.id;
             const draft: InspectionDraftDTO = this.mapToDraft();
 
             this.service.sendForFurtherCorrections(draft).subscribe({
                 next: () => {
                     dialogClose(this.model);
+                },
+                error: (errorResponse: HttpErrorResponse) => {
+                    this.handleErrorResponse(errorResponse);
                 }
             });
         }
@@ -214,7 +220,7 @@ export abstract class BaseInspectionsComponent implements IDialogComponent {
         return draft;
     }
 
-    private handleErrorResponse(response: HttpErrorResponse): void {
+    private handleSubmitErrorResponse(response: HttpErrorResponse): void {
         if (response.error?.code === ErrorCode.NotInspector) {
             this.snackbar.open(this.translate.getValue('inspections.not-inspector'));
         }
@@ -222,6 +228,33 @@ export abstract class BaseInspectionsComponent implements IDialogComponent {
             this.reportNumAlreadyExistsError = true;
             this.form.get('generalInfoControl')!.setErrors({ reportNumAlreadyExists: true });
             this.validityCheckerGroup.validate();
+        }
+        else if (response.error?.code == ErrorCode.InvalidInspectionType) {
+            const message = this.translate.getValue('inspections.cannot-edit-inspection-of-this-inspection-type');
+            this.snackbar.open(message, undefined, {
+                duration: RequestProperties.DEFAULT.showExceptionDurationErr,
+                panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
+            });
+        }
+    }
+
+    private handleErrorResponse(response: HttpErrorResponse): void {
+        if (response.error !== undefined && response.error !== null) {
+            let message: string = '';
+
+            if (response.error?.code === ErrorCode.AlreadySubmitted) {
+                message = this.translate.getValue('inspections.inspection-already-submitted');
+            }
+            else if (response.error?.code == ErrorCode.InvalidInspectionType) {
+                message = this.translate.getValue('inspections.cannot-edit-inspection-of-this-inspection-type');
+            }
+
+            if (message !== undefined && message !== null && message !== '') {
+                this.snackbar.open(message, undefined, {
+                    duration: RequestProperties.DEFAULT.showExceptionDurationErr,
+                    panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
+                });
+            }
         }
     }
 }

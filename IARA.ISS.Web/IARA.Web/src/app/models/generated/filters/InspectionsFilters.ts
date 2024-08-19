@@ -17,6 +17,7 @@ export class InspectionsFilters extends BaseRequestModel {
     public shipId: number | undefined;
     public territoryNode: number | undefined;
     public inspector: string | undefined;
+    public inspectorId: number | undefined;
     public inspectionTypeId: number | undefined;
     public stateIds: number[] | undefined;
     public reportNumber: string | undefined;
@@ -34,6 +35,8 @@ export class InspectionsFilters extends BaseRequestModel {
     public firstSaleCenterName: string | undefined;
     public tractorLicensePlateNumber: string | undefined;
     public trailerLicensePlateNumber: string | undefined;
+    public showOnlyUserInspections: boolean | undefined;
+    public inspectorUserId: number | undefined;
     public shipLogBookPageId: number | undefined;
     public addmissionLogBookPageId: number | undefined;
     public transportationLogBookPageId: number | undefined;
@@ -41,4 +44,6 @@ export class InspectionsFilters extends BaseRequestModel {
     public aquacultureLogBookPageId: number | undefined;
     public inspectedPersonId: number | undefined;
     public inspectedLegalId: number | undefined;
+    public inspectionId: number | undefined;
+    public updatedAfter: Date | undefined;
 }

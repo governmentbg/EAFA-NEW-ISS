@@ -4,9 +4,10 @@
         xmlns:lc="clr-namespace:IARA.Mobile.Insp.Controls"
         xmlns:sv="clr-namespace:IARA.Mobile.Shared.Views;assembly=IARA.Mobile.Shared"
         xmlns:local="clr-namespace:IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.DeclarationCatchDialog"
-        xmlns:m="clr-namespace:IARA.Mobile.Insp.Models"
+        xmlns:nom="clr-namespace:IARA.Mobile.Insp.Application.DTObjects.Inspections;assembly=IARA.Mobile.Insp.Application"
         xmlns:rt="clr-namespace:TechnoLogica.Xamarin.ResourceTranslator;assembly=TechnoLogica.Xamarin"
         xmlns:tl="clr-namespace:TechnoLogica.Xamarin.Controls;assembly=TechnoLogica.Xamarin"
+        xmlns:m="clr-namespace:IARA.Mobile.Insp.Models"
         xmlns:conv="clr-namespace:IARA.Mobile.Insp.Converters"
         x:Class="IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.DeclarationCatchDialog.DeclarationCatchDialog"
         x:Name="dialog"
@@ -64,7 +65,28 @@
                                 AllowEmptyDialog="True"
                                 IsVisible="{Binding BindingContext.SubjectType, Converter={StaticResource IsSubjectNotNNN}, Source={Reference dialog}}"
                                 DialogAddButtonText="{rt:Translate Add, Group=Common}"
-                                DialogAddCommand="{Binding AddPage}" />
+                                DialogAddCommand="{Binding AddPage}">
+                            <DataTemplate>
+                                <Grid x:DataType="nom:DeclarationLogBookPageDto"
+                                        RowDefinitions="Auto,Auto,1"
+                                        RowSpacing="0">
+                                    <tl:TLRichLabel Margin="5,5,2,0">
+                                        <Span Text="{Binding Num}" />
+                                        <Span Text=" " />
+                                        <Span Text="{rt:Translate Status, Group=DeclarationCatch}" />
+                                        <Span Text=": " />
+                                        <Span Text="{Binding StatusString, Converter={StaticResource StatusToText}}" />
+                                    </tl:TLRichLabel>
+                                    <Label Grid.Row="1"
+                                            FontSize="Small"
+                                            Margin="5,0"
+                                            Text="{Binding Date, Converter={StaticResource DateToString}}" />
+                                    <BoxView Grid.Row="2"
+                                            Margin="5,0"
+                                            Color="LightGray" />
+                                </Grid>
+                            </DataTemplate>
+                        </tl:TLPicker>
 
                         <tl:TLDatePicker Title="{rt:Translate SaleDate, Group=DeclarationCatch}"
                                 ValidState="{Binding LogBookPageDate}"
@@ -116,12 +138,6 @@
                             ValidState="{Binding CatchCount}"
                             Keyboard="Numeric"
                             IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}" />
-                    <tl:TLNativePicker Title="{rt:Translate CatchType, Group=DeclarationCatch}"
-                            ItemsSource="{Binding CatchTypes}"
-                            ValidState="{Binding CatchType}"
-                            DisplayValue="DisplayValue"
-                            IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}"
-                            IsVisible="{Binding HasCatchType}" />
                     <tl:TLEntry Title="{rt:Translate CatchQuantity, Group=DeclarationCatch}"
                             ValidState="{Binding CatchQuantity}"
                             Keyboard="Numeric"
@@ -134,7 +150,7 @@
                     <tl:TLCheckView Text="{rt:Translate UndersizedFish, Group=DeclarationCatch}"
                             ValidState="{Binding UndersizedFish}"
                             IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}"
-                                    IsVisible="{Binding HasUndersizedFishControl}"/>
+                            IsVisible="{Binding HasUndersizedFishControl}" />
                 </tl:TLAutoGrid>
             </sv:SectionView>
             <Button Command="{Binding Save}"

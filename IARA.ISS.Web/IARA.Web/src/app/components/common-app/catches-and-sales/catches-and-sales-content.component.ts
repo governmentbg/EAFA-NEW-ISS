@@ -102,18 +102,21 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
     public readonly canEditFirstSaleLogBookRecords: boolean;
     public readonly canCancelFirstSaleLogBookRecords: boolean;
     public readonly canEditNumberFirstSaleLogBookRecords: boolean;
+    public readonly canEditCommonDataFirstSaleLogBookRecords: boolean;
 
     public readonly canReadAdmissionLogBookRecords: boolean;
     public readonly canAddAdmissionLogBookRecords: boolean;
     public readonly canEditAdmissionLogBookRecords: boolean;
     public readonly canCancelAdmissionLogBookRecords: boolean;
     public readonly canEditNumberAdmissionLogBookRecords: boolean;
+    public readonly canEditCommonDataAdmissionLogBookRecords: boolean;
 
     public readonly canReadTransportationLogBookRecords: boolean;
     public readonly canAddTransportationLogBookRecords: boolean;
     public readonly canEditTransportationLogBookRecords: boolean;
     public readonly canCancelTransportationLogBookRecords: boolean;
     public readonly canEditNumberTransportationLogBookRecords: boolean;
+    public readonly canEditCommonDataTransportationLogBookRecords: boolean;
 
     public readonly canReadAquacultureLogBookRecords: boolean;
     public readonly canAddAquacultureLogBookRecords: boolean;
@@ -212,18 +215,21 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
         this.canEditFirstSaleLogBookRecords = permissions.has(PermissionsEnum.FirstSaleLogBookPageEdit);
         this.canCancelFirstSaleLogBookRecords = permissions.has(PermissionsEnum.FirstSaleLogBookPageCancel);
         this.canEditNumberFirstSaleLogBookRecords = permissions.has(PermissionsEnum.FirstSaleLogBookPageEditNumber);
+        this.canEditCommonDataFirstSaleLogBookRecords = permissions.has(PermissionsEnum.FirstSaleLogBookPageEditCommonData);
 
         this.canReadAdmissionLogBookRecords = permissions.has(PermissionsEnum.AdmissionLogBookRead) || permissions.has(PermissionsEnum.AdmissionLogBookPageReadAll);
         this.canAddAdmissionLogBookRecords = permissions.has(PermissionsEnum.AdmissionLogBookPageAdd);
         this.canEditAdmissionLogBookRecords = permissions.has(PermissionsEnum.AdmissionLogBookPageEdit);
         this.canCancelAdmissionLogBookRecords = permissions.has(PermissionsEnum.AdmissionLogBookPageCancel);
         this.canEditNumberAdmissionLogBookRecords = permissions.has(PermissionsEnum.AdmissionLogBookPageEditNumber);
+        this.canEditCommonDataAdmissionLogBookRecords = permissions.has(PermissionsEnum.AdmissionLogBookPageEditCommonData);
 
         this.canReadTransportationLogBookRecords = permissions.has(PermissionsEnum.TransportationLogBookRead) || permissions.has(PermissionsEnum.TransportationLogBookPageReadAll);
         this.canAddTransportationLogBookRecords = permissions.has(PermissionsEnum.TransportationLogBookPageAdd);
         this.canEditTransportationLogBookRecords = permissions.has(PermissionsEnum.TransportationLogBookPageEdit);
         this.canCancelTransportationLogBookRecords = permissions.has(PermissionsEnum.TransportationLogBookPageCancel);
         this.canEditNumberTransportationLogBookRecords = permissions.has(PermissionsEnum.TransportationLogBookPageEditNumber);
+        this.canEditCommonDataTransportationLogBookRecords = permissions.has(PermissionsEnum.TransportationLogBookPageEditCommonData);
 
         this.canReadAquacultureLogBookRecords = permissions.has(PermissionsEnum.AquacultureLogBookRead) || permissions.has(PermissionsEnum.AquacultureLogBookPageReadAll);
         this.canAddAquacultureLogBookRecords = permissions.has(PermissionsEnum.AquacultureLogBookPageAdd);
@@ -580,7 +586,8 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
                 pageNumber: logBookPage.pageNumber,
                 pageStatus: logBookPage.status,
                 service: this.service,
-                viewMode: viewMode
+                viewMode: viewMode,
+                canEditCommonDataPermission: this.canEditCommonDataTransportationLogBookRecords
             });
 
             this.openEditTransportationLogBookPageDialog(data, viewMode);
@@ -1190,7 +1197,8 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
             pageNumber: logBookPage.pageNumber,
             pageStatus: logBookPage.status,
             service: this.service,
-            viewMode: viewMode
+            viewMode: viewMode,
+            canEditCommonDataPermission: this.canEditCommonDataAdmissionLogBookRecords
         });
 
         if (viewMode === true) {
@@ -1239,7 +1247,8 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
             pageNumber: logBookPage.pageNumber,
             pageStatus: logBookPage.status,
             service: this.service,
-            viewMode: viewMode
+            viewMode: viewMode,
+            canEditCommonDataPermission: this.canEditCommonDataFirstSaleLogBookRecords
         });
 
         if (viewMode === true) {

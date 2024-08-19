@@ -7,6 +7,7 @@
         xmlns:rt="clr-namespace:TechnoLogica.Xamarin.ResourceTranslator;assembly=TechnoLogica.Xamarin"
         xmlns:local="clr-namespace:IARA.Mobile.Insp.FlyoutPages.Inspections.InspectionWater"
         xmlns:h="clr-namespace:TechnoLogica.Xamarin.Helpers;assembly=TechnoLogica.Xamarin"
+        xmlns:m="clr-namespace:IARA.Mobile.Insp.Application.DTObjects.Nomenclatures;assembly=IARA.Mobile.Insp.Application"
         x:Class="IARA.Mobile.Insp.FlyoutPages.Inspections.InspectionWater.InspectionWaterPage"
         x:DataType="local:InspectionWaterViewModel"
         x:TypeArguments="local:InspectionWaterViewModel"
@@ -15,8 +16,7 @@
         Title="{rt:Translate Title, Group=InspectionWater}"
         BackgroundColor="{StaticResource BackgroundColor}">
     <lc:TLForwardSections x:Name="forwardSections">
-        <sv:SectionView Image="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Info}, Color=White, Size=100}"
-                Text="{rt:Translate GeneralInfo, Group=GeneralInfo}">
+        <sv:SectionView Image="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Info}, Color=White, Size=100}" Text="{rt:Translate GeneralInfo, Group=GeneralInfo}">
             <StackLayout Padding="10">
                 <lc:InspectionGeneralInfoView BindingContext="{Binding InspectionGeneralInfo}" />
                 <lc:PatrolVehiclesView BindingContext="{Binding PatrolVehicles}" />
@@ -38,8 +38,7 @@
                 <lc:TLGeneratedToggles IsEnabled="{Binding ActivityType, Converter={StaticResource IsNotReview}}"
                         IsVisible="{Binding Toggles.Value.Count, Converter={StaticResource NotEqual}, ConverterParameter=0}"
                         ValidState="{Binding Toggles}" />
-                <lc:TLLocationView Title="{rt:Translate GPSCoordinates, Group=InspectionWater}"
-                        ValidState="{Binding Location}" />
+                <lc:TLLocationView Title="{rt:Translate GPSCoordinates, Group=InspectionWater}" ValidState="{Binding Location}" />
                 <lc:WaterFishingGearsView BindingContext="{Binding FishingGears}" />
                 <lc:WaterVesselsView BindingContext="{Binding Vessels}" />
                 <lc:EnginesView BindingContext="{Binding Engines}" />
@@ -47,7 +46,73 @@
             </StackLayout>
         </sv:SectionView>
         <lc:AdditionalInfoView BindingContext="{Binding AdditionalInfo}" />
-        
+        <sv:SectionView Image="{FontImage FontFamily=FA, Glyph={Static h:IconFont.PersonRunning}, Color=White, Size=100}"
+                Text="{rt:Translate Offenders, Group=InspectionWater}"
+                IsExpanded="False">
+            <StackLayout Padding="10">
+                <tl:TLCheckView Text="{rt:Translate HasOffenders, Group=InspectionWater}"
+                        ValidState="{Binding HasOffenders}"
+                        IsEnabled="{Binding ActivityType, Converter={StaticResource IsNotReview}}" />
+
+                <tl:TLResponsiveTable Title="{rt:Translate OffendersTableTitle, Group=InspectionWater}"
+                        ValidState="{Binding Offenders}"
+                        IsVisible="{Binding HasOffenders.Value}">
+                    <tl:TLResponsiveTable.TableColumns>
+                        <tl:TLTableColumn Text="{rt:Translate FirstName, Group=Common}" Width="*" />
+                        <tl:TLTableColumn Text="{rt:Translate MiddleName, Group=Common}" Width="*" />
+                        <tl:TLTableColumn Text="{rt:Translate LastName, Group=Common}" Width="*" />
+                        <tl:TLTableColumn Text="{rt:Translate EGN, Group=Common}" Width="*" />
+                        <tl:TLTableColumn Width="{Binding BindingContext.ActivityType, Converter={StaticResource ReviewToWidth}, ConverterParameter=40}" />
+                    </tl:TLResponsiveTable.TableColumns>
+                    <tl:TLResponsiveTable.DefaultItemTemplate>
+                        <DataTemplate>
+                            <tl:TLTableRow x:DataType="m:InspectionSubjectPersonnelDto">
+                                <Label Text="{Binding FirstName}"
+                                        LineBreakMode="WordWrap"
+                                        VerticalOptions="Center" />
+                                <Label Text="{Binding MiddleName}"
+                                        LineBreakMode="WordWrap"
+                                        VerticalOptions="Center" />
+                                <Label Text="{Binding LastName}"
+                                        LineBreakMode="WordWrap"
+                                        VerticalOptions="Center" />
+                                <Label Text="{Binding EgnLnc.EgnLnc}"
+                                        LineBreakMode="WordWrap"
+                                        VerticalOptions="Center" />
+                                <StackLayout Orientation="Horizontal" VerticalOptions="Start">
+                                    <ImageButton Source="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Eye}, Size=20, Color=White}"
+                                            Padding="10"
+                                            Command="{Binding BindingContext.ViewOffender, Source={Reference page}}"
+                                            CommandParameter="{Binding}" />
+                                    <ImageButton Source="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Pencil}, Size=20, Color=White}"
+                                            Padding="10"
+                                            Command="{Binding BindingContext.EditOffender, Source={Reference page}}"
+                                            CommandParameter="{Binding}"
+                                            IsVisible="{Binding BindingContext.ActivityType, Converter={StaticResource IsNotReview}, Source={Reference page}}" />
+                                    <ImageButton Source="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Trash}, Size=20, Color=White}"
+                                            Padding="10"
+                                            Command="{Binding BindingContext.RemoveOffender, Source={Reference page}}"
+                                            CommandParameter="{Binding}"
+                                            IsVisible="{Binding BindingContext.ActivityType, Converter={StaticResource IsNotReview}, Source={Reference page}}" />
+                                </StackLayout>
+                            </tl:TLTableRow>
+                        </DataTemplate>
+                    </tl:TLResponsiveTable.DefaultItemTemplate>
+                    <tl:TLResponsivleTableChild TableLayout="Table" />
+                    <tl:TLResponsivleTableChild TableLayout="Sections" QueryWidth="800" />
+                    <tl:TLResponsiveTable.FooterView>
+                        <Button Text="{rt:Translate Add, Group=Common}"
+                                Command="{Binding AddOffender}"
+                                ImageSource="{FontImage FontFamily=FA, Glyph={Static h:IconFont.CirclePlus}, Size=25, Color=White}"
+                                HorizontalOptions="End"
+                                IsVisible="{Binding BindingContext.Inspection.ActivityType, Converter={StaticResource IsNotReview}, Source={Reference page}}" />
+                    </tl:TLResponsiveTable.FooterView>
+                    <tl:TLResponsiveTable.EmptyView>
+                        <Label Text="{rt:Translate NoInformation, Group=Common}" Margin="20,10" />
+                    </tl:TLResponsiveTable.EmptyView>
+                </tl:TLResponsiveTable>
+            </StackLayout>
+        </sv:SectionView>
         <lc:InspectionFilesView BindingContext="{Binding InspectionFiles}" />
         <lc:SignaturesView BindingContext="{Binding Signatures}" />
         <lc:SaveButtonsLayout />

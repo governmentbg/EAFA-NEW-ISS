@@ -156,7 +156,7 @@ namespace IARA.Mobile.Insp.Helpers
                                 {
                                     LogBookModel logBook = new LogBookModel(shipCatches)
                                     {
-                                        Pages = pages?.FindAll(s => s.LogBookId == f.Id) ?? new List<LogBookPageDto>(),
+                                        Pages = pages?.FindAll(s => s.LogBookId == f.Id).OrderByDescending(x => x.IssuedOn).ToList() ?? new List<LogBookPageDto>(),
                                         Dto = new InspectionLogBookDto
                                         {
                                             LogBookId = f.Id,

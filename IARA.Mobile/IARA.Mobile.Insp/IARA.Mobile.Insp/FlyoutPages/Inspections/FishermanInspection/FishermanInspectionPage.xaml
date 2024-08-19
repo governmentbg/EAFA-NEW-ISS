@@ -15,8 +15,7 @@
         Title="{rt:Translate Title, Group=FishermanInspection}"
         BackgroundColor="{StaticResource BackgroundColor}">
     <lc:TLForwardSections x:Name="forwardSections">
-        <sv:SectionView Image="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Info}, Color=White, Size=100}"
-                Text="{rt:Translate GeneralInfo, Group=GeneralInfo}">
+        <sv:SectionView Image="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Info}, Color=White, Size=100}" Text="{rt:Translate GeneralInfo, Group=GeneralInfo}">
             <StackLayout Padding="10">
                 <lc:InspectionGeneralInfoView BindingContext="{Binding InspectionGeneralInfo}" />
                 <lc:PatrolVehiclesView BindingContext="{Binding PatrolVehicles}" />
@@ -32,15 +31,18 @@
                 Text="{rt:Translate FishermanInspection, Group=FishermanInspection}"
                 IsExpanded="False">
             <StackLayout Padding="10">
-                <lc:PersonView Title="{rt:Translate InspectedPerson, Group=FishermanInspection}"
-                        BindingContext="{Binding InspectedPerson}" />
+                <lc:PersonView Title="{rt:Translate InspectedPerson, Group=FishermanInspection}" BindingContext="{Binding InspectedPerson}" />
                 <tl:TLCheckView Text="{rt:Translate HasTicket, Group=FishermanInspection}"
                         ValidState="{Binding HasTicket}"
                         IsEnabled="{Binding ActivityType, Converter={StaticResource IsNotReview}}" />
-                <Grid ColumnDefinitions="*,Auto"
-                        IsVisible="{Binding HasTicket.Value}">
-                    <tl:TLEntry Title="{rt:Translate TicketNumber, Group=FishermanInspection}"
-                            ValidState="{Binding TicketNumber}"
+                <Grid ColumnDefinitions="*,Auto" IsVisible="{Binding HasTicket.Value}">
+                    <tl:TLPicker IsTitleVisible="False"
+                            ValidState="{Binding TicketNumberSelect}"
+                            ItemsSource="{Binding FishingTickets}"
+                            AllowEmptyDialog="True"
+                            DisplayValue="Name"
+                            DialogAddButtonText="{rt:Translate Add, Group=Common}"
+                            DialogAddCommand="{Binding AddTicket}"
                             IsEnabled="{Binding ActivityType, Converter={StaticResource IsNotReview}}" />
                     <ImageButton Grid.Column="1"
                             Padding="10"
@@ -67,8 +69,7 @@
                 IsExpanded="False">
             <StackLayout Padding="10">
                 <lc:CatchInspectionsView BindingContext="{Binding Catches}" />
-                <lc:TLGeneratedToggles ValidState="{Binding InspectionToggles}"
-                        IsEnabled="{Binding ActivityType, Converter={StaticResource IsNotReview}}" />
+                <lc:TLGeneratedToggles ValidState="{Binding InspectionToggles}" IsEnabled="{Binding ActivityType, Converter={StaticResource IsNotReview}}" />
             </StackLayout>
         </sv:SectionView>
         <lc:AdditionalInfoView BindingContext="{Binding AdditionalInfo}">

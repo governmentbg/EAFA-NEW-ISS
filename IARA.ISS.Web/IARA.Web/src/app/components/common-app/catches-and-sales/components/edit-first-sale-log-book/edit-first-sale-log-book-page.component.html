@@ -84,7 +84,14 @@
     <tl-expansion-panel title="{{ 'catches-and-sales.first-sale-basic-information-and-vendor-panel' | tlTranslate }}"
                         tooltipResourceName="catches-and-sales.first-sale-basic-information-and-vendor-panel-helper"
                         [validityChecker]="form">
-        <div fxFlex="100" fxLayout="row">
+        <div *ngIf="!viewMode && hasEditCommonDataPermission" fxFlexFill fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="end center">
+            <button mat-raised-button
+                    color="accent"
+                    (click)="editBasicInformation()">
+                {{ 'catches-and-sales.first-sale-edit-basic-information' | tlTranslate }}
+            </button>
+        </div>
+        <div fxFlexFill fxLayout="row" fxLayoutGap="1em">
             <common-log-book-page-data fxFlexFill
                                        formControlName="commonLogBookPageDataControl"
                                        validityChecker

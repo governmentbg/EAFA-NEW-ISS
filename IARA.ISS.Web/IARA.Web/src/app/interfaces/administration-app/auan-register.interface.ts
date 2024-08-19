@@ -12,6 +12,7 @@ import { AuanConfiscationActionsNomenclatureDTO } from '@app/models/generated/dt
 import { InspDeliveryTypesNomenclatureDTO } from '@app/models/generated/dtos/InspDeliveryTypesNomenclatureDTO';
 import { AuanInspectionDTO } from '@app/models/generated/dtos/AuanInspectionDTO';
 import { AuanLawSectionDTO } from '@app/models/generated/dtos/AuanLawSectionDTO';
+import { AuanDrafterNomenclatureDTO } from '@app/models/generated/dtos/AuanDrafterNomenclatureDTO';
 
 export interface IAuanRegisterService extends IBaseAuditService {
     getAllAuans(request: GridRequestModel<AuanRegisterFilters>): Observable<GridResultModel<AuanRegisterDTO>>;
@@ -27,7 +28,7 @@ export interface IAuanRegisterService extends IBaseAuditService {
     getAuanReportData(inspectionId: number): Observable<AuanReportDataDTO>;
     downloadFile(fileId: number, fileName: string): Observable<boolean>;
 
-    getAllDrafters(): Observable<NomenclatureDTO<number>[]>;
+    getAllDrafters(): Observable<AuanDrafterNomenclatureDTO[]>;
     getInspectionDrafters(inspectionId: number): Observable<NomenclatureDTO<number>[]>;
     getAllInspectionReports(): Observable<NomenclatureDTO<number>[]>;
 

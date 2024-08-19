@@ -36,6 +36,10 @@ import { GetControlErrorLabelTextCallback } from '@app/shared/components/input-c
 import { TLError } from '@app/shared/components/input-controls/models/tl-error.model';
 import { LogBookPageEditExceptionDTO } from '@app/models/generated/dtos/LogBookPageEditExceptionDTO';
 import { SecurityService } from '@app/services/common-app/security.service';
+import { TLMatDialog } from '@app/shared/components/dialog-wrapper/tl-mat-dialog';
+import { AddLogBookPageWizardComponent } from '../add-log-book-page-wizard/add-log-book-page-wizard.component';
+import { AddLogBookPageDialogParams } from '../add-log-book-page-wizard/models/add-log-book-page-wizard-dialog-params.model';
+import { HeaderCloseFunction } from '@app/shared/components/dialog-wrapper/interfaces/header-cancel-button.interface';
 
 @Component({
     selector: 'edit-first-sale-log-book-page',
@@ -56,6 +60,7 @@ export class EditFirstSaleLogBookPageComponent implements OnInit, AfterViewInit,
     public noAvailableProducts: boolean = false;
     public isLogBookPageDateLockedError: boolean = false;
     public isCommonLogBookPageDataReadonly: boolean = true;
+    public hasEditCommonDataPermission: boolean = false;
 
     public getControlErrorLabelTextMethod: GetControlErrorLabelTextCallback = this.getControlErrorLabelText.bind(this);
 
@@ -83,6 +88,7 @@ export class EditFirstSaleLogBookPageComponent implements OnInit, AfterViewInit,
     private readonly snackbar: MatSnackBar;
     private readonly confirmDialog: TLConfirmDialog;
     private readonly datePipe: DatePipe;
+    private readonly editBasicInformationDialog: TLMatDialog<AddLogBookPageWizardComponent>;
     private readonly systemParametersService: SystemParametersService;
 
     public constructor(
@@ -91,6 +97,7 @@ export class EditFirstSaleLogBookPageComponent implements OnInit, AfterViewInit,
         snackbar: MatSnackBar,
         confirmDialog: TLConfirmDialog,
         datePipe: DatePipe,
+        editBasicInformationDialog: TLMatDialog<AddLogBookPageWizardComponent>,
         systemParametersService: SystemParametersService,
         authService: SecurityService
     ) {
@@ -99,6 +106,7 @@ export class EditFirstSaleLogBookPageComponent implements OnInit, AfterViewInit,
         this.snackbar = snackbar;
         this.confirmDialog = confirmDialog;
         this.datePipe = datePipe;
+        this.editBasicInformationDialog = editBasicInformationDialog;
         this.systemParametersService = systemParametersService;
 
         this.currentUserId = authService.User!.userId;
@@ -225,6 +233,7 @@ export class EditFirstSaleLogBookPageComponent implements OnInit, AfterViewInit,
         this.pageStatus = data.pageStatus;
         this.shipPageDocumentData = data.shipPageDocumentData;
         this.logBookTypeId = data.logBookTypeId;
+        this.hasEditCommonDataPermission = data.canEditCommonDataPermission;
 
         if (this.pageStatus === LogBookPageStatusesEnum.Missing) {
             this.isAdd = false;
@@ -285,6 +294,84 @@ export class EditFirstSaleLogBookPageComponent implements OnInit, AfterViewInit,
 
     public dialogButtonClicked(actionInfo: IActionInfo, dialogClose: DialogCloseCallback): void {
         dialogClose();
+    }
+
+    public editBasicInformation(): void {
+        const title: string = this.translationService.getValue('catches-and-sales.edit-first-sale-page-basic-information-dialog-title');
+
+        if (this.hasEditCommonDataPermission) {
+            this.editBasicInformationDialog.open({
+                title: title,
+                TCtor: AddLogBookPageWizardComponent,
+                translteService: this.translationService,
+                viewMode: false,
+                headerCancelButton: {
+                    cancelBtnClicked: this.closeEditBasicInformationDialogBtnClicked.bind(this)
+                },
+                saveBtn: {
+                    id: 'save',
+                    color: 'accent',
+                    translateValue: this.translationService.getValue('catches-and-sales.edit-first-sale-page-basic-information-ok-btn')
+                },
+                cancelBtn: {
+                    id: 'cancel',
+                    color: 'primary',
+                    translateValue: this.translationService.getValue('common.cancel'),
+                },
+                componentData: new AddLogBookPageDialogParams({
+                    service: this.service,
+                    logBookType: this.logBookType,
+                    logBookId: this.logBookId,
+                    logBookTypeId: this.logBookTypeId,
+                    pageNumber: this.pageNumber,
+                    editLogBookPageBasicInfo: true
+                }),
+                disableDialogClose: true
+            }, '1500px').subscribe({
+                next: (result: CommonLogBookPageDataDTO | undefined) => {
+                    if (result !== undefined && result !== null) {
+                        this.form.get('commonLogBookPageDataControl')!.setValue(result);
+
+                        if (result.admissionDocumentId !== undefined && result.admissionDocumentId !== null) {
+                            this.service.getPossibleProductsByAdmissionDocument(result.admissionDocumentId, LogBookPageDocumentTypesEnum.FirstSaleDocument).subscribe({
+                                next: (products: LogBookPageProductDTO[]) => {
+                                    this.originPossibleProducts = products;
+                                    this.model.originalPossibleProducts = [];
+
+                                    this.form.get('productsControl')!.setValue(products);
+                                }
+                            });
+                        }
+                        else if (result.transportationDocumentId !== undefined && result.transportationDocumentId !== null) {
+                            this.service.getPossibleProductsByTransportationDocument(result.transportationDocumentId, LogBookPageDocumentTypesEnum.FirstSaleDocument).subscribe({
+                                next: (products: LogBookPageProductDTO[]) => {
+                                    this.originPossibleProducts = products;
+                                    this.model.originalPossibleProducts = [];
+
+                                    this.form.get('productsControl')!.setValue(products);
+                                }
+                            });
+                        }
+                        else if (result.originDeclarationId !== undefined && result.originDeclarationId !== null) {
+                            this.service.getPossibleProductsByOriginDeclarationId(result.originDeclarationId, LogBookPageDocumentTypesEnum.FirstSaleDocument).subscribe({
+                                next: (products: LogBookPageProductDTO[]) => {
+                                    this.originPossibleProducts = products;
+                                    this.model.originalPossibleProducts = [];
+
+                                    this.form.get('productsControl')!.setValue(products);
+                                }
+                            });
+                        }
+                        else {
+                            this.originPossibleProducts = [];
+                            this.model.originalPossibleProducts = [];
+
+                            this.form.get('productsControl')!.setValue([]);
+                        }
+                    }
+                }
+            });
+        }
     }
 
     public getControlErrorLabelText(controlName: string, errorValue: unknown, errorCode: string): TLError | undefined {
@@ -377,10 +464,7 @@ export class EditFirstSaleLogBookPageComponent implements OnInit, AfterViewInit,
         this.model.products = this.form.get('productsControl')!.value;
         this.model.productsTotalPrice = this.form.get('productsTotalValueControl')!.value;
         this.model.files = this.form.get('filesControl')!.value;
-
-        if (!this.isCommonLogBookPageDataReadonly) {
-            this.model.commonData = this.form.get('commonLogBookPageDataControl')!.value;
-        }
+        this.model.commonData = this.form.get('commonLogBookPageDataControl')!.value;
     }
 
     private addFirstSaleLogBookPage(dialogClose: DialogCloseCallback): void {
@@ -668,5 +752,9 @@ export class EditFirstSaleLogBookPageComponent implements OnInit, AfterViewInit,
 
             return Object.keys(errors).length === 0 ? true : false;
         }
+    }
+
+    private closeEditBasicInformationDialogBtnClicked(closeFn: HeaderCloseFunction): void {
+        closeFn();
     }
 }

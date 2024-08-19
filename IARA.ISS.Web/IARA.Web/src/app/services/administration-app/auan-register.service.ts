@@ -24,6 +24,7 @@ import { SimpleAuditDTO } from '@app/models/generated/dtos/SimpleAuditDTO';
 import { map } from 'rxjs/operators';
 import { AuanStatusEnum } from '@app/enums/auan-status.enum';
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
+import { AuanDrafterNomenclatureDTO } from '@app/models/generated/dtos/AuanDrafterNomenclatureDTO';
 
 @Injectable({
     providedIn: 'root'
@@ -121,8 +122,8 @@ export class AuanRegisterService extends BaseAuditService implements IAuanRegist
         return this.requestService.download(this.area, this.controller, 'DownloadFile', '', { httpParams: params });
     }
 
-    public getAllDrafters(): Observable<NomenclatureDTO<number>[]> {
-        return this.requestService.get(this.area, this.controller, 'GetAllDrafters', { responseTypeCtr: NomenclatureDTO });
+    public getAllDrafters(): Observable<AuanDrafterNomenclatureDTO[]> {
+        return this.requestService.get(this.area, this.controller, 'GetAllDrafters', { responseTypeCtr: AuanDrafterNomenclatureDTO });
     }
 
     public getInspectionDrafters(inspectionId: number): Observable<NomenclatureDTO<number>[]> {

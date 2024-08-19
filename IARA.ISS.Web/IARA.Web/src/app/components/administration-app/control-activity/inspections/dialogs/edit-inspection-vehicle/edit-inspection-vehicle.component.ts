@@ -65,30 +65,14 @@ export class EditInspectionVehicleComponent extends BaseInspectionsComponent imp
         }
 
         const nomenclatureTables = await forkJoin([
-            NomenclatureStore.instance.getNomenclature(
-                NomenclatureTypes.Institutions, this.nomenclatures.getInstitutions.bind(this.nomenclatures), false
-            ),
-            NomenclatureStore.instance.getNomenclature(
-                NomenclatureTypes.TransportVehicleTypes, this.nomenclatures.getTransportVehicleTypes.bind(this.nomenclatures), false
-            ),
-            NomenclatureStore.instance.getNomenclature(
-                NomenclatureTypes.Countries, this.nomenclatures.getCountries.bind(this.nomenclatures), false
-            ),
-            NomenclatureStore.instance.getNomenclature(
-                NomenclatureTypes.Ships, this.nomenclatures.getShips.bind(this.nomenclatures), false
-            ),
-            NomenclatureStore.instance.getNomenclature(
-                NomenclatureTypes.Fishes, this.nomenclatures.getFishTypes.bind(this.nomenclatures), false
-            ),
-            NomenclatureStore.instance.getNomenclature(
-                NomenclatureTypes.CatchTypes, this.nomenclatures.getCatchInspectionTypes.bind(this.nomenclatures), false
-            ),
-            NomenclatureStore.instance.getNomenclature(
-                NomenclatureTypes.CatchZones, this.nomenclatures.getCatchZones.bind(this.nomenclatures), false
-            ),
-            NomenclatureStore.instance.getNomenclature(
-                NomenclatureTypes.CatchPresentations, this.nomenclatures.getCatchPresentations.bind(this.nomenclatures), false
-            ),
+            NomenclatureStore.instance.getNomenclature(NomenclatureTypes.Institutions, this.nomenclatures.getInstitutions.bind(this.nomenclatures), false),
+            NomenclatureStore.instance.getNomenclature(NomenclatureTypes.TransportVehicleTypes, this.nomenclatures.getTransportVehicleTypes.bind(this.nomenclatures), false),
+            NomenclatureStore.instance.getNomenclature(NomenclatureTypes.Countries, this.nomenclatures.getCountries.bind(this.nomenclatures), false),
+            NomenclatureStore.instance.getNomenclature(NomenclatureTypes.Ships, this.nomenclatures.getShips.bind(this.nomenclatures), false),
+            NomenclatureStore.instance.getNomenclature(NomenclatureTypes.Fishes, this.nomenclatures.getFishTypes.bind(this.nomenclatures), false),
+            NomenclatureStore.instance.getNomenclature(NomenclatureTypes.CatchTypes, this.nomenclatures.getCatchInspectionTypes.bind(this.nomenclatures), false),
+            NomenclatureStore.instance.getNomenclature(NomenclatureTypes.CatchZones, this.nomenclatures.getCatchZones.bind(this.nomenclatures), false),
+            NomenclatureStore.instance.getNomenclature(NomenclatureTypes.CatchPresentations, this.nomenclatures.getCatchPresentations.bind(this.nomenclatures), false),
             this.service.getBuyers(),
             this.service.getCheckTypesForInspection(InspectionTypesEnum.IVH)
         ]).toPromise();
@@ -107,8 +91,8 @@ export class EditInspectionVehicleComponent extends BaseInspectionsComponent imp
 
         if (this.id !== null && this.id !== undefined) {
             this.service.get(this.id, this.inspectionCode).subscribe({
-                next: (dto: InspectionTransportVehicleDTO) => {
-                    this.model = dto;
+                next: (inspection: InspectionTransportVehicleDTO) => {
+                    this.model = inspection;
 
                     this.fillForm();
                 }
@@ -123,7 +107,7 @@ export class EditInspectionVehicleComponent extends BaseInspectionsComponent imp
             addressControl: new FormControl(undefined, Validators.maxLength(500)),
             typeControl: new FormControl(undefined, Validators.required),
             countryControl: new FormControl(undefined, Validators.required),
-            vehicleRegNumControl: new FormControl(undefined, Validators.maxLength(20)),
+            vehicleRegNumControl: new FormControl(undefined, [Validators.required, Validators.maxLength(20)]),
             vehicleMarkControl: new FormControl(undefined, Validators.maxLength(50)),
             vehicleModelControl: new FormControl(undefined, Validators.maxLength(50)),
             vehicleTrailerNumControl: new FormControl(undefined, Validators.maxLength(20)),
@@ -165,7 +149,12 @@ export class EditInspectionVehicleComponent extends BaseInspectionsComponent imp
 
         this.form.get('ownerControl')!.valueChanges.subscribe({
             next: (owner: InspectionSubjectPersonnelDTO) => {
-                this.isLegalOwner = owner.isLegal ?? false;
+                if (owner !== undefined && owner !== null) {
+                    this.isLegalOwner = owner.isLegal ?? false;
+                }
+                else {
+                    this.isLegalOwner = false;
+                }
             }
         });
     }
@@ -180,8 +169,6 @@ export class EditInspectionVehicleComponent extends BaseInspectionsComponent imp
                 byEmergencySignal: this.model.byEmergencySignal,
             }));
 
-            this.form.get('filesControl')!.setValue(this.model.files);
-
             this.form.get('additionalInfoControl')!.setValue(new InspectionAdditionalInfoModel({
                 actionsTaken: this.model.actionsTaken,
                 administrativeViolation: this.model.administrativeViolation,
@@ -192,33 +179,27 @@ export class EditInspectionVehicleComponent extends BaseInspectionsComponent imp
 
             this.form.get('mapControl')!.setValue(this.model.inspectionLocation);
             this.form.get('addressControl')!.setValue(this.model.inspectionAddress);
-
             this.form.get('transporterCommentControl')!.setValue(this.model.transporterComment);
-
-            this.form.get('typeControl')!.setValue(this.vehicleTypes.find(f => f.value === this.model.vehicleTypeId));
-            this.form.get('countryControl')!.setValue(this.countries.find(f => f.value === this.model.countryId));
+            this.form.get('typeControl')!.setValue(this.vehicleTypes.find(x => x.value === this.model.vehicleTypeId));
+            this.form.get('countryControl')!.setValue(this.countries.find(x => x.value === this.model.countryId));
             this.form.get('vehicleRegNumControl')!.setValue(this.model.tractorLicensePlateNum);
             this.form.get('vehicleMarkControl')!.setValue(this.model.tractorBrand);
             this.form.get('vehicleModelControl')!.setValue(this.model.tractorModel);
             this.form.get('vehicleTrailerNumControl')!.setValue(this.model.trailerLicensePlateNum);
             this.form.get('destinationControl')!.setValue(this.model.transportDestination);
-
             this.form.get('sealInstitutionControl')!.setValue(this.institutions.find(f => f.value === this.model.sealInstitutionId));
             this.form.get('sealConditionControl')!.setValue(this.model.sealCondition);
-
             this.form.get('catchTogglesControl')!.setValue(this.model.checks);
+            this.form.get('filesControl')!.setValue(this.model.files);
 
             this.hasSeal = this.model.isSealed === true;
             this.form.get('hasSealControl')!.setValue(this.model.isSealed);
-
             this.form.get('catchesControl')!.setValue(this.model.catchMeasures);
 
             if (this.model.personnel !== null && this.model.personnel !== undefined) {
-                this.form.get('ownerControl')!.setValue(
-                    this.model.personnel.find(f => f.type === InspectedPersonTypeEnum.OwnerLegal || f.type === InspectedPersonTypeEnum.OwnerPers)
-                );
+                this.form.get('ownerControl')!.setValue(this.model.personnel.find(x => x.type === InspectedPersonTypeEnum.OwnerLegal || x.type === InspectedPersonTypeEnum.OwnerPers));
 
-                const driver = this.model.personnel.find(f => f.type === InspectedPersonTypeEnum.Driver);
+                const driver = this.model.personnel.find(x => x.type === InspectedPersonTypeEnum.Driver);
 
                 if (driver !== undefined && driver !== null && driver.egnLnc !== null && driver.egnLnc !== undefined) {
                     this.form.get('driverControl')!.setValue(driver);
@@ -227,7 +208,7 @@ export class EditInspectionVehicleComponent extends BaseInspectionsComponent imp
                     this.form.get('ownerIsDriverControl')!.setValue(true);
                 }
 
-                const buyer = this.model.personnel.find(f => f.type === InspectedPersonTypeEnum.RegBuyer);
+                const buyer = this.model.personnel.find(x => x.type === InspectedPersonTypeEnum.RegBuyer);
 
                 if (buyer !== null && buyer !== undefined) {
                     this.form.get('buyerControl')!.setValue(new InspectedBuyerNomenclatureDTO({
@@ -256,39 +237,38 @@ export class EditInspectionVehicleComponent extends BaseInspectionsComponent imp
         const additionalInfo: InspectionAdditionalInfoModel = this.form.get('additionalInfoControl')!.value;
         const buyer: InspectedBuyerNomenclatureDTO = this.form.get('buyerControl')!.value;
 
-        this.model = new InspectionTransportVehicleDTO({
-            id: this.model.id,
-            startDate: generalInfo.startDate,
-            endDate: generalInfo.endDate,
-            inspectors: generalInfo.inspectors,
-            reportNum: generalInfo.reportNum,
-            files: this.form.get('filesControl')!.value,
-            actionsTaken: additionalInfo?.actionsTaken,
-            administrativeViolation: additionalInfo?.administrativeViolation === true,
-            byEmergencySignal: generalInfo.byEmergencySignal,
-            inspectionType: InspectionTypesEnum.IVH,
-            inspectorComment: additionalInfo?.inspectorComment,
-            violatedRegulations: additionalInfo?.violatedRegulations,
-            isActive: true,
-            transporterComment: this.form.get('transporterCommentControl')!.value,
-            checks: this.form.get('catchTogglesControl')!.value,
-            inspectionAddress: this.form.get('addressControl')!.value,
-            inspectionLocation: this.form.get('mapControl')!.value,
-            vehicleTypeId: this.form.get('typeControl')!.value?.value,
-            countryId: this.form.get('countryControl')!.value?.value,
-            tractorLicensePlateNum: this.form.get('vehicleRegNumControl')!.value,
-            tractorBrand: this.form.get('vehicleMarkControl')!.value,
-            tractorModel: this.form.get('vehicleModelControl')!.value,
-            trailerLicensePlateNum: this.form.get('vehicleTrailerNumControl')!.value,
-            transportDestination: this.form.get('destinationControl')!.value,
-            isSealed: this.form.get('hasSealControl')!.value,
-            sealInstitutionId: this.form.get('sealInstitutionControl')!.value?.value,
-            sealCondition: this.form.get('sealConditionControl')!.value,
-            catchMeasures: this.form.get('catchesControl')!.value,
-            observationTexts: [
-                additionalInfo?.violation,
-            ].filter(f => f !== null && f !== undefined) as InspectionObservationTextDTO[]
-        });
+        this.model.inspectionType = InspectionTypesEnum.IVH;
+        this.model.isActive = true;
+        this.model.startDate = generalInfo?.startDate;
+        this.model.endDate = generalInfo?.endDate;
+        this.model.inspectors = generalInfo?.inspectors;
+        this.model.reportNum = generalInfo?.reportNum;
+        this.model.byEmergencySignal = generalInfo?.byEmergencySignal;
+        this.model.actionsTaken = additionalInfo?.actionsTaken;
+        this.model.administrativeViolation = additionalInfo?.administrativeViolation === true;
+        this.model.inspectorComment = additionalInfo?.inspectorComment;
+        this.model.violatedRegulations = additionalInfo?.violatedRegulations;
+
+        this.model.files = this.form.get('filesControl')!.value;
+        this.model.transporterComment = this.form.get('transporterCommentControl')!.value;
+        this.model.checks = this.form.get('catchTogglesControl')!.value;
+        this.model.inspectionAddress = this.form.get('addressControl')!.value;
+        this.model.inspectionLocation = this.form.get('mapControl')!.value;
+        this.model.vehicleTypeId = this.form.get('typeControl')!.value?.value;
+        this.model.countryId = this.form.get('countryControl')!.value?.value;
+        this.model.tractorLicensePlateNum = this.form.get('vehicleRegNumControl')!.value;
+        this.model.tractorBrand = this.form.get('vehicleMarkControl')!.value;
+        this.model.tractorModel = this.form.get('vehicleModelControl')!.value;
+        this.model.trailerLicensePlateNum = this.form.get('vehicleTrailerNumControl')!.value;
+        this.model.transportDestination = this.form.get('destinationControl')!.value;
+        this.model.isSealed = this.form.get('hasSealControl')!.value;
+        this.model.sealInstitutionId = this.form.get('sealInstitutionControl')!.value?.value;
+        this.model.sealCondition = this.form.get('sealConditionControl')!.value;
+        this.model.catchMeasures = this.form.get('catchesControl')!.value;
+
+        this.model.observationTexts = [
+            additionalInfo?.violation,
+        ].filter(x => x !== null && x !== undefined) as InspectionObservationTextDTO[];
 
         this.model.personnel = [];
         const driver: InspectionSubjectPersonnelDTO | undefined = this.form.get('driverControl')!.value;

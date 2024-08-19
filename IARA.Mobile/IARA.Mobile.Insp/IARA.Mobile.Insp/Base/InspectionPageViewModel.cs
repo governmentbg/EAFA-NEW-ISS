@@ -2,11 +2,13 @@
 using IARA.Mobile.Domain.Enums;
 using IARA.Mobile.Domain.Models;
 using IARA.Mobile.Insp.Application.DTObjects.Inspections;
+using IARA.Mobile.Insp.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Insp.Application.Interfaces.Transactions;
 using IARA.Mobile.Insp.Domain.Enums;
 using IARA.Mobile.Insp.FlyoutPages.InspectionsPage;
 using IARA.Mobile.Insp.Helpers;
 using System;
+using System.Collections.Generic;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -43,6 +45,16 @@ namespace IARA.Mobile.Insp.Base
             get => _inspectionState;
             set => SetProperty(ref _inspectionState, value);
         }
+
+        public List<InspectionSubjectPersonnelDto> DefaultInspecterPerson => new List<InspectionSubjectPersonnelDto>
+        {
+            new InspectionSubjectPersonnelDto
+            {
+                FirstName = "",
+                MiddleName = "",
+                LastName = "",
+            }
+        };
 
         public ICommand SaveDraft { get; protected set; }
         public ICommand Finish { get; protected set; }

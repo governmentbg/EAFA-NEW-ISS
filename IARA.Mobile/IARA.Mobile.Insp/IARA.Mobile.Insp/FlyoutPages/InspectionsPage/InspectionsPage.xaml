@@ -55,6 +55,13 @@
                                 <tl:TLFlex GrowUnit="200">
                                     <tl:TLDatePicker Title="{rt:Translate StarDate, Group=Inspections}" ValidState="{Binding StartDate}" />
                                     <tl:TLDatePicker Title="{rt:Translate EndDate, Group=Inspections}" ValidState="{Binding EndDate}" />
+                                    <tl:TLNativePicker ValidState="{Binding InspectionStateSelect}"
+                                            ItemsSource="{Binding InspectionStates}"
+                                            DisplayValue="DisplayValue"
+                                            DialogTitle="{rt:Translate InspectionState, Group=Common}"
+                                            Title="{rt:Translate InspectionState, Group=Common}" />
+                                    <tl:TLEntry ValidState="{Binding ReportNumber}" Title="{rt:Translate ReportNumber, Group=Common}" />
+                                    <tl:TLCheckView ValidState="{Binding ShowIsnpectionCratedByCurrentUser}" Text="{rt:Translate ShowIsnpectionCratedByCurrentUser, Group=Common}" />
                                     <StackLayout Orientation="Horizontal">
                                         <Button Text="{rt:Translate Filter, Group=Inspections}"
                                                 WidthRequest="130"
