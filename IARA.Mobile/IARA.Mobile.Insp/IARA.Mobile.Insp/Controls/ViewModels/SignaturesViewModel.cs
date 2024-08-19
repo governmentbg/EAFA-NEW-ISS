@@ -1,12 +1,14 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using IARA.Mobile.Application;
+﻿using IARA.Mobile.Application;
 using IARA.Mobile.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Domain.Enums;
 using IARA.Mobile.Domain.Models;
 using IARA.Mobile.Insp.Base;
 using IARA.Mobile.Insp.ViewModels.Models;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using TechnoLogica.Xamarin.Helpers;
+using TechnoLogica.Xamarin.ResourceTranslator;
 using Xamarin.Forms;
 
 namespace IARA.Mobile.Insp.Controls.ViewModels
@@ -19,12 +21,13 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
         {
             Inspection = inspection;
             HasInspectedPerson = hasInspectedPerson;
-
-            Inspector = new SignatureModel(inspection);
-
+            Inspectors = new TLObservableCollection<SignatureModel>();
             if (hasInspectedPerson)
             {
-                InspectedPerson = new SignatureModel(inspection);
+                InspectedPerson = new SignatureModel(inspection)
+                {
+                    SignatureType = TranslateExtension.Translator[nameof(GroupResourceEnum.GeneralInfo) + "/InspectedPersonSignature"]
+                };
             }
         }
 
@@ -32,7 +35,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
 
         public bool HasInspectedPerson { get; }
 
-        public SignatureModel Inspector { get; }
+        public TLObservableCollection<SignatureModel> Inspectors { get; }
         public SignatureModel InspectedPerson { get; }
 
         public bool HasSignature
@@ -43,13 +46,16 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
 
         public void OnEdit(List<FileModel> files, List<SelectNomenclatureDto> fileTypes)
         {
-            FileModel inspectorSignatureFile = files?.Find(f => fileTypes.Any(s => s.Id == f.FileTypeId && s.Code == Constants.InspectorSignature));
-
-            if (inspectorSignatureFile != null)
+            HasSignature = true;
+            List<SignatureModel> inspectorSignatures = new List<SignatureModel>();
+            foreach (FileModel inspectorSignature in files?.Where(f => fileTypes.Any(s => s.Id == f.FileTypeId && s.Code == Constants.InspectorSignature)))
             {
-                OnEditSingle(inspectorSignatureFile, Inspector);
-                HasSignature = true;
+                SignatureModel signature = new SignatureModel(Inspection);
+                OnEditSingle(inspectorSignature, signature);
+                inspectorSignatures.Add(signature);
             }
+            Inspectors.AddRange(inspectorSignatures);
+
 
             if (InspectedPerson != null)
             {
@@ -58,8 +64,10 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
                 if (inspectedPersonSignatureFile != null)
                 {
                     OnEditSingle(inspectedPersonSignatureFile, InspectedPerson);
+                    Inspectors.Add(InspectedPerson);
                 }
             }
+
         }
 
         private void OnEditSingle(FileModel inspectorSignatureFile, SignatureModel signature)

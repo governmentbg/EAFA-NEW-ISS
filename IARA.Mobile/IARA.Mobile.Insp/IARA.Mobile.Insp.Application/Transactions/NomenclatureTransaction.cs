@@ -438,104 +438,230 @@ namespace IARA.Mobile.Insp.Application.Transactions
         {
             using (IAppDbContext context = ContextBuilder.CreateContext())
             {
-                List<ShipPersonnelDto> personnel = (
-                    from shipOwner in context.ShipOwners
-                    join person in context.Persons on shipOwner.PersonId equals person.Id
-                    where shipOwner.ShipUid == shipUid
-                    orderby shipOwner.Id
-                    select new ShipPersonnelDto
-                    {
-                        Id = person.Id,
-                        EntryId = shipOwner.Id,
-                        Code = person.EgnLnc,
-                        Type = InspectedPersonType.OwnerPers,
-                        Name = $"{person.FirstName} {(person.MiddleName == null ? string.Empty : person.MiddleName + " ")}{person.LastName}",
-                    }
-                ).ToList();
+                var owners = (from owner in context.ShipOwners
+                              where owner.ShipUid == shipUid
+                              select new
+                              {
+                                  owner.Id,
+                                  PersonId = owner.PersonId,
+                                  LegalId = owner.LegalId,
+                              });
 
-                personnel.AddRange((
-                    from shipOwner in context.ShipOwners
-                    join legal in context.Legals on shipOwner.LegalId equals legal.Id
-                    where shipOwner.ShipUid == shipUid
-                    orderby shipOwner.Id
-                    select new ShipPersonnelDto
-                    {
-                        Id = legal.Id,
-                        EntryId = shipOwner.Id,
-                        Code = legal.Eik,
-                        Type = InspectedPersonType.OwnerLegal,
-                        Name = legal.Name,
-                    }
-                ).ToList());
+                var permits = (from plr in context.PermitLicenses
+                               join ship in context.Ships on plr.ShipUid equals ship.Uid
+                               where plr.ShipUid == shipUid
+                               select new
+                               {
+                                   plr.Id,
+                                   PersonId = plr.PersonId,
+                                   LegalId = plr.LegalId,
+                                   CaptainId = plr.CaptainId,
+                               });
 
-                personnel.AddRange((
-                    from permit in context.PermitLicenses
-                    join legal in context.Legals on permit.LegalId equals legal.Id
-                    where permit.ShipUid == shipUid
-                    orderby permit.Id
-                    group permit.Id by new
-                    {
-                        legal.Id,
-                        legal.Eik,
-                        legal.Name,
-                    } into grp
-                    select new ShipPersonnelDto
-                    {
-                        Id = grp.Key.Id,
-                        EntryId = grp.Min(f => f),
-                        Code = grp.Key.Eik,
-                        Type = InspectedPersonType.LicUsrLgl,
-                        Name = grp.Key.Name,
-                    }
-                ).ToList());
+                var captains = (from plr in context.PermitLicenses
+                                join ship in context.Ships on plr.ShipUid equals ship.Uid
+                                where plr.ShipUid == shipUid
+                                select new
+                                {
+                                    PersonId = plr.PersonCaptainId,
+                                    CaptainId = plr.FishermanId,
+                                });
 
-                personnel.AddRange((
-                    from permit in context.PermitLicenses
-                    join person in context.Persons on permit.PersonId equals person.Id
-                    where permit.ShipUid == shipUid
-                    orderby permit.Id
-                    group permit.Id by new
-                    {
-                        person.Id,
-                        person.EgnLnc,
-                        person.FirstName,
-                        person.MiddleName,
-                        person.LastName,
-                    } into grp
-                    select new ShipPersonnelDto
-                    {
-                        Id = grp.Key.Id,
-                        EntryId = grp.Min(f => f),
-                        Code = grp.Key.EgnLnc,
-                        Type = InspectedPersonType.LicUsrPers,
-                        Name = $"{grp.Key.FirstName} {(grp.Key.MiddleName == null ? string.Empty : grp.Key.MiddleName + " ")}{grp.Key.LastName}",
-                    }
-                ).ToList());
+                List<int> personIds = owners.Where(f => f.PersonId.HasValue).Select(f => f.PersonId.Value)
+                .Concat(permits.Where(f => f.PersonId.HasValue).Select(f => f.PersonId.Value))
+                .Concat(captains.Select(f => f.PersonId))
+                .ToList();
 
-                personnel.AddRange((
-                    from permit in context.PermitLicenses
-                    join person in context.Persons on permit.PersonCaptainId equals person.Id
-                    where permit.ShipUid == shipUid
-                    orderby permit.Id
-                    group permit.Id by new
-                    {
-                        person.Id,
-                        person.EgnLnc,
-                        person.FirstName,
-                        person.MiddleName,
-                        person.LastName,
-                    } into grp
-                    select new ShipPersonnelDto
-                    {
-                        Id = grp.Key.Id,
-                        EntryId = grp.Min(f => f),
-                        Code = grp.Key.EgnLnc,
-                        Type = InspectedPersonType.CaptFshmn,
-                        Name = $"{grp.Key.FirstName} {(grp.Key.MiddleName == null ? string.Empty : grp.Key.MiddleName + " ")}{grp.Key.LastName}",
-                    }
-                ).ToList());
+                List<int> legalIds = owners.Where(f => f.LegalId.HasValue).Select(f => f.LegalId.Value)
+                    .Concat(permits.Where(f => f.LegalId.HasValue).Select(f => f.LegalId.Value))
+                    .ToList();
+
+                var persons = (from person in context.Persons
+                               where personIds.Contains(person.Id)
+                               select new
+                               {
+                                   person.Id,
+                                   person.FirstName,
+                                   person.MiddleName,
+                                   person.LastName,
+                                   EgnLnc = new EgnLncDto
+                                   {
+                                       EgnLnc = person.EgnLnc,
+                                       IdentifierType = person.IdentifierType
+                                   }
+                               }).ToList();
+
+                var legals = (from legal in context.Legals
+                              where legalIds.Contains(legal.Id)
+                              select new
+                              {
+                                  legal.Id,
+                                  legal.Name,
+                                  legal.Eik
+                              }).ToList();
+
+                List<ShipPersonnelDto> personnel = (from owner in owners
+                                                    join person in persons on owner.PersonId equals person.Id
+                                                    select new ShipPersonnelDto
+                                                    {
+                                                        Id = person.Id,
+                                                        EntryId = owner.Id,
+                                                        Code = person.EgnLnc.EgnLnc,
+                                                        Name = person.FirstName
+                                                            + (person.MiddleName == null ? " " : $" {person.MiddleName} ")
+                                                            + person.LastName,
+                                                        Type = InspectedPersonType.OwnerPers,
+                                                    }).ToList();
+
+                personnel.AddRange((from owner in owners
+                                    join legal in legals on owner.LegalId equals legal.Id
+                                    select new ShipPersonnelDto
+                                    {
+                                        Id = legal.Id,
+                                        EntryId = owner.Id,
+                                        Code = legal.Eik,
+                                        Name = legal.Name,
+                                        Type = InspectedPersonType.OwnerLegal,
+                                    }).ToList());
+
+                personnel.AddRange((from permit in permits
+                                    join person in persons on permit.PersonId equals person.Id
+                                    select new ShipPersonnelDto
+                                    {
+                                        Id = person.Id,
+                                        EntryId = permit.Id,
+                                        Code = person.EgnLnc.EgnLnc,
+                                        Name = person.FirstName
+                                            + (person.MiddleName == null ? " " : $" {person.MiddleName} ")
+                                            + person.LastName,
+                                        Type = InspectedPersonType.LicUsrPers,
+                                    }).ToList());
+
+                personnel.AddRange((from permit in permits
+                                    join legal in legals on permit.LegalId equals legal.Id
+                                    select new ShipPersonnelDto
+                                    {
+                                        Id = legal.Id,
+                                        EntryId = permit.Id,
+                                        Code = legal.Eik,
+                                        Name = legal.Name,
+                                        Type = InspectedPersonType.LicUsrLgl,
+                                    }).ToList());
+
+                personnel.AddRange((from permit in permits
+                                    join captain in captains on permit.CaptainId equals captain.CaptainId
+                                    join person in persons on captain.PersonId equals person.Id
+                                    select new ShipPersonnelDto
+                                    {
+                                        Id = person.Id,
+                                        EntryId = permit.Id,
+                                        Code = person.EgnLnc.EgnLnc,
+                                        Name = person.FirstName
+                                            + (person.MiddleName == null ? " " : $" {person.MiddleName} ")
+                                            + person.LastName,
+                                        Type = InspectedPersonType.CaptFshmn,
+                                    }).ToList());
 
                 return personnel;
+
+                //List<ShipPersonnelDto> personnel = (
+                //    from shipOwner in context.ShipOwners
+                //    join person in context.Persons on shipOwner.PersonId equals person.Id
+                //    where shipOwner.ShipUid == shipUid
+                //    orderby shipOwner.Id
+                //    select new ShipPersonnelDto
+                //    {
+                //        Id = person.Id,
+                //        EntryId = shipOwner.Id,
+                //        Code = person.EgnLnc,
+                //        Type = InspectedPersonType.OwnerPers,
+                //        Name = $"{person.FirstName} {(person.MiddleName == null ? string.Empty : person.MiddleName + " ")}{person.LastName}",
+                //    }
+                //).ToList();
+
+                //personnel.AddRange((
+                //    from shipOwner in context.ShipOwners
+                //    join legal in context.Legals on shipOwner.LegalId equals legal.Id
+                //    where shipOwner.ShipUid == shipUid
+                //    orderby shipOwner.Id
+                //    select new ShipPersonnelDto
+                //    {
+                //        Id = legal.Id,
+                //        EntryId = shipOwner.Id,
+                //        Code = legal.Eik,
+                //        Type = InspectedPersonType.OwnerLegal,
+                //        Name = legal.Name,
+                //    }
+                //).ToList());
+
+                //personnel.AddRange((
+                //    from permit in context.PermitLicenses
+                //    join legal in context.Legals on permit.LegalId equals legal.Id
+                //    where permit.ShipUid == shipUid
+                //    orderby permit.Id
+                //    group permit.Id by new
+                //    {
+                //        legal.Id,
+                //        legal.Eik,
+                //        legal.Name,
+                //    } into grp
+                //    select new ShipPersonnelDto
+                //    {
+                //        Id = grp.Key.Id,
+                //        EntryId = grp.Min(f => f),
+                //        Code = grp.Key.Eik,
+                //        Type = InspectedPersonType.LicUsrLgl,
+                //        Name = grp.Key.Name,
+                //    }
+                //).ToList());
+
+                //personnel.AddRange((
+                //    from permit in context.PermitLicenses
+                //    join person in context.Persons on permit.PersonId equals person.Id
+                //    where permit.ShipUid == shipUid
+                //    orderby permit.Id
+                //    group permit.Id by new
+                //    {
+                //        person.Id,
+                //        person.EgnLnc,
+                //        person.FirstName,
+                //        person.MiddleName,
+                //        person.LastName,
+                //    } into grp
+                //    select new ShipPersonnelDto
+                //    {
+                //        Id = grp.Key.Id,
+                //        EntryId = grp.Min(f => f),
+                //        Code = grp.Key.EgnLnc,
+                //        Type = InspectedPersonType.LicUsrPers,
+                //        Name = $"{grp.Key.FirstName} {(grp.Key.MiddleName == null ? string.Empty : grp.Key.MiddleName + " ")}{grp.Key.LastName}",
+                //    }
+                //).ToList());
+
+                //personnel.AddRange((
+                //    from permit in context.PermitLicenses
+                //    join person in context.Persons on permit.PersonCaptainId equals person.Id
+                //    where permit.ShipUid == shipUid
+                //    orderby permit.Id
+                //    group permit.Id by new
+                //    {
+                //        person.Id,
+                //        person.EgnLnc,
+                //        person.FirstName,
+                //        person.MiddleName,
+                //        person.LastName,
+                //    } into grp
+                //    select new ShipPersonnelDto
+                //    {
+                //        Id = grp.Key.Id,
+                //        EntryId = grp.Min(f => f),
+                //        Code = grp.Key.EgnLnc,
+                //        Type = InspectedPersonType.CaptFshmn,
+                //        Name = $"{grp.Key.FirstName} {(grp.Key.MiddleName == null ? string.Empty : grp.Key.MiddleName + " ")}{grp.Key.LastName}",
+                //    }
+                //).ToList());
+
+                //return personnel;
             }
         }
 
@@ -913,6 +1039,22 @@ namespace IARA.Mobile.Insp.Application.Transactions
                         Name = port.Name,
                     }
                 ).Skip(page * count).Take(count).ToList();
+            }
+        }
+        public SelectNomenclatureDto GetPort(int id)
+        {
+            using (IAppDbContext context = ContextBuilder.CreateContext())
+            {
+                return (
+                    from port in context.NPorts
+                    where port.Id == id
+                    select new SelectNomenclatureDto
+                    {
+                        Id = port.Id,
+                        Code = port.Code,
+                        Name = port.Name,
+                    }
+                ).First();
             }
         }
 

@@ -14,11 +14,9 @@ import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.
 import { InspectionsService } from '@app/services/administration-app/inspections.service';
 import { DeclarationLogBookTypeEnum } from '@app/enums/declaration-log-book-type.enum';
 import { InspectedDeclarationCatchDTO } from '@app/models/generated/dtos/InspectedDeclarationCatchDTO';
-import { FillDef, MapOptions, SimplePolygonStyleDef, StrokeDef, TLMapViewerComponent } from '@tl/tl-angular-map';
-import { TLPopoverComponent } from '@app/shared/components/tl-popover/tl-popover.component';
+import { FillDef, MapOptions, SimplePolygonStyleDef, StrokeDef } from '@tl/tl-angular-map';
 import { TLValidators } from '@app/shared/utils/tl-validators';
 import { forkJoin } from 'rxjs';
-import { DeclarationLogBookPageFishDTO } from '@app/models/generated/dtos/DeclarationLogBookPageFishDTO';
 import { TLError } from '@app/shared/components/input-controls/models/tl-error.model';
 import { CatchSizeCodesEnum } from '@app/enums/catch-size-codes.enum';
 import { ValidityCheckerGroupDirective } from '@app/shared/directives/validity-checker/validity-checker-group.directive';

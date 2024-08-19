@@ -67,7 +67,7 @@ namespace IARA.Mobile.Insp.Infrastructure.Persistence
         #endregion Nomenclatures
 
         #region Inspections
-
+        public TLTableQuery<InspectionFiles> InspectionFiles => TLTable<InspectionFiles>();
         public TLTableQuery<Catch> Catches => TLTable<Catch>();
         public TLTableQuery<PoundNetFishingGearPinger> PoundNetFishingGearPingers => TLTable<PoundNetFishingGearPinger>();
         public TLTableQuery<PoundNetFishingGearMark> PoundNetFishingGearMarks => TLTable<PoundNetFishingGearMark>();

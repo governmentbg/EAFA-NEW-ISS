@@ -1,9 +1,9 @@
-﻿using System;
-using System.Threading.Tasks;
-using IARA.Mobile.Domain.Enums;
+﻿using IARA.Mobile.Domain.Enums;
 using IARA.Mobile.Insp.Application.DTObjects.Inspections;
 using IARA.Mobile.Insp.Domain.Enums;
 using IARA.Mobile.Insp.FlyoutPages.InspectionsPage;
+using System;
+using System.Threading.Tasks;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Converters;
 using TechnoLogica.Xamarin.DataTemplates.Base;
@@ -30,22 +30,22 @@ namespace IARA.Mobile.Insp.DataTemplateSelectors
 
             if (item.SubmitType == SubmitType.Finish)
             {
-                if (item.InspectionState == InspectionState.Submitted && item.CreatedByCurrentUser)
-                {
-                    buttonsStack.Children.Add(new ImageButton
-                    {
-                        Source = new FontImageSource
-                        {
-                            Color = Color.White,
-                            FontFamily = "FA",
-                            Glyph = IconFont.Signature,
-                            Size = 25
-                        },
-                        Padding = 10,
-                        Command = bindingContext.SignInspection,
-                        CommandParameter = item,
-                    });
-                }
+                //if (item.InspectionState == InspectionState.Submitted && item.CreatedByCurrentUser)
+                //{
+                //    buttonsStack.Children.Add(new ImageButton
+                //    {
+                //        Source = new FontImageSource
+                //        {
+                //            Color = Color.White,
+                //            FontFamily = "FA",
+                //            Glyph = IconFont.Signature,
+                //            Size = 25
+                //        },
+                //        Padding = 10,
+                //        Command = bindingContext.SignInspection,
+                //        CommandParameter = item,
+                //    });
+                //}
 
                 buttonsStack.Children.Add(new ImageButton
                 {

@@ -354,6 +354,7 @@ namespace IARA.Mobile.Insp.Application.Helpers
                 f => new PermitLicense
                 {
                     Id = f.Id,
+                    FishermanId = f.FishermanId,
                     LegalId = f.LegalId,
                     PersonId = f.PersonId,
                     CaptainId = f.CaptainId,

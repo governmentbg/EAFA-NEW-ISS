@@ -2,6 +2,7 @@
 using IARA.Mobile.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Application.DTObjects.Reports;
 using IARA.Mobile.Domain.Enums;
+using IARA.Mobile.Domain.Models;
 using IARA.Mobile.Insp.Application;
 using IARA.Mobile.Insp.Application.DTObjects.Inspections;
 using IARA.Mobile.Insp.Application.DTObjects.Nomenclatures;
@@ -225,7 +226,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FishermanInspection
         {
             return this.Save(Edit,
                 InspectionFiles,
-                (inspectionIdentifier, files) =>
+                async (inspectionIdentifier, files) =>
                 {
                     InspectionFisherDto dto = new InspectionFisherDto
                     {
@@ -265,8 +266,12 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FishermanInspection
                         PatrolVehicles = PatrolVehicles,
                         ViolatedRegulations = AdditionalInfo.ViolatedRegulations.ViolatedRegulations.Value.Select(x => (AuanViolatedRegulationDto)x).ToList(),
                     };
-
-                    return InspectionsTransaction.HandleInspection(dto, submitType);
+                    List<FileModel> signatures = null;
+                    if (submitType == SubmitType.Finish)
+                    {
+                        signatures = await InspectionSaveHelper.GetSignatures(dto.Inspectors);
+                    }
+                    return await InspectionsTransaction.HandleInspection(dto, submitType, signatures);
                 }
             );
         }

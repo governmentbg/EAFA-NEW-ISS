@@ -22,6 +22,7 @@ import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureD
 import { TLValidators } from '@app/shared/utils/tl-validators';
 import { ShipNomenclatureDTO } from '@app/models/generated/dtos/ShipNomenclatureDTO';
 import { TLConfirmDialog } from '@app/shared/components/confirmation-dialog/tl-confirm-dialog';
+import { EgnLncDTO } from '@app/models/generated/dtos/EgnLncDTO';
 
 @Component({
     selector: 'edit-inspection-person',
@@ -38,10 +39,12 @@ export class EditInspectionPersonComponent extends BaseInspectionsComponent impl
     public catchZones: NomenclatureDTO<number>[] = [];
     public fishSex: NomenclatureDTO<number>[] = [];
     public turbotSizeGroups: NomenclatureDTO<number>[] = [];
+    public tickets: NomenclatureDTO<number>[] = [];
 
     public catchToggles: InspectionCheckModel[] = [];
 
     public hasTicket: boolean = true;
+    public hasValidTickets: boolean = true;
 
     public readonly inspectedPersonTypeEnum: typeof InspectedPersonTypeEnum = InspectedPersonTypeEnum;
 
@@ -86,7 +89,7 @@ export class EditInspectionPersonComponent extends BaseInspectionsComponent impl
             NomenclatureStore.instance.getNomenclature(
                 NomenclatureTypes.TurbotSizeGroups, this.nomenclatures.getTurbotSizeGroups.bind(this.nomenclatures), false
             ),
-            this.service.getCheckTypesForInspection(InspectionTypesEnum.IFP),
+            this.service.getCheckTypesForInspection(InspectionTypesEnum.IFP)
         ]).toPromise();
 
         this.institutions = nomenclatureTables[0];
@@ -106,6 +109,23 @@ export class EditInspectionPersonComponent extends BaseInspectionsComponent impl
                     this.model = dto;
 
                     this.fillForm();
+                }
+            });
+        }
+    }
+
+    public downloadPersonDataBtnClicked(egnLnc: EgnLncDTO): void {
+        if (egnLnc !== undefined && egnLnc !== null) {
+            this.service.getValidFishingTicketsByEgn(egnLnc.egnLnc!).subscribe({
+                next: (tickets: NomenclatureDTO<number>[]) => {
+                    this.form.get('ticketControl')!.setValue(undefined);
+
+                    this.tickets = tickets;
+                    this.hasValidTickets = tickets.length > 0;
+
+                    if (tickets.length === 1) {
+                        this.form.get('ticketControl')!.setValue(tickets[0]);
+                    }
                 }
             });
         }
@@ -157,7 +177,7 @@ export class EditInspectionPersonComponent extends BaseInspectionsComponent impl
                 administrativeViolation: this.model.administrativeViolation,
                 inspectorComment: this.model.inspectorComment,
                 violation: this.model.observationTexts?.find(f => f.category === InspectionObservationCategoryEnum.AdditionalInfo),
-                violatedRegulations: this.model.violatedRegulations,
+                violatedRegulations: this.model.violatedRegulations
             }));
 
             this.form.get('mapControl')!.setValue(this.model.inspectionLocation);
@@ -194,41 +214,62 @@ export class EditInspectionPersonComponent extends BaseInspectionsComponent impl
         const generalInfo: InspectionGeneralInfoModel = this.form.get('generalInfoControl')!.value;
         const additionalInfo: InspectionAdditionalInfoModel = this.form.get('additionalInfoControl')!.value;
 
-        this.model = new InspectionFisherDTO({
-            id: this.model.id,
-            startDate: generalInfo.startDate,
-            endDate: generalInfo.endDate,
-            inspectors: generalInfo.inspectors,
-            reportNum: generalInfo.reportNum,
-            files: this.form.get('filesControl')!.value,
-            actionsTaken: additionalInfo?.actionsTaken,
-            administrativeViolation: additionalInfo?.administrativeViolation === true,
-            byEmergencySignal: generalInfo.byEmergencySignal,
-            inspectionType: InspectionTypesEnum.IFP,
-            inspectorComment: additionalInfo?.inspectorComment,
-            violatedRegulations: additionalInfo?.violatedRegulations,
-            isActive: true,
-            checks: this.form.get('catchTogglesControl')!.value,
-            inspectionLocation: this.form.get('mapControl')!.value,
-            catchMeasures: this.form.get('catchesControl')!.value,
-            patrolVehicles: this.form.get('patrolVehiclesControl')!.value,
-            inspectionAddress: this.form.get('addressControl')!.value,
-            fishermanComment: this.form.get('fishermanCommentControl')!.value,
-            fishingHooksCount: this.form.get('hookCountControl')!.value,
-            fishingRodsCount: this.form.get('fishingGearCountControl')!.value,
-            ticketNum: this.hasTicket
-                ? this.form.get('ticketControl')!.value
-                : undefined,
-            observationTexts: [
-                additionalInfo?.violation,
-            ].filter(f => f !== null && f !== undefined) as InspectionObservationTextDTO[],
-            personnel: [
-                this.form.get('personControl')!.value,
-            ].filter(f => f !== null && f !== undefined),
-        });
+        this.model.inspectionType = InspectionTypesEnum.IFP;
+        this.model.startDate = generalInfo.startDate;
+        this.model.endDate = generalInfo.endDate;
+        this.model.inspectors = generalInfo.inspectors;
+        this.model.reportNum = generalInfo.reportNum;
+        this.model.byEmergencySignal = generalInfo.byEmergencySignal;
+        this.model.isActive = true;
+
+        this.model.files = this.form.get('filesControl')!.value;
+
+        this.model.actionsTaken = additionalInfo?.actionsTaken;
+        this.model.administrativeViolation = additionalInfo?.administrativeViolation === true;
+        this.model.inspectorComment = additionalInfo?.inspectorComment;
+        this.model.violatedRegulations = additionalInfo?.violatedRegulations;
+
+        this.model.checks = this.form.get('catchTogglesControl')!.value;
+        this.model.inspectionLocation = this.form.get('mapControl')!.value;
+        this.model.catchMeasures = this.form.get('catchesControl')!.value;
+        this.model.patrolVehicles = this.form.get('patrolVehiclesControl')!.value;
+        this.model.inspectionAddress = this.form.get('addressControl')!.value;
+        this.model.fishermanComment = this.form.get('fishermanCommentControl')!.value;
+        this.model.fishingHooksCount = this.form.get('hookCountControl')!.value;
+        this.model.fishingRodsCount = this.form.get('fishingGearCountControl')!.value;
+
+        this.model.observationTexts = [
+            additionalInfo?.violation
+        ].filter(f => f !== null && f !== undefined) as InspectionObservationTextDTO[];
+
+        this.model.personnel = [
+            this.form.get('personControl')!.value
+        ].filter(f => f !== null && f !== undefined);
+
+        const ticket: NomenclatureDTO<number> | string | undefined = this.form.get('ticketControl')!.value;
+
+        if (typeof ticket === 'string') {
+            this.model.ticketNum = ticket;
+        }
+        else if (ticket !== undefined && ticket !== null) {
+            this.model.ticketNum = ticket.code;
+        }
+        else {
+            this.model.ticketNum = undefined;
+        }
     }
 
     private onHasTicketChanged(value: boolean): void {
         this.hasTicket = value;
+
+        if (!this.viewMode) {
+            if (!this.hasTicket) {
+                this.form.get('ticketControl')!.setValue(undefined);
+                this.form.get('ticketControl')!.disable();
+            }
+            else {
+                this.form.get('ticketControl')!.enable();
+            }
+        }
     }
 }

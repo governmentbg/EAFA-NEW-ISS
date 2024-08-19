@@ -18,6 +18,7 @@ import { DatePipe } from '@angular/common';
 import { GetControlErrorLabelTextCallback } from '@app/shared/components/input-controls/base-tl-control';
 import { SystemPropertiesDTO } from '@app/models/generated/dtos/SystemPropertiesDTO';
 import { SystemParametersService } from '@app/services/common-app/system-parameters.service';
+import { Moment } from 'moment';
 
 @Component({
     selector: 'inspection-general-info',
@@ -167,7 +168,7 @@ export class InspectionGeneralInfoComponent extends CustomFormControl<Inspection
                     return new TLError({ text: `${messageText}: ${dateString}` });
                 }
             }
-            else if (errorCode === 'matDatetimePickerMax') { 
+            else if (errorCode === 'matDatetimePickerMax') {
                 const maxDate: Date = new Date();
                 const dateString: string = this.datePipe.transform(maxDate, 'dd.MM.YYYY HH:mm') ?? "";
                 let messageText: string = this.translate.getValue('validation.max');
@@ -192,6 +193,12 @@ export class InspectionGeneralInfoComponent extends CustomFormControl<Inspection
             Validators.required,
             TLValidators.minDate(form.get('inspectionStartDateControl')!)
         ]);
+
+        form.get('inspectionStartDateControl')!.valueChanges.subscribe({
+            next: (startDate: Moment | null | undefined) => {
+                form.get('inspectionEndDateControl')!.updateValueAndValidity({ emitEvent: false });
+            }
+        });
 
         form.get('inspectionEndDateControl')!.markAsPending({ emitEvent: false });
         form.get('inspectionEndDateControl')!.updateValueAndValidity({ emitEvent: false });

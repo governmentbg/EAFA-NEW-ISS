@@ -114,7 +114,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.InspectionsPage
                     fileResult.FileTypeId = NomenclaturesTransaction.GetFileType(Constants.SignedReport);
 
                     await TLLoadingHelper.ShowFullLoadingScreen();
-                    result = await InspectionsTransaction.SignInspection(dto.Id, new List<FileModel> { fileResult });
+                    result = await InspectionsTransaction.SignInspection(dto.Id, new List<FileModel> { fileResult }, dto.Id);
                 }
             }
             else
@@ -188,6 +188,10 @@ namespace IARA.Mobile.Insp.FlyoutPages.InspectionsPage
             if (result)
             {
                 Inspections.Remove(dto);
+            }
+            else
+            {
+                await TLSnackbar.Show(TranslateExtension.Translator[nameof(GroupResourceEnum.Common) + "/ActionRequiresInternet"], App.GetResource<Color>("ErrorColor"));
             }
         }
 
@@ -327,15 +331,30 @@ namespace IARA.Mobile.Insp.FlyoutPages.InspectionsPage
         private async Task<bool> MobileSign(InspectionDto dto)
         {
             List<SelectNomenclatureDto> fileTypes = DependencyService.Resolve<INomenclatureTransaction>().GetFileTypes();
+            int inspectionId = dto.Id;
+            HttpResult<List<InspectorDto>> inspectors = await DependencyService.Resolve<IRestClient>().GetAsync<List<InspectorDto>>("InspectionData/GetInspectorsForInspection", new { inspectionId });
+            List<SignatureSaveModel> signatures = new List<SignatureSaveModel>();
 
-            List<SignatureSaveModel> signatures = new List<SignatureSaveModel>(2)
+            if (inspectors.IsSuccessful)
             {
-                new SignatureSaveModel
+                foreach (InspectorDto inspector in inspectors.Content)
+                {
+                    signatures.Add(new SignatureSaveModel
+                    {
+                        Caption = string.Join(" - ", TranslateExtension.Translator[nameof(GroupResourceEnum.GeneralInfo) + "/InspectorSignature"],
+                                    string.Join(" ", inspector.FirstName, inspector.MiddleName, inspector.LastName)),
+                        FileTypeId = fileTypes.Find(f => f.Code == Constants.InspectorSignature).Id
+                    });
+                }
+            }
+            else
+            {
+                signatures.Add(new SignatureSaveModel
                 {
                     Caption = TranslateExtension.Translator[nameof(GroupResourceEnum.GeneralInfo) + "/InspectorSignature"],
                     FileTypeId = fileTypes.Find(f => f.Code == Constants.InspectorSignature).Id
-                },
-            };
+                });
+            }
 
             if (dto.Type != InspectionType.OFS)
             {
@@ -378,7 +397,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.InspectionsPage
             }
 
             await TLLoadingHelper.ShowFullLoadingScreen();
-            return await InspectionsTransaction.SignInspection(dto.Id, files);
+            return await InspectionsTransaction.SignInspection(dto.Id, files, dto.Id);
         }
     }
 }

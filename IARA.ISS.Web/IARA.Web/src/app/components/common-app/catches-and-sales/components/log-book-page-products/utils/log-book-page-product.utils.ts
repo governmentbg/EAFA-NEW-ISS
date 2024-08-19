@@ -8,7 +8,7 @@ export class LogBookPageProductUtils {
         return formattedTotalPrice;
     }
 
-    private static calculateTotalPrice(quantity: number | undefined, unitPrice: number | undefined): number | undefined {
+    public static calculateTotalPrice(quantity: number | undefined, unitPrice: number | undefined): number | undefined {
         if (unitPrice) {
             if (quantity) {
                 return quantity * unitPrice;

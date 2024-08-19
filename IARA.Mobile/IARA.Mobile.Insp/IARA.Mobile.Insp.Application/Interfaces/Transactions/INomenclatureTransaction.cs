@@ -72,6 +72,7 @@ namespace IARA.Mobile.Insp.Application.Interfaces.Transactions
         List<SelectNomenclatureDto> GetWaterBodyTypes();
 
         List<SelectNomenclatureDto> GetPorts(int page, int count, string search = null);
+        SelectNomenclatureDto GetPort(int id);
 
         List<SelectNomenclatureDto> GetFishingGearMarkStatuses();
 

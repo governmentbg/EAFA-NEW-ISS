@@ -56,7 +56,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
             this.AddValidation(
                 groups: new Dictionary<string, Func<bool>>
                 {
-                    { Group.IS_TRANSHIPMENT, () => HarbourInspectionViewModel.Static.HasTranshipment.Value }
+                    { Group.IS_TRANSHIPMENT, () => HarbourInspectionViewModel.Static != null ? HarbourInspectionViewModel.Static.HasTranshipment.Value : true}
                 });
         }
 

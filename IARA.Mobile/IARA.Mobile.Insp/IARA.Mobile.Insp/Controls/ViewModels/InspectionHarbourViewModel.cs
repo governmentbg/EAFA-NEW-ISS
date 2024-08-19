@@ -78,7 +78,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
                 Harbour.Value = new SelectNomenclatureDto
                 {
                     Id = portVisit.PortId.Value,
-                    Name = portVisit.PortName,
+                    Name = NomenclaturesTransaction.GetPort(portVisit.PortId.Value).Name,
                 };
 
                 HarbourInRegister.Value = true;

@@ -53,10 +53,10 @@ namespace IARA.Mobile.Insp.Application.Interfaces.Transactions
 
         Task<InspectionConstativeProtocolDto> GetOTH(int id, bool isLocal);
 
-        Task<PostEnum> HandleInspection<TDto>(TDto dto, SubmitType submitType, bool fromOffline = false)
+        Task<PostEnum> HandleInspection<TDto>(TDto dto, SubmitType submitType, List<FileModel> signatures, bool fromOffline = false)
             where TDto : InspectionEditDto;
 
-        Task<bool> SignInspection(int inspectionId, List<FileModel> files);
+        Task<bool> SignInspection(int inspectionId, List<FileModel> files, int localInspectionId);
 
         List<FishingGearDto> GetFishingGearsForShip(int shipUid, int? permitId = null);
 

@@ -41,11 +41,12 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
                     {
                         if(HarbourInspectionViewModel.Static == null)
                         {
-                            return true;
+                            return false;
                         }
 
                         return HarbourInspectionViewModel.Static.HasTranshipment.Value;
-                    } }
+                    } },
+                    { Group.CAN_PICK_LOCATION, () => canPickLocation }
                 }
             );
 
@@ -80,6 +81,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
 
         [Required]
         [ValidGroup(Group.IS_TRANSHIPMENT)]
+        [ValidGroup(Group.CAN_PICK_LOCATION)]
         public ValidStateLocation Location { get; set; }
 
         [Required]

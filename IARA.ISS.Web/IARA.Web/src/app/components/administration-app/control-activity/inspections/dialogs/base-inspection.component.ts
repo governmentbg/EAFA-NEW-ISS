@@ -19,6 +19,7 @@ import { Component, ViewChild } from '@angular/core';
 import { InspectionTypesEnum } from '@app/enums/inspection-types.enum';
 import { InspectionDialogParamsModel } from '../models/inspection-dialog-params.model';
 import { TLConfirmDialog } from '@app/shared/components/confirmation-dialog/tl-confirm-dialog';
+import { InspectionStatesEnum } from '@app/enums/inspection-states.enum';
 
 @Component({
     template: ''
@@ -204,6 +205,7 @@ export abstract class BaseInspectionsComponent implements IDialogComponent {
         });
 
         this.model.files = undefined;
+        this.model.inspectionState = InspectionStatesEnum.Draft;
 
         const camelCaseModel = CommonUtils.convertKeysToCamelCase(this.model);
 

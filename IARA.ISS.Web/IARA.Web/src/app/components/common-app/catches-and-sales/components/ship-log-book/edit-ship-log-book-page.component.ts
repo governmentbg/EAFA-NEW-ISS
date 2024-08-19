@@ -90,6 +90,8 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
     public catchRecords: CatchRecordDTO[] = [];
 
     public declarationOfOriginCatchRecords: OriginDeclarationFishDTO[] = [];
+    public declarationOfOriginCatchRecordsGrouped: OriginDeclarationFishDTO[] = [];
+
     public declarationOfOriginHasCatchFromPreviousTrip: boolean = false;
 
     public ships: ShipNomenclatureDTO[] = [];
@@ -120,9 +122,6 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
 
     @ViewChild('catchRecordsTable')
     private catchRecordsTable!: TLDataTableComponent;
-
-    @ViewChild('declarationOfOriginCatchRecordsTable')
-    private declarationOfOriginCatchRecordsTable!: TLDataTableComponent;
 
     private id: number | undefined;
     private translationService: FuseTranslationLoaderService;
@@ -468,8 +467,11 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
 
         this.declarationOfOriginCatchRecords = this.declarationOfOriginCatchRecords.filter(x => x.id !== null && x.id !== undefined);
 
+        // ако се генерират отново, трябва UnloadedQuantityKg на всеки запис от CatchRecordFishes да е 0, за да се пресметнат правилно количествата за разтоварване и вписване в OriginDeclarationFish от getOriginDeclarationCatchRecords
+        this.recalculateUnloadedQuantities();
         const possibleCatchRecordFishes: CatchRecordFishDTO[] = this.getPossibleCatchRecordFishesForOriginDeclaration();
         this.declarationOfOriginCatchRecords = [...this.declarationOfOriginCatchRecords, ...this.getOriginDeclarationCatchRecords(possibleCatchRecordFishes)];
+
         this.setDeclarationOfOriginHasCatchFromPreviousTripFlag();
         this.selectedCatchesFromPreviousTrips = [];
         this.recalculateDeclarationOfOriginCatchRecordsQuantitySums();
@@ -659,9 +661,9 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
                     return new TLError({ text: `${messageText}: ${dateString}` });
                 }
             }
-            else if (errorCode === 'logBookPageDateLocked') {
+            else if (errorCode === 'logBookPageDateLocked' || errorCode === 'logBookPageDatePeriodLocked') {
                 const messageText: string = this.translationService.getValue('catches-and-sales.ship-page-date-cannot-be-chosen-error');
-                if (this.isLogBookPageDateLockedError) {
+                if (this.isLogBookPageDateLockedError || errorCode === 'logBookPageDatePeriodLocked') {
                     return new TLError({ text: messageText, type: 'error' });
                 }
                 else {
@@ -685,9 +687,9 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
                     return new TLError({ text: `${this.translationService.getValue('validation.min')}: ${dateString}` });
                 }
             }
-            else if (errorCode === 'logBookPageDateLocked') {
+            else if (errorCode === 'logBookPageDateLocked' || errorCode === 'logBookPageDatePeriodLocked') {
                 const messageText: string = this.translationService.getValue('catches-and-sales.ship-page-date-cannot-be-chosen-error');
-                if (this.isLogBookPageDateLockedError) {
+                if (this.isLogBookPageDateLockedError || errorCode === 'logBookPageDatePeriodLocked') {
                     return new TLError({ text: messageText, type: 'error' });
                 }
                 else {
@@ -1290,8 +1292,7 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
             const catchRecordFishes: CatchRecordFishDTO[] = [];
 
             if (catchRecord.catchRecordFishes !== null && catchRecord.catchRecordFishes !== undefined && catchRecord.catchRecordFishes.length > 0) {
-                for (const catchRecordFish of catchRecord.catchRecordFishes.filter(x => x.isActive)) {
-
+                for (const catchRecordFish of catchRecord.catchRecordFishes.filter(x => x.isActive && !x.isDiscarded)) {
                     const index: number = catchRecordFishes.findIndex(x =>
                         x.fishId === catchRecordFish.fishId
                         && (this.isIdUndefinedOrSame(x.catchQuadrantId, catchRecordFish.catchQuadrantId))
@@ -1299,32 +1300,14 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
                     );
 
                     if (index !== -1) {
-                        if (!catchRecordFish.isDiscarded) {
-                            catchRecordFishes[index].quantityKg! += (catchRecordFish.quantityKg ?? 0);
+                        catchRecordFishes[index].quantityKg! += (catchRecordFish.quantityKg ?? 0);
 
-                            if (catchRecordFish.turbotCount !== undefined && catchRecordFish.turbotCount !== null) {
-                                catchRecordFishes[index].turbotCount! += (catchRecordFish.turbotCount ?? 0);
-                            }
-                        }
-                        else {
-                            catchRecordFishes[index].quantityKg! -= (catchRecordFish.quantityKg ?? 0);
-
-                            if (catchRecordFish.turbotCount !== undefined && catchRecordFish.turbotCount !== null) {
-                                catchRecordFishes[index].turbotCount! -= (catchRecordFish.turbotCount ?? 0);
-                            }
+                        if (catchRecordFish.turbotCount !== undefined && catchRecordFish.turbotCount !== null) {
+                            catchRecordFishes[index].turbotCount! += (catchRecordFish.turbotCount ?? 0);
                         }
                     }
                     else {
                         const fish: CatchRecordFishDTO = new CatchRecordFishDTO(catchRecordFish);
-
-                        if (catchRecordFish.isDiscarded) {
-                            fish.quantityKg = -(catchRecordFish.quantityKg ?? 0);
-
-                            if (fish.turbotCount !== undefined && fish.turbotCount !== null) {
-                                fish.turbotCount = -(catchRecordFish.turbotCount ?? 0);
-                            }
-                        }
-
                         catchRecordFishes.push(fish);
                     }
                 }
@@ -1631,7 +1614,7 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
                 return null;
             }
             else {
-                const originDeclarationFishes: OriginDeclarationFishDTO[] = (this.declarationOfOriginCatchRecordsTable.rows as OriginDeclarationFishDTO[]) ?? [];
+                const originDeclarationFishes: OriginDeclarationFishDTO[] = (this.declarationOfOriginCatchRecords as OriginDeclarationFishDTO[]) ?? [];
                 if (originDeclarationFishes.some(x => x.transboradDateTime === null || x.transboradDateTime === undefined)) { // Ако има улов, който няма данни за трансбордиране
                     return { 'noTransboardDataForTransboardedCatch': true };
                 }
@@ -1691,8 +1674,6 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
             else {
                 return null;
             }
-
-            return null;
         }
     }
 
@@ -1945,15 +1926,19 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
     private recalculateDeclarationOfOriginCatchRecordsQuantitySums(): void {
         const recordsGroupedByCatchQuadrant: Record<number, OriginDeclarationFishDTO[]> = CommonUtils.groupBy(this.declarationOfOriginCatchRecords.filter(x => x.isActive), x => (x.catchQuadrantId ?? 0));
         this.declarationOfOriginCatchRecordsQuantityTexts.clear();
+        this.declarationOfOriginCatchRecordsGrouped = [];
 
         for (const catchQuadrantId in recordsGroupedByCatchQuadrant) {
             const fishesGrouped: FishGroupedQuantitiesModel[] = this.getOriginDeclarationFishesQuantitiesGrouped(recordsGroupedByCatchQuadrant[catchQuadrantId]);
             const quantityText: string | undefined = this.buildFishQuantitiesText(fishesGrouped.filter(x => x.quantity !== undefined && x.quantity !== null && x.quantity > 0), true);
+            this.declarationOfOriginCatchRecordsGrouped.push(...fishesGrouped);
 
             if (quantityText !== undefined && quantityText !== null && quantityText !== '') {
                 this.declarationOfOriginCatchRecordsQuantityTexts.set(Number(catchQuadrantId), quantityText);
             }
         }
+
+        this.declarationOfOriginCatchRecordsGrouped = this.declarationOfOriginCatchRecordsGrouped.slice();
     }
 
     private recalculateCatchRecordsQuantitySums(): void {
@@ -2015,16 +2000,11 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
     private getCatchRecordFishesQuantitiesGrouped(catchRecordFishes: CatchRecordFishDTO[]): FishGroupedQuantitiesModel[] {
         const result: FishGroupedQuantitiesModel[] = [];
 
-        for (const catchRecordFish of catchRecordFishes) {
+        for (const catchRecordFish of catchRecordFishes.filter(x => !x.isDiscarded)) {
             const index: number = result.findIndex(x => x.fishId === catchRecordFish.fishId && (this.isIdUndefinedOrSame(x.turbotSizeGroupId, catchRecordFish.turbotSizeGroupId)));
 
             if (index !== -1) {
-                if (!catchRecordFish.isDiscarded) {
-                    result[index].quantity! += (catchRecordFish.quantityKg ?? 0);
-                }
-                else {
-                    result[index].quantity! -= (catchRecordFish.quantityKg ?? 0);
-                }
+                result[index].quantity! += (catchRecordFish.quantityKg ?? 0);
             }
             else {
                 const fish: FishGroupedQuantitiesModel = new FishGroupedQuantitiesModel({
@@ -2035,10 +2015,6 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
                     fishName: this.aquaticOrganisms.find(x => x.value === catchRecordFish.fishId)!.displayName,
                     turbotSizeGroupName: this.turbotSizeGroups.find(x => x.value === catchRecordFish.turbotSizeGroupId)?.displayName
                 });
-
-                if (catchRecordFish.isDiscarded) {
-                    fish.quantity = -(catchRecordFish.quantityKg ?? 0);
-                }
 
                 result.push(fish);
             }
@@ -2059,6 +2035,13 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
                 if (declarationFish.turbotCount !== undefined && declarationFish.turbotCount !== null) {
                     result[index].turbotCount! += (declarationFish.turbotCount ?? 0);
                 }
+
+                // ако има поне един невалиден улов, целият ред за улова да се отбелязва като невалиден 
+                if (!declarationFish.isValid && declarationFish.isActive) {
+                    result[index].isValid = declarationFish.isValid;
+                }
+
+                result[index].declarationFishes.push(declarationFish);
             }
             else {
                 const fish: FishGroupedQuantitiesModel = new FishGroupedQuantitiesModel({
@@ -2066,10 +2049,18 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
                     turbotSizeGroupId: declarationFish.turbotSizeGroupId,
                     turbotCount: declarationFish.turbotCount,
                     quantity: (declarationFish.quantityKg ?? 0),
-                    catchQuadrantId: (declarationFish.catchQuadrantId ?? 0),
+                    catchQuadrantId: declarationFish.catchQuadrantId,
+                    catchZone: declarationFish.catchZone,
                     fishName: this.aquaticOrganisms.find(x => x.value === declarationFish.fishId)!.displayName,
-                    turbotSizeGroupName: this.turbotSizeGroups.find(x => x.value === declarationFish.turbotSizeGroupId)?.displayName
+                    turbotSizeGroupName: this.turbotSizeGroups.find(x => x.value === declarationFish.turbotSizeGroupId)?.displayName,
+                    catchFishStateId: declarationFish.catchFishStateId,
+                    catchFishPresentationId: declarationFish.catchFishPresentationId,
+                    catchFishPreservationId: declarationFish.catchFishPreservationId,
+                    isActive: declarationFish.isActive,
+                    isValid: declarationFish.isValid
                 });
+
+                fish.declarationFishes.push(declarationFish);
 
                 result.push(fish);
             }
