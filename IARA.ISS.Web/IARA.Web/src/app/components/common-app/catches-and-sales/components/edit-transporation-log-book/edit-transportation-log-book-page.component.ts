@@ -32,6 +32,10 @@ import { CatchesAndSalesUtils } from '../../utils/catches-and-sales.utils';
 import { TLError } from '@app/shared/components/input-controls/models/tl-error.model';
 import { DatePipe } from '@angular/common';
 import { GetControlErrorLabelTextCallback } from '@app/shared/components/input-controls/base-tl-control';
+import { TLMatDialog } from '@app/shared/components/dialog-wrapper/tl-mat-dialog';
+import { AddLogBookPageWizardComponent } from '../add-log-book-page-wizard/add-log-book-page-wizard.component';
+import { AddLogBookPageDialogParams } from '../add-log-book-page-wizard/models/add-log-book-page-wizard-dialog-params.model';
+import { HeaderCloseFunction } from '@app/shared/components/dialog-wrapper/interfaces/header-cancel-button.interface';
 
 @Component({
     selector: 'edit-transportation-log-book-page',
@@ -49,14 +53,15 @@ export class EditTransportationLogBookPageComponent implements OnInit, IDialogCo
     public isAdd: boolean = false;
     public canAddProducts: boolean = false;
     public isCommonLogBookPageDataReadonly: boolean = true;
+    public hasEditCommonDataPermission: boolean = false;
+
+    public noAvailableProducts: boolean = false;
 
     public getControlErrorLabelTextMethod: GetControlErrorLabelTextCallback = this.getControlErrorLabelText.bind(this);
 
     private lockTransportationLogBookPeriod!: number;
     private logBookPageEditExceptions: LogBookPageEditExceptionDTO[] = [];
     private currentUserId: number;
-
-    public noAvailableProducts: boolean = false;
 
     @ViewChild(ValidityCheckerGroupDirective)
     private validityCheckerGroup!: ValidityCheckerGroupDirective;
@@ -76,6 +81,7 @@ export class EditTransportationLogBookPageComponent implements OnInit, IDialogCo
     private confirmDialog: TLConfirmDialog;
     private hasMissingPagesRangePermission: boolean = false;
     private readonly datePipe: DatePipe;
+    private readonly editBasicInformationDialog: TLMatDialog<AddLogBookPageWizardComponent>;
     private readonly systemParametersService: SystemParametersService;
 
     public constructor(
@@ -83,6 +89,7 @@ export class EditTransportationLogBookPageComponent implements OnInit, IDialogCo
         snackbar: MatSnackBar,
         confirmDialog: TLConfirmDialog,
         datePipe: DatePipe,
+        editBasicInformationDialog: TLMatDialog<AddLogBookPageWizardComponent>,
         systemParametersService: SystemParametersService,
         authService: SecurityService
     ) {
@@ -90,6 +97,7 @@ export class EditTransportationLogBookPageComponent implements OnInit, IDialogCo
         this.snackbar = snackbar;
         this.confirmDialog = confirmDialog;
         this.datePipe = datePipe;
+        this.editBasicInformationDialog = editBasicInformationDialog;
         this.systemParametersService = systemParametersService;
 
         this.currentUserId = authService.User!.userId;
@@ -202,7 +210,8 @@ export class EditTransportationLogBookPageComponent implements OnInit, IDialogCo
         this.logBookId = data.logBookId;
         this.logBookTypeId = data.logBookTypeId;
         this.logBookPermitLicenseId = data.logBookPermitLicenseId;
-       
+        this.hasEditCommonDataPermission = data.canEditCommonDataPermission;
+
         this.pageNumber = data.pageNumber;
         this.pageStatus = data.pageStatus;
         this.shipPageDocumentData = data.shipPageDocumentData;
@@ -298,6 +307,64 @@ export class EditTransportationLogBookPageComponent implements OnInit, IDialogCo
         return undefined;
     }
 
+    public editBasicInformation(): void {
+        const title: string = this.translationService.getValue('catches-and-sales.edit-transportation-page-basic-information-dialog-title');
+
+        if (this.hasEditCommonDataPermission) {
+            this.editBasicInformationDialog.open({
+                title: title,
+                TCtor: AddLogBookPageWizardComponent,
+                translteService: this.translationService,
+                viewMode: false,
+                headerCancelButton: {
+                    cancelBtnClicked: this.closeEditBasicInformationDialogBtnClicked.bind(this)
+                },
+                saveBtn: {
+                    id: 'save',
+                    color: 'accent',
+                    translateValue: this.translationService.getValue('catches-and-sales.edit-transportation-page-basic-information-ok-btn')
+                },
+                cancelBtn: {
+                    id: 'cancel',
+                    color: 'primary',
+                    translateValue: this.translationService.getValue('common.cancel'),
+                },
+                componentData: new AddLogBookPageDialogParams({
+                    service: this.service,
+                    logBookType: this.logBookType,
+                    logBookId: this.logBookId,
+                    logBookTypeId: this.logBookTypeId,
+                    pageNumber: this.pageNumber,
+                    editLogBookPageBasicInfo: true
+                }),
+                disableDialogClose: true
+            }, '1500px').subscribe({
+                next: (result: CommonLogBookPageDataDTO | undefined) => {
+                    if (result !== undefined && result !== null) {
+                        this.form.get('commonLogBookPageDataControl')!.setValue(result);
+
+                        if (result.originDeclarationId !== undefined && result.originDeclarationId !== null) {
+                            this.service.getPossibleProductsByOriginDeclarationId(result.originDeclarationId, LogBookPageDocumentTypesEnum.TransportationDocument).subscribe({
+                                next: (products: LogBookPageProductDTO[]) => {
+                                    this.originPossibleProducts = products;
+                                    this.model.originalPossibleProducts = [];
+
+                                    this.form.get('productsControl')!.setValue(products);
+                                }
+                            });
+                        }
+                        else {
+                            this.originPossibleProducts = [];
+                            this.model.originalPossibleProducts = [];
+
+                            this.form.get('productsControl')!.setValue([]);
+                        }
+                    }
+                }
+            });
+        }
+    }
+
     private buildForm(): void {
         this.form = new FormGroup({
             pageNumberControl: new FormControl(undefined, [Validators.required, TLValidators.number(0)]),
@@ -314,7 +381,7 @@ export class EditTransportationLogBookPageComponent implements OnInit, IDialogCo
             filesControl: new FormControl()
         });
 
-        this.setMinLoadingDateControlValidators(); 
+        this.setMinLoadingDateControlValidators();
     }
 
     private fillModel(): void {
@@ -335,7 +402,7 @@ export class EditTransportationLogBookPageComponent implements OnInit, IDialogCo
     private fillForm(): void {
         this.form.get('pageNumberControl')!.setValue(this.model.pageNumber);
         this.form.get('vehicleIdentificationControl')!.setValue(this.model.vehicleIdentification);
-        
+
         if (!this.isAdd) {
             this.form.get('statusControl')!.setValue(this.model.status);
         }
@@ -528,5 +595,9 @@ export class EditTransportationLogBookPageComponent implements OnInit, IDialogCo
 
             return null;
         }
+    }
+
+    private closeEditBasicInformationDialogBtnClicked(closeFn: HeaderCloseFunction): void {
+        closeFn();
     }
 }

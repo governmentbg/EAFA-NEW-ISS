@@ -119,6 +119,10 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
                         {
                             return "";
                         }
+                        if (quantity.First() == null)
+                        {
+                            quantity = catches.Select(ci => ci.CatchQuantity);
+                        }
                         return $"{_fishTypes.Where(f => f.Id == fishType).First().DisplayValue}: {quantity.Sum(x => x.HasValue ? x.Value : 0):f2} кг";
                     }
                 ).Where(c => !string.IsNullOrEmpty(c)));

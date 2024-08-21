@@ -29,6 +29,7 @@ using IARA.Mobile.Shared.Menu;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using TechnoLogica.Xamarin.Commands;
@@ -43,6 +44,8 @@ namespace IARA.Mobile.Insp.FlyoutPages.InspectionsPage
     public class InspectionsViewModel : MainPageViewModel
     {
         private InspectionsFilters _inspectionsFilters = null;
+        private List<SelectNomenclatureDto> _inspectionStates;
+
         public InspectionsViewModel()
         {
             IsBusy = false;
@@ -63,6 +66,12 @@ namespace IARA.Mobile.Insp.FlyoutPages.InspectionsPage
         }
 
         public TLPagedCollection<InspectionDto> Inspections { get; }
+        public List<SelectNomenclatureDto> InspectionStates
+        {
+            get => _inspectionStates;
+            set => SetProperty(ref _inspectionStates, value);
+        }
+
 
         public ICommand SignInspection { get; }
         public ICommand GoToAddInspection { get; }
@@ -80,6 +89,9 @@ namespace IARA.Mobile.Insp.FlyoutPages.InspectionsPage
 
         public ValidStateDate StartDate { get; set; }
         public ValidStateDate EndDate { get; set; }
+        public ValidStateSelect<SelectNomenclatureDto> InspectionStateSelect { get; set; }
+        public ValidState ReportNumber { get; set; }
+        public ValidStateBool ShowIsnpectionCratedByCurrentUser { get; set; }
 
         public override async void OnAppearing()
         {
@@ -89,6 +101,25 @@ namespace IARA.Mobile.Insp.FlyoutPages.InspectionsPage
         public override Task Initialize(object sender)
         {
             DependencyService.Resolve<IConnectivity>().OfflineDataPosted += OnConnectivityOfflineDataPosted;
+            IInspectionsTransaction inspectionsTransaction = DependencyService.Resolve<IInspectionsTransaction>();
+            InspectionStates = new List<SelectNomenclatureDto>()
+            {
+                new SelectNomenclatureDto()
+                {
+                    Id = inspectionsTransaction.GetInspectionStateId(InspectionState.Signed),
+                    Name = TranslateExtension.Translator[nameof(GroupResourceEnum.Common) + "/Signed"]
+                },
+                new SelectNomenclatureDto()
+                {
+                    Id = inspectionsTransaction.GetInspectionStateId(InspectionState.Draft),
+                    Name = TranslateExtension.Translator[nameof(GroupResourceEnum.Common) + "/Draft"]
+                },
+                new SelectNomenclatureDto()
+                {
+                    Id = inspectionsTransaction.GetInspectionStateId(InspectionState.Submitted),
+                    Name = TranslateExtension.Translator[nameof(GroupResourceEnum.Common) + "/Submitted"]
+                },
+            };
             return Task.CompletedTask;
         }
 
@@ -100,34 +131,40 @@ namespace IARA.Mobile.Insp.FlyoutPages.InspectionsPage
         private async Task OnSignInspection(InspectionDto dto)
         {
             bool result;
-
-            if (Device.RuntimePlatform == Device.UWP)
+            if (CommonGlobalVariables.InternetStatus != InternetStatus.Connected)
             {
-                FileModel fileResult = await TLDialogHelper.ShowDialog(new SaveInspectionUWPDialog());
-
-                if (fileResult == null)
-                {
-                    result = false;
-                }
-                else
-                {
-                    fileResult.FileTypeId = NomenclaturesTransaction.GetFileType(Constants.SignedReport);
-
-                    await TLLoadingHelper.ShowFullLoadingScreen();
-                    result = await InspectionsTransaction.SignInspection(dto.Id, new List<FileModel> { fileResult }, dto.Id);
-                }
+                await TLSnackbar.Show(TranslateExtension.Translator[nameof(GroupResourceEnum.Common) + "/ActionRequiresInternet"], App.GetResource<Color>("ErrorColor"));
             }
             else
             {
-                result = await MobileSign(dto);
-            }
+                if (Device.RuntimePlatform == Device.UWP)
+                {
+                    FileModel fileResult = await TLDialogHelper.ShowDialog(new SaveInspectionUWPDialog());
 
-            if (result)
-            {
-                await OnReload();
-            }
+                    if (fileResult == null)
+                    {
+                        result = false;
+                    }
+                    else
+                    {
+                        fileResult.FileTypeId = NomenclaturesTransaction.GetFileType(Constants.SignedReport);
 
-            await TLLoadingHelper.HideFullLoadingScreen();
+                        await TLLoadingHelper.ShowFullLoadingScreen();
+                        result = await InspectionsTransaction.SignInspection(dto.Id, new List<FileModel> { fileResult }, dto.Id);
+                    }
+                }
+                else
+                {
+                    result = await MobileSign(dto);
+                }
+
+                if (result)
+                {
+                    await OnReload();
+                }
+
+                await TLLoadingHelper.HideFullLoadingScreen();
+            }
         }
 
         private async Task OnGetStartupData()
@@ -206,6 +243,18 @@ namespace IARA.Mobile.Insp.FlyoutPages.InspectionsPage
             {
                 _inspectionsFilters.DateTo = EndDate.Value.Value;
             }
+            if (InspectionStateSelect.Value != null)
+            {
+                _inspectionsFilters.StateIds = new List<int>() { InspectionStateSelect.Value.Id };
+            }
+            if (ReportNumber.Value != null)
+            {
+                _inspectionsFilters.ReportNumber = ReportNumber.Value;
+            }
+            if (ShowIsnpectionCratedByCurrentUser.Value != false)
+            {
+                _inspectionsFilters.ShowOnlyUserInspections = true;
+            }
             Inspections.Page = 1;
 
             return OnReload();
@@ -216,6 +265,9 @@ namespace IARA.Mobile.Insp.FlyoutPages.InspectionsPage
             _inspectionsFilters = null;
             StartDate.Value = null;
             EndDate.Value = null;
+            InspectionStateSelect.Value = null;
+            ReportNumber.Value = null;
+            ShowIsnpectionCratedByCurrentUser.Value = false;
             Inspections.Page = 1;
 
             return OnReload();
@@ -330,39 +382,74 @@ namespace IARA.Mobile.Insp.FlyoutPages.InspectionsPage
 
         private async Task<bool> MobileSign(InspectionDto dto)
         {
-            List<SelectNomenclatureDto> fileTypes = DependencyService.Resolve<INomenclatureTransaction>().GetFileTypes();
-            int inspectionId = dto.Id;
-            HttpResult<List<InspectorDto>> inspectors = await DependencyService.Resolve<IRestClient>().GetAsync<List<InspectorDto>>("InspectionData/GetInspectorsForInspection", new { inspectionId });
             List<SignatureSaveModel> signatures = new List<SignatureSaveModel>();
+            int inspectionId = dto.Id;
+            string jsonContent = InspectionsTransaction.GetInspectionJson(inspectionId);
 
-            if (inspectors.IsSuccessful)
+            List<SelectNomenclatureDto> fileTypes = DependencyService.Resolve<INomenclatureTransaction>().GetFileTypes();
+            int inspectorSignatureFileId = fileTypes.Find(f => f.Code == Constants.InspectorSignature).Id;
+            int inspectedPersonSignatureFileId = fileTypes.Find(f => f.Code == Constants.InspectedPersonSignature).Id;
+
+
+            if (CommonGlobalVariables.InternetStatus == InternetStatus.Connected)
             {
-                foreach (InspectorDto inspector in inspectors.Content)
+                HttpResult<List<InspectionRequiredSignatureDto>> inspectionRequiredSignatures = await DependencyService.Resolve<IRestClient>().GetAsync<List<InspectionRequiredSignatureDto>>("InspectionData/GetInspectionRequiredSignatures", new { inspectionId });
+                if (!inspectionRequiredSignatures.IsSuccessful)
+                {
+                    await TLSnackbar.Show(TranslateExtension.Translator[nameof(GroupResourceEnum.Common) + "/ActionRequiresInternet"], App.GetResource<Color>("ErrorColor"));
+                }
+
+                foreach (var signature in inspectionRequiredSignatures.Content)
                 {
                     signatures.Add(new SignatureSaveModel
                     {
-                        Caption = string.Join(" - ", TranslateExtension.Translator[nameof(GroupResourceEnum.GeneralInfo) + "/InspectorSignature"],
-                                    string.Join(" ", inspector.FirstName, inspector.MiddleName, inspector.LastName)),
-                        FileTypeId = fileTypes.Find(f => f.Code == Constants.InspectorSignature).Id
+                        Caption = GetSignatureCaption(signature),
+                        FileTypeId = signature.SignatureType == PersonSignatureType.Inspector ? inspectorSignatureFileId : inspectedPersonSignatureFileId
                     });
                 }
             }
             else
             {
-                signatures.Add(new SignatureSaveModel
+                if (jsonContent == null)
                 {
-                    Caption = TranslateExtension.Translator[nameof(GroupResourceEnum.GeneralInfo) + "/InspectorSignature"],
-                    FileTypeId = fileTypes.Find(f => f.Code == Constants.InspectorSignature).Id
-                });
-            }
+                    await TLSnackbar.Show(TranslateExtension.Translator[nameof(GroupResourceEnum.Common) + "/ActionRequiresInternet"], App.GetResource<Color>("ErrorColor"));
+                    return false;
+                }
+                InspectionEditDto inspection = JsonSerializer.Deserialize<InspectionEditDto>(jsonContent);
 
-            if (dto.Type != InspectionType.OFS)
-            {
-                signatures.Add(new SignatureSaveModel
+                foreach (var inspector in inspection.Inspectors)
                 {
-                    Caption = TranslateExtension.Translator[nameof(GroupResourceEnum.GeneralInfo) + "/InspectedPersonSignature"],
-                    FileTypeId = fileTypes.Find(f => f.Code == Constants.InspectedPersonSignature).Id
-                });
+                    signatures.Add(new SignatureSaveModel
+                    {
+                        Caption = string.Join(" - ", TranslateExtension.Translator[nameof(GroupResourceEnum.GeneralInfo) + "/InspectorSignature"],
+                                string.Join(" ", inspector.FirstName, inspector.MiddleName, inspector.LastName)),
+                        FileTypeId = inspectorSignatureFileId
+                    });
+                }
+
+                if (inspection.InspectionType != InspectionType.OFS || inspection.InspectionType != InspectionType.OTH)
+                {
+                    if (inspection.InspectionType == InspectionType.CWO)
+                    {
+                        foreach (var inspectedPerson in inspection.Personnel)
+                        {
+                            signatures.Add(new SignatureSaveModel
+                            {
+                                Caption = string.Join(" - ", TranslateExtension.Translator[nameof(GroupResourceEnum.GeneralInfo) + "/InspectedPersonSignature"],
+                                string.Join(" ", inspectedPerson.FirstName, inspectedPerson.MiddleName, inspectedPerson.LastName)),
+                                FileTypeId = inspectedPersonSignatureFileId
+                            });
+                        }
+                    }
+                    else
+                    {
+                        signatures.Add(new SignatureSaveModel
+                        {
+                            Caption = TranslateExtension.Translator[nameof(GroupResourceEnum.GeneralInfo) + "/InspectedPersonSignature"],
+                            FileTypeId = inspectedPersonSignatureFileId
+                        });
+                    }
+                }
             }
 
             bool finish = await TLDialogHelper.ShowDialog(new SaveInspectionView(signatures));
@@ -398,6 +485,28 @@ namespace IARA.Mobile.Insp.FlyoutPages.InspectionsPage
 
             await TLLoadingHelper.ShowFullLoadingScreen();
             return await InspectionsTransaction.SignInspection(dto.Id, files, dto.Id);
+        }
+
+        private string GetSignatureCaption(InspectionRequiredSignatureDto signature)
+        {
+            switch (signature.SignatureType)
+            {
+                case PersonSignatureType.Inspector:
+                    return string.Join(" - ", TranslateExtension.Translator[nameof(GroupResourceEnum.GeneralInfo) + "/InspectorSignature"],
+                                               string.Join(" ", signature.FirstName, signature.MiddleName, signature.LastName));
+                case PersonSignatureType.InspectedPerson:
+                    if (string.IsNullOrEmpty(signature.FirstName) && string.IsNullOrEmpty(signature.LastName))
+                    {
+                        return TranslateExtension.Translator[nameof(GroupResourceEnum.GeneralInfo) + "/InspectedPersonSignature"];
+                    }
+                    else
+                    {
+                        return string.Join(" - ", TranslateExtension.Translator[nameof(GroupResourceEnum.GeneralInfo) + "/InspectedPersonSignature"],
+                                                   string.Join(" ", signature.FirstName, signature.MiddleName, signature.LastName));
+                    }
+                default:
+                    return string.Empty;
+            }
         }
     }
 }

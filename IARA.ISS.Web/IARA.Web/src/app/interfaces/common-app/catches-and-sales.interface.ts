@@ -34,7 +34,7 @@ import { LogBookNomenclatureDTO } from '@app/models/generated/dtos/LogBookNomenc
 export interface ICatchesAndSalesService {
     getAllCatchesAndSales(request: GridRequestModel<CatchesAndSalesAdministrationFilters | CatchesAndSalesPublicFilters>): Observable<GridResultModel<LogBookRegisterDTO>>;
 
-    getCommonLogBookPageData(parameters: CommonLogBookPageDataParameters): Observable<CommonLogBookPageDataDTO>;
+    getCommonLogBookPageData(parameters: CommonLogBookPageDataParameters, isEditing: boolean): Observable<CommonLogBookPageDataDTO>;
     getLogBookPageDocumentData(parameters: BasicLogBookPageDocumentParameters): Observable<BasicLogBookPageDocumentDataDTO>;
     getLogBookPageDocumentOwnerData(documentNumber: number, documentType: LogBookPageDocumentTypesEnum): Observable<NomenclatureDTO<number>[]>;
     getAquacultureLogBookPageOwnerData(pageNumber: number): Observable<LogBookNomenclatureDTO[]>;
@@ -43,6 +43,9 @@ export interface ICatchesAndSalesService {
     getPreviousTripOnBoardCatchRecords(shipId: number, currentPageId?: number): Observable<OnBoardCatchRecordFishDTO[]>;
 
     getPossibleProducts(shipLogBookPageId: number, documentType: LogBookPageDocumentTypesEnum): Observable<LogBookPageProductDTO[]>;
+    getPossibleProductsByOriginDeclarationId(originDeclarationId: number, documentType: LogBookPageDocumentTypesEnum): Observable<LogBookPageProductDTO[]>;
+    getPossibleProductsByTransportationDocument(transportationDocumentId: number, documentType: LogBookPageDocumentTypesEnum): Observable<LogBookPageProductDTO[]>;
+    getPossibleProductsByAdmissionDocument(admissionDocumentId: number, documentType: LogBookPageDocumentTypesEnum): Observable<LogBookPageProductDTO[]>;
 
     getCommercialFishingLogBook(id: number): Observable<CommercialFishingLogBookEditDTO>;
     getLogBook(id: number): Observable<LogBookEditDTO>;

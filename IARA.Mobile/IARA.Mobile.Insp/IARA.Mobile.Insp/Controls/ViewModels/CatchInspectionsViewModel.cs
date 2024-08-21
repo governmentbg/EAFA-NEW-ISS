@@ -161,7 +161,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
                 viewModel.CatchQuantity.AssignFrom(f.CatchQuantity);
                 viewModel.UnloadedQuantity.AssignFrom(f.UnloadedQuantity);
                 viewModel.AllowedDeviation.AssignFrom(f.AllowedDeviation);
-                viewModel.CatchType.AssignFrom(f.CatchInspectionTypeId, CatchTypes);
+                viewModel.CatchType.Value = CatchTypes.Find(x => x.Id == f.CatchInspectionTypeId);
                 viewModel.CatchArea.AssignFrom(f.CatchZoneId, CatchAreas);
                 viewModel.FishType.AssignFrom(f.FishId, FishTypes);
                 viewModel.AverageSize.AssignFrom(f.AverageSize);

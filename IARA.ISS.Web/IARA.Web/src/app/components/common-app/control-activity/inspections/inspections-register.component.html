@@ -15,11 +15,13 @@
                                  label="{{ 'inspections.territory' | tlTranslate }}">
                 </tl-autocomplete>
 
-                <tl-input fxFlex="25"
-                          formControlName="inspectorNameControl"
-                          tooltipResourceName="inspections.inspector-helper"
-                          label="{{ 'inspections.inspector' | tlTranslate }}">
-                </tl-input>
+                <tl-autocomplete fxFlex="25"
+                                 formControlName="inspectorNameControl"
+                                 [options]="inspectors"
+                                 [hasSelectedValueFromDropdownValidator]="false"
+                                 tooltipResourceName="inspections.inspector-helper"
+                                 label="{{ 'inspections.inspector' | tlTranslate }}">
+                </tl-autocomplete>
 
                 <tl-select fxFlex="25"
                            [options]="states"
@@ -119,11 +121,19 @@
 
             <!-- Юридическо лице -->
             <div fxLayout="row" fxLayoutGap="1em" fxFlexFill fxLayoutAlign="space-between center">
-                <tl-slide-toggle fxFlex="70"
+                <tl-slide-toggle fxFlex="25"
                                  formControlName="isLegalControl"
                                  tooltipResourceName="inspections.is-legal-helper"
                                  label="{{ 'inspections.is-legal' | tlTranslate }}">
                 </tl-slide-toggle>
+
+                <tl-slide-toggle fxFlex="25"
+                                 formControlName="showOnlyUserInspectionsControl"
+                                 tooltipResourceName="inspections.show-only-user-inspections-helper"
+                                 label="{{ 'inspections.show-only-user-inspections' | tlTranslate }}">
+                </tl-slide-toggle>
+
+                <div fxFlex="50"></div>
             </div>
 
             <!-- Име на юридическо лице, ЕИК, управител -->

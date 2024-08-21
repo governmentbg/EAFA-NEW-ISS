@@ -10,6 +10,7 @@
         x:DataType="vm:PersonViewModel"
         x:Name="view">
     <Label Text="{Binding Title, Source={Reference view}}"
+            IsVisible="{Binding IsTitleVisible, Source={Reference view}}"
             FontAttributes="Bold"
             FontSize="24" />
     <tl:TLFlex GrowUnit="200">
@@ -23,8 +24,7 @@
                 ValidState="{Binding LastName}"
                 IsEnabled="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}" />
         <Grid ColumnDefinitions="*,Auto">
-            <sv:TLEntryWithType ValidState="{Binding EGN}"
-                    IsEnabled="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}" />
+            <sv:TLEntryWithType ValidState="{Binding EGN}" IsEnabled="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}" />
             <ImageButton Grid.Column="1"
                     Source="{FontImageSource Color=White, FontFamily=FA, Glyph={Static h:IconFont.MagnifyingGlass}, Size=25}"
                     Padding="10"

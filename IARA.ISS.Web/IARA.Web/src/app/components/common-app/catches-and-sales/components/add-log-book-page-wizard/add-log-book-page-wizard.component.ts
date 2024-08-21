@@ -68,6 +68,7 @@ export class AddLogBookPageWizardComponent implements OnInit, AfterViewInit, IDi
     public originDeclarationTypeSelected: boolean = false;
     public transportationDocumentTypeSelected: boolean = false;
     public admissionDocumentTypeSelected: boolean = false;
+    public editLogBookPageBasicInfo: boolean = false;
 
     public hasInvalidOriginDeclarationNumber: boolean = false;
     public hasInvalidTransportationDocNumber: boolean = false;
@@ -237,7 +238,7 @@ export class AddLogBookPageWizardComponent implements OnInit, AfterViewInit, IDi
                     next: (owner: LogBookOwnerNomenclatureDTO | undefined) => {
                         if (owner !== undefined && owner !== null) {
                             this.noAdmissionLogBookOwnerSelected = false;
-                            
+
                             this.service.getAdmissionPagesByOwnerId(owner.buyerId, owner.legalId, owner.personId).subscribe({
                                 next: (pages: LogBookPageNomenclatureDTO[]) => {
                                     this.admissionDocumentsForOwner = pages;
@@ -306,6 +307,7 @@ export class AddLogBookPageWizardComponent implements OnInit, AfterViewInit, IDi
         this.logBookTypeId = data.logBookTypeId;
         this.pageNumber = data.pageNumber;
         this.pageStatus = data.pageStatus;
+        this.editLogBookPageBasicInfo = data.editLogBookPageBasicInfo;
 
         this.dialogRef = buttons.dialogRef;
     }
@@ -318,19 +320,25 @@ export class AddLogBookPageWizardComponent implements OnInit, AfterViewInit, IDi
         this.confirmationDataFormGroup.updateValueAndValidity();
 
         if (this.preliminaryDataFormGroup.valid && this.confirmationDataFormGroup.valid) {
-            switch (this.logBookType) {
-                case LogBookTypesEnum.FirstSale: {
-                    this.openAddFirstSaleLogBookPageDialog();
-                } break;
-                case LogBookTypesEnum.Admission: {
-                    this.openAddAdmissionLogBookPageDialog();
-                } break;
-                case LogBookTypesEnum.Transportation: {
-                    this.openTransportationLogBookPageDialog();
-                } break;
-                default: {
-                    dialogClose();
-                } break;
+            if (!this.editLogBookPageBasicInfo) {
+                switch (this.logBookType) {
+                    case LogBookTypesEnum.FirstSale: {
+                        this.openAddFirstSaleLogBookPageDialog();
+                    } break;
+                    case LogBookTypesEnum.Admission: {
+                        this.openAddAdmissionLogBookPageDialog();
+                    } break;
+                    case LogBookTypesEnum.Transportation: {
+                        this.openTransportationLogBookPageDialog();
+                    } break;
+                    default: {
+                        dialogClose();
+                    } break;
+                }
+            }
+            else {
+                const commonData: CommonLogBookPageDataDTO = this.confirmationDataFormGroup.get('commonLogBookPageDataControl')!.value;
+                dialogClose(commonData);
             }
         }
     }
@@ -359,7 +367,7 @@ export class AddLogBookPageWizardComponent implements OnInit, AfterViewInit, IDi
                     });
                 }
                 else {
-                    this.service.getCommonLogBookPageData(this.getCommonLogBookPageParameters()).subscribe({
+                    this.service.getCommonLogBookPageData(this.getCommonLogBookPageParameters(), this.editLogBookPageBasicInfo).subscribe({
                         next: (result: CommonLogBookPageDataDTO) => {
                             if (result.possibleLogBooks !== null && result.possibleLogBooks !== undefined) {
                                 this.buildPossibleLogBooksCollection(result.possibleLogBooks);

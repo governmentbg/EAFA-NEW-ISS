@@ -354,7 +354,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.BoatOnOpenWater
                     List<FileModel> signatures = null;
                     if (submitType == SubmitType.Finish)
                     {
-                        signatures = await InspectionSaveHelper.GetSignatures(dto.Inspectors, false);
+                        signatures = await InspectionSaveHelper.GetSignatures(dto.Inspectors);
                     }
                     return await InspectionsTransaction.HandleInspection(dto, submitType, signatures);
                 }

@@ -5,13 +5,16 @@
              fxLayoutGap="1em"
              fxFlexFill>
             <ng-template matStepLabel>
-                <span [ngClass]="{ 'error-color': preliminaryDataFormGroup.touched && preliminaryDataFormGroup.invalid }">
+                <span *ngIf="!editLogBookPageBasicInfo" [ngClass]="{ 'error-color': preliminaryDataFormGroup.touched && preliminaryDataFormGroup.invalid }">
                     {{ 'catches-and-sales.add-log-book-page-wizard-fill-preliminary-data' | tlTranslate }}
+                </span>
+                <span *ngIf="editLogBookPageBasicInfo" [ngClass]="{ 'error-color': preliminaryDataFormGroup.touched && preliminaryDataFormGroup.invalid }">
+                    {{ 'catches-and-sales.edit-log-book-page-wizard-fill-preliminary-data' | tlTranslate }}
                 </span>
             </ng-template>
             <div fxLayout="row">
                 <div fxFlexFill fxLayout="column" fxLayoutGap="1em">
-                    <div fxFlex="100" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                    <div *ngIf="!editLogBookPageBasicInfo" fxFlex="100" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
                         <tl-input fxFlex="50"
                                   formControlName="pageNumberControl"
                                   label="{{ 'catches-and-sales.add-log-book-page-wizard-page-number-to-add' | tlTranslate }}"
@@ -175,7 +178,7 @@
                     {{ 'catches-and-sales.add-log-book-page-wizard-confirm-additional-data' | tlTranslate }}
                 </span>
             </ng-template>
-            <div fxLayout="row" fxFlex="100" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+            <div *ngIf="!editLogBookPageBasicInfo" fxLayout="row" fxFlex="100" fxLayoutAlign="space-between center" fxLayoutGap="1em">
                 <tl-autocomplete fxFlex="100"
                                  formControlName="possibleLogBooksForPageControl"
                                  label="{{ 'catches-and-sales.add-log-book-page-wizard-chosen-log-book-for-page' | tlTranslate }}"

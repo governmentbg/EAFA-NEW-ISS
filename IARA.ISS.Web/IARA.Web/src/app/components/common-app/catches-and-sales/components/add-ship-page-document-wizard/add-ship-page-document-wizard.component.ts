@@ -236,7 +236,7 @@ export class AddShipPageDocumentWizardComponent implements OnInit, IDialogCompon
                     });
                 }
                 else {
-                    this.service.getCommonLogBookPageData(this.getCommonLogBookPageParameters()).subscribe({
+                    this.service.getCommonLogBookPageData(this.getCommonLogBookPageParameters(), false).subscribe({
                         next: (result: CommonLogBookPageDataDTO) => {
                             this.confirmationDataFormGroup.get('sourceDataControl')!.setValue(result);
                         },

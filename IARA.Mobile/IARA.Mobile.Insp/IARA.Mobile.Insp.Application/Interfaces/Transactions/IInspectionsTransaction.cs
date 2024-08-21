@@ -78,5 +78,6 @@ namespace IARA.Mobile.Insp.Application.Interfaces.Transactions
         string GetInspectionJson(int id);
         void ReturnForEdit(int id);
         int GetInspectionStateId(InspectionState inspectionState);
+        int GetUnsignedInspectionCount();
     }
 }

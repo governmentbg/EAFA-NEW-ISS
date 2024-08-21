@@ -23,6 +23,7 @@
             <xct:NotEqualConverter x:Key="NotEqual" />
             <converters:IsReviewConverter x:Key="IsReview" />
             <converters:IsNotReviewConverter x:Key="IsNotReview" />
+            <converters:StatusToTextConverter x:Key="StatusToText" />
             <converters:IsSubjectNotLegalConverter x:Key="IsSubjectNotLegal" />
             <tlConverters:DateTimeToStringConverter x:Key="DateTimeToString" />
             <tlConverters:DateToStringConverter x:Key="DateToString" />

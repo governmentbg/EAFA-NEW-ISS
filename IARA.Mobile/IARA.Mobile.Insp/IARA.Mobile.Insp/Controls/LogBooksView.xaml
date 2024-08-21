@@ -7,6 +7,7 @@
         xmlns:lh="clr-namespace:IARA.Mobile.Insp.Helpers"
         xmlns:m="clr-namespace:IARA.Mobile.Insp.Models"
         xmlns:h="clr-namespace:TechnoLogica.Xamarin.Helpers;assembly=TechnoLogica.Xamarin"
+        xmlns:nom="clr-namespace:IARA.Mobile.Insp.Application.DTObjects.Nomenclatures;assembly=IARA.Mobile.Insp.Application"
         x:Class="IARA.Mobile.Insp.Controls.LogBooksView"
         x:DataType="vm:LogBooksViewModel"
         x:Name="view"
@@ -214,7 +215,28 @@
                                             DisplayValue="DisplayValue"
                                             DialogAddButtonText="{rt:Translate Add, Group=Common}"
                                             DialogAddCommand="{Binding AddPage}"
-                                            IsEnabled="{Binding BindingContext.Inspection.ActivityType, Converter={StaticResource IsNotReview}, Source={Reference view}}" />
+                                            IsEnabled="{Binding BindingContext.Inspection.ActivityType, Converter={StaticResource IsNotReview}, Source={Reference view}}">
+                                        <DataTemplate>
+                                            <Grid x:DataType="nom:LogBookPageDto"
+                                                    RowDefinitions="Auto,Auto,1"
+                                                    RowSpacing="0">
+                                                <tl:TLRichLabel Margin="5,5,2,0">
+                                                    <Span Text="{Binding PageNum}" />
+                                                    <Span Text=" " />
+                                                    <Span Text="{rt:Translate Status, Group=DeclarationCatch}" />
+                                                    <Span Text=": " />
+                                                    <Span Text="{Binding Status, Converter={StaticResource StatusToText}}" />
+                                                </tl:TLRichLabel>
+                                                <Label Grid.Row="1"
+                                                        FontSize="Small"
+                                                        Margin="5,0"
+                                                        Text="{Binding IssuedOn, Converter={StaticResource DateToString}}" />
+                                                <BoxView Grid.Row="2"
+                                                        Margin="5,0"
+                                                        Color="LightGray" />
+                                            </Grid>
+                                        </DataTemplate>
+                                    </tl:TLPicker>
                                     <tl:TLEntry Title="{rt:Translate Description, Group=ShipChecks}"
                                             ValidState="{Binding Description}"
                                             IsEnabled="{Binding BindingContext.Inspection.ActivityType, Converter={StaticResource IsNotReview}, Source={Reference view}}" />

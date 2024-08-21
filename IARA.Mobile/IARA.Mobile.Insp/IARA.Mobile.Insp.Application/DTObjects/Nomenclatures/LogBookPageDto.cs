@@ -1,4 +1,6 @@
-﻿namespace IARA.Mobile.Insp.Application.DTObjects.Nomenclatures
+﻿using System;
+
+namespace IARA.Mobile.Insp.Application.DTObjects.Nomenclatures
 {
     public class LogBookPageDto
     {
@@ -6,6 +8,8 @@
         public int LogBookId { get; set; }
         public string PageNum { get; set; }
         public string Status { get; set; }
-        public string DisplayValue => PageNum + " (" + Status + ")";
+        public string DisplayValue => PageNum;
+        public DateTime? IssuedOn { get; set; }
+
     }
 }

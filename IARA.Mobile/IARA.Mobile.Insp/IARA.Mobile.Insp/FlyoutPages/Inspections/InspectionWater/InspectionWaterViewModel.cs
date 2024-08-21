@@ -9,6 +9,7 @@ using IARA.Mobile.Insp.Base;
 using IARA.Mobile.Insp.Controls;
 using IARA.Mobile.Insp.Controls.ViewModels;
 using IARA.Mobile.Insp.Domain.Enums;
+using IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.OffenderDialog;
 using IARA.Mobile.Insp.Helpers;
 using IARA.Mobile.Insp.Models;
 using IARA.Mobile.Insp.ViewModels.Models;
@@ -17,8 +18,10 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Helpers;
+using TechnoLogica.Xamarin.ResourceTranslator;
 using TechnoLogica.Xamarin.ViewModels.Interfaces;
 using TechnoLogica.Xamarin.ViewModels.Models;
 
@@ -44,6 +47,11 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.InspectionWater
             AdditionalInfo = new AdditionalInfoViewModel(this);
             Signatures = new SignaturesViewModel(this);
 
+            AddOffender = CommandBuilder.CreateFrom(OnAddOffender);
+            ViewOffender = CommandBuilder.CreateFrom<InspectionSubjectPersonnelDto>(OnViewOffender);
+            EditOffender = CommandBuilder.CreateFrom<InspectionSubjectPersonnelDto>(OnEditOffender);
+            RemoveOffender = CommandBuilder.CreateFrom<InspectionSubjectPersonnelDto>(OnRemoveOffender);
+
             this.AddValidation(others: new IValidatableViewModel[]
             {
                 InspectionGeneralInfo,
@@ -57,7 +65,6 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.InspectionWater
                 Signatures,
             });
         }
-
         public InspectionCheckWaterObjectDto Edit
         {
             get => _edit;
@@ -79,6 +86,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.InspectionWater
         public InspectionFilesViewModel InspectionFiles { get; }
         public AdditionalInfoViewModel AdditionalInfo { get; }
         public SignaturesViewModel Signatures { get; }
+        public List<SelectNomenclatureDto> Counties { get; set; }
 
         public ValidStateValidatableTable<ToggleViewModel> Toggles { get; set; }
 
@@ -91,6 +99,15 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.InspectionWater
 
         [Required]
         public ValidStateLocation Location { get; set; }
+
+        public ValidStateBool HasOffenders { get; set; }
+
+        public ValidStateTable<InspectionSubjectPersonnelDto> Offenders { get; set; }
+
+        public ICommand AddOffender { get; set; }
+        public ICommand ViewOffender { get; set; }
+        public ICommand EditOffender { get; set; }
+        public ICommand RemoveOffender { get; set; }
 
         public List<SelectNomenclatureDto> WaterTypes
         {
@@ -124,7 +141,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.InspectionWater
 
             INomenclatureTransaction nomTransaction = NomenclaturesTransaction;
 
-            List<SelectNomenclatureDto> countries = nomTransaction.GetCountries();
+            Counties = nomTransaction.GetCountries();
             List<InspectionCheckTypeDto> checkTypes = nomTransaction.GetInspectionCheckTypes(InspectionType.CWO);
 
             await InspectionGeneralInfo.Init();
@@ -202,6 +219,12 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.InspectionWater
                     }
                 }
 
+                if (Edit.Personnel?.Count > 0)
+                {
+                    HasOffenders.Value = true;
+                    Offenders.Value.AddRange(Edit.Personnel.Where(x => x.Type == InspectedPersonType.Offender).ToList());
+                }
+
                 ObjectName.AssignFrom(Edit.ObjectName);
                 WaterType.AssignFrom(Edit.WaterObjectTypeId, WaterTypes);
                 Location.AssignFrom(Edit.WaterObjectLocation);
@@ -217,6 +240,60 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.InspectionWater
 
             await TLLoadingHelper.HideFullLoadingScreen();
         }
+        private async Task OnRemoveOffender(InspectionSubjectPersonnelDto dto)
+        {
+            bool result = await App.Current.MainPage.DisplayAlert(null,
+                TranslateExtension.Translator[nameof(GroupResourceEnum.Common) + "/DeleteMessage"],
+                TranslateExtension.Translator[nameof(GroupResourceEnum.Common) + "/Yes"],
+                TranslateExtension.Translator[nameof(GroupResourceEnum.Common) + "/No"]
+            );
+
+            if (result)
+            {
+                Offenders.Value.Remove(dto);
+            }
+        }
+
+        private async Task OnEditOffender(InspectionSubjectPersonnelDto dto)
+        {
+            InspectionSubjectPersonnelDto offender = await TLDialogHelper.ShowDialog(new OffenderDialog(this, Counties, ViewActivityType.Edit, dto));
+            if (offender != null)
+            {
+                dto.Id = offender.Id;
+                dto.FirstName = offender.FirstName;
+                dto.MiddleName = offender.MiddleName;
+                dto.LastName = offender.LastName;
+                dto.Address = offender.Address;
+                dto.HasBulgarianAddressRegistration = offender.HasBulgarianAddressRegistration;
+                dto.EgnLnc = offender.EgnLnc;
+                dto.Eik = offender.Eik;
+                dto.IsLegal = offender.IsLegal;
+                dto.CitizenshipId = offender.CitizenshipId;
+                dto.Comment = offender.Comment;
+                dto.IsActive = offender.IsActive;
+                dto.IsRegistered = offender.IsRegistered;
+                dto.EntryId = offender.EntryId;
+                dto.Type = offender.Type;
+                dto.RegisteredAddress = offender.RegisteredAddress;
+
+                Offenders.Value.Replace(dto, offender);
+            }
+        }
+
+        private async Task OnViewOffender(InspectionSubjectPersonnelDto dto)
+        {
+            await TLDialogHelper.ShowDialog(new OffenderDialog(this, Counties, ViewActivityType.Review, dto));
+        }
+
+        private async Task OnAddOffender()
+        {
+            InspectionSubjectPersonnelDto offender = await TLDialogHelper.ShowDialog(new OffenderDialog(this, Counties, ViewActivityType.Add, null));
+            if (offender != null)
+            {
+                Offenders.Value.Add(offender);
+            }
+        }
+
 
         private Task OnSaveDraft()
         {
@@ -267,11 +344,12 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.InspectionWater
                         }.Where(f => !string.IsNullOrWhiteSpace(f.Text)).ToList(),
                         Catches = Catches,
                         ViolatedRegulations = AdditionalInfo.ViolatedRegulations.ViolatedRegulations.Value.Select(x => (AuanViolatedRegulationDto)x).ToList(),
+                        Personnel = HasOffenders.Value ? Offenders.Value.ToList() : null,
                     };
                     List<FileModel> signatures = null;
                     if (submitType == SubmitType.Finish)
                     {
-                        signatures = await InspectionSaveHelper.GetSignatures(dto.Inspectors);
+                        signatures = await InspectionSaveHelper.GetSignatures(dto.Inspectors, HasOffenders.Value ? Offenders.Value.ToList() : null);
                     }
                     return await InspectionsTransaction.HandleInspection(dto, submitType, signatures);
                 }

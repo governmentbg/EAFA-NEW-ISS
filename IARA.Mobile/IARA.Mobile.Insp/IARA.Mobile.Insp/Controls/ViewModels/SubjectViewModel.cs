@@ -23,7 +23,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
     {
         private SelectNomenclatureDto _action;
         private List<SelectNomenclatureDto> _nationalities;
-        public SubjectViewModel(InspectionPageViewModel inspection, InspectedPersonType personType, InspectedPersonType legalType, bool isRequired = true)
+        public SubjectViewModel(InspectionPageViewModel inspection, InspectedPersonType personType, InspectedPersonType legalType, bool isRequired = true, bool requiresEgn = true)
         {
             Inspection = inspection;
             PersonType = personType;
@@ -46,6 +46,13 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
                 EGN.HasAsterisk = true;
                 Address.HasAsterisk = true;
                 Nationality.HasAsterisk = true;
+            }
+
+            if (!requiresEgn)
+            {
+                EGN.Validations.RemoveAt(EGN.Validations.FindIndex(f => f.Name == nameof(RequiredIfBooleanEqualsAttribute)));
+                EGN.HasAsterisk = false;
+                OnPropertyChanged(nameof(EGN));
             }
 
             Actions = new List<SelectNomenclatureDto>

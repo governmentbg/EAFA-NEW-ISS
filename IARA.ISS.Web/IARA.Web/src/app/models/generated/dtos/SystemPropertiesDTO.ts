@@ -93,4 +93,7 @@ export class SystemPropertiesDTO {
 
     @StrictlyTyped(String)
     public approveNewInstallations?: string;
+
+    @StrictlyTyped(Number)
+    public notifyInspectionNotSignedAfterHours?: number;
 }

@@ -62,8 +62,8 @@ export class CatchesAndSalesPublicService extends BaseAuditService implements IC
         return this.commonService.getLogBook(this.area, this.controller, id);
     }
 
-    public getCommonLogBookPageData(parameters: CommonLogBookPageDataParameters): Observable<CommonLogBookPageDataDTO> {
-        return this.commonService.getCommonLogBookPageData(this.area, this.controller, parameters);
+    public getCommonLogBookPageData(parameters: CommonLogBookPageDataParameters, isEditing: boolean = false): Observable<CommonLogBookPageDataDTO> {
+        return this.commonService.getCommonLogBookPageData(this.area, this.controller, parameters, isEditing);
     }
 
     public getLogBookPageDocumentData(parameters: BasicLogBookPageDocumentParameters): Observable<BasicLogBookPageDocumentDataDTO> {
@@ -88,6 +88,18 @@ export class CatchesAndSalesPublicService extends BaseAuditService implements IC
 
     public getPossibleProducts(shipLogBookPageId: number, documentType: LogBookPageDocumentTypesEnum): Observable<LogBookPageProductDTO[]> {
         return this.commonService.getPossibleProducts(this.area, this.controller, shipLogBookPageId, documentType);
+    }
+
+    public getPossibleProductsByOriginDeclarationId(originDeclarationId: number, documentType: LogBookPageDocumentTypesEnum): Observable<LogBookPageProductDTO[]> {
+        return this.commonService.getPossibleProductsByOriginDeclarationId(this.area, this.controller, originDeclarationId, documentType);
+    }
+
+    public getPossibleProductsByTransportationDocument(transportationDocumentId: number, documentType: LogBookPageDocumentTypesEnum): Observable<LogBookPageProductDTO[]> {
+        return this.commonService.getPossibleProductsByTransportationDocument(this.area, this.controller, transportationDocumentId, documentType);
+    }
+
+    public getPossibleProductsByAdmissionDocument(admissionDocumentId: number, documentType: LogBookPageDocumentTypesEnum): Observable<LogBookPageProductDTO[]> {
+        return this.commonService.getPossibleProductsByAdmissionDocument(this.area, this.controller, admissionDocumentId, documentType);
     }
 
     public getShipLogBookPage(id: number): Observable<ShipLogBookPageEditDTO> {

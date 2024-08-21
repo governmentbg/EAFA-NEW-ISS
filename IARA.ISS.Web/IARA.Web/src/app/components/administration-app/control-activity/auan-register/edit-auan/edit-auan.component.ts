@@ -32,6 +32,7 @@ import { TLSnackbar } from '@app/shared/components/snackbar/tl.snackbar';
 import { TLConfirmDialog } from '@app/shared/components/confirmation-dialog/tl-confirm-dialog';
 import { AuanStatusEnum } from '@app/enums/auan-status.enum';
 import { AuanWitnessDTO } from '@app/models/generated/dtos/AuanWitnessDTO';
+import { AuanDrafterNomenclatureDTO } from '@app/models/generated/dtos/AuanDrafterNomenclatureDTO';
 
 @Component({
     selector: 'edit-auan',
@@ -49,8 +50,10 @@ export class EditAuanComponent implements OnInit, AfterViewInit, IDialogComponen
 
     public inspectionTypes: NomenclatureDTO<number>[] = [];
     public territoryUnits: NomenclatureDTO<number>[] = [];
-    public drafters: NomenclatureDTO<number>[] = [];
     public objectionResolutionTypes: NomenclatureDTO<AuanObjectionResolutionTypesEnum>[] = [];
+
+    public drafters: AuanDrafterNomenclatureDTO[] = [];
+    public allDrafters: AuanDrafterNomenclatureDTO[] = [];
 
     public inspectedEntities: AuanInspectedEntityDTO[] = [];
     public violatedRegulations: AuanViolatedRegulationDTO[] = [];
@@ -114,22 +117,16 @@ export class EditAuanComponent implements OnInit, AfterViewInit, IDialogComponen
         this.isAdding = this.auanId === undefined || this.auanId === null;
         this.showInspectedEntity = !this.isAdding;
 
-        const nomenclatures: (NomenclatureDTO<number> | InspDeliveryTypesNomenclatureDTO)[][] = await forkJoin(
+        const nomenclatures: (NomenclatureDTO<number> | InspDeliveryTypesNomenclatureDTO | AuanDrafterNomenclatureDTO)[][] = await forkJoin(
             NomenclatureStore.instance.getNomenclature(NomenclatureTypes.InspectionTypes, this.nomenclatures.getInspectionTypes.bind(this.nomenclatures), false),
             NomenclatureStore.instance.getNomenclature(NomenclatureTypes.TerritoryUnits, this.nomenclatures.getTerritoryUnits.bind(this.nomenclatures), false),
-            this.service.getInspectionDrafters(this.inspectionId),
             this.service.getAllDrafters()
         ).toPromise();
 
         this.inspectionTypes = nomenclatures[0];
         this.territoryUnits = nomenclatures[1];
-
-        if (nomenclatures[2].length > 0) {
-            this.drafters = nomenclatures[2];
-        }
-        else {
-            this.drafters = nomenclatures[3]; //списък с всички инспектори, нужно е само когато инспекцията е мигрирана
-        }
+        this.drafters = nomenclatures[2];
+        this.allDrafters = nomenclatures[2];
 
         this.service.getAuanReportData(this.inspectionId).subscribe({
             next: (data: AuanReportDataDTO) => {
@@ -177,6 +174,31 @@ export class EditAuanComponent implements OnInit, AfterViewInit, IDialogComponen
 
     public ngAfterViewInit(): void {
         if (!this.viewMode) {
+            this.form.get('territoryUnitControl')!.valueChanges.subscribe({
+                next: (value: NomenclatureDTO<number> | undefined) => {
+                    if (value !== undefined && value !== null && typeof value !== 'string') {
+                        this.drafters = this.allDrafters.filter(x => x.territoryUnitId === value.value);
+                    }
+                    else {
+                        this.drafters = this.allDrafters;
+                    }
+
+                    this.drafters = this.drafters.slice();
+                }
+            });
+
+            this.form.get('drafterControl')!.valueChanges.subscribe({
+                next: (value: AuanDrafterNomenclatureDTO | undefined) => {
+                    if (value !== undefined && value !== null && value.territoryUnitId !== undefined && value.territoryUnitId !== null) {
+                        const territoryUnit: NomenclatureDTO<number> | undefined = this.form.get('territoryUnitControl')!.value;
+
+                        if (territoryUnit === undefined || territoryUnit === null) {
+                            this.form.get('territoryUnitControl')!.setValue(this.territoryUnits.find(x => x.value === value.territoryUnitId));
+                        }
+                    }
+                }
+            });
+
             this.form.get('inspectedEntityControl')!.valueChanges.subscribe({
                 next: (entity: AuanInspectedEntityDTO | undefined) => {
                     this.inspectedEntity = entity;
@@ -315,6 +337,7 @@ export class EditAuanComponent implements OnInit, AfterViewInit, IDialogComponen
     public dialogButtonClicked(action: IActionInfo, dialogClose: DialogCloseCallback): void {
         if (action.id === 'save-draft') {
             this.markDraftOrCancelAsTouched();
+            this.validityCheckerGroup.validate();
 
             if (this.isDraftOrCancelValid()) {
                 this.fillModel();
@@ -473,7 +496,7 @@ export class EditAuanComponent implements OnInit, AfterViewInit, IDialogComponen
         }
 
         if (this.isInspector) {
-            this.form.get('drafterControl')!.setValue(this.drafters.find(x => x.value === this.model.inspectorId));
+            this.form.get('drafterControl')!.setValue(this.allDrafters.find(x => x.value === this.model.inspectorId));
         }
         else {
             this.form.get('drafterNameControl')!.setValue(this.model.inspectorName);

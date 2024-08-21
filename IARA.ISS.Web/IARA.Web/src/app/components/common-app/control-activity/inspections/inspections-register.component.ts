@@ -81,6 +81,7 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
     public ships: NomenclatureDTO<number>[] = [];
     public aquacultureFacilities: NomenclatureDTO<number>[] = [];
     public poundNets: NomenclatureDTO<number>[] = [];
+    public inspectors: NomenclatureDTO<number>[] = [];
 
     public readonly icIconSize: number = CommonUtils.IC_ICON_SIZE;
     public readonly canReadRecords: boolean;
@@ -202,6 +203,12 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
                 }
             });
 
+            this.service.getInspectors().subscribe({
+                next: (result: NomenclatureDTO<number>[]) => {
+                    this.inspectors = result;
+                }
+            });
+
             this.service.getIsInspector().subscribe({
                 next: (value) => {
                     this.isInspector = value ?? false;
@@ -230,7 +237,6 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
 
         const subjectId: number | undefined = window.history.state?.id;
         const isPerson: boolean | undefined = window.history.state?.isPerson;
-
         if (!CommonUtils.isNullOrEmpty(subjectId)) {
             if (isPerson === true) {
                 this.gridManager.advancedFilters = new InspectionsFilters({
@@ -244,6 +250,15 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
                     subjectIsLegal: true
                 });
             }
+
+            this.gridManager.refreshData();
+        }
+
+        const tableId: number | undefined = window.history.state?.tableId;
+        if (!CommonUtils.isNullOrEmpty(tableId)) {
+            this.gridManager.advancedFilters = new InspectionsFilters({
+                inspectionId: tableId
+            });
 
             this.gridManager.refreshData();
         }
@@ -548,7 +563,6 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
             showInactiveRecords: filters.showInactiveRecords,
 
             territoryNode: filters.getValue('territoryNodeControl'),
-            inspector: filters.getValue('inspectorNameControl'),
             inspectionTypeId: this.form.get('inspectionTypeControl')!.value?.value,
             reportNumber: filters.getValue('reportNumberControl'),
             subjectIsLegal: filters.getValue('isLegalControl'),
@@ -563,7 +577,8 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
             waterObjectName: filters.getValue('waterObjectControl'),
             firstSaleCenterName: filters.getValue('firstSaleCenterNameControl'),
             tractorLicensePlateNumber: filters.getValue('tractorLicensePlateNumberControl'),
-            trailerLicensePlateNumber: filters.getValue('trailerLicensePlateNumberControl')
+            trailerLicensePlateNumber: filters.getValue('trailerLicensePlateNumberControl'),
+            showOnlyUserInspections: filters.getValue('showOnlyUserInspectionsControl')
         });
 
         if (result.subjectIsLegal === true) {
@@ -573,6 +588,23 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
         else {
             result.subjectEGN = filters.getValue('egnControl');
             result.subjectName = filters.getValue('personNameControl');
+        }
+
+        if (result.showOnlyUserInspections === true) {
+            result.inspectorUserId = this.userId;
+        }
+        else {
+            result.inspectorUserId = undefined;
+        }
+
+        const inspector: number | string | undefined = filters.getValue('inspectorNameControl');
+        if (inspector !== undefined && inspector !== null) {
+            if (typeof inspector === 'number') {
+                result.inspectorId = inspector;
+            }
+            else {
+                result.inspector = inspector;
+            }
         }
 
         return result;
@@ -798,7 +830,8 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
             waterObjectControl: new FormControl(),
             firstSaleCenterNameControl: new FormControl(),
             tractorLicensePlateNumberControl: new FormControl(),
-            trailerLicensePlateNumberControl: new FormControl()
+            trailerLicensePlateNumberControl: new FormControl(),
+            showOnlyUserInspectionsControl: new FormControl()
         });
     }
 }

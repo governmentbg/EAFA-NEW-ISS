@@ -84,9 +84,6 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.DeclarationCatchDialo
         [TLRange(1, 10000, true)]
         public ValidState CatchCount { get; set; }
 
-        [Required]
-        public ValidStateSelect<SelectNomenclatureDto> CatchType { get; set; }
-
         public ValidStateBool UndersizedFish { get; set; }
 
         [Required]
@@ -212,12 +209,6 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.DeclarationCatchDialo
 
             InspectedShip.Validation.GlobalGroups = new List<string> { "IsShip" };
 
-            if (!HasCatchType)
-            {
-                CatchType.HasAsterisk = false;
-                CatchType.Validations.Clear();
-            }
-
             Aquaculture.ItemsSource = new TLObservableCollection<SelectNomenclatureDto>();
             LogBookPages = new List<DeclarationLogBookPageDto>();
             Aquaculture.GetMore = (int page, int pageSize, string search) =>
@@ -262,7 +253,6 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.DeclarationCatchDialo
             {
                 CatchCount.AssignFrom(Edit.Dto.CatchCount);
                 CatchQuantity.AssignFrom(Edit.Dto.CatchQuantity);
-                CatchType.AssignFrom(Edit.Dto.CatchTypeId, CatchTypes);
                 FishType.AssignFrom(Edit.Dto.FishTypeId, FishTypes);
                 Presentation.AssignFrom(Edit.Dto.PresentationId, Presentations);
                 UndersizedFish.AssignFrom(Edit.Dto.Undersized);
@@ -483,16 +473,12 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.DeclarationCatchDialo
                 return HideDialog(new DeclarationCatchModel
                 {
                     Type = FishType.Value?.DisplayValue,
-                    CatchType = CatchType.Value?.DisplayValue,
                     Presentation = Presentation.Value?.Name,
                     Dto = new InspectedDeclarationCatchDto
                     {
                         Id = Edit?.Dto.Id,
                         CatchQuantity = ParseHelper.ParseDecimal(CatchQuantity.Value),
                         CatchCount = ParseHelper.ParseInteger(CatchCount.Value),
-                        CatchTypeId = HasUndersizedCheck
-                            ? (UndersizedFish ? CatchTypes.Find(f => f.Code == nameof(CatchSizeCodesEnum.BMS))?.Id : CatchTypes.Find(f => f.Code == nameof(CatchSizeCodesEnum.LSC))?.Id)
-                            : CatchType.Value,
                         FishTypeId = FishType.Value,
                         PresentationId = Presentation.Value,
                         OriginShip = InspectedShip,

@@ -44,6 +44,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ErrorCode, ErrorModel } from '@app/models/common/exception.model';
 import { RequestProperties } from '@app/shared/services/request-properties';
+import { AuanDrafterNomenclatureDTO } from '@app/models/generated/dtos/AuanDrafterNomenclatureDTO';
 
 @Component({
     selector: 'penal-decrees',
@@ -61,7 +62,7 @@ export class PenalDecreesComponent implements OnInit, AfterViewInit {
 
     public territoryUnits: NomenclatureDTO<number>[] = [];
     public statuses: NomenclatureDTO<number>[] = [];
-    public drafters: NomenclatureDTO<number>[] = [];
+    public drafters: AuanDrafterNomenclatureDTO[] = [];
     public sanctions: NomenclatureDTO<number>[] = [];
     public fishes: NomenclatureDTO<number>[] = [];
     public fishingGears: NomenclatureDTO<number>[] = [];
@@ -208,7 +209,7 @@ export class PenalDecreesComponent implements OnInit, AfterViewInit {
         });
 
         this.auanService.getAllDrafters().subscribe({
-            next: (drafters: NomenclatureDTO<number>[]) => {
+            next: (drafters: AuanDrafterNomenclatureDTO[]) => {
                 this.drafters = drafters;
             }
         });
@@ -569,7 +570,6 @@ export class PenalDecreesComponent implements OnInit, AfterViewInit {
             territoryUnitId: filters.getValue('territoryUnitControl'),
             issueDateFrom: filters.getValue<DateRangeData>('issueDateRangeControl')?.start,
             issueDateTo: filters.getValue<DateRangeData>('issueDateRangeControl')?.end,
-            drafterId: filters.getValue('drafterControl'),
             sanctionTypeIds: filters.getValue('sanctionTypeControl'),
             statusTypeIds: filters.getValue('statusTypeControl'),
             locationDescription: filters.getValue('locationDescriptionControl'),
@@ -587,6 +587,16 @@ export class PenalDecreesComponent implements OnInit, AfterViewInit {
         if (fineAmount !== undefined && fineAmount !== null) {
             result.fineAmountFrom = fineAmount.start;
             result.fineAmountTo = fineAmount.end;
+        }
+
+        const drafter: number | string | undefined = filters.getValue('drafterControl');
+        if (drafter !== undefined) {
+            if (typeof drafter === 'number') {
+                result.drafterId = drafter;
+            }
+            else {
+                result.drafterName = drafter;
+            }
         }
 
         return result;

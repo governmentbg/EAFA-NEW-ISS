@@ -67,7 +67,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
                         LogBookId = f.LogBookId.Value,
                         PageNum = f.PageNum,
                     };
-                    model.Pages = pages?.FindAll(s => s.LogBookId == f.LogBookId.Value) ?? new List<LogBookPageDto>();
+                    model.Pages = pages?.FindAll(s => s.LogBookId == f.LogBookId.Value).OrderByDescending(x => x.IssuedOn).ToList() ?? new List<LogBookPageDto>();
                 }
 
                 return model;

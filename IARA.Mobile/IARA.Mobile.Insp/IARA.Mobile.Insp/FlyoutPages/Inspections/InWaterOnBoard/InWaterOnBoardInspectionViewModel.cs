@@ -98,6 +98,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.InWaterOnBoard
                 GroupResourceEnum.InspectedShipData,
                 GroupResourceEnum.InWaterOnBoardInspection,
                 GroupResourceEnum.Validation,
+                GroupResourceEnum.DeclarationCatch
             };
         }
 
@@ -286,7 +287,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.InWaterOnBoard
                     List<FileModel> signatures = null;
                     if (submitType == SubmitType.Finish)
                     {
-                        signatures = await InspectionSaveHelper.GetSignatures(dto.Inspectors);
+                        signatures = await InspectionSaveHelper.GetSignatures(dto.Inspectors, DefaultInspecterPerson);
                     }
                     return await InspectionsTransaction.HandleInspection(dto, submitType, signatures);
                 }

@@ -274,7 +274,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.AquacultureFarmInspection
                     List<FileModel> signatures = null;
                     if (submitType == SubmitType.Finish)
                     {
-                        signatures = await InspectionSaveHelper.GetSignatures(dto.Inspectors);
+                        signatures = await InspectionSaveHelper.GetSignatures(dto.Inspectors, DefaultInspecterPerson);
                     }
                     return await InspectionsTransaction.HandleInspection(dto, submitType, signatures);
                 }

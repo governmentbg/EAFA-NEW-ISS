@@ -447,6 +447,7 @@
     FirstSaleLogBookPageEdit = 'FirstSaleLogBookPageEdit',
     FirstSaleLogBookPageCancel = 'FirstSaleLogBookPageCancel',
     FirstSaleLogBookPageEditNumber = 'FirstSaleLogBookPageEditNumber',
+    FirstSaleLogBookPageEditCommonData = 'FirstSaleLogBookPageEditCommonData',
 
     AdmissionLogBookPageReadAll = 'AdmissionLogBookPageReadAll',
     AdmissionLogBookPageRead = 'AdmissionLogBookPageRead',
@@ -454,6 +455,7 @@
     AdmissionLogBookPageEdit = 'AdmissionLogBookPageEdit',
     AdmissionLogBookPageCancel = 'AdmissionLogBookPageCancel',
     AdmissionLogBookPageEditNumber = 'AdmissionLogBookPageEditNumber',
+    AdmissionLogBookPageEditCommonData = 'AdmissionLogBookPageEditCommonData',
 
     TransportationLogBookPageReadAll = 'TransportationLogBookPageReadAll',
     TransportationLogBookPageRead = 'TransportationLogBookPageRead',
@@ -461,6 +463,7 @@
     TransportationLogBookPageEdit = 'TransportationLogBookPageEdit',
     TransportationLogBookPageCancel = 'TransportationLogBookPageCancel',
     TransportationLogBookPageEditNumber = 'TransportationLogBookPageEditNumber',
+    TransportationLogBookPageEditCommonData = 'TransportationLogBookPageEditCommonData',
 
     AquacultureLogBookPageReadAll = 'AquacultureLogBookPageReadAll',
     AquacultureLogBookPageRead = 'AquacultureLogBookPageRead',

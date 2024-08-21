@@ -39,8 +39,8 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.VehicleInspection
             Finish = CommandBuilder.CreateFrom(OnFinish);
 
             InspectionGeneralInfo = new InspectionGeneralInfoViewModel(this);
-            Owner = new SubjectViewModel(this, InspectedPersonType.OwnerPers, InspectedPersonType.OwnerLegal);
-            Driver = new PersonViewModel(this, InspectedPersonType.Driver);
+            Owner = new SubjectViewModel(this, InspectedPersonType.OwnerPers, InspectedPersonType.OwnerLegal, requiresEgn: false);
+            Driver = new PersonViewModel(this, InspectedPersonType.Driver, requiresEgn: false);
             Buyer = new BuyerViewModel(this, true);
             Catches = new DeclarationCatchesViewModel(this, false);
             InspectionFiles = new InspectionFilesViewModel(this);
@@ -102,6 +102,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.VehicleInspection
         public ValidStateSelect<SelectNomenclatureDto> Country { get; set; }
 
         [MaxLength(20)]
+        [Required]
         public ValidState TractorLicensePlateNum { get; set; }
 
         [MaxLength(50)]
@@ -323,7 +324,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.VehicleInspection
                     List<FileModel> signatures = null;
                     if (submitType == SubmitType.Finish)
                     {
-                        signatures = await InspectionSaveHelper.GetSignatures(dto.Inspectors);
+                        signatures = await InspectionSaveHelper.GetSignatures(dto.Inspectors, DefaultInspecterPerson);
                     }
                     return await InspectionsTransaction.HandleInspection(dto, submitType, signatures);
                 }
