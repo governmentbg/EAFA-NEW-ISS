@@ -155,17 +155,6 @@ export class RecreationalFishingAdministrationService extends ApplicationsRegist
         });
     }
 
-    public checkTicketNumbersAvailability(numbers: string[]): Observable<boolean[]> {
-        let params: HttpParams = new HttpParams();
-        for (const num of numbers) {
-            params = params.append('ticketNumbers', num);
-        }
-
-        return this.requestService.get(this.area, this.controller, 'CheckTicketNumbersAvailability', {
-            httpParams: params
-        });
-    }
-
     public getPhoto(fileId: number): Observable<string> {
         const params = new HttpParams().append('fileId', fileId.toString());
         return this.requestService.get(this.area, this.controller, 'GetPhoto', {

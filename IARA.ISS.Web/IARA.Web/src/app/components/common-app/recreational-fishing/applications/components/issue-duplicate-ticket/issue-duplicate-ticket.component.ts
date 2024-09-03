@@ -1,8 +1,6 @@
-﻿import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
-import { AbstractControl, FormControl, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
-import { MatStepper } from '@angular/material/stepper';
+﻿import { Component, OnInit } from '@angular/core';
+import { FormControl, Validators } from '@angular/forms';
 import { StepperSelectionEvent } from '@angular/cdk/stepper';
-import { Subject } from 'rxjs';
 
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 import { IRecreationalFishingService } from '@app/interfaces/common-app/recreational-fishing.interface';
@@ -21,49 +19,32 @@ import { TariffCodesEnum } from '@app/enums/tariff-codes.enum';
 import { PaymentTariffDTO } from '@app/models/generated/dtos/PaymentTariffDTO';
 import { IssueDuplicateTicketDialogParams } from '../../models/issue-duplicate-ticket-dialog-params.model';
 import { GetControlErrorLabelTextCallback } from '@app/shared/components/input-controls/base-tl-control';
-import { FileInfoDTO } from '../../../../../../models/generated/dtos/FileInfoDTO';
+import { FileInfoDTO } from '@app/models/generated/dtos/FileInfoDTO';
 
 @Component({
     selector: 'issue-duplicate-ticket',
     templateUrl: './issue-duplicate-ticket.component.html'
 })
-export class IssueDuplicateTicketComponent implements OnInit, AfterViewInit, IDialogComponent {
+export class IssueDuplicateTicketComponent implements OnInit, IDialogComponent {
     public readonly currentDate: Date = new Date();
 
     public ticketNumControl: FormControl;
     public paymentDataControl: FormControl;
 
     public paymentSummary!: PaymentSummaryDTO;
-    public ticketNumApproved: boolean = true;
-
-    public getControlErrorLabelTextForTicketNumberMethod: GetControlErrorLabelTextCallback  = this.getControlErrorLabelTextForTicketNumber.bind(this);
-
-    @ViewChild('stepper')
-    private stepper!: MatStepper;
 
     private ticketId!: number;
     private associationId: number | undefined;
     private photo: FileInfoDTO | undefined;
 
     private service!: IRecreationalFishingService;
-    private translate: FuseTranslationLoaderService;
     private nomenclatures: CommonNomenclatures;
 
-    private ticketNumbersAvailability: Map<string, boolean> = new Map<string, boolean>();
-    private ticketInvalid: Subject<void> = new Subject<void>();
-
-    public constructor(translate: FuseTranslationLoaderService, nomenclatures: CommonNomenclatures) {
-        this.translate = translate;
+    public constructor(nomenclatures: CommonNomenclatures) {
         this.nomenclatures = nomenclatures;
 
-        this.ticketNumControl = new FormControl(null, [Validators.required, TLValidators.number(0), this.ticketNumberAlreadyInUse()]);
+        this.ticketNumControl = new FormControl(null, [Validators.required, TLValidators.number(0)]);
         this.paymentDataControl = new FormControl(null, Validators.required);
-
-        this.ticketNumControl.valueChanges.subscribe({
-            next: (ticketNum: string) => {
-                this.ticketNumApproved = false;
-            }
-        });
     }
 
     public ngOnInit(): void {
@@ -94,16 +75,6 @@ export class IssueDuplicateTicketComponent implements OnInit, AfterViewInit, IDi
                 else {
                     throw new Error('Could not find tariff for ticket duplicate!');
                 }
-            }
-        });
-    }
-
-    public ngAfterViewInit(): void {
-        this.ticketInvalid.subscribe({
-            next: () => {
-                setTimeout(() => {
-                    this.stepper.previous();
-                });
             }
         });
     }
@@ -155,54 +126,13 @@ export class IssueDuplicateTicketComponent implements OnInit, AfterViewInit, IDi
         }
     }
 
-    public getControlErrorLabelTextForTicketNumber(controlName: string, error: unknown, errorCode: string): TLError | undefined {
-        if (errorCode === 'alreadyInUse') {
-            return new TLError({
-                text: this.translate.getValue('recreational-fishing.ticket-number-already-in-use'),
-                type: 'error'
-            });
-        }
-        return undefined;
-    }
-
     private checkTicketNumber(): void {
-        const ticketNum: string = this.ticketNumControl.value;
-
-        if (this.ticketNumbersAvailability.has(ticketNum)) {
-            this.updateTicketNumAndEmit();
-        }
-        else {
-            this.service.checkTicketNumbersAvailability([ticketNum]).subscribe({
-                next: (result: boolean[]) => {
-                    this.ticketNumApproved = true;
-
-                    this.ticketNumbersAvailability.set(ticketNum, result[0]);
-                    this.updateTicketNumAndEmit();
-                }
-            });
-        }
+        this.updateTicketNumAndEmit();
     }
 
     private updateTicketNumAndEmit(): void {
         this.ticketNumControl.markAsTouched();
         this.ticketNumControl.updateValueAndValidity();
-
-        if (!this.ticketNumControl.valid) {
-            this.ticketInvalid.next();
-        }
-    }
-
-    private ticketNumberAlreadyInUse(): ValidatorFn {
-        return (control: AbstractControl): ValidationErrors | null => {
-            if (this.ticketNumApproved === true) {
-                const available: boolean | undefined = this.ticketNumbersAvailability.get(control.value);
-                if (available !== undefined && available === false) {
-                    return { alreadyInUse: true };
-                }
-            }
-
-            return null;
-        };
     }
 
     private getValue(): RecreationalFishingTicketDuplicateDTO {

@@ -194,7 +194,7 @@ export class EditInspectionVehicleComponent extends BaseInspectionsComponent imp
 
             this.hasSeal = this.model.isSealed === true;
             this.form.get('hasSealControl')!.setValue(this.model.isSealed);
-            this.form.get('catchesControl')!.setValue(this.model.catchMeasures);
+            this.form.get('catchesControl')!.setValue(this.model.inspectionLogBookPages);
 
             if (this.model.personnel !== null && this.model.personnel !== undefined) {
                 this.form.get('ownerControl')!.setValue(this.model.personnel.find(x => x.type === InspectedPersonTypeEnum.OwnerLegal || x.type === InspectedPersonTypeEnum.OwnerPers));
@@ -264,8 +264,8 @@ export class EditInspectionVehicleComponent extends BaseInspectionsComponent imp
         this.model.isSealed = this.form.get('hasSealControl')!.value;
         this.model.sealInstitutionId = this.form.get('sealInstitutionControl')!.value?.value;
         this.model.sealCondition = this.form.get('sealConditionControl')!.value;
-        this.model.catchMeasures = this.form.get('catchesControl')!.value;
-
+        this.model.inspectionLogBookPages = this.form.get('catchesControl')!.value;
+  
         this.model.observationTexts = [
             additionalInfo?.violation,
         ].filter(x => x !== null && x !== undefined) as InspectionObservationTextDTO[];

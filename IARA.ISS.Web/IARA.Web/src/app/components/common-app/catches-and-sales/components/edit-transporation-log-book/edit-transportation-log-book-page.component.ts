@@ -346,10 +346,11 @@ export class EditTransportationLogBookPageComponent implements OnInit, IDialogCo
                         if (result.originDeclarationId !== undefined && result.originDeclarationId !== null) {
                             this.service.getPossibleProductsByOriginDeclarationId(result.originDeclarationId, LogBookPageDocumentTypesEnum.TransportationDocument).subscribe({
                                 next: (products: LogBookPageProductDTO[]) => {
+                                    const logBookProducts: LogBookPageProductDTO[] = this.getProductsFromBasicInfo(products);
                                     this.originPossibleProducts = products;
                                     this.model.originalPossibleProducts = [];
 
-                                    this.form.get('productsControl')!.setValue(products);
+                                    this.form.get('productsControl')!.setValue(logBookProducts);
                                 }
                             });
                         }
@@ -595,6 +596,19 @@ export class EditTransportationLogBookPageComponent implements OnInit, IDialogCo
 
             return null;
         }
+    }
+
+    private getProductsFromBasicInfo(products: LogBookPageProductDTO[]): LogBookPageProductDTO[] {
+        const productsToDelete: LogBookPageProductDTO[] = this.model.products ?? [];
+
+        for (const product of productsToDelete) {
+            product.isActive = false;
+            product.hasMissingProperties = false;
+        }
+
+        const result: LogBookPageProductDTO[] = products.concat(...productsToDelete);
+
+        return result;
     }
 
     private closeEditBasicInformationDialogBtnClicked(closeFn: HeaderCloseFunction): void {

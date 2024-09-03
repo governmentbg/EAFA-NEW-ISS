@@ -219,7 +219,8 @@ export class InspectionGeneralInfoComponent extends CustomFormControl<Inspection
         }
         else {
             if (!CommonUtils.isNullOrEmpty(this.numPrefix)) {
-                result.reportNum = this.numPrefix + this.handleNumber(this.form.get('reportNumberControl')!.value);
+                const userNum: string = this.form.get('reportNumberControl')!.value;
+                result.reportNum = this.numPrefix + userNum;
             }
         }
 

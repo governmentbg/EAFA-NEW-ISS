@@ -38,7 +38,7 @@ namespace IARA.Mobile.Insp.Helpers
             }
         }
 
-        public static void InitShip(FishingShipViewModel fishingShip, ShipChecksViewModel shipChecks, ShipCatchesViewModel shipCatches = null, FishingGearsViewModel fishingGears = null)
+        public static void InitShip(FishingShipViewModel fishingShip, ShipChecksViewModel shipChecks, ShipCatchesViewModel shipCatches, FishingGearsViewModel fishingGears = null)
         {
             fishingShip.ShipData.ShipSelected = CommandBuilder.CreateFrom(
                 async (ShipSelectNomenclatureDto ship) =>

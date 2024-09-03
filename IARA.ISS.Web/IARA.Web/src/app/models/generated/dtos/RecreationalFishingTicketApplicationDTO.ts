@@ -83,5 +83,8 @@ export class RecreationalFishingTicketApplicationDTO {
     public isDuplicate?: boolean;
 
     @StrictlyTyped(Boolean)
+    public isExpired?: boolean;
+
+    @StrictlyTyped(Boolean)
     public isActive?: boolean;
 }

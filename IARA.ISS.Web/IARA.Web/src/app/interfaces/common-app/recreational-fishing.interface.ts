@@ -35,7 +35,6 @@ export interface IRecreationalFishingService extends IBaseAuditService {
 
     calculateTicketValidToDate(params: RecreationalFishingTicketValidToCalculationParamsDTO): Observable<Date>;
     checkEgnLncPurchaseAbility(data: RecreationalFishingTicketValidationDTO): Observable<RecreationalFishingTicketValidationResultDTO>;
-    checkTicketNumbersAvailability(numbers: string[]): Observable<boolean[]>;
     enterOnlineTicketOfflineNumber(id: number, ticketNum: string): Observable<boolean>;
 
     downloadFile(fileId: number, fileName: string): Observable<boolean>;

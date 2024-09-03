@@ -8,7 +8,7 @@
     <tl-card tooltipResourceName="recreational-fishing.association-basic-information-helper"
              [validityChecker]="form">
         <tl-card-title>{{ 'recreational-fishing.association-basic-information' | tlTranslate }}</tl-card-title>
-        <tl-card-content fxLayout="column">
+        <tl-card-content fxLayout="column" fxLayoutGap="1em">
             <regix-data formControlName="legalRegixDataControl"
                         validityChecker
                         [isPerson]="false"
@@ -16,6 +16,10 @@
                         (downloadDataBtnClicked)="downloadedLegalData($event)"
                         checkboxLabel="{{ 'recreational-fishing.has-bulgarian-address-registration' | tlTranslate }}">
             </regix-data>
+
+            <mat-error *ngIf="form.touched && form.get('legalRegixDataControl')?.errors?.associationAlreadyExists">
+                * {{ 'recreational-fishing.fishing-association-with-same-eik-already-exists' | tlTranslate }}
+            </mat-error>
 
             <div fxLayout="row">
                 <tl-autocomplete fxFlex="50"
@@ -34,7 +38,6 @@
             </address-registration>
         </tl-card-content>
     </tl-card>
-
     <!-- Потребители с достъп до сдружението -->
     <tl-card tooltipResourceName="recreational-fishing.association-users-helper"
              [validityChecker]="form">

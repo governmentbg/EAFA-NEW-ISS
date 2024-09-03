@@ -160,9 +160,14 @@ export class LogBookPageProductsComponent extends CustomFormControl<LogBookPageP
         for (const product of this.originProducts) {
             const newProduct: LogBookPageProductDTO = new LogBookPageProductDTO();
             Object.assign(newProduct, product);
-            newProduct.hasMissingProperties = true;
+
+            if (product.isActive) {
+                newProduct.hasMissingProperties = true;
+            }
+
             this.products.push(newProduct);
         }
+
         this.onChanged(this.products);
         this.recalculateFishQuantitySums();
 
@@ -318,7 +323,7 @@ export class LogBookPageProductsComponent extends CustomFormControl<LogBookPageP
     public validate(control: AbstractControl): ValidationErrors | null {
         const errors: ValidationErrors = {};
 
-        //productsQuantityNotMatch is warning
+        //productsQuantityNotMatch and noProductQuantities are warnings
         if (this.control.errors !== null && this.control.errors !== undefined) {
             if (this.control.errors['missingProperties']) {
                 errors['missingProperties'] = this.control.errors['missingProperties'];
@@ -336,7 +341,8 @@ export class LogBookPageProductsComponent extends CustomFormControl<LogBookPageP
         return new FormControl(null, [
             this.missingPropertiesValidator(),
             this.atLeastOneProductValidator(),
-            this.productsQuantitiesNotGreaterThanOriginal()
+            this.productsQuantitiesNotGreaterThanOriginal(),
+            this.noProductQuantitiesValidator()
         ]);
     }
 
@@ -433,6 +439,25 @@ export class LogBookPageProductsComponent extends CustomFormControl<LogBookPageP
 
             if (this.products === null || this.products === undefined || this.products.filter(x => x.isActive).length === 0) {
                 return { 'noProducts': true };
+            }
+
+            return null;
+        }
+    }
+
+    private noProductQuantitiesValidator(): ValidatorFn {
+        return (control: AbstractControl): ValidationErrors | null => {
+            if (control === null || control === undefined) {
+                return null;
+            }
+
+            if (this.originProducts === null || this.originProducts === undefined || this.originProducts.length === 0) {
+                return null;
+            }
+
+            //ако всички продукти от риболов са с количество 0, значи вече са декларирани в друга страница
+            if (this.originProducts.filter(x => x.isActive && x.quantityKg !== undefined && x.quantityKg !== null && x.quantityKg > 0).length === 0) {
+                return { 'noProductQuantities': true };
             }
 
             return null;

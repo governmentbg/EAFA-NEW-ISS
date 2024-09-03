@@ -38,7 +38,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.AquacultureFarmInspection
             PatrolVehicles = new PatrolVehiclesViewModel(this, false);
             LegalEntity = new LegalViewModel(this, InspectedPersonType.LicUsrLgl)
             {
-                IsEnabled = false,
+                IsEnabled = true,
             };
             Representative = new PersonViewModel(this, InspectedPersonType.ReprsPers, false);
             Catches = new CatchInspectionsViewModel(this,

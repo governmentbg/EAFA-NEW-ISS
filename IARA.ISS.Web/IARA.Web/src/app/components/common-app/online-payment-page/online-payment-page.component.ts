@@ -6,7 +6,6 @@ import { FuseTranslationLoaderService } from "@fuse/services/translation-loader.
 import { FormDataModel, TLEGovPaymentService, VPOSPaymentTypes } from '@tl/tl-egov-payments';
 import { EPaymentType, InvoicePaymentRequestModel, TLEPaymentService } from '@tl/tl-epay-payments';
 
-
 @Component({
     selector: 'online-payment-page',
     templateUrl: './online-payment-page.component.html',

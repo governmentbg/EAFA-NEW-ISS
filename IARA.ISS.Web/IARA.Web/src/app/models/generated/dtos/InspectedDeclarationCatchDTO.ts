@@ -1,8 +1,6 @@
 ﻿
 
 import { StrictlyTyped } from '@app/shared/decorators/strictly-typed.decorator';
-import { VesselDuringInspectionDTO } from './VesselDuringInspectionDTO';
-import { DeclarationLogBookTypeEnum } from '@app/enums/declaration-log-book-type.enum';
 
 export class InspectedDeclarationCatchDTO { 
     public constructor(obj?: Partial<InspectedDeclarationCatchDTO>) {
@@ -42,27 +40,6 @@ export class InspectedDeclarationCatchDTO {
     @StrictlyTyped(Number)
     public turbotSizeGroupId?: number;
 
-    @StrictlyTyped(VesselDuringInspectionDTO)
-    public originShip?: VesselDuringInspectionDTO;
-
-    @StrictlyTyped(Number)
-    public aquacultureId?: number;
-
     @StrictlyTyped(String)
-    public unregisteredEntityData?: string;
-
-    @StrictlyTyped(Number)
-    public logBookPageId?: number;
-
-    @StrictlyTyped(Number)
-    public logBookType?: DeclarationLogBookTypeEnum;
-
-    @StrictlyTyped(String)
-    public unregisteredPageNum?: string;
-
-    @StrictlyTyped(String)
-    public unregisteredLogBookNum?: string;
-
-    @StrictlyTyped(Date)
-    public unregisteredPageDate?: Date;
+    public fishName?: string;
 }

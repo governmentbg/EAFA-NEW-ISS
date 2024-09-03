@@ -26,7 +26,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
         private List<ToggleOption> _opMembershipButtons;
         private List<SelectNomenclatureDto> _shipAssociations;
 
-        public ShipChecksViewModel(InspectionPageViewModel inspection, ShipCatchesViewModel shipCatches = null)
+        public ShipChecksViewModel(InspectionPageViewModel inspection, ShipCatchesViewModel shipCatches)
         {
             Inspection = inspection;
 

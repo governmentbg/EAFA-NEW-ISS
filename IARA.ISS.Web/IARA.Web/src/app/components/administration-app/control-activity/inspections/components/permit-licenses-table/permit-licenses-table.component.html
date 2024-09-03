@@ -44,19 +44,19 @@
                         <tl-icon-button icon="visibility"
                                         (buttonClicked)="addEditEntry(row.data, true)"
                                         iconClass="accent-color"
-                                        tooltipText="{{ 'inspections.inspector-table-view' | tlTranslate }}">
+                                        tooltipText="{{ 'inspections.permit-license-table-view' | tlTranslate }}">
                         </tl-icon-button>
                         <tl-icon-button *ngIf="!isDisabled"
                                         icon="edit"
                                         (buttonClicked)="addEditEntry(row.data)"
                                         iconClass="accent-color"
-                                        tooltipText="{{ 'inspections.inspector-table-edit' | tlTranslate }}">
+                                        tooltipText="{{ 'inspections.permit-license-table-edit' | tlTranslate }}">
                         </tl-icon-button>
                         <tl-icon-button *ngIf="!isDisabled && !row.data.isCurrentUser"
                                         icon="delete"
                                         (buttonClicked)="deleteEntry(row)"
                                         iconClass="accent-color"
-                                        tooltipText="{{ 'inspections.inspector-table-delete' | tlTranslate }}">
+                                        tooltipText="{{ 'inspections.permit-license-table-delete' | tlTranslate }}">
                         </tl-icon-button>
                     </div>
                 </ng-template>

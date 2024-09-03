@@ -56,12 +56,17 @@
                     </tl-date>
                 </div>
 
-                <!-- Номер на билет, билетодържател, ЕГН на билетодържател, билетосъздател -->
+                <!-- Номер на билет, номер на бланка, билетодържател, ЕГН на билетодържател -->
                 <div fxLayout="row" fxFlexFill fxLayoutAlign="start center" fxLayoutGap="1em">
                     <tl-input fxFlex="25"
                               formControlName="ticketNumControl"
                               tooltipResourceName="recreational-fishing.application-ticket-num-helper"
                               label="{{ 'recreational-fishing.application-ticket-num' | tlTranslate }}">
+                    </tl-input>
+                    <tl-input fxFlex="25"
+                              formControlName="paperNumControl"
+                              tooltipResourceName="recreational-fishing.application-paper-num-helper"
+                              label="{{ 'recreational-fishing.application-paper-num' | tlTranslate }}">
                     </tl-input>
                     <tl-input fxFlex="25"
                               formControlName="holderControl"
@@ -73,15 +78,15 @@
                               tooltipResourceName="recreational-fishing.application-ticket-holder-egn-helper"
                               label="{{ 'recreational-fishing.application-ticket-holder-egn' | tlTranslate }}">
                     </tl-input>
+                </div>
+
+                <!-- Билетосъздател, Дубликат, статус, дата на издаване -->
+                <div fxLayout="row" fxFlexFill fxLayoutAlign="start center" fxLayoutGap="1em">
                     <tl-input fxFlex="25"
                               formControlName="issuerControl"
                               tooltipResourceName="recreational-fishing.application-ticket-issued-by-helper"
                               label="{{ 'recreational-fishing.application-ticket-issued-by' | tlTranslate }}">
                     </tl-input>
-                </div>
-
-                <!-- Дубликат, статус -->
-                <div fxLayout="row" fxFlexFill fxLayoutAlign="start center" fxLayoutGap="1em">
                     <tl-select fxFlex="25"
                                formControlName="isDuplicateControl"
                                tooltipResourceName="recreational-fishing.application-duplicate-helper"
@@ -102,7 +107,6 @@
                                    tooltipResourceName="recreational-fishing.application-issue-date-helper">
                     </tl-date-range>
                     <div *ngIf="isAssociation" fxFlex="25"></div>
-                    <div fxFlex="25"></div>
                 </div>
             </div>
         </search-panel>
@@ -114,10 +118,13 @@
                            [showInactiveRecords]="canRestoreRecords && !isDashboardMode"
                            (addButtonClicked)="onAddClicked()"
                            [recordsPerPage]="recordsPerPage">
-                <data-column propertyName="ticketNum"
-                             [flexRate]="0.2"
-                             columnName="{{ 'recreational-fishing.application-ticket-num' | tlTranslate }}">
-                </data-column>
+                <data-template-column propertyName="ticketNum"
+                                      [flexRate]="0.3"
+                                      columnName="{{ 'recreational-fishing.application-ticket-num' | tlTranslate }}">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                        <span class="ticket-num">{{ row.data.ticketNum }}</span>
+                    </ng-template>
+                </data-template-column>
 
                 <data-column propertyName="ticketHolderName"
                              [flexRate]="0.3"
@@ -131,7 +138,7 @@
                 </data-column>
 
                 <data-column propertyName="issuedOn"
-                             [flexRate]="0.3"
+                             [flexRate]="0.25"
                              dataType="date"
                              columnName="{{ 'recreational-fishing.application-ticket-issued-on' | tlTranslate }}">
                 </data-column>
@@ -142,7 +149,7 @@
                 </data-column>
 
                 <data-column propertyName="ticketPeriod"
-                             [flexRate]="0.3"
+                             [flexRate]="0.25"
                              columnName="{{ 'recreational-fishing.application-ticket-period' | tlTranslate }}">
                 </data-column>
 
@@ -343,10 +350,13 @@
                            [showAddButton]="false"
                            [showInactiveRecords]="canRestoreRecords && !isDashboardMode"
                            [recordsPerPage]="recordsPerPage">
-                <data-column propertyName="ticketNum"
-                             [flexRate]="0.2"
-                             columnName="{{ 'recreational-fishing.application-ticket-num' | tlTranslate }}">
-                </data-column>
+                <data-template-column propertyName="ticketNum"
+                                      [flexRate]="0.3"
+                                      columnName="{{ 'recreational-fishing.application-ticket-num' | tlTranslate }}">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                        <span class="ticket-num">{{ row.data.ticketNum }}</span>
+                    </ng-template>
+                </data-template-column>
 
                 <data-column propertyName="ticketHolderName"
                              [flexRate]="0.3"
@@ -360,23 +370,23 @@
                 </data-column>
 
                 <data-column propertyName="issuedOn"
-                             [flexRate]="0.3"
+                             [flexRate]="0.25"
                              dataType="date"
                              columnName="{{ 'recreational-fishing.application-ticket-issued-on' | tlTranslate }}">
                 </data-column>
 
                 <data-column propertyName="ticketType"
-                             [flexRate]="0.4"
+                             [flexRate]="0.3"
                              columnName="{{ 'recreational-fishing.application-ticket-type' | tlTranslate }}">
                 </data-column>
 
                 <data-column propertyName="ticketPeriod"
-                             [flexRate]="0.3"
+                             [flexRate]="0.25"
                              columnName="{{ 'recreational-fishing.application-ticket-period' | tlTranslate }}">
                 </data-column>
 
                 <data-template-column propertyName="ticketPrice"
-                                      [flexRate]="0.3"
+                                      [flexRate]="0.2"
                                       columnName="{{ 'recreational-fishing.application-ticket-price' | tlTranslate }}">
                     <ng-template let-row="row" ngx-datatable-cell-template>
                         <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="0.3em">
@@ -541,6 +551,15 @@
                             tooltipText="{{ 'applications-register.payment-refusal' | tlTranslate }}"
                             (buttonClicked)="paymentRefusalActoinClicked(value.row)">
             </tl-icon-button>
+            <tl-icon-button *ngIf="canCancelRecords"
+                            icon="ic-fluent-doc-prohibited-24-regular"
+                            iconClass="accent-color"
+                            [size]="icIconSize"
+                            tooltipText="{{ 'recreational-fishing.cancel-application' | tlTranslate }}"
+                            (buttonClicked)="cancellationActionClicked(value.row)">
+            </tl-icon-button>
+        </ng-container>
+        <ng-container *ngSwitchCase="applicationStatusEnum.PAYMENT_PROCESSING">
             <tl-icon-button *ngIf="canCancelRecords"
                             icon="ic-fluent-doc-prohibited-24-regular"
                             iconClass="accent-color"

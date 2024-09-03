@@ -194,6 +194,9 @@
                                            [isReadonly]="true">
                 </common-log-book-page-data>
             </div>
+            <mat-error *ngIf="noAvailableProducts" class="warn-orange-color">
+                * {{ 'catches-and-sales.page-product-products-with-no-quantities' | tlTranslate }}
+            </mat-error>
         </div>
     </mat-step>
 </mat-vertical-stepper>

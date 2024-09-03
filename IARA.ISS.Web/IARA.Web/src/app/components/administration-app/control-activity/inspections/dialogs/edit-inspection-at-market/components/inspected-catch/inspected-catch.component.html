@@ -1,0 +1,73 @@
+﻿<div fxLayout="column"
+     fxLayoutGap="1em"
+     fxFlexFill
+     validityCheckerGroup
+     [formGroup]="form">
+    <tl-expansion-panel [title]="expansionPanelTitle.length > 0 ? expansionPanelTitle : defaultExpansionPanelTitle"
+                        [validityChecker]="form"
+                        tooltipResourceName="inspections.market-catch-data-helper">
+        <tl-expansion-panel-description>
+            <div fxFlex="100" fxLayout="row" fxLayoutAlign="end start">
+                <tl-icon-button icon="delete"
+                                iconClass="accent-color"
+                                (buttonClicked)="deletePanel()"
+                                [disabled]="isDisabled">
+                </tl-icon-button>
+            </div>
+        </tl-expansion-panel-description>
+
+        <div fxLayout="row wrap"
+             fxLayoutGap="1em grid"
+             fxLayoutAlign="start center">
+            <tl-autocomplete fxFlex="33"
+                             formControlName="typeControl"
+                             [options]="fishes"
+                             label="{{ 'inspections.market-catch-fish' | tlTranslate }}"
+                             tooltipResourceName="inspections.market-catch-fish-helper">
+            </tl-autocomplete>
+
+            <tl-input fxFlex="33"
+                      formControlName="countControl"
+                      type="number"
+                      label="{{ 'inspections.market-catch-count' | tlTranslate }}"
+                      tooltipResourceName="inspections.market-catch-count-helper">
+            </tl-input>
+
+            <tl-autocomplete *ngIf="hasCatchType"
+                             fxFlex="33"
+                             formControlName="catchTypeControl"
+                             [options]="types"
+                             label="{{ 'inspections.market-catch-type' | tlTranslate }}"
+                             tooltipResourceName="inspections.market-catch-type-helper">
+            </tl-autocomplete>
+
+            <tl-checkbox *ngIf="hasUndersizedCheck"
+                         fxFlex="33"
+                         formControlName="undersizedControl"
+                         label="{{ 'inspections.undersized-fish' | tlTranslate }}">
+            </tl-checkbox>
+
+            <tl-input fxFlex="33"
+                      formControlName="quantityControl"
+                      type="number"
+                      label="{{ 'inspections.market-catch-quantity' | tlTranslate }}"
+                      tooltipResourceName="inspections.market-catch-quantity-helper">
+            </tl-input>
+
+            <tl-autocomplete *ngIf="showTurbotControl"
+                             fxFlex="33"
+                             formControlName="turbotSizeGroupControl"
+                             label="{{ 'inspections.market-catch-turbot-size-group' | tlTranslate }}"
+                             [options]="turbotSizeGroups"
+                             tooltipResourceName="inspections.market-catch-turbot-size-group-helper">
+            </tl-autocomplete>
+
+            <tl-autocomplete fxFlex="33"
+                             formControlName="presentationControl"
+                             [options]="presentations"
+                             label="{{ 'inspections.market-catch-presentation' | tlTranslate }}"
+                             tooltipResourceName="inspections.market-catch-presentation-helper">
+            </tl-autocomplete>
+        </div>
+    </tl-expansion-panel>
+</div>

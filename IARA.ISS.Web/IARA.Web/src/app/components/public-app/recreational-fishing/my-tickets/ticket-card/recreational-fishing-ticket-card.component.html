@@ -13,66 +13,54 @@
             <div fxLayout="column" fxLayoutAlign="start start">
                 <div>{{ ticket.person }}</div>
 
-                <div *ngIf="ticket.cancellationReason; else notCanceled">
-                    <b>{{ 'recreational-fishing.my-ticket-status' | tlTranslate }}:</b> {{ 'recreational-fishing.my-ticket-canceled' | tlTranslate }}
-                </div>
-
-                <ng-template #notCanceled>
-                    <div *ngIf="ticket.daysRemaining !== undefined && ticket.daysRemaining <= 0 && ticket.paymentStatus === statuses.PaidOK; else notExpired">
-                        <b>{{ 'recreational-fishing.my-ticket-status' | tlTranslate }}:</b> {{ 'recreational-fishing.my-ticket-expired' | tlTranslate }}
-                    </div>
-
-                    <ng-template #notExpired>
-                        <div [ngSwitch]="ticket.paymentStatus">
-                            <div *ngSwitchCase="statuses.PaidOK">
-                                <b>{{ 'recreational-fishing.my-ticket-status' | tlTranslate }}:</b> {{ 'recreational-fishing.my-ticket-active' | tlTranslate }}
-                            </div>
-                            <div *ngSwitchCase="statuses.NotNeeded">
-                                <b>{{ 'recreational-fishing.my-ticket-status' | tlTranslate }}:</b> {{ 'recreational-fishing.my-ticket-active' | tlTranslate }}
-                            </div>
-                            <div *ngSwitchCase="statuses.Unpaid">
-                                <b>{{ 'recreational-fishing.my-ticket-status' | tlTranslate }}:</b> {{ 'recreational-fishing.my-ticket-awaiting-payment' | tlTranslate }}
-                            </div>
-                            <div *ngSwitchCase="statuses.PaymentFail">
-                                <b>{{ 'recreational-fishing.my-ticket-status' | tlTranslate }}:</b> {{ 'recreational-fishing.my-ticket-payment-declined' | tlTranslate }}
-                            </div>
-                        </div>
-                    </ng-template>
-                </ng-template>
+                <div><b>{{ 'recreational-fishing.my-ticket-status' | tlTranslate }}:</b> {{ ticket.status }}</div>
 
                 <div><b>{{ 'recreational-fishing.my-ticket-valid-to' | tlTranslate }}:</b> {{ ticket.validTo | date: 'mediumDate' }}</div>
             </div>
 
             <div fxLayout="column" fxLayoutAlign="center end">
-                <!-- Платен и активен -->
-                <div *ngIf="ticket.daysRemaining !== undefined && ticket.daysRemaining > 0 && (ticket.paymentStatus === statuses.PaidOK || ticket.paymentStatus === statuses.NotNeeded)">
-                    <tl-icon icon="fa-check"
-                             size="2"
-                             iconClass="success-color"
-                             matTooltip="{{ 'recreational-fishing.remaining' | tlTranslate }} {{ ticket.daysRemaining }} {{ 'recreational-fishing.days' | tlTranslate }}"
+                <!-- Анулиране -->
+                <div *ngIf="ticket.ticketStatus === statuses.CANCELED; else notAnnuled">
+                    <tl-icon icon="fa-times"
+                             size="2.5"
+                             iconClass="error-color"
+                             matTooltip="{{ 'recreational-fishing.ticket-annuled' | tlTranslate }}"
                              [matTooltipShowDelay]="300">
                     </tl-icon>
                 </div>
 
-                <!-- Платен и изтекъл -->
-                <div *ngIf="ticket.daysRemaining !== undefined && ticket.daysRemaining <= 0 && ticket.paymentStatus === statuses.PaidOK">
-                    <tl-icon icon="fa-times"
-                             size="2.5"
-                             iconClass="error-color"
-                             matTooltip="{{ 'recreational-fishing.invalid-for' | tlTranslate }} {{ -ticket.daysRemaining }} {{ 'recreational-fishing.days' | tlTranslate }}"
-                             [matTooltipShowDelay]="300">
-                    </tl-icon>
-                </div>
+                <ng-template #notAnnuled>
+                    <!-- Платен и активен -->
+                    <div *ngIf="(ticket.paymentStatus === paymentStatuses.PaidOK || ticket.paymentStatus === paymentStatuses.NotNeeded)
+                        && (ticket.ticketStatus === statuses.REQUESTED || ticket.ticketStatus === statuses.ISSUED || ticket.ticketStatus === statuses.APPROVED)">
+                        <tl-icon icon="fa-check"
+                                 size="2"
+                                 iconClass="success-color"
+                                 matTooltip="{{ 'recreational-fishing.remaining' | tlTranslate }} {{ ticket.daysRemaining }} {{ 'recreational-fishing.days' | tlTranslate }}"
+                                 [matTooltipShowDelay]="300">
+                        </tl-icon>
+                    </div>
 
-                <!-- Неплатен -->
-                <div *ngIf="ticket.paymentStatus === statuses.Unpaid || ticket.paymentStatus === statuses.PaymentFail">
-                    <tl-icon icon="fa-times"
-                             size="2.5"
-                             iconClass="error-color"
-                             matTooltip="{{ 'recreational-fishing.ticket-unpaid' | tlTranslate }}"
-                             [matTooltipShowDelay]="300">
-                    </tl-icon>
-                </div>
+                    <!-- Платен и изтекъл -->
+                    <div *ngIf="(ticket.paymentStatus === paymentStatuses.PaidOK || ticket.paymentStatus === paymentStatuses.NotNeeded) && ticket.ticketStatus === statuses.EXPIRED">
+                        <tl-icon icon="fa-times"
+                                 size="2.5"
+                                 iconClass="error-color"
+                                 matTooltip="{{ 'recreational-fishing.invalid-for' | tlTranslate }} {{ -ticket.daysRemaining }} {{ 'recreational-fishing.days' | tlTranslate }}"
+                                 [matTooltipShowDelay]="300">
+                        </tl-icon>
+                    </div>
+
+                    <!-- Неплатен -->
+                    <div *ngIf="ticket.paymentStatus === paymentStatuses.Unpaid || ticket.paymentStatus === paymentStatuses.PaymentFail">
+                        <tl-icon icon="fa-times"
+                                 size="2.5"
+                                 iconClass="error-color"
+                                 matTooltip="{{ 'recreational-fishing.ticket-unpaid' | tlTranslate }}"
+                                 [matTooltipShowDelay]="300">
+                        </tl-icon>
+                    </div>
+                </ng-template>
             </div>
         </div>
     </tl-card-content>

@@ -53,6 +53,9 @@ export class CommonLogBookPageDataDTO {
     @StrictlyTyped(String)
     public placeOfImport?: string;
 
+    @StrictlyTyped(Boolean)
+    public hasAvailableProducts?: boolean;
+
     @StrictlyTyped(String)
     public vendorName?: string;
 }

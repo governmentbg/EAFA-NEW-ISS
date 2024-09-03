@@ -62,6 +62,7 @@ export class SystemLogService extends BaseAuditService implements ISystemLogServ
                         }
                     }
                 }
+
                 return entries;
             }));
         })));

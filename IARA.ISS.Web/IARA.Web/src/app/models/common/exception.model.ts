@@ -83,5 +83,6 @@ export enum ErrorCode {
     CannotDeleteInspectionWithAuans = 61,
     CannotDeleteAuanWithDecrees = 62,
     CannotDeleteDecreeWithPenalPoints = 63,
-    InvalidInspectionType = 64
+    InvalidInspectionType = 64,
+    FishingAssociationAlreadyExists = 65
 }

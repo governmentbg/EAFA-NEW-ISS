@@ -1,5 +1,4 @@
-﻿import { CurrencyPipe } from '@angular/common';
-import { AfterViewInit, Component, DoCheck, EventEmitter, Input, OnInit, Optional, Output, Self, ViewEncapsulation } from '@angular/core';
+﻿import { AfterViewInit, Component, DoCheck, EventEmitter, Input, OnInit, Optional, Output, Self, ViewEncapsulation } from '@angular/core';
 import { AbstractControl, ControlValueAccessor, FormControl, FormGroup, NgControl, ValidationErrors, Validator, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { IdentifierTypeEnum } from '@app/enums/identifier-type.enum';
@@ -15,7 +14,7 @@ import { UsersService } from '@app/services/common-app/users.service';
 import { ApplicationsPublicService } from '@app/services/public-app/applications-public.service';
 import { NomenclatureStore } from '@app/shared/utils/nomenclatures.store';
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
-import { FormDataModel } from '@tl/tl-egov-payments';
+import { FormDataModel, TLEGovPaymentService } from '@tl/tl-egov-payments';
 import { GeneratedPaymentModel } from '@tl/tl-epay-payments';
 import { DialogWrapperComponent } from '../dialog-wrapper/dialog-wrapper.component';
 import { IActionInfo } from '../dialog-wrapper/interfaces/action-info.interface';
@@ -26,7 +25,6 @@ import { TLMatDialog } from '../dialog-wrapper/tl-mat-dialog';
 import { EGovOfflinePaymenDataComponent } from './egov-offline-payment-data/egov-offline-payment-data.component';
 import { EGovOfflinePaymentDataDialogParams } from './egov-offline-payment-data/models/egov-offline-payment-data-dialog-params.model';
 import { OnlinePaymentDataDialogParams } from './egov-offline-payment-data/models/online-payment-data-dialog-params.model';
-
 
 @Component({
     selector: 'online-payment-data',
@@ -66,31 +64,32 @@ export class OnlinePaymentDataComponent implements OnInit, AfterViewInit, DoChec
 
     public showTariffs: boolean = false;
 
+    public paymentTypeControl!: FormControl;
+    public isForeignPerson: boolean = false;
+
     private applicationsService: IApplicationsService;
     private ePaymentsService: IEPaymentsService;
     private matDialogRef: MatDialogRef<DialogWrapperComponent<OnlinePaymentDataComponent>>;
     private egovOfflinePaymentDataDialog: TLMatDialog<EGovOfflinePaymenDataComponent>;
-    private paymentDataMap: Map<PaymentTypesEnum, unknown | null> = new Map<PaymentTypesEnum, unknown | null>();
     private translationService: FuseTranslationLoaderService;
     private commonNomenclaturesService: CommonNomenclatures;
-    private currencyPipe: CurrencyPipe;
+    private egovService: TLEGovPaymentService;
 
-    private isDisabled: boolean = false;
     private ngControl: NgControl;
     private onChanged: (value: NomenclatureDTO<number>) => void;
     private onTouched: (value: NomenclatureDTO<number>) => void;
-    public paymentTypeControl!: FormControl;
-    public isForeignPerson: boolean = false;
 
-    public constructor(@Optional() @Self() ngControl: NgControl,
+    public constructor(
+        @Optional() @Self() ngControl: NgControl,
         @Optional() matDialogRef: MatDialogRef<DialogWrapperComponent<OnlinePaymentDataComponent>>,
         egovOfflinePaymentDataDialog: TLMatDialog<EGovOfflinePaymenDataComponent>,
         applicationsService: ApplicationsPublicService,
         ePaymentsService: EPaymentsService,
         translationService: FuseTranslationLoaderService,
         commonNomenclaturesService: CommonNomenclatures,
-        currencyPipe: CurrencyPipe,
-        userService: UsersService) {
+        userService: UsersService,
+        egovService: TLEGovPaymentService
+    ) {
         this.ngControl = ngControl;
         this.matDialogRef = matDialogRef;
 
@@ -103,7 +102,7 @@ export class OnlinePaymentDataComponent implements OnInit, AfterViewInit, DoChec
         this.ePaymentsService = ePaymentsService;
         this.translationService = translationService;
         this.commonNomenclaturesService = commonNomenclaturesService;
-        this.currencyPipe = currencyPipe;
+        this.egovService = egovService;
         this.isForeignPerson = userService.User?.egnLnc?.identifierType === IdentifierTypeEnum.FORID;
         this.onChanged = (value: NomenclatureDTO<number>) => { return; };
         this.onTouched = (value: NomenclatureDTO<number>) => { return; };
@@ -113,6 +112,7 @@ export class OnlinePaymentDataComponent implements OnInit, AfterViewInit, DoChec
         }
 
         this.paymentTypeControl = new FormControl(null, Validators.required);
+
         this.performOnlinePaymentFormGroup = new FormGroup({
             paymentSummaryControl: new FormControl(null),
             paymentTypeControl: this.paymentTypeControl
@@ -149,35 +149,19 @@ export class OnlinePaymentDataComponent implements OnInit, AfterViewInit, DoChec
             NomenclatureTypes.OnlinePaymentTypes, this.commonNomenclaturesService.getOnlinePaymentTypes.bind(this.commonNomenclaturesService), false
         ).subscribe({
             next: (types: NomenclatureDTO<number>[]) => {
-
                 const foreignPaymentMethods = ['ePay', 'ePayDirect'];
 
                 this.paymentTypes = types.filter(x => x.isActive === true);
 
                 if (this.isForeignPerson) {
-                    this.paymentTypes = this.paymentTypes.filter(x => {
-                        if (foreignPaymentMethods.some(y => y === x.code)) {
-                            return true;
-                        } else {
-                            return false;
-                        }
-                    });
-                } else {
-                    this.paymentTypes = this.paymentTypes.filter(x => {
-                        if (!foreignPaymentMethods.some(y => y === x.code)) {
-                            return true;
-                        } else {
-                            return false;
-                        }
-                    });
+                    this.paymentTypes = this.paymentTypes.filter(x => foreignPaymentMethods.some(y => y === x.code));
+                }
+                else {
+                    this.paymentTypes = this.paymentTypes.filter(x => !foreignPaymentMethods.some(y => y === x.code));
                 }
 
                 if (this.removeOfflinePaymentOptions === true) {
                     this.paymentTypes = this.paymentTypes.filter(x => x.code !== 'PayEGovBank');
-                }
-
-                for (const paymentType of this.paymentTypes) {
-                    this.paymentDataMap.set(PaymentTypesEnum[paymentType.code as keyof typeof PaymentTypesEnum], null);
                 }
             }
         });
@@ -197,17 +181,65 @@ export class OnlinePaymentDataComponent implements OnInit, AfterViewInit, DoChec
             }
         });
 
-        this.performOnlinePaymentFormGroup.controls!.paymentTypeControl.valueChanges.subscribe((paymentType: NomenclatureDTO<number>) => {
-            if (paymentType?.code === PaymentTypesEnum[PaymentTypesEnum.PayEGovBank]) {
-                this.showEGovBankPaymentButton = true;
-            }
-            else {
-                this.showEGovBankPaymentButton = false;
-            }
+        this.performOnlinePaymentFormGroup.controls!.paymentTypeControl.valueChanges.subscribe({
+            next: (paymentType: NomenclatureDTO<number>) => {
+                if (paymentType?.code === PaymentTypesEnum[PaymentTypesEnum.PayEGovBank]) {
+                    this.showEGovBankPaymentButton = true;
+                }
+                else {
+                    this.showEGovBankPaymentButton = false;
+                }
 
-            this.generatePayment(paymentType);
+                const paymentTypeCode = PaymentTypesEnum[paymentType?.code as keyof typeof PaymentTypesEnum];
 
-            this.onChanged(paymentType);
+                switch (paymentTypeCode) {
+                    case PaymentTypesEnum.ePay: {
+                        this.showEGovBankPaymentButton = false;
+                        this.showEGovEPOSPaymentButton = false;
+                        this.showEGovEPayPaymentButton = false;
+                        this.showEPayPaymentButton = true;
+                        this.showEPayDirectPaymentButton = false;
+
+                    } break;
+                    case PaymentTypesEnum.ePayDirect: {
+                        this.showEGovBankPaymentButton = false;
+                        this.showEGovEPOSPaymentButton = false;
+                        this.showEGovEPayPaymentButton = false;
+                        this.showEPayPaymentButton = false;
+                        this.showEPayDirectPaymentButton = true;
+                    } break;
+                    case PaymentTypesEnum.PayEGovBank: {
+                        this.showEGovBankPaymentButton = true;
+                        this.showEGovEPOSPaymentButton = false;
+                        this.showEGovEPayPaymentButton = false;
+                        this.showEPayPaymentButton = false;
+                        this.showEPayDirectPaymentButton = false;
+                    } break;
+                    case PaymentTypesEnum.PayEGovePayBG: {
+                        this.showEGovBankPaymentButton = false;
+                        this.showEGovEPOSPaymentButton = false;
+                        this.showEGovEPayPaymentButton = true;
+                        this.showEPayPaymentButton = false;
+                        this.showEPayDirectPaymentButton = false;
+                    } break;
+                    case PaymentTypesEnum.PayEGovePOS: {
+                        this.showEGovBankPaymentButton = false;
+                        this.showEGovEPOSPaymentButton = true;
+                        this.showEGovEPayPaymentButton = false;
+                        this.showEPayPaymentButton = false;
+                        this.showEPayDirectPaymentButton = false;
+                    } break;
+                    default: {
+                        this.showEGovBankPaymentButton = false;
+                        this.showEGovEPOSPaymentButton = false;
+                        this.showEGovEPayPaymentButton = false;
+                        this.showEPayPaymentButton = false;
+                        this.showEPayDirectPaymentButton = false;
+                    } break;
+                }
+
+                this.onChanged(paymentType);
+            }
         });
     }
 
@@ -233,8 +265,7 @@ export class OnlinePaymentDataComponent implements OnInit, AfterViewInit, DoChec
         this.onTouched = fn;
     }
 
-    public setDisabledState?(isDisabled: boolean): void {
-        this.isDisabled = isDisabled;
+    public setDisabledState(isDisabled: boolean): void {
         if (isDisabled) {
             this.performOnlinePaymentFormGroup.disable();
         }
@@ -259,10 +290,25 @@ export class OnlinePaymentDataComponent implements OnInit, AfterViewInit, DoChec
     }
 
     public eGovBankPaymentBtnClicked(): void {
-        this.ePaymentsService!.initiateEGovBankPayment(this.paymentRequestNum).subscribe((result: string) => {
-            this.paymentDataMap.set(PaymentTypesEnum.PayEGovBank, result);
-            this.openOfflinePaymentDataDialog(this.paymentDataMap.get(PaymentTypesEnum.PayEGovBank) as string);
+        this.ePaymentsService!.initiateEGovBankPayment(this.paymentRequestNum).subscribe({
+            next: (result: string) => {
+                this.applicationsService.getApplicationPaymentSummary(this.applicationId).subscribe({
+                    next: (result: PaymentSummaryDTO) => {
+                        this.paymentRequestNum = result.paymentRequestNum!;
+                    }
+                });
+
+                this.openOfflinePaymentDataDialog(result);
+            }
         });
+    }
+
+    public onEgovPaymentButtonClicked(): void {
+        const type: NomenclatureDTO<number> = this.performOnlinePaymentFormGroup.get('paymentTypeControl')!.value;
+
+        if (type) {
+            this.generatePayment(type);
+        }
     }
 
     private getValue(): NomenclatureDTO<number> {
@@ -274,74 +320,42 @@ export class OnlinePaymentDataComponent implements OnInit, AfterViewInit, DoChec
 
         switch (paymentTypeCode) {
             case PaymentTypesEnum.ePay: {
-                this.showEGovBankPaymentButton = false;
-                this.showEGovEPOSPaymentButton = false;
-                this.showEGovEPayPaymentButton = false;
-                this.showEPayPaymentButton = true;
-                this.showEPayDirectPaymentButton = false;
-
-                const paymentData = this.paymentDataMap.get(PaymentTypesEnum.ePay);
-                if (paymentData === null || paymentData === undefined) {
-                    this.ePaymentsService.initiateEPayBGPayment(this.paymentRequestNum).subscribe((result: GeneratedPaymentModel) => {
-                        this.paymentDataMap.set(PaymentTypesEnum.ePay, result);
+                this.ePaymentsService.initiateEPayBGPayment(this.paymentRequestNum).subscribe((result: GeneratedPaymentModel) => {
+                    this.applicationsService.getApplicationPaymentSummary(this.applicationId).subscribe({
+                        next: (result: PaymentSummaryDTO) => {
+                            this.paymentRequestNum = result.paymentRequestNum!;
+                        }
                     });
-                }
+                });
             } break;
             case PaymentTypesEnum.ePayDirect: {
-                this.showEGovBankPaymentButton = false;
-                this.showEGovEPOSPaymentButton = false;
-                this.showEGovEPayPaymentButton = false;
-                this.showEPayPaymentButton = false;
-                this.showEPayDirectPaymentButton = true;
-
-                const paymentData = this.paymentDataMap.get(PaymentTypesEnum.ePayDirect);
-                if (paymentData === null || paymentData === undefined) {
-                    this.ePaymentsService.initiateEPayDirectPayment(this.paymentRequestNum).subscribe((result: GeneratedPaymentModel) => {
-                        this.paymentDataMap.set(PaymentTypesEnum.ePayDirect, result);
+                this.ePaymentsService.initiateEPayDirectPayment(this.paymentRequestNum).subscribe((result: GeneratedPaymentModel) => {
+                    this.applicationsService.getApplicationPaymentSummary(this.applicationId).subscribe({
+                        next: (result: PaymentSummaryDTO) => {
+                            this.paymentRequestNum = result.paymentRequestNum!;
+                        }
                     });
-                }
-            } break;
-            case PaymentTypesEnum.PayEGovBank: {
-                this.showEGovBankPaymentButton = true;
-                this.showEGovEPOSPaymentButton = false;
-                this.showEGovEPayPaymentButton = false;
-                this.showEPayPaymentButton = false;
-                this.showEPayDirectPaymentButton = false;
+                });
             } break;
             case PaymentTypesEnum.PayEGovePayBG: {
-                this.showEGovBankPaymentButton = false;
-                this.showEGovEPOSPaymentButton = false;
-                this.showEGovEPayPaymentButton = true;
-                this.showEPayPaymentButton = false;
-                this.showEPayDirectPaymentButton = false;
-
-                const paymentData = this.paymentDataMap.get(PaymentTypesEnum.PayEGovePayBG);
-                if (paymentData === null || paymentData === undefined) {
-                    this.ePaymentsService!.initiateEGovEPayBGPayment(this.paymentRequestNum).subscribe((result: FormDataModel) => {
-                        this.paymentDataMap.set(PaymentTypesEnum.PayEGovePayBG, result);
+                this.ePaymentsService!.initiateEGovEPayBGPayment(this.paymentRequestNum).subscribe((result: FormDataModel) => {
+                    this.applicationsService.getApplicationPaymentSummary(this.applicationId).subscribe({
+                        next: (summary: PaymentSummaryDTO) => {
+                            this.paymentRequestNum = summary.paymentRequestNum!;
+                            this.egovService.onPaymentGenerated.next(result);
+                        }
                     });
-                }
+                });
             } break;
             case PaymentTypesEnum.PayEGovePOS: {
-                this.showEGovBankPaymentButton = false;
-                this.showEGovEPOSPaymentButton = true;
-                this.showEGovEPayPaymentButton = false;
-                this.showEPayPaymentButton = false;
-                this.showEPayDirectPaymentButton = false;
-
-                const paymentData = this.paymentDataMap.get(PaymentTypesEnum.PayEGovePOS);
-                if (paymentData === null || paymentData === undefined) {
-                    this.ePaymentsService!.initiateEGovEPOSPayment(this.paymentRequestNum).subscribe((result: FormDataModel) => {
-                        this.paymentDataMap.set(PaymentTypesEnum.PayEGovePOS, result);
+                this.ePaymentsService!.initiateEGovEPOSPayment(this.paymentRequestNum).subscribe((result: FormDataModel) => {
+                    this.applicationsService.getApplicationPaymentSummary(this.applicationId).subscribe({
+                        next: (summary: PaymentSummaryDTO) => {
+                            this.paymentRequestNum = summary.paymentRequestNum!;
+                            this.egovService.onPaymentGenerated.next(result);
+                        }
                     });
-                }
-            } break;
-            default: {
-                this.showEGovBankPaymentButton = false;
-                this.showEGovEPOSPaymentButton = false;
-                this.showEGovEPayPaymentButton = false;
-                this.showEPayPaymentButton = false;
-                this.showEPayDirectPaymentButton = false;
+                });
             } break;
         }
     }
@@ -354,12 +368,21 @@ export class OnlinePaymentDataComponent implements OnInit, AfterViewInit, DoChec
             componentData: new EGovOfflinePaymentDataDialogParams({ referenceNumber: paymentAccessCode }),
             headerCancelButton: {
                 cancelBtnClicked: this.closeOfflinePaymentDataDialogBtnClicked.bind(this)
+            },
+            saveBtn: {
+                id: 'save',
+                color: 'accent',
+                translateValue: this.translationService.getValue('online-payment-data.to-payment-page')
             }
-        }, '600px').subscribe({
-            next: () => {
-                this.egovOfflinePaymentDataDialogClosed.emit();
-                if (this.matDialogRef !== null && this.matDialogRef !== undefined) {
-                    this.matDialogRef.close();
+        }, '700px').subscribe({
+            next: (href: string | undefined) => {
+                if (href) {
+                    this.egovOfflinePaymentDataDialogClosed.emit();
+                    if (this.matDialogRef !== null && this.matDialogRef !== undefined) {
+                        this.matDialogRef.close();
+                    }
+
+                    window.open(href, '_self');
                 }
             }
         });

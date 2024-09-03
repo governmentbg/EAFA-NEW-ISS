@@ -109,17 +109,6 @@ export class RecreationalFishingPublicService extends BaseAuditService implement
         });
     }
 
-    public checkTicketNumbersAvailability(numbers: string[]): Observable<boolean[]> {
-        let params: HttpParams = new HttpParams();
-        for (const num of numbers) {
-            params = params.append('ticketNumbers', num);
-        }
-
-        return this.requestService.get(this.area, this.controller, 'CheckTicketNumbersAvailability', {
-            httpParams: params
-        });
-    }
-
     public updateUserDataFromTicket(data: RecreationalFishingUserTicketDataDTO): Observable<void> {
         return this.requestService.post(this.area, this.controller, 'UpdateUserDataFromTicket', data, {
             properties: new RequestProperties({ asFormData: true })

@@ -35,11 +35,11 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.TranshipmentInspection
             InspectionGeneralInfo = new InspectionGeneralInfoViewModel(this);
             PatrolVehicles = new PatrolVehiclesViewModel(this, true);
             InspectedShip = new FishingShipViewModel(this, hasLastPort: false);
-            InspectedShipChecks = new ShipChecksViewModel(this);
             InspectedShipCatches = new ShipCatchesViewModel(this);
+            InspectedShipChecks = new ShipChecksViewModel(this, InspectedShipCatches);
             AcceptingShip = new FishingShipViewModel(this, hasLastPort: false);
-            AcceptingShipChecks = new ShipChecksViewModel(this);
             AcceptingShipCatches = new ShipCatchesViewModel(this);
+            AcceptingShipChecks = new ShipChecksViewModel(this, AcceptingShipCatches);
             TranshippedCatches = new CatchInspectionsViewModel(this);
             InspectionFiles = new InspectionFilesViewModel(this);
             AdditionalInfo = new AdditionalInfoViewModel(this);
@@ -124,14 +124,15 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.TranshipmentInspection
                 GroupResourceEnum.PatrolVehicle,
                 GroupResourceEnum.TranshipmentInspection,
                 GroupResourceEnum.Validation,
+                GroupResourceEnum.DeclarationCatch,
             };
         }
 
         public override async Task Initialize(object sender)
         {
             InspectionHelper.Initialize(this, Edit);
-            InspectionHelper.InitShip(InspectedShip, InspectedShipChecks);
-            InspectionHelper.InitShip(AcceptingShip, AcceptingShipChecks);
+            InspectionHelper.InitShip(InspectedShip, InspectedShipChecks, InspectedShipCatches);
+            InspectionHelper.InitShip(AcceptingShip, AcceptingShipChecks, AcceptingShipCatches);
 
             INomenclatureTransaction nomTransaction = NomenclaturesTransaction;
 

@@ -21,6 +21,9 @@ export class RecreationalFishingTicketDTO extends RecreationalFishingTicketBaseR
     public ticketNum?: string;
 
     @StrictlyTyped(String)
+    public paperNum?: string;
+
+    @StrictlyTyped(String)
     public duplicateOfTicketNum?: string;
 
     @StrictlyTyped(Number)

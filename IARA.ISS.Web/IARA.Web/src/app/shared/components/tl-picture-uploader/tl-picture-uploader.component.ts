@@ -137,6 +137,7 @@ export class TLPictureUploaderComponent implements OnInit, OnChanges, DoCheck, O
                                     if (photo && photo.length > 0) {
                                         this.image = photo;
                                         this.hasImage = true;
+                                        this.showRequiredError = false;
                                         this.ngControl.control?.updateValueAndValidity();
 
                                         TLPictureUploaderComponent.cachedImages.set(this.photo.id!, this.image);
