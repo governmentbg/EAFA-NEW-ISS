@@ -15,6 +15,7 @@ export class RecreationalFishingTicketApplicationFilters extends BaseRequestMode
 
     
     public ticketNum: string | undefined;
+    public paperNum: string | undefined;
     public typeIds: number[] | undefined;
     public periodIds: number[] | undefined;
     public ticketHolderName: string | undefined;

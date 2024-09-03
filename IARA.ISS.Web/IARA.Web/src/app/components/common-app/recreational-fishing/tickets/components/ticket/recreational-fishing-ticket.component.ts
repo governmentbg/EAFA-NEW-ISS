@@ -357,6 +357,9 @@ export class RecreationalFishingTicketComponent extends CustomFormControl<Recrea
             if (this.hasProperty(value, 'ticketNum')) {
                 this.form.get('ticketNumControl')?.setValue(value.ticketNum);
             }
+            if (this.hasProperty(value, 'paperNum')) {
+                this.form.get('paperNumControl')?.setValue(value.paperNum);
+            }
             if (this.hasProperty(value, 'duplicateOfTicketNum')) {
                 this.form.get('duplicateOfTicketNumControl')?.setValue(value.duplicateOfTicketNum);
             }
@@ -612,6 +615,7 @@ export class RecreationalFishingTicketComponent extends CustomFormControl<Recrea
             validFromControl: new FormControl(new Date(), Validators.required),
             validToControl: new FormControl(null),
             ticketNumControl: new FormControl(null),
+            paperNumControl: new FormControl(null),
             duplicateOfTicketNumControl: new FormControl(null),
             regixDataControl: new FormControl(null, Validators.required),
             photoControl: new FormControl(null),

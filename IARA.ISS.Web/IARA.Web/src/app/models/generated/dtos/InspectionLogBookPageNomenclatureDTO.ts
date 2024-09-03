@@ -2,7 +2,6 @@
 
 import { StrictlyTyped } from '@app/shared/decorators/strictly-typed.decorator';
 import { NomenclatureDTO } from './GenericNomenclatureDTO';
-import { DeclarationLogBookPageFishDTO } from './DeclarationLogBookPageFishDTO';
 import { LogBookPageStatusesEnum } from '@app/enums/log-book-page-statuses.enum'; 
 
 export class InspectionLogBookPageNomenclatureDTO extends NomenclatureDTO<number> {
@@ -34,6 +33,6 @@ export class InspectionLogBookPageNomenclatureDTO extends NomenclatureDTO<number
     @StrictlyTyped(Number)
     public status?: LogBookPageStatusesEnum;
 
-    @StrictlyTyped(DeclarationLogBookPageFishDTO)
-    public logBookProducts?: DeclarationLogBookPageFishDTO[];
+    @StrictlyTyped(String)
+    public logPageNumMobile?: string;
 }

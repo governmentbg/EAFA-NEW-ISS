@@ -1,12 +1,39 @@
-﻿<div fxLayout="column" [formGroup]="paymentDataFormGroup" fxLayoutGap="1em">
-    <span fxLayout="row wrap">
-        {{ 'online-payment-data.egov-offline-more-information-about' | tlTranslate }}&nbsp;
-        <a [attr.href]="egovPaymentHref" target="_blank" rel="noopener noreferrer">
-            {{ 'online-payment-data.here' | tlTranslate }}
-        </a>.
-    </span>
-    <tl-input formControlName="referenceNumber"
-              label="{{ 'online-payment-data.egov-offline-payment-ref-number' | tlTranslate }}"
-              [readonly]="true"
-              tooltipResourceName="{{ 'online-payment-data.egov-offline-payment-ref-number-helper' | tlTranslate }}"></tl-input>
-</div>
+﻿<mat-vertical-stepper linear color="accent">
+    <mat-step [editable]="true">
+        <div [formGroup]="paymentDataFormGroup"
+             fxLayout="column"
+             fxLayoutGap="1em"
+             fxFlexFill>
+            <ng-template matStepLabel>
+                <span>{{ 'online-payment-data.egov-offline-payment-ref-number-title' | tlTranslate }}</span>
+            </ng-template>
+
+            <span>{{ 'online-payment-data.egov-offline-payment-ref-number-explanation' | tlTranslate }}</span>
+
+            <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="1em">
+                <tl-input formControlName="referenceNumber"
+                          [readonly]="true"
+                          label="{{ 'online-payment-data.egov-offline-payment-ref-number' | tlTranslate }}"
+                          tooltipResourceName="{{ 'online-payment-data.egov-offline-payment-ref-number-helper' | tlTranslate }}">
+                </tl-input>
+
+                <button mat-raised-button
+                        color="accent"
+                        matStepperNext
+                        [cdkCopyToClipboard]="copyToClipboard()"
+                        (cdkCopyToClipboardCopied)="codeCopied($event)">
+                    <tl-icon type="IC_ICON" icon="ic-copy" size="1.33em"></tl-icon>
+                    {{ 'online-payment-data.copy-code' | tlTranslate }}
+                </button>
+            </div>
+        </div>
+    </mat-step>
+
+    <mat-step [editable]="true">
+        <ng-template matStepLabel>
+            <span>{{ 'online-payment-data.egov-offline-more-information-title' | tlTranslate }}</span>
+        </ng-template>
+
+        <span>{{ 'online-payment-data.egov-offline-more-information-about' | tlTranslate }}</span>
+    </mat-step>
+</mat-vertical-stepper>

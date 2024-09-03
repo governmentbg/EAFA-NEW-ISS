@@ -29,7 +29,7 @@
             </div>
 
             <!-- Регистров запис -->
-            <div *ngIf="isRegisterEntry; else isNotRegisterEntry" fxLayout="row wrap" fxLayoutAlign="start center" fxLayoutGap="1em">
+            <div *ngIf="isRegisterEntry; else isNotRegisterEntry" fxLayout="row wrap" fxLayoutAlign="space-between center" fxLayoutGap="1em 0em grid">
                 <tl-input fxFlex="25"
                           fxFlex.lt-md="50"
                           fxFlex.lt-sm="100"
@@ -37,6 +37,14 @@
                           [readonly]="true"
                           tooltipResourceName="recreational-fishing.register-ticket-num-helper"
                           label="{{ 'recreational-fishing.register-ticket-num' | tlTranslate }}">
+                </tl-input>
+                <tl-input fxFlex="25"
+                          fxFlex.lt-md="50"
+                          fxFlex.lt-sm="100"
+                          formControlName="paperNumControl"
+                          [readonly]="true"
+                          tooltipResourceName="recreational-fishing.register-paper-num-helper"
+                          label="{{ 'recreational-fishing.register-paper-num' | tlTranslate }}">
                 </tl-input>
                 <tl-date fxFlex="25"
                          fxFlex.lt-md="50"
@@ -63,7 +71,6 @@
                           tooltipResourceName="recreational-fishing.ticket-duplicate-of-num-helper"
                           label="{{ 'recreational-fishing.ticket-duplicate-of-num' | tlTranslate }}">
                 </tl-input>
-                <div *ngIf="!isDuplicate" fxFlex="25" fxFlex.lt-md="50" fxFlex.lt-sm="100"></div>
             </div>
 
             <!-- Нерегистров запис -->

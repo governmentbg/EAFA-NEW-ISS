@@ -2,39 +2,34 @@
      fxLayoutGap="1em"
      fxLayoutAlign="start stretch">
     <tl-data-table fxFlexFill
-                   [rows]="catches"
+                   [rows]="pages"
                    [isRemote]="false"
                    [isSoftDeletable]="false"
                    [showInactiveRecords]="false"
                    [showAddButton]="!isDisabled"
                    (addButtonClicked)="addEditEntry()"
                    (activeRecordChanged)="addEditEntry($event)">
+        <data-column [flexRate]="0.3"
+                     propertyName="logBookType"
+                     [options]="logBookTypes"
+                     dataType="nomenclature"
+                     columnName="{{ 'inspections.market-page-type' | tlTranslate }}">
+        </data-column>
+
         <data-column [flexRate]="0.2"
-                     propertyName="fishTypeId"
-                     [options]="fishes"
-                     dataType="nomenclature"
-                     columnName="{{ 'inspections.market-catch-fish' | tlTranslate }}">
+                     propertyName="unregisteredPageNum"
+                     columnName="{{ 'inspections.market-page-num' | tlTranslate }}">
         </data-column>
-        <data-column *ngIf="hasCatchType"
-                     [flexRate]="0.2"
-                     propertyName="catchTypeId"
-                     [options]="types"
-                     dataType="nomenclature"
-                     columnName="{{ 'inspections.market-catch-type' | tlTranslate }}">
+
+        <data-column [flexRate]="0.2"
+                     propertyName="unregisteredPageDate"
+                     dataType="date"
+                     columnName="{{ 'inspections.market-page-date' | tlTranslate }}">
         </data-column>
-        <data-column [flexRate]="0.1"
-                     propertyName="catchCount"
-                     columnName="{{ 'inspections.market-catch-count' | tlTranslate }}">
-        </data-column>
-        <data-column [flexRate]="0.1"
-                     propertyName="catchQuantity"
-                     columnName="{{ 'inspections.market-catch-quantity' | tlTranslate }}">
-        </data-column>
-        <data-column [flexRate]="0.1"
-                     propertyName="presentationId"
-                     [options]="presentations"
-                     dataType="nomenclature"
-                     columnName="{{ 'inspections.market-catch-presentation' | tlTranslate }}">
+
+        <data-column [flexRate]="0.3"
+                     propertyName="catchMeasuresText"
+                     columnName="{{ 'inspections.market-catch-measures-text' | tlTranslate }}">
         </data-column>
 
         <data-template-column [flexRate]="0.2">
@@ -45,19 +40,21 @@
                     <tl-icon-button icon="visibility"
                                     (buttonClicked)="addEditEntry(row.data, true)"
                                     iconClass="accent-color"
-                                    tooltipText="{{ 'inspections.inspector-table-view' | tlTranslate }}">
+                                    tooltipText="{{ 'inspections.market-catch-view' | tlTranslate }}">
                     </tl-icon-button>
+
                     <tl-icon-button *ngIf="!isDisabled"
                                     icon="edit"
                                     (buttonClicked)="addEditEntry(row.data)"
                                     iconClass="accent-color"
-                                    tooltipText="{{ 'inspections.inspector-table-edit' | tlTranslate }}">
+                                    tooltipText="{{ 'inspections.market-catch-edit' | tlTranslate }}">
                     </tl-icon-button>
+
                     <tl-icon-button *ngIf="!isDisabled && !row.data.isCurrentUser"
                                     icon="delete"
                                     (buttonClicked)="deleteEntry(row)"
                                     iconClass="accent-color"
-                                    tooltipText="{{ 'inspections.inspector-table-delete' | tlTranslate }}">
+                                    tooltipText="{{ 'inspections.market-catch-delete' | tlTranslate }}">
                     </tl-icon-button>
                 </div>
             </ng-template>

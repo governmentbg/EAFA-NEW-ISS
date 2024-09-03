@@ -41,7 +41,7 @@ export class EditInspectionAtMarketComponent extends BaseInspectionsComponent im
 
     public catchToggles: InspectionCheckModel[] = [];
 
-    public hasImporter: boolean = true;
+    public hasImporter: boolean = false;
 
     public readonly inspectedPersonTypeEnum: typeof InspectedPersonTypeEnum = InspectedPersonTypeEnum;
 
@@ -84,9 +84,8 @@ export class EditInspectionAtMarketComponent extends BaseInspectionsComponent im
 
         if (this.id !== null && this.id !== undefined) {
             this.service.get(this.id, this.inspectionCode).subscribe({
-                next: (dto: InspectionFirstSaleDTO) => {
-                    this.model = dto;
-
+                next: (inspection: InspectionFirstSaleDTO) => {
+                    this.model = inspection;
                     this.fillForm();
                 }
             });
@@ -112,7 +111,7 @@ export class EditInspectionAtMarketComponent extends BaseInspectionsComponent im
             buyerControl: new FormControl(undefined),
             representativeControl: new FormControl(undefined),
             catchTogglesControl: new FormControl([]),
-            hasImporterControl: new FormControl(true),
+            hasImporterControl: new FormControl(false),
             importerControl: new FormControl(undefined),
             catchesControl: new FormControl([]),
             catchViolationControl: new FormControl(undefined),
@@ -155,13 +154,13 @@ export class EditInspectionAtMarketComponent extends BaseInspectionsComponent im
                 actionsTaken: this.model.actionsTaken,
                 administrativeViolation: this.model.administrativeViolation,
                 inspectorComment: this.model.inspectorComment,
-                violation: this.model.observationTexts?.find(f => f.category === InspectionObservationCategoryEnum.AdditionalInfo),
+                violation: this.model.observationTexts?.find(x => x.category === InspectionObservationCategoryEnum.AdditionalInfo),
                 violatedRegulations: this.model.violatedRegulations,
             }));
 
             this.form.get('representativeCommentControl')!.setValue(this.model.representativeComment);
             this.form.get('catchTogglesControl')!.setValue(this.model.checks);
-            this.form.get('catchesControl')!.setValue(this.model.catchMeasures);
+            this.form.get('catchesControl')!.setValue(this.model.inspectionLogBookPages);
             this.form.get('marketNameControl')!.setValue(this.model.subjectName);
             this.form.get('addressControl')!.setValue(this.model.subjectAddress);
             this.form.get('filesControl')!.setValue(this.model.files);
@@ -202,7 +201,7 @@ export class EditInspectionAtMarketComponent extends BaseInspectionsComponent im
 
         this.model.files = this.form.get('filesControl')!.value;
         this.model.representativeComment = this.form.get('representativeCommentControl')!.value;
-        this.model.catchMeasures = this.form.get('catchesControl')!.value;
+        this.model.inspectionLogBookPages = this.form.get('catchesControl')!.value;
         this.model.checks = this.form.get('catchTogglesControl')!.value;
         this.model.subjectName = this.form.get('marketNameControl')!.value;
         this.model.subjectAddress = this.form.get('addressControl')!.value;

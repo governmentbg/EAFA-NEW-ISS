@@ -342,20 +342,22 @@ export class EditAdmissionLogBookPageComponent implements OnInit, IDialogCompone
                         if (result.transportationDocumentId !== undefined && result.transportationDocumentId !== null) {
                             this.service.getPossibleProductsByTransportationDocument(result.transportationDocumentId, LogBookPageDocumentTypesEnum.AdmissionDocument).subscribe({
                                 next: (products: LogBookPageProductDTO[]) => {
+                                    const logBookProducts: LogBookPageProductDTO[] = this.getProductsFromBasicInfo(products);
                                     this.originPossibleProducts = products;
                                     this.model.originalPossibleProducts = [];
 
-                                    this.form.get('productsControl')!.setValue(products);
+                                    this.form.get('productsControl')!.setValue(logBookProducts);
                                 }
                             });
                         }
                         else if (result.originDeclarationId !== undefined && result.originDeclarationId !== null) {
                             this.service.getPossibleProductsByOriginDeclarationId(result.originDeclarationId, LogBookPageDocumentTypesEnum.AdmissionDocument).subscribe({
                                 next: (products: LogBookPageProductDTO[]) => {
+                                    const logBookProducts: LogBookPageProductDTO[] = this.getProductsFromBasicInfo(products);
                                     this.originPossibleProducts = products;
                                     this.model.originalPossibleProducts = [];
 
-                                    this.form.get('productsControl')!.setValue(products);
+                                    this.form.get('productsControl')!.setValue(logBookProducts);
                                 }
                             });
                         }
@@ -665,6 +667,19 @@ export class EditAdmissionLogBookPageComponent implements OnInit, IDialogCompone
 
             return Object.keys(errors).length === 0 ? true : false;
         }
+    }
+
+    private getProductsFromBasicInfo(products: LogBookPageProductDTO[]): LogBookPageProductDTO[] {
+        const productsToDelete: LogBookPageProductDTO[] = this.model.products ?? [];
+
+        for (const product of productsToDelete) {
+            product.isActive = false;
+            product.hasMissingProperties = false;
+        }
+
+        const result: LogBookPageProductDTO[] = products.concat(...productsToDelete);
+
+        return result;
     }
 
     private closeEditBasicInformationDialogBtnClicked(closeFn: HeaderCloseFunction): void {

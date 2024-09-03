@@ -76,6 +76,7 @@ export class AddLogBookPageWizardComponent implements OnInit, AfterViewInit, IDi
     public hasPageNotInLogBookError: boolean = false;
     public hasPageAlreadySubmittedError: boolean = false;
     public hasPageAlreadySubmittedOtherLogBookError: boolean = false;
+    public noAvailableProducts: boolean = false;
     public noShipSelected: boolean = true;
     public noAdmissionLogBookOwnerSelected: boolean = true;
     public noTransportationLogBookOwnerSelected: boolean = true;
@@ -380,6 +381,7 @@ export class AddLogBookPageWizardComponent implements OnInit, AfterViewInit, IDi
                                 this.possibleLogBooksForPage = [];
                             }
 
+                            this.noAvailableProducts = !result.hasAvailableProducts;
                             this.confirmationDataFormGroup.get('commonLogBookPageDataControl')!.setValue(result);
 
                             setTimeout(() => {

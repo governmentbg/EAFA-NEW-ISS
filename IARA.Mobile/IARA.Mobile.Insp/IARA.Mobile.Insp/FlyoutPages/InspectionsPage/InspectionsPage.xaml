@@ -63,13 +63,15 @@
                                     <tl:TLEntry ValidState="{Binding ReportNumber}" Title="{rt:Translate ReportNumber, Group=Common}" />
                                     <tl:TLCheckView ValidState="{Binding ShowIsnpectionCratedByCurrentUser}" Text="{rt:Translate ShowIsnpectionCratedByCurrentUser, Group=Common}" />
                                     <StackLayout Orientation="Horizontal">
+                                        <Button Text="{rt:Translate Clear, Group=Inspections}"
+                                                WidthRequest="130"
+                                                Command="{Binding ClearFilters}"
+                                                BackgroundColor="{StaticResource Secondary}" />
+
+                                        <BoxView HorizontalOptions="FillAndExpand" />
                                         <Button Text="{rt:Translate Filter, Group=Inspections}"
                                                 WidthRequest="130"
                                                 Command="{Binding Filter}" />
-                                        <BoxView HorizontalOptions="FillAndExpand" />
-                                        <Button Text="{rt:Translate Clear, Group=Inspections}"
-                                                WidthRequest="130"
-                                                Command="{Binding ClearFilters}" />
                                     </StackLayout>
                                 </tl:TLFlex>
                             </Frame>

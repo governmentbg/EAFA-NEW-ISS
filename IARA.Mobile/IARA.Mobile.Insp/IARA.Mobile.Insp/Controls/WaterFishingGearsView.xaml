@@ -12,12 +12,9 @@
         Title="{rt:Translate Title, Group=WaterFishingGear}"
         ValidState="{Binding FishingGears}">
     <tl:TLResponsiveTable.TableColumns>
-        <tl:TLTableColumn Text="{rt:Translate Type, Group=WaterFishingGear}"
-                Width="*" />
-        <tl:TLTableColumn Text="{rt:Translate Count, Group=WaterFishingGear}"
-                Width="*" />
-        <tl:TLTableColumn Text="{rt:Translate NetEyeSize, Group=WaterFishingGear}"
-                Width="*" />
+        <tl:TLTableColumn Text="{rt:Translate Type, Group=WaterFishingGear}" Width="*" />
+        <tl:TLTableColumn Text="{rt:Translate Count, Group=WaterFishingGear}" Width="*" />
+        <tl:TLTableColumn Text="{rt:Translate NetEyeSize, Group=WaterFishingGear}" Width="*" />
         <tl:TLTableColumn Width="{Binding BindingContext.Inspection.ActivityType, Converter={StaticResource ReviewDialogToWidth}, ConverterParameter=140, Source={Reference view}}" />
     </tl:TLResponsiveTable.TableColumns>
     <tl:TLResponsiveTable.DefaultItemTemplate>
@@ -35,8 +32,7 @@
                         LineBreakMode="WordWrap"
                         VerticalOptions="Center"
                         IsEnabled="{Binding BindingContext.Inspection.ActivityType, Converter={StaticResource IsNotReview}, Source={Reference view}}" />
-                <StackLayout Orientation="Horizontal"
-                        VerticalOptions="Start">
+                <StackLayout Orientation="Horizontal" VerticalOptions="Start">
                     <ImageButton Source="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Eye}, Size=20, Color=White}"
                             Padding="10"
                             Command="{Binding BindingContext.Review, Source={Reference view}}"
@@ -56,17 +52,15 @@
         </DataTemplate>
     </tl:TLResponsiveTable.DefaultItemTemplate>
     <tl:TLResponsivleTableChild TableLayout="Table" />
-    <tl:TLResponsivleTableChild TableLayout="Sections"
-            QueryWidth="800" />
+    <tl:TLResponsivleTableChild TableLayout="Sections" QueryWidth="800" />
     <tl:TLResponsiveTable.FooterView>
-        <Button Text="{rt:Translate AddFishingGear, Group=WaterFishingGear}"
+        <Button Text="{rt:Translate Add, Group=Common}"
                 Command="{Binding Add}"
                 ImageSource="{FontImage FontFamily=FA, Glyph={Static h:IconFont.CirclePlus}, Size=25, Color=White}"
                 HorizontalOptions="End"
                 IsVisible="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}" />
     </tl:TLResponsiveTable.FooterView>
     <tl:TLResponsiveTable.EmptyView>
-        <Label Text="{rt:Translate NoInformation, Group=Common}"
-                Margin="20,10" />
+        <Label Text="{rt:Translate NoInformation, Group=Common}" Margin="20,10" />
     </tl:TLResponsiveTable.EmptyView>
 </tl:TLResponsiveTable>

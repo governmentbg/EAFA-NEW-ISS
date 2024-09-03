@@ -138,7 +138,6 @@ export class RecreationalFishingTicketsContentComponent implements OnInit, After
     private ticketPrices: [number, number, number][] = []; // array of tuples [periodId, typeId, price]
 
     private shouldUpdatePersonalData: boolean = true;
-    private ticketNumbersAvailability: Map<string, boolean> = new Map<string, boolean>();
 
     private cannotPurchase: boolean = false;
     private cannotPurchaseUnder14: boolean = false;
@@ -250,27 +249,8 @@ export class RecreationalFishingTicketsContentComponent implements OnInit, After
     }
 
     public checkTicketNumbers(): void {
-        const check: boolean = (this.ticketNumsArray.value as string[]).some((num: string) => {
-            return !this.ticketNumbersAvailability.has(num);
-        });
-
-        if (check) {
-            this.service.checkTicketNumbersAvailability(this.ticketNumsArray.value).subscribe({
-                next: (result: boolean[]) => {
-                    this.ticketNumsApproved = true;
-
-                    for (let i = 0; i < result.length; ++i) {
-                        this.ticketNumbersAvailability.set(this.ticketNumsArray.value[i], result[i]);
-                    }
-
-                    this.updateTicketNumsArrayAndMoveStep();
-                }
-            });
-        }
-        else {
-            this.ticketNumsApproved = true;
-            this.updateTicketNumsArrayAndMoveStep();
-        }
+        this.ticketNumsApproved = true;
+        this.updateTicketNumsArrayAndMoveStep();
     }
 
     public save(print: boolean): void {
@@ -454,10 +434,10 @@ export class RecreationalFishingTicketsContentComponent implements OnInit, After
                     const ticketNum: string = this.ticketNumsArray.controls[i].value;
 
                     if (i < this.tickets.length) {
-                        this.tickets[i].ticketNum = ticketNum;
+                        this.tickets[i].paperNum = ticketNum;
                     }
                     else {
-                        this.childTickets[i - this.tickets.length].ticketNum = ticketNum;
+                        this.childTickets[i - this.tickets.length].paperNum = ticketNum;
                     }
                 }
             }
@@ -550,19 +530,6 @@ export class RecreationalFishingTicketsContentComponent implements OnInit, After
             if (!valid) {
                 return { atLeastOne: true };
             }
-            return null;
-        };
-    }
-
-    private ticketNumberAlreadyInUse(): ValidatorFn {
-        return (control: AbstractControl): ValidationErrors | null => {
-            if (this.ticketNumsApproved === true) {
-                const available: boolean | undefined = this.ticketNumbersAvailability.get(control.value);
-                if (available !== undefined && available === false) {
-                    return { alreadyInUse: true };
-                }
-            }
-
             return null;
         };
     }
@@ -1083,7 +1050,7 @@ export class RecreationalFishingTicketsContentComponent implements OnInit, After
 
             for (const ticket of this.tickets) {
                 this.ticketNumsArray.push(new FormControl(null, [
-                    Validators.required, Validators.maxLength(50), TLValidators.number(1, undefined, 0), this.ticketNumberAlreadyInUse()
+                    Validators.required, Validators.maxLength(50), TLValidators.number(1, undefined, 0)
                 ]));
 
                 const type: string = this.ticketTypes.find(x => x.value === ticket.typeId)!.displayName!;
@@ -1092,7 +1059,7 @@ export class RecreationalFishingTicketsContentComponent implements OnInit, After
 
             for (let i = 0; i < this.childTickets.length; ++i) {
                 this.ticketNumsArray.push(new FormControl(null, [
-                    Validators.required, Validators.maxLength(50), TLValidators.number(1, undefined, 0), this.ticketNumberAlreadyInUse()
+                    Validators.required, Validators.maxLength(50), TLValidators.number(1, undefined, 0)
                 ]));
 
                 const type: string = this.ticketTypes.find(x => x.code === TicketTypeEnum[TicketTypeEnum.UNDER14])!.displayName!;

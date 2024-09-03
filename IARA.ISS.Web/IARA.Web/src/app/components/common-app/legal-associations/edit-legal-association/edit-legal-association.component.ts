@@ -46,6 +46,7 @@ import { CommonNomenclatures } from '@app/services/common-app/common-nomenclatur
 import { EgnLncDTO } from '@app/models/generated/dtos/EgnLncDTO';
 import { PersonFullDataDTO } from '@app/models/generated/dtos/PersonFullDataDTO';
 import { LegalFullDataDTO } from '@app/models/generated/dtos/LegalFullDataDTO';
+import { ErrorCode } from '@app/models/common/exception.model';
 
 @Component({
     selector: 'edit-legal-association',
@@ -691,6 +692,10 @@ export class EditLegalAssociationComponent implements OnInit, IDialogComponent {
 
                 if (errors?.egnLnc !== undefined && errors?.egnLnc !== null) {
                     this.egnAndEmailDontMatchErrorEmail = errors?.email;
+                }
+
+                if (response.error?.code === ErrorCode.FishingAssociationAlreadyExists) {
+                    this.form.get('submittedForControl')!.setErrors({ associationAlreadyExists: true });
                 }
             }
         });

@@ -1,5 +1,5 @@
 ﻿import { Component, Input, OnInit, Self, ViewChild } from '@angular/core';
-import { AbstractControl, FormControl, FormGroup, NgControl, ValidationErrors, ValidatorFn } from '@angular/forms';
+import { AbstractControl, FormControl, NgControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 
 import { CustomFormControl } from '@app/shared/utils/custom-form-control';
 import { GridRow } from '@app/shared/components/data-table/models/row.model';
@@ -11,9 +11,11 @@ import { HeaderCloseFunction } from '@app/shared/components/dialog-wrapper/inter
 import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
 import { EditMarketCatchComponent } from '../edit-market-catch/edit-market-catch.component';
 import { MarketCatchTableParams } from './models/market-catch-table-params';
-import { InspectedDeclarationCatchDTO } from '@app/models/generated/dtos/InspectedDeclarationCatchDTO';
 import { InspectedCatchTableModel } from '../../../../models/inspected-catch-table.model';
 import { CommonUtils } from '@app/shared/utils/common.utils';
+import { InspectionLogBookPageDTO } from '@app/models/generated/dtos/InspectionLogBookPageDTO';
+import { DeclarationLogBookTypeEnum } from '@app/enums/declaration-log-book-type.enum';
+import { InspectedDeclarationCatchDTO } from '@app/models/generated/dtos/InspectedDeclarationCatchDTO';
 
 function groupBy(array: any[], f: any): any[][] {
     const groups: any = {};
@@ -31,10 +33,7 @@ function groupBy(array: any[], f: any): any[][] {
     selector: 'market-catches-table',
     templateUrl: './market-catches-table.component.html'
 })
-export class MarketCatchesTableComponent extends CustomFormControl<InspectedDeclarationCatchDTO[]> implements OnInit {
-
-    public catches: InspectedDeclarationCatchDTO[] = [];
-
+export class MarketCatchesTableComponent extends CustomFormControl<InspectionLogBookPageDTO[]> implements OnInit {
     @Input()
     public hasCatchType: boolean = true;
 
@@ -50,7 +49,11 @@ export class MarketCatchesTableComponent extends CustomFormControl<InspectedDecl
     @Input()
     public presentations: NomenclatureDTO<number>[] = [];
 
+    public logBookTypes: NomenclatureDTO<DeclarationLogBookTypeEnum>[] = [];
+
     public catchQuantities: Map<number, number> = new Map<number, number>();
+
+    public pages: InspectionLogBookPageDTO[] = [];
 
     @ViewChild(TLDataTableComponent)
     private datatable!: TLDataTableComponent;
@@ -70,36 +73,38 @@ export class MarketCatchesTableComponent extends CustomFormControl<InspectedDecl
         this.translate = translate;
         this.confirmDialog = confirmDialog;
         this.editEntryDialog = editEntryDialog;
+
+        this.initLogBookTypesNomenclature();
     }
 
     public async ngOnInit(): Promise<void> {
         this.initCustomFormControl();
     }
 
-    public writeValue(value: InspectedDeclarationCatchDTO[]): void {
+    public writeValue(value: InspectionLogBookPageDTO[]): void {
         if (value !== undefined && value !== null && value.length !== 0) {
             setTimeout(() => {
-                this.catches = value;
+                this.pages = value;
                 this.recalculateCatchQuantitySums();
                 this.onChanged(this.getValue());
             });
         }
         else {
-            this.catches = [];
+            this.pages = [];
             this.recalculateCatchQuantitySums();
             this.onChanged(this.getValue());
         }
     }
 
-    public addEditEntry(inspectedCatch?: InspectedDeclarationCatchDTO, viewMode?: boolean): void {
+    public addEditEntry(inspectedPage?: InspectionLogBookPageDTO, viewMode?: boolean): void {
         const readOnly: boolean = this.isDisabled || viewMode === true;
 
         let data: MarketCatchTableParams | undefined;
         let title: string;
 
-        if (inspectedCatch !== undefined && inspectedCatch !== null) {
+        if (inspectedPage !== undefined && inspectedPage !== null) {
             data = new MarketCatchTableParams({
-                model: inspectedCatch,
+                model: inspectedPage,
                 readOnly: readOnly,
                 fishes: this.fishes,
                 presentations: this.presentations,
@@ -139,23 +144,25 @@ export class MarketCatchesTableComponent extends CustomFormControl<InspectedDecl
             viewMode: readOnly
         }, '1200px');
 
-        dialog.subscribe((result: InspectedDeclarationCatchDTO) => {
+        dialog.subscribe((result: InspectionLogBookPageDTO) => {
             if (result !== undefined && result !== null) {
-                if (inspectedCatch !== undefined) {
-                    inspectedCatch = result;
+                result.catchMeasuresText = result.inspectionCatchMeasures?.map(x => `${x.fishName} ${(Number(x.catchQuantity)).toFixed(2)}kg`).join(';') ?? '';
+
+                if (inspectedPage !== undefined) {
+                    inspectedPage = result;
                 }
                 else {
-                    this.catches.push(result);
+                    this.pages.push(result);
                 }
 
-                this.catches = this.catches.slice();
+                this.pages = this.pages.slice();
                 this.recalculateCatchQuantitySums();
                 this.onChanged(this.getValue());
             }
         });
     }
 
-    public deleteEntry(inspectedCatch: GridRow<InspectedDeclarationCatchDTO>): void {
+    public deleteEntry(inspectedCatch: GridRow<InspectionLogBookPageDTO>): void {
         this.confirmDialog.open({
             title: this.translate.getValue('inspections.market-catches-table-delete-dialog-title'),
             message: this.translate.getValue('inspections.market-catches-table-delete-message'),
@@ -164,7 +171,7 @@ export class MarketCatchesTableComponent extends CustomFormControl<InspectedDecl
             next: (ok: boolean) => {
                 if (ok) {
                     this.datatable.softDelete(inspectedCatch);
-                    this.catches.splice(this.catches.indexOf(inspectedCatch.data), 1);
+                    this.pages.splice(this.pages.indexOf(inspectedCatch.data), 1);
                     this.onChanged(this.getValue());
                     this.recalculateCatchQuantitySums();
                 }
@@ -176,14 +183,14 @@ export class MarketCatchesTableComponent extends CustomFormControl<InspectedDecl
         return new FormControl(undefined, [this.catchesValidator(), this.minLengthValidator()]);
     }
 
-    protected getValue(): InspectedDeclarationCatchDTO[] {
-        return this.catches;
+    protected getValue(): InspectionLogBookPageDTO[] {
+        return this.pages;
     }
 
     private catchesValidator(): ValidatorFn {
         return (): ValidationErrors | null => {
-            if (this.catches !== undefined && this.catches !== null) {
-                const result = groupBy(this.catches, ((o: InspectedCatchTableModel) => ([o.fishId, o.catchInspectionTypeId, o.turbotSizeGroupId])));
+            if (this.pages !== undefined && this.pages !== null) {
+                const result = groupBy(this.pages, ((o: InspectedCatchTableModel) => ([o.fishId, o.catchInspectionTypeId, o.turbotSizeGroupId])));
 
                 if (result.find((f: any[]) => f.length > 1)) {
                     return { 'catchesMatch': true };
@@ -195,8 +202,8 @@ export class MarketCatchesTableComponent extends CustomFormControl<InspectedDecl
 
     private minLengthValidator(): ValidatorFn {
         return (): ValidationErrors | null => {
-            if (this.catches !== undefined && this.catches !== null) {
-                if (this.catches.length === 0) {
+            if (this.pages !== undefined && this.pages !== null) {
+                if (this.pages.length === 0) {
                     return { 'minLength': true };
                 }
             }
@@ -205,12 +212,55 @@ export class MarketCatchesTableComponent extends CustomFormControl<InspectedDecl
     }
 
     private recalculateCatchQuantitySums(): void {
-        const recordsGroupedByFish: Record<number, InspectedDeclarationCatchDTO[]> = CommonUtils.groupBy(this.catches, x => x.fishTypeId!);
+        const inspectedProducts: InspectedDeclarationCatchDTO[][] = this.pages.map(x => x.inspectionCatchMeasures!);
+        const inspectedProductsFlattened: InspectedDeclarationCatchDTO[] = ([] as InspectedDeclarationCatchDTO[]).concat(...inspectedProducts);
+
+        const recordsGroupedByFish: Record<number, InspectedDeclarationCatchDTO[]> = CommonUtils.groupBy(inspectedProductsFlattened, x => x.fishTypeId!);
         this.catchQuantities.clear();
 
         for (const fishGroupId in recordsGroupedByFish) {
             const quantity: number = recordsGroupedByFish[fishGroupId].reduce((sum, current) => Number(sum) + Number(current.catchQuantity!), 0);
             this.catchQuantities.set(Number(fishGroupId), quantity);
         }
+    }
+
+    private initLogBookTypesNomenclature(): void {
+        this.logBookTypes = [
+            new NomenclatureDTO({
+                value: DeclarationLogBookTypeEnum.FirstSaleLogBook,
+                displayName: this.translate.getValue('inspections.market-first-sale-log-book'),
+                isActive: true
+            }),
+            new NomenclatureDTO({
+                value: DeclarationLogBookTypeEnum.AdmissionLogBook,
+                displayName: this.translate.getValue('inspections.market-admission-log-book'),
+                isActive: true
+            }),
+            new NomenclatureDTO({
+                value: DeclarationLogBookTypeEnum.TransportationLogBook,
+                displayName: this.translate.getValue('inspections.market-transport-log-book'),
+                isActive: true
+            }),
+            new NomenclatureDTO({
+                value: DeclarationLogBookTypeEnum.ShipLogBook,
+                displayName: this.translate.getValue('inspections.market-ship-log-book'),
+                isActive: true
+            }),
+            new NomenclatureDTO({
+                value: DeclarationLogBookTypeEnum.AquacultureLogBook,
+                displayName: this.translate.getValue('inspections.market-aquaculture-log-book'),
+                isActive: true
+            }),
+            new NomenclatureDTO({
+                value: DeclarationLogBookTypeEnum.Invoice,
+                displayName: this.translate.getValue('inspections.market-other'),
+                isActive: true
+            }),
+            new NomenclatureDTO({
+                value: DeclarationLogBookTypeEnum.NNN,
+                displayName: this.translate.getValue('inspections.market-ship-nnn'),
+                isActive: true
+            })
+        ];
     }
 }

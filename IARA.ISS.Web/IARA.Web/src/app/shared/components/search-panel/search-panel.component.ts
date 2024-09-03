@@ -29,6 +29,9 @@ export class SearchPanelComponent implements AfterViewInit {
     @Input()
     public translateService!: ITranslationService;
 
+    @Input()
+    public collapseOnInvalid: boolean = true;
+
     @ContentChild(ControlContainer)
     set advancedSerachFormGroupDirective(value: FormGroupDirective) {
         if (value !== null && value !== undefined) {
@@ -335,7 +338,9 @@ export class SearchPanelComponent implements AfterViewInit {
 
     private closeExpansionPanel(): void {
         if (this.panel !== null && this.panel !== undefined) {
-            this.panel.close();
+            if (this._advancedSearchFormGroup.valid || (this._advancedSearchFormGroup.invalid && this.collapseOnInvalid)) {
+                this.panel.close();
+            }
         }
     }
 

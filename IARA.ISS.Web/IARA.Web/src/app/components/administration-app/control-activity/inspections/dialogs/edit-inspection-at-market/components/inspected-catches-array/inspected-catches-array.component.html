@@ -1,0 +1,24 @@
+﻿<div fxFlexFill fxLayout="column" fxLayoutGap="1em" validityCheckerGroup>
+    <div *ngFor="let catchControl of form.controls; let i = index" fxFlex="100" fxLayout="column" fxLayoutGap="1em">
+        <inspected-catch [formControl]="catchControl"
+                         [viewMode]="viewMode"
+                         [fishes]="fishes"
+                         [catchTypes]="catchTypes"
+                         [presentations]="presentations"
+                         [turbotSizeGroups]="turbotSizeGroups"
+                         [hasCatchType]="hasCatchType"
+                         [hasUndersizedCheck]="hasUndersizedCheck"
+                         [hasDeclaration]="hasDeclaration"
+                         (deletePanelBtnClicked)="deleteCatchControl(catchControl, i)"
+                         validityChecker>
+        </inspected-catch>
+    </div>
+    <div fxLayout="row" fxLayoutAlign="end center" fxLayoutGap="1em">
+        <button *ngIf="!viewMode"
+                mat-raised-button
+                color="accent"
+                (click)="addCatchControl()">
+            {{ 'inspections.add-inspected-catch' | tlTranslate }}
+        </button>
+    </div>
+</div>

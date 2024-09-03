@@ -1,7 +1,6 @@
-﻿import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
-import { FormControl } from '@angular/forms';
+﻿import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { PageEvent } from '@angular/material/paginator';
 import { forkJoin } from 'rxjs';
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 import { ApplicationStatusesEnum } from '@app/enums/application-statuses.enum';
@@ -31,8 +30,7 @@ import { PermissionsEnum } from '@app/shared/enums/permissions.enum';
     templateUrl: './recreational-fishing-tickets.component.html',
     styleUrls: ['./recreational-fishing-tickets.component.scss']
 })
-export class RecreationalFishingTicketsComponent implements OnInit, AfterViewInit {
-    public showExpiredControl: FormControl;
+export class RecreationalFishingTicketsComponent implements OnInit {
     public showBuyTicketScreen: boolean;
     public initialLoadComplete: boolean = false;
 
@@ -49,9 +47,6 @@ export class RecreationalFishingTicketsComponent implements OnInit, AfterViewIni
     public service: RecreationalFishingPublicService;
     public tickets: RecreationalFishingTicketCardDTO[] = [];
 
-    @ViewChild('ticketsPaginator')
-    private ticketsPaginator!: MatPaginator;
-
     private types: NomenclatureDTO<number>[] = [];
     private periods: NomenclatureDTO<number>[] = [];
 
@@ -63,7 +58,6 @@ export class RecreationalFishingTicketsComponent implements OnInit, AfterViewIni
     private paymentDialog: TLMatDialog<OnlinePaymentDataComponent>;
 
     private pageEvent: PageEvent;
-    private activeTickets: boolean = true;
 
     public constructor(
         service: RecreationalFishingPublicService,
@@ -81,8 +75,6 @@ export class RecreationalFishingTicketsComponent implements OnInit, AfterViewIni
         this.editDialog = editDialog;
         this.statusReasonDialog = statusReasonDialog;
         this.paymentDialog = paymentDialog;
-
-        this.showExpiredControl = new FormControl(false);
 
         this.pageEvent = new PageEvent();
         this.pageEvent.pageIndex = 0;
@@ -105,20 +97,6 @@ export class RecreationalFishingTicketsComponent implements OnInit, AfterViewIni
                 this.periods = periods;
 
                 this.getAllUserTickets();
-            }
-        });
-    }
-
-    public ngAfterViewInit(): void {
-        this.showExpiredControl.valueChanges.subscribe({
-            next: (checked: boolean) => {
-                if (checked === this.activeTickets) {
-                    this.ticketsPaginator?.firstPage();
-                    this.pageEvent.pageIndex = 0;
-                }
-
-                this.activeTickets = !checked;
-                this.switchPage(this.pageEvent);
             }
         });
     }
@@ -286,17 +264,7 @@ export class RecreationalFishingTicketsComponent implements OnInit, AfterViewIni
     public switchPage(event: PageEvent): void {
         this.pageEvent = event;
 
-        if (this.activeTickets === true) {
-            this.tickets = this.allTickets.filter(x =>
-                x.ticketStatus !== TicketStatusEnum.EXPIRED
-                && x.ticketStatus !== TicketStatusEnum.CANCELED);
-        }
-        else {
-            this.tickets = this.allTickets.filter(x => 
-                x.ticketStatus === TicketStatusEnum.EXPIRED
-                || x.ticketStatus === TicketStatusEnum.CANCELED);
-        }
-
+        this.tickets = [...this.allTickets];
         this.ticketsLength = this.tickets.length;
 
         this.tickets = this.tickets.slice(
@@ -330,7 +298,10 @@ export class RecreationalFishingTicketsComponent implements OnInit, AfterViewIni
                     else if (ticket.ticketStatus === TicketStatusEnum.CANCELED) {
                         ticket.status = this.translate.getValue('recreational-fishing.ticket-card-canceled');
                     }
-                    else if (ticket.isPaymentProcessing) {
+                    else if (ticket.applicationStatus === ApplicationStatusesEnum.WAIT_PMT_FROM_USR) {
+                        ticket.status = this.translate.getValue('recreational-fishing.ticket-card-awaiting-payment');
+                    }
+                    else if (ticket.applicationStatus === ApplicationStatusesEnum.PAYMENT_PROCESSING) {
                         ticket.status = this.translate.getValue('recreational-fishing.ticket-card-payment-processing');
                     }
                     else {

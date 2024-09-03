@@ -9,38 +9,36 @@
             </tl-expansion-panel>
         </div>
         <div fxLayout="column">
-            <tl-expansion-panel title="{{ 'online-payment-data.choose-payment-method-panel-title' | tlTranslate }}">
-                <label [ngClass]="{'error-color': paymentTypeControl.invalid && paymentTypeControl.touched}">
-                    {{ 'online-payment-data.choose-payment-type' | tlTranslate }}<span> *</span>
-                </label>
-                <mat-radio-group style="display: flex; flex-direction: column;"
-                                 formControlName="paymentTypeControl"
-                                 [color]="'accent'"
-                                 [required]="true">
-                    <mat-radio-button *ngFor="let option of paymentTypes" [value]="option" [name]="'radioGroup'">
-                        <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="1em">
-                            <ng-container [ngSwitch]="paymentTypesEnum[option.code]">
-                                <img *ngSwitchCase="paymentTypesEnum.PayEGovBank"
-                                     class="logo-2em"
-                                     src="assets/images/logos/egov-Logo_regional_administration.jpg">
-                                <img *ngSwitchCase="paymentTypesEnum.PayEGovePOS"
-                                     class="logo-2em"
-                                     src="assets/images/logos/egov-Logo_regional_administration.jpg">
-                                <img *ngSwitchCase="paymentTypesEnum.PayEGovePayBG"
-                                     class="logo-2em"
-                                     src="assets/images/logos/egov-Logo_regional_administration.jpg">
-                                <img *ngSwitchCase="paymentTypesEnum.ePay"
-                                     class="logo-3em"
-                                     src="assets/images/logos/epay-logo.jpg">
-                                <img *ngSwitchCase="paymentTypesEnum.ePayDirect"
-                                     class="logo-2em"
-                                     src="assets/images/logos/boriga-logo.gif">
-                            </ng-container>
-                            <span>{{ option.displayName }}</span>
-                        </div>
-                    </mat-radio-button>
-                </mat-radio-group>
-            </tl-expansion-panel>
+            <label [ngClass]="{'error-color': paymentTypeControl.invalid && paymentTypeControl.touched}">
+                {{ 'online-payment-data.choose-payment-type' | tlTranslate }}<span> *</span>
+            </label>
+            <mat-radio-group style="display: flex; flex-direction: column;"
+                             formControlName="paymentTypeControl"
+                             [color]="'accent'"
+                             [required]="true">
+                <mat-radio-button *ngFor="let option of paymentTypes" [value]="option" [name]="'radioGroup'">
+                    <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="1em" class="logo-container">
+                        <ng-container [ngSwitch]="paymentTypesEnum[option.code]">
+                            <img *ngSwitchCase="paymentTypesEnum.PayEGovBank"
+                                 class="logo logo-3em"
+                                 src="assets/icons/payment/PayEGovBank.png">
+                            <img *ngSwitchCase="paymentTypesEnum.PayEGovePOS"
+                                 class="logo logo-3em"
+                                 src="assets/icons/payment/PayEGovePOS.png">
+                            <img *ngSwitchCase="paymentTypesEnum.PayEGovePayBG"
+                                 class="logo logo-3em"
+                                 src="assets/icons/payment/PayEGovePayBG.png">
+                            <img *ngSwitchCase="paymentTypesEnum.ePay"
+                                 class="logo logo-3em"
+                                 src="assets/images/logos/epay-logo.jpg">
+                            <img *ngSwitchCase="paymentTypesEnum.ePayDirect"
+                                 class="logo logo-3em"
+                                 src="assets/images/logos/boriga-logo.gif">
+                        </ng-container>
+                        <span>{{ option.displayName }}</span>
+                    </div>
+                </mat-radio-button>
+            </mat-radio-group>
         </div>
     </div>
     <div fxLayout="row" fxLayoutAlign="start">
@@ -52,37 +50,24 @@
             </button>
         </div>
         <div [fxFlex]="isComponentOpenedInDialog ? '75' : '100'" fxLayout="row" [fxLayoutAlign]="isComponentOpenedInDialog ? 'end stretch' : 'start stretch'">
-            <button id="egov-bank-payment-btn"
+            <button *ngIf="showEGovBankPaymentButton"
+                    id="egov-bank-payment-btn"
                     mat-raised-button
-                    [ngClass]="{
-                        'hidden-button': !showEGovBankPaymentButton,
-                        'shown-button': showEGovBankPaymentButton
-                    }"
                     (click)="eGovBankPaymentBtnClicked()">
                 {{ 'online-payment-data.pay-with-egov' | tlTranslate }}
             </button>
-            <tl-egovpayment-btn *ngIf="!isForeignPerson" [ngClass]="{
-                                    'hidden-button': !showEGovEPOSPaymentButton,
-                                    'shown-button': showEGovEPOSPaymentButton
-                                }"
-                                btnText="{{ 'online-payment-data.pay-with-egov' | tlTranslate }}">
+            <tl-egovpayment-btn *ngIf="!isForeignPerson && showEGovEPOSPaymentButton"
+                                btnText="{{ 'online-payment-data.pay-with-egov' | tlTranslate }}"
+                                (onButtonClick)="onEgovPaymentButtonClicked()">
             </tl-egovpayment-btn>
-            <tl-egovpayment-btn *ngIf="!isForeignPerson" [ngClass]="{
-                                    'hidden-button': !showEGovEPayPaymentButton,
-                                    'shown-button': showEGovEPayPaymentButton
-                                }"
-                                btnText="{{ 'online-payment-data.pay-with-egov' | tlTranslate }}">
+            <tl-egovpayment-btn *ngIf="!isForeignPerson && showEGovEPayPaymentButton"
+                                btnText="{{ 'online-payment-data.pay-with-egov' | tlTranslate }}"
+                                (onButtonClick)="onEgovPaymentButtonClicked()">
             </tl-egovpayment-btn>
-            <tl-epayment-btn *ngIf="isForeignPerson" [ngClass]="{
-                                    'hidden-button': !showEPayPaymentButton,
-                                    'shown-button': showEPayPaymentButton
-                                }"
+            <tl-epayment-btn *ngIf="isForeignPerson && showEPayPaymentButton"
                              btnText="{{ 'online-payment-data.pay-with-epay' | tlTranslate }}">
             </tl-epayment-btn>
-            <tl-epayment-btn *ngIf="isForeignPerson" [ngClass]="{
-                                    'hidden-button': !showEPayDirectPaymentButton,
-                                    'shown-button': showEPayDirectPaymentButton
-                                }"
+            <tl-epayment-btn *ngIf="isForeignPerson && showEPayDirectPaymentButton"
                              btnText="{{ 'online-payment-data.pay-with-epay-direct' | tlTranslate }}">
             </tl-epayment-btn>
         </div>

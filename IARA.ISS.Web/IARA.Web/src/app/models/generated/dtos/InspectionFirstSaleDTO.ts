@@ -2,7 +2,7 @@
 
 import { StrictlyTyped } from '@app/shared/decorators/strictly-typed.decorator';
 import { InspectionEditDTO } from './InspectionEditDTO';
-import { InspectedDeclarationCatchDTO } from './InspectedDeclarationCatchDTO'; 
+import { InspectionLogBookPageDTO } from './InspectionLogBookPageDTO'; 
 
 export class InspectionFirstSaleDTO extends InspectionEditDTO {
     public constructor(obj?: Partial<InspectionFirstSaleDTO>) {
@@ -24,6 +24,6 @@ export class InspectionFirstSaleDTO extends InspectionEditDTO {
     @StrictlyTyped(String)
     public representativeComment?: string;
 
-    @StrictlyTyped(InspectedDeclarationCatchDTO)
-    public catchMeasures?: InspectedDeclarationCatchDTO[];
+    @StrictlyTyped(InspectionLogBookPageDTO)
+    public inspectionLogBookPages?: InspectionLogBookPageDTO[];
 }

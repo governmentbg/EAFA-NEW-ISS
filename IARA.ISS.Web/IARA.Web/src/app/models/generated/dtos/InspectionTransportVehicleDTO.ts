@@ -3,7 +3,7 @@
 import { StrictlyTyped } from '@app/shared/decorators/strictly-typed.decorator';
 import { InspectionEditDTO } from './InspectionEditDTO';
 import { LocationDTO } from './LocationDTO';
-import { InspectedDeclarationCatchDTO } from './InspectedDeclarationCatchDTO'; 
+import { InspectionLogBookPageDTO } from './InspectionLogBookPageDTO'; 
 
 export class InspectionTransportVehicleDTO extends InspectionEditDTO {
     public constructor(obj?: Partial<InspectionTransportVehicleDTO>) {
@@ -55,6 +55,6 @@ export class InspectionTransportVehicleDTO extends InspectionEditDTO {
     @StrictlyTyped(String)
     public transportDestination?: string;
 
-    @StrictlyTyped(InspectedDeclarationCatchDTO)
-    public catchMeasures?: InspectedDeclarationCatchDTO[];
+    @StrictlyTyped(InspectionLogBookPageDTO)
+    public inspectionLogBookPages?: InspectionLogBookPageDTO[];
 }

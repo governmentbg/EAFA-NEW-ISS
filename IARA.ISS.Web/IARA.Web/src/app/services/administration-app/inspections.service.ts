@@ -33,6 +33,7 @@ import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.
 import { InspectionCatchMeasureDTO } from '@app/models/generated/dtos/InspectionCatchMeasureDTO';
 import { LogBookPageStatusesEnum } from '@app/enums/log-book-page-statuses.enum';
 import { DatePipe } from '@angular/common';
+import { InspectedLogBookPageDataDTO } from '@app/models/generated/dtos/InspectedLogBookPageDataDTO';
 
 
 @Injectable({
@@ -195,6 +196,15 @@ export class InspectionsService extends BaseAuditService {
 
             return pages;
         }));
+    }
+
+    public getInspectedLogBookPageData(logBookPageId: number, type: DeclarationLogBookTypeEnum): Observable<InspectedLogBookPageDataDTO> {
+        const params = new HttpParams().append('logBookPageId', logBookPageId.toString()).append('type', type.toString());
+
+        return this.requestService.get(this.area, this.controller, 'GetInspectedLogBookPageData', {
+            httpParams: params,
+            responseTypeCtr: InspectedLogBookPageDataDTO
+        });
     }
 
     public getCatchRecordsByShipLogBookPageId(shipLogBookPageId: number): Observable<InspectionCatchMeasureDTO[]> {

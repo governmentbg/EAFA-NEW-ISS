@@ -10,16 +10,16 @@
                         tooltipResourceName="inspections.market-catch-info-helper">
         <div fxLayout="column"
              fxLayoutGap="1em">
-            <tl-autocomplete formControlName="permitControl"
-                             [options]="permitTypes"
-                             label="{{ 'inspections.market-declaration-type' | tlTranslate }}"
-                             tooltipResourceName="inspections.market-declaration-type-helper">
-            </tl-autocomplete>
+            <tl-select formControlName="permitControl"
+                       [options]="permitTypes"
+                       label="{{ 'inspections.market-declaration-type' | tlTranslate }}"
+                       tooltipResourceName="inspections.market-declaration-type-helper">
+            </tl-select>
 
             <inspected-ship *ngIf="permitTypeSelected != null
-                            && permitTypeSelected !== declarationLogBookTypeEnum.Invoice
-                            && permitTypeSelected !== declarationLogBookTypeEnum.NNN
-                            && permitTypeSelected !== declarationLogBookTypeEnum.AquacultureLogBook"
+                                && permitTypeSelected !== declarationLogBookTypeEnum.Invoice
+                                && permitTypeSelected !== declarationLogBookTypeEnum.NNN
+                                && permitTypeSelected !== declarationLogBookTypeEnum.AquacultureLogBook"
                             formControlName="shipControl"
                             [hasMap]="false"
                             [ships]="ships"
@@ -82,96 +82,101 @@
                 <div fxFlex="50"></div>
             </div>
 
-            <div *ngIf="hasDeclaration
-                 && form.controls.permitControl.value && form.controls.permitControl.value.value !== declarationLogBookTypeEnum.NNN
-                 && form.controls.permitControl.value.value !== declarationLogBookTypeEnum.Invoice
-                 && form.controls.permitControl.value.value !== declarationLogBookTypeEnum.ShipLogBook
-                 && permitTypeSelected !== declarationLogBookTypeEnum.AquacultureLogBook"
-                 fxLayout="row"
-                 fxLayoutGap="1em"
-                 fxLayoutAlign="space-between center">
-                <tl-input fxFlex="50"
-                          formControlName="declarationNumberControl"
-                          label="{{ 'inspections.market-declaration-number' | tlTranslate }}"
-                          tooltipResourceName="inspections.market-declaration-number-helper">
-                </tl-input>
-
-                <tl-date fxFlex="50"
-                         formControlName="declarationDateControl"
-                         label="{{ 'inspections.market-declaration-date' | tlTranslate }}"
-                         tooltipResourceName="inspections.market-declaration-date-helper">
-                </tl-date>
-            </div>
-
             <tl-input *ngIf="form.controls.permitControl.value && form.controls.permitControl.value.value === declarationLogBookTypeEnum.Invoice"
                       formControlName="invoiceDataControl"
                       label="{{ 'inspections.invoice-data' | tlTranslate }}"
                       tooltipResourceName="inspections.invoice-data-helper">
             </tl-input>
-        </div>
-    </tl-expansion-panel>
 
-    <!-- Улов -->
-    <tl-expansion-panel title="{{ 'inspections.market-catch-data' | tlTranslate }}"
-                        [validityChecker]="form"
-                        [validityCheckerExtraCondition]="fishErrors.length === 0"
-                        tooltipResourceName="inspections.market-catch-data-helper">
-        <div fxLayout="row wrap"
-             fxLayoutGap="1em grid"
-             fxLayoutAlign="start center">
-            <tl-autocomplete fxFlex="33"
-                             formControlName="typeControl"
-                             [options]="fishes"
-                             label="{{ 'inspections.market-catch-fish' | tlTranslate }}"
-                             tooltipResourceName="inspections.market-catch-fish-helper">
-            </tl-autocomplete>
+            <!-- допълнителна информация за избраната страница от дневник -->
+            <div *ngIf="showShipPageControls"
+                 fxLayout="row"
+                 fxLayoutGap="1em"
+                 fxLayoutAlign="space-between center">
+                <tl-input fxFlex="50"
+                          [readonly]="true"
+                          formControlName="shipPageNumberControl"
+                          label="{{ 'inspections.market-declaration-number' | tlTranslate }}"
+                          tooltipResourceName="inspections.market-declaration-number-helper">
+                </tl-input>
 
-            <tl-input fxFlex="33"
-                      formControlName="countControl"
-                      type="number"
-                      label="{{ 'inspections.market-catch-count' | tlTranslate }}"
-                      tooltipResourceName="inspections.market-catch-count-helper">
-            </tl-input>
+                <tl-date fxFlex="50"
+                         [readonly]="true"
+                         formControlName="shipPageDateControl"
+                         label="{{ 'inspections.market-declaration-date' | tlTranslate }}"
+                         tooltipResourceName="inspections.market-declaration-date-helper">
+                </tl-date>
+            </div>
 
-            <tl-autocomplete *ngIf="hasCatchType"
-                             fxFlex="33"
-                             formControlName="catchTypeControl"
-                             [options]="types"
-                             label="{{ 'inspections.market-catch-type' | tlTranslate }}"
-                             tooltipResourceName="inspections.market-catch-type-helper">
-            </tl-autocomplete>
+            <div *ngIf="showTransportationPageControls"
+                 fxLayout="row"
+                 fxLayoutGap="1em"
+                 fxLayoutAlign="space-between center">
+                <tl-input fxFlex="50"
+                          [readonly]="true"
+                          formControlName="transportationPageNumberControl"
+                          label="{{ 'inspections.market-transportation-document-number' | tlTranslate }}"
+                          tooltipResourceName="inspections.market-declaration-number-helper">
+                </tl-input>
 
-            <tl-checkbox *ngIf="hasUndersizedCheck"
-                         fxFlex="33"
-                         formControlName="undersizedControl"
-                         label="{{ 'inspections.undersized-fish' | tlTranslate }}">
-            </tl-checkbox>
+                <tl-date fxFlex="50"
+                         [readonly]="true"
+                         formControlName="transportationPageDateControl"
+                         label="{{ 'inspections.market-loading-date' | tlTranslate }}"
+                         tooltipResourceName="inspections.market-declaration-date-helper">
+                </tl-date>
+            </div>
 
-            <tl-input fxFlex="33"
-                      formControlName="quantityControl"
-                      type="number"
-                      label="{{ 'inspections.market-catch-quantity' | tlTranslate }}"
-                      tooltipResourceName="inspections.market-catch-quantity-helper">
-            </tl-input>
+            <div *ngIf="showAdmissionPageControls"
+                 fxLayout="row"
+                 fxLayoutGap="1em"
+                 fxLayoutAlign="space-between center">
+                <tl-input fxFlex="50"
+                          [readonly]="true"
+                          formControlName="admissionPageNumberControl"
+                          label="{{ 'inspections.market-admission-document-number' | tlTranslate }}"
+                          tooltipResourceName="inspections.market-declaration-number-helper">
+                </tl-input>
 
-            <tl-autocomplete *ngIf="showTurbotControl"
-                             fxFlex="33"
-                             formControlName="turbotSizeGroupControl"
-                             label="{{ 'inspections.market-catch-turbot-size-group' | tlTranslate }}"
-                             [options]="turbotSizeGroups"
-                             tooltipResourceName="inspections.market-catch-turbot-size-group-helper">
-            </tl-autocomplete>
+                <tl-date fxFlex="50"
+                         [readonly]="true"
+                         formControlName="admissionPageDateControl"
+                         label="{{ 'inspections.market-handover-date' | tlTranslate }}"
+                         tooltipResourceName="inspections.market-declaration-date-helper">
+                </tl-date>
+            </div>
 
-            <tl-autocomplete fxFlex="33"
-                             formControlName="presentationControl"
-                             [options]="presentations"
-                             label="{{ 'inspections.market-catch-presentation' | tlTranslate }}"
-                             tooltipResourceName="inspections.market-catch-presentation-helper">
-            </tl-autocomplete>
+            <div *ngIf="permitTypeSelected != null
+                        && permitTypeSelected !== declarationLogBookTypeEnum.Invoice
+                        && permitTypeSelected !== declarationLogBookTypeEnum.NNN
+                        && !readOnly"
+                 fxLayout="row"
+                 fxLayoutGap="1em"
+                 fxLayoutAlign="end center">
+                <button mat-raised-button
+                        color="accent"
+                        (click)="generateInspectedProducts()">
+                    {{ 'inspections.generate-inspected-products' | tlTranslate }}
+                </button>
+            </div>
 
             <tl-error [errors]="fishErrors"
+                      [useMultipleLines]="true"
                       fxFlexFill>
             </tl-error>
         </div>
     </tl-expansion-panel>
+
+    <!-- Продукти -->
+    <inspected-catches-array formControlName="inspectedCatchesControl"
+                             validityChecker
+                             [viewMode]="readOnly"
+                             [fishes]="fishes"
+                             [catchTypes]="types"
+                             [presentations]="presentations"
+                             [turbotSizeGroups]="turbotSizeGroups"
+                             [hasCatchType]="hasCatchType"
+                             [hasUndersizedCheck]="hasUndersizedCheck"
+                             [hasDeclaration]="hasDeclaration">
+    </inspected-catches-array>
 </div>

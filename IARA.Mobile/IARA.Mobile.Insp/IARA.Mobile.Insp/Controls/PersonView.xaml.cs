@@ -15,7 +15,7 @@ namespace IARA.Mobile.Insp.Controls
         }
 
         public static readonly BindableProperty IsTitleVisibleProperty =
-           BindableProperty.Create(nameof(IsTitleVisible), typeof(bool), typeof(PersonView));
+           BindableProperty.Create(nameof(IsTitleVisible), typeof(bool), typeof(PersonView), defaultValue: true);
         public bool IsTitleVisible
         {
             get => (bool)GetValue(IsTitleVisibleProperty);

@@ -53,7 +53,8 @@ type ThreeState = 'yes' | 'no' | 'both';
 
 @Component({
     selector: 'recreational-fishing-applications-content',
-    templateUrl: './recreational-fishing-applications-content.component.html'
+    templateUrl: './recreational-fishing-applications-content.component.html',
+    styleUrls: ['./recreational-fishing-applications-content.component.scss']
 })
 export class RecreationalFishingApplicationsContentComponent implements OnInit, AfterViewInit {
     @Input()
@@ -613,7 +614,7 @@ export class RecreationalFishingApplicationsContentComponent implements OnInit, 
         const rightButtons: IActionInfo[] = [];
 
         if (!isOnline) {
-            if (ticket.ticketStatus !== TicketStatusEnum.CANCELED) {
+            if (ticket.ticketStatus !== TicketStatusEnum.CANCELED && !ticket.isExpired) {
                 rightButtons.push({
                     id: 'issue-duplicate',
                     color: 'accent',
@@ -636,11 +637,13 @@ export class RecreationalFishingApplicationsContentComponent implements OnInit, 
             headerCancelButton: {
                 cancelBtnClicked: this.closeEditDialogBtnClicked.bind(this)
             },
-            headerAuditButton: {
-                id: params.id,
-                getAuditRecordData: this.service.getSimpleAudit.bind(this.service),
-                tableName: 'FishingTicket'
-            },
+            headerAuditButton: params.isAssociation || isOnline
+                ? undefined
+                : {
+                    id: params.id,
+                    getAuditRecordData: this.service.getSimpleAudit.bind(this.service),
+                    tableName: 'FishingTicket'
+                },
             rightSideActionsCollection: rightButtons,
             cancelBtn: {
                 id: 'cancel',
@@ -727,6 +730,7 @@ export class RecreationalFishingApplicationsContentComponent implements OnInit, 
     private buildForm(): void {
         this.form = new FormGroup({
             ticketNumControl: new FormControl(),
+            paperNumControl: new FormControl(),
             typesControl: new FormControl(),
             periodsControl: new FormControl(),
             holderControl: new FormControl(),
@@ -747,6 +751,7 @@ export class RecreationalFishingApplicationsContentComponent implements OnInit, 
             showInactiveRecords: filters.showInactiveRecords,
 
             ticketNum: filters.getValue('ticketNumControl'),
+            paperNum: filters.getValue('paperNumControl'),
             typeIds: filters.getValue('typesControl'),
             periodIds: filters.getValue('periodsControl'),
             ticketHolderName: filters.getValue('holderControl'),

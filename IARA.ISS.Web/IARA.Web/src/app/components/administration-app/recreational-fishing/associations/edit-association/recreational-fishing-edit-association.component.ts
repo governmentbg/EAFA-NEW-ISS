@@ -27,6 +27,8 @@ import { UserLegalStatusEnum } from '@app/enums/user-legal-status.enum';
 import { TLDataTableComponent } from '@app/shared/components/data-table/tl-data-table.component';
 import { RecordChangedEventArgs } from '@app/shared/components/data-table/models/record-changed-event.model';
 import { CommandTypes } from '@app/shared/components/data-table/enums/command-type.enum';
+import { HttpErrorResponse } from '@angular/common/http';
+import { ErrorCode } from '@app/models/common/exception.model';
 
 @Component({
     selector: 'recreational-fishing-edit-association',
@@ -250,11 +252,14 @@ export class RecreationalFishingEditAssociationComponent implements OnInit, Afte
         if (!isAnnul) {
             this.fillModel();
         }
-
+        
         if (this.id !== undefined && !this.isAdding) {
             this.service.editAssociation(this.model).subscribe({
                 next: () => {
                     dialogClose(this.model);
+                },
+                error: (response: HttpErrorResponse) => {
+                    this.handleAddEditErrorResponse(response);
                 }
             });
         }
@@ -263,6 +268,9 @@ export class RecreationalFishingEditAssociationComponent implements OnInit, Afte
                 next: (id: number) => {
                     this.model.id = id;
                     dialogClose(this.model);
+                },
+                error: (response: HttpErrorResponse) => {
+                    this.handleAddEditErrorResponse(response);
                 }
             });
         }
@@ -320,6 +328,13 @@ export class RecreationalFishingEditAssociationComponent implements OnInit, Afte
         }
 
         return result;
+    }
+
+    private handleAddEditErrorResponse(response: HttpErrorResponse): void {
+        if (response.error?.code === ErrorCode.FishingAssociationAlreadyExists) {
+            this.form.get('legalRegixDataControl')!.setErrors({ associationAlreadyExists: true });
+            this.validityCheckerGroup.validate();
+        }
     }
 
     private closeAnnulDialogBtnClicked(closeFn: HeaderCloseFunction): void {

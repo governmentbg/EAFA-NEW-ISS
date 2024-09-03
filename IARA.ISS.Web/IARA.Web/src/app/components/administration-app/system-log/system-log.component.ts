@@ -1,5 +1,5 @@
 ﻿import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { NomenclatureTypes } from '@app/enums/nomenclature.types';
 import { ISystemLogService } from '@app/interfaces/administration-app/system-log.interface';
 import { RequestStatistics } from '@app/models/common/request-statistics.model';
@@ -22,6 +22,8 @@ import { DateRangeData } from '@app/shared/components/input-controls/tl-date-ran
 import { SystemLogDialogParams } from './models/system-log-dialog-params.model';
 import { ViewSystemLogComponent } from './view-system-log.component';
 import { BaseSystemLogDTO } from '@app/models/generated/dtos/BaseSystemLogDTO';
+
+const DATE_RANGE_CONTROL_NAME = 'dateRangeControl';
 
 @Component({
     selector: 'system-log',
@@ -69,6 +71,8 @@ export class SystemLogComponent implements AfterViewInit, OnInit {
     }
 
     public ngOnInit(): void {
+        this.setDateRangeControlValue();
+
         NomenclatureStore.instance.getNomenclature<number>(NomenclatureTypes.AuditLogActionTypes, this.systemLogService.getActionTypeCategories.bind(this.systemLogService)).subscribe((result: NomenclatureDTO<number>[]) => {
             this.actionTypeCategories = result;
         });
@@ -122,6 +126,25 @@ export class SystemLogComponent implements AfterViewInit, OnInit {
             filtersMapper: this.mapFilters
         });
 
+        if (this.searchpanel !== null && this.searchpanel !== undefined) {
+            this.searchpanel.filtersChanged.subscribe({
+                next: () => {
+                    const dateRange: DateRangeData | null = this.searchPanel?.appliedFilters.find(x => CommonUtils.getFormControlName(x.control) === DATE_RANGE_CONTROL_NAME)?.value;
+
+                    if (dateRange === undefined || dateRange === null) {
+                        this.setDateRangeControlValue();
+                    }
+                }
+            })
+        }
+
+        if (this.gridManager.advancedFilters === undefined || this.gridManager.advancedFilters === null) {
+            const today: Date = new Date();
+            const startDate: Date = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 7);
+
+            this.gridManager.advancedFilters = new SystemLogFilters({ registeredDateFrom: startDate, registeredDateTo: today });
+        }
+
         const id: string | undefined = window.history.state?.tableId;
         const tableName: string | undefined = window.history.state?.tableName;
 
@@ -159,13 +182,23 @@ export class SystemLogComponent implements AfterViewInit, OnInit {
             }
         }
 
+        if ((result.registeredDateFrom === undefined || result.registeredDateFrom === null) && (result.registeredDateTo === undefined || result.registeredDateTo === null)) {
+            const today: Date = new Date();
+            const startDate: Date = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 7);
+            const dateRange = new DateRangeData({ start: startDate, end: today });
+
+            this.formGroup?.get('dateRangeControl')?.setValue(dateRange);
+            result.registeredDateFrom = startDate;
+            result.registeredDateTo = today;
+        }
+
         return result;
     }
 
     private buildForm(): void {
         this.formGroup = new FormGroup({
             actionTypeControl: new FormControl(),
-            dateRangeControl: new FormControl(),
+            dateRangeControl: new FormControl(undefined, Validators.required),
             userControl: new FormControl(),
             applicationControl: new FormControl(),
             actionControl: new FormControl(),
@@ -175,5 +208,19 @@ export class SystemLogComponent implements AfterViewInit, OnInit {
             newValueControl: new FormControl(),
             showRelatedLogsControl: new FormControl(false)
         });
+
+        setTimeout(() => {
+            this.formGroup.get('dateRangeControl')!.markAsTouched();
+            this.formGroup.get('dateRangeControl')!.updateValueAndValidity();
+        });
+    }
+
+    private setDateRangeControlValue(): void {
+        const today: Date = new Date();
+        const startDate: Date = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 7);
+        const dateRange = new DateRangeData({ start: startDate, end: today });
+
+        this.formGroup?.get('dateRangeControl')?.setValue(dateRange);
+        this.formGroup?.get('dateRangeControl')?.updateValueAndValidity();
     }
 }

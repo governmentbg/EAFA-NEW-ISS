@@ -45,6 +45,10 @@
                         checkboxLabel="{{ 'legal-association.has-bulgarian-address-registration' | tlTranslate }}">
             </regix-data>
 
+            <mat-error *ngIf="form.touched && form.get('submittedForControl')?.errors?.associationAlreadyExists">
+                * {{ 'legal-association.fishing-association-with-same-eik-already-exists' | tlTranslate }}
+            </mat-error>
+
             <div *ngIf="isRegister"
                  fxLayout="row">
                 <tl-autocomplete fxFlex="50"

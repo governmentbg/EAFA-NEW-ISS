@@ -8,25 +8,14 @@
 
     <ng-template #allTicketsScreen>
         <div *ngIf="allTickets?.length !== 0; else noTickets" fxFlexFill>
-            <div fxLayout="row" fxLayoutAlign="space-between center" class="buttons full-width">
-                <tl-slide-toggle [formControl]="showExpiredControl"
-                                 label="{{ 'recreational-fishing.show-expired-tickets' | tlTranslate }}">
-                </tl-slide-toggle>
-
+            <div fxLayout="row" fxLayoutAlign="end center" class="buttons full-width">
                 <button mat-raised-button color="accent" (click)="navigateToBuyTicketPage()">
                     {{ 'recreational-fishing.buy-new-ticket' | tlTranslate }}
                 </button>
             </div>
 
             <div *ngIf="tickets?.length === 0" class="no-tickets-label" fxFlexFill fxLayoutAlign="center center">
-                <span *ngIf="showExpiredControl.value === false; else showingExpired">
-                    {{ 'recreational-fishing.my-tickets-no-active-tickets' | tlTranslate }}
-                </span>
-                <ng-template #showingExpired>
-                    <span>
-                        {{ 'recreational-fishing.my-tickets-no-inactive-tickets' | tlTranslate }}
-                    </span>
-                </ng-template>
+                {{ 'recreational-fishing.my-tickets-no-active-tickets' | tlTranslate }}
             </div>
 
             <div fxLayout="column" fxLayoutAlign="start stretch">
@@ -93,14 +82,14 @@
                                                     tooltipText="{{ 'recreational-fishing.edit-ticket' | tlTranslate }}"
                                                     (buttonClicked)="editTicket(ticket, false)">
                                     </tl-icon-button>
-                                    <tl-icon-button *ngIf="ticket.applicationStatus === applicationStatuses.CONFIRMED_ISSUED_TICKET 
+                                    <tl-icon-button *ngIf="ticket.applicationStatus === applicationStatuses.CONFIRMED_ISSUED_TICKET
                                                         && ticket.ticketStatus === ticketStatuses.EXPIRED"
                                                     icon="fa-ticket-alt"
                                                     iconClass="accent-color"
                                                     tooltipText="{{ 'recreational-fishing.renew-ticket' | tlTranslate }}"
                                                     (buttonClicked)="renewTicket(ticket)">
                                     </tl-icon-button>
-                                    <tl-icon-button *ngIf="ticket.ticketStatus === ticketStatuses.APPROVED 
+                                    <tl-icon-button *ngIf="ticket.ticketStatus === ticketStatuses.APPROVED
                                                         || ticket.ticketStatus === ticketStatuses.ISSUED"
                                                     icon="fa-download"
                                                     iconClass="accent-color"

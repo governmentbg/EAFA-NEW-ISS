@@ -335,30 +335,33 @@ export class EditFirstSaleLogBookPageComponent implements OnInit, AfterViewInit,
                         if (result.admissionDocumentId !== undefined && result.admissionDocumentId !== null) {
                             this.service.getPossibleProductsByAdmissionDocument(result.admissionDocumentId, LogBookPageDocumentTypesEnum.FirstSaleDocument).subscribe({
                                 next: (products: LogBookPageProductDTO[]) => {
+                                    const logBookProducts: LogBookPageProductDTO[] = this.getProductsFromBasicInfo(products);
                                     this.originPossibleProducts = products;
                                     this.model.originalPossibleProducts = [];
 
-                                    this.form.get('productsControl')!.setValue(products);
+                                    this.form.get('productsControl')!.setValue(logBookProducts);
                                 }
                             });
                         }
                         else if (result.transportationDocumentId !== undefined && result.transportationDocumentId !== null) {
                             this.service.getPossibleProductsByTransportationDocument(result.transportationDocumentId, LogBookPageDocumentTypesEnum.FirstSaleDocument).subscribe({
                                 next: (products: LogBookPageProductDTO[]) => {
+                                    const logBookProducts: LogBookPageProductDTO[] = this.getProductsFromBasicInfo(products);
                                     this.originPossibleProducts = products;
                                     this.model.originalPossibleProducts = [];
 
-                                    this.form.get('productsControl')!.setValue(products);
+                                    this.form.get('productsControl')!.setValue(logBookProducts);
                                 }
                             });
                         }
                         else if (result.originDeclarationId !== undefined && result.originDeclarationId !== null) {
                             this.service.getPossibleProductsByOriginDeclarationId(result.originDeclarationId, LogBookPageDocumentTypesEnum.FirstSaleDocument).subscribe({
                                 next: (products: LogBookPageProductDTO[]) => {
+                                    const logBookProducts: LogBookPageProductDTO[] = this.getProductsFromBasicInfo(products);
                                     this.originPossibleProducts = products;
                                     this.model.originalPossibleProducts = [];
 
-                                    this.form.get('productsControl')!.setValue(products);
+                                    this.form.get('productsControl')!.setValue(logBookProducts);
                                 }
                             });
                         }
@@ -752,6 +755,19 @@ export class EditFirstSaleLogBookPageComponent implements OnInit, AfterViewInit,
 
             return Object.keys(errors).length === 0 ? true : false;
         }
+    }
+
+    private getProductsFromBasicInfo(products: LogBookPageProductDTO[]): LogBookPageProductDTO[] {
+        const productsToDelete: LogBookPageProductDTO[] = this.model.products ?? [];
+
+        for (const product of productsToDelete) {
+            product.isActive = false;
+            product.hasMissingProperties = false;
+        }
+
+        const result: LogBookPageProductDTO[] = products.concat(...productsToDelete);
+
+        return result;
     }
 
     private closeEditBasicInformationDialogBtnClicked(closeFn: HeaderCloseFunction): void {
