@@ -88,6 +88,7 @@ export class BaseTLDatatableComponent {
     public _selectedRows: any[] = [];
     public _groupRowsByFieldName: string = '';
     public _groupsExpandedByDefault: boolean = false;
+    public _rowsExpandedByDefault: boolean = false;
     public _rowClass: ((row: any) => Record<string, boolean>) | undefined;
 
 
@@ -243,6 +244,11 @@ export class BaseTLDatatableComponent {
 
     @Input() public set groupsExpandedByDefault(value: boolean) {
         this._groupsExpandedByDefault = value;
+    }
+
+    @Input() public set rowsExpandedByDefault(value: boolean) {
+        this._rowsExpandedByDefault = value;
+
     }
 
     @Input() public set groupHeaderRowHeight(value: string) {

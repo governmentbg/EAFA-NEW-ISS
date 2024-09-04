@@ -59,6 +59,12 @@ export class TLDataTableComponent extends BaseTLDatatableComponent implements IT
                 || this.wrapperDivHeight != this.gridWrapperDiv.nativeElement.offsetHeight) {
                 this.recalculateGrid();
             }
+
+            if (this._datatable != undefined) {
+                if (this._rowsExpandedByDefault) {
+                    this._datatable.rowDetail.expandAllRows();
+                }
+            }
         }
     }
 

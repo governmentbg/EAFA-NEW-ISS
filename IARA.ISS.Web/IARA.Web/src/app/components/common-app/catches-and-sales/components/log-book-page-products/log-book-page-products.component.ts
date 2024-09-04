@@ -163,6 +163,8 @@ export class LogBookPageProductsComponent extends CustomFormControl<LogBookPageP
 
             if (product.isActive) {
                 newProduct.hasMissingProperties = true;
+                const row = this.productsTable.rows.find(x => x.data === product);
+                this.productsTable.onToggleExpandRow(row);
             }
 
             this.products.push(newProduct);
@@ -171,8 +173,15 @@ export class LogBookPageProductsComponent extends CustomFormControl<LogBookPageP
         this.onChanged(this.products);
         this.recalculateFishQuantitySums();
 
+        this.expandAllRows();
+
         this.isTouched = true;
         this.control.updateValueAndValidity({ emitEvent: false, onlySelf: true });
+    }
+
+    public expandPanel(row: GridRow<LogBookPageProductDTO>): void {
+        this.productsTable.rowsExpandedByDefault = false;
+        this.productsTable.onToggleExpandRow(row);
     }
 
     public addEditProduct(product?: LogBookPageProductDTO, viewMode: boolean = false, openDialog: boolean = true): void {
@@ -180,6 +189,7 @@ export class LogBookPageProductsComponent extends CustomFormControl<LogBookPageP
             let data: EditLogBookPageProductDialogParamsModel | undefined;
             let headerAuditBtn: IHeaderAuditButton | undefined;
             let title: string = '';
+            this.productsTable.rowsExpandedByDefault = false;
 
             if (product !== null && product !== undefined) {
                 data = new EditLogBookPageProductDialogParamsModel({
@@ -277,6 +287,7 @@ export class LogBookPageProductsComponent extends CustomFormControl<LogBookPageP
                         this.onChanged(this.products);
                         this.recalculateFishQuantitySums();
 
+                        this.productsTable.rowsExpandedByDefault = false;
                         this.isTouched = true;
                         this.control.updateValueAndValidity({ emitEvent: false, onlySelf: true });
                     }
@@ -322,6 +333,8 @@ export class LogBookPageProductsComponent extends CustomFormControl<LogBookPageP
 
     public validate(control: AbstractControl): ValidationErrors | null {
         const errors: ValidationErrors = {};
+
+        this.expandAllRows();
 
         //productsQuantityNotMatch and noProductQuantities are warnings
         if (this.control.errors !== null && this.control.errors !== undefined) {
@@ -661,6 +674,16 @@ export class LogBookPageProductsComponent extends CustomFormControl<LogBookPageP
         }
 
         return result;
+    }
+
+    private expandAllRows(): void {
+        if (this.productsTable !== undefined && this.productsTable !== null) {
+            this.productsTable.rowsExpandedByDefault = false;
+        
+            if (this.products.some(x => x.hasMissingProperties === true)) {
+                this.productsTable.rowsExpandedByDefault = true;
+            }
+        }
     }
 
     private closeEditLogBookPageProductDialogBtnClicked(closeFn: HeaderCloseFunction): void {

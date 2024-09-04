@@ -4629,6 +4629,7 @@
         'page-product-turbot-average-unit-weigth-kg': 'Turbot average unit weight (kg)',
         'page-product-generate-products-from-origin-catch': 'Generate from catch records',
         'page-product-missing-properties': 'There are products with invalid/empty fileds, which need to be correctly filled',
+        'products-missing-properties': 'There are products with invalid/empty fileds, which need to be correctly filled',
         'page-product-no-products': 'There must be at least one product',
         'page-product-products-quantities-greater-than-original-possible-products': 'There are products, which have greater quantities (in kilograms) than the original possible products',
         'page-product-products-with-no-quantities': 'Products are already added to another log book page',
