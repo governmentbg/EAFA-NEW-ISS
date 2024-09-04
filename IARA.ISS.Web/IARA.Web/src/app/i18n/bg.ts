@@ -4686,6 +4686,7 @@
         'page-product-turbot-average-unit-weigth-kg': 'Средно единично тегло на калкан',
         'page-product-generate-products-from-origin-catch': 'Генерирай от улов',
         'page-product-missing-properties': 'Има продукти с невалидни/непопълни полета, които трябва да бъдат валидно попълнени',
+        'products-missing-properties': 'Има продукти от този вид с невалидни/непопълни полета, които трябва да бъдат валидно попълнени',
         'page-product-no-products': 'Трябва да има поне един въведен продукт',
         'page-product-products-quantities-greater-than-original-possible-products': 'Има продукти, които надвишават първоначалните възможни количества като килограми',
         'page-product-products-with-no-quantities': 'Продуктите вече са използвани в друг документ или декларация',

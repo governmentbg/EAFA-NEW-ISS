@@ -19,8 +19,7 @@
         <row-detail *ngIf="logBookType !== logBookTypesEnum.Aquaculture">
             <ng-template let-row="row" ngx-datatable-row-detail-template>
                 <tl-card>
-                    <tl-card-title>{{ 'catches-and-sales.ship-page-catch-records-fishes-card-title' | tlTranslate }}</tl-card-title>
-                    <tl-card-content>
+                    <tl-card-content fxLayoutGap="1em">
                         <tl-data-table [isRemote]="false"
                                        [isSoftDeletable]="true"
                                        [showInactiveRecords]="true"
@@ -121,6 +120,10 @@
                                 </ng-template>
                             </data-template-column>
                         </tl-data-table>
+
+                        <mat-error *ngIf="isTouched && row.data.hasMissingProperties === true">
+                            * {{ 'catches-and-sales.page-product-missing-properties' | tlTranslate }}
+                        </mat-error>
                     </tl-card-content>
                 </tl-card>
             </ng-template>
@@ -177,11 +180,13 @@
         <data-template-column *ngIf="logBookType !== logBookTypesEnum.Aquaculture" [flexRate]="0.1" [cellClass]="'justify-center'">
             <ng-template let-row="row" ngx-datatable-cell-template>
                 <div fxLayout="row wrap" fxLayoutAlign="end center">
-                    <tl-icon *ngIf="isTouched && (row.data.hasMissingProperties === true || row.data.quantityKg === 0)"
-                             icon="ic-exclamation"
-                             iconClass="error-color"
-                             [size]="icIconSize">
-                    </tl-icon>
+                    <tl-icon-button *ngIf="isTouched && (row.data.hasMissingProperties === true || row.data.quantityKg === 0)"
+                                    icon="ic-exclamation"
+                                    iconClass="error-color"
+                                    [size]="icIconSize"
+                                    (buttonClicked)="expandPanel(row)"
+                                    tooltipText="{{ 'catches-and-sales.products-missing-properties' | tlTranslate }}">
+                    </tl-icon-button>
                 </div>
             </ng-template>
         </data-template-column>

@@ -81,7 +81,7 @@ export class RecreationalFishingTicketSummaryComponent implements OnChanges {
     public printApplication(): void {
         if (this.expectDeclaration) {
             const parameters = new RecreationalFishingTicketDeclarationParametersDTO({
-                ticketNum: this.ticket.ticketNum,
+                ticketNum: this.ticket.paperNum,
                 validFrom: this.ticket.validFrom,
                 type: TicketTypeEnum[this.type.code as keyof typeof TicketTypeEnum],
                 period: TicketPeriodEnum[this.period.code as keyof typeof TicketPeriodEnum],
