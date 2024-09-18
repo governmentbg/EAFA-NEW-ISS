@@ -692,7 +692,8 @@
         'email-already-exists-error': 'Въведеният имейл вече съществува в системата',
         'must-have-one-valid-egn-lnc-error': 'В системата вече има валиден потребител с посоченото ЕГН/ЛНЧ',
         'dates-overlap-with-other-record': 'Датите за валидност се припокриват с друг запис за този потребител',
-        'at-least-one-role-needed-error': 'Необходимо е да бъде въведена поне една роля'
+        'at-least-one-role-needed-error': 'Необходимо е да бъде въведена поне една роля',
+        'passwords-must-match': 'Паролите трябва да съвпадат'
     },
     'legal-entities-page': {
         'legal-entity-register-title': 'Достъп на юридически лица',

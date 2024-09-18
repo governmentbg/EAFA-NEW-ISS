@@ -695,6 +695,7 @@
         'must-have-one-valid-egn-lnc-error': 'There is already a valid user with the specified EGN/PNF',
         'dates-overlap-with-other-record': 'Dates of validity overlap with other record for this role',
         'change-user-message': 'Are you sure you want to make this user internal?',
+        'passwords-must-match': 'Passwords must match',
         'change-user-ok-btn-label': '',
         'change-user-cancel-btn-label': 'Cancel',
         'title': 'Title',

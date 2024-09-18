@@ -80,10 +80,10 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
         public ValidStateSelect<SelectNomenclatureDto> CatchType { get; set; }
 
         [Required]
-        [TLRange(1, 10000, true)]
+        [TLRange(0, 10000, true)]
         public ValidState CatchQuantity { get; set; }
 
-        [TLRange(1, 10000, true)]
+        [TLRange(0, 10000, true)]
         public ValidState CatchCount { get; set; }
 
         [Required]

@@ -33,9 +33,10 @@ export class CreateProfileComponent implements OnInit, OnDestroy {
     public readonly termsAndConditionsPageUrl: string[] = ['/terms-and-conditions'];
     public invalidEgnLnchServerMessage: string = '';
     public invalidEmailServerMessage: string = '';
+    public invalidEgnLnch: boolean = false;
 
     public getControlErrorLabelTextMethod: GetControlErrorLabelTextCallback = this.getControlErrorLabelText.bind(this);
-
+    
     private unsubscribeAll: Subject<unknown>;
     private fuseConfigService: FuseConfigService;
     private userService: UsersService;
@@ -81,6 +82,10 @@ export class CreateProfileComponent implements OnInit, OnDestroy {
         this.registerForm.controls.password.valueChanges.subscribe(() => {
             this.registerForm.controls.passwordConfirmation.updateValueAndValidity();
         });
+
+        this.registerForm.controls.egnControl.valueChanges.subscribe(() => {
+            this.invalidEgnLnch = false;
+        });
     }
 
     public ngOnInit(): void {
@@ -115,7 +120,7 @@ export class CreateProfileComponent implements OnInit, OnDestroy {
 
     public registrationButtonClicked(): void {
         this.registerForm.markAllAsTouched();
-        if (this.registerForm.valid) {
+        if (this.registerForm.valid && !this.invalidEgnLnch) {
             this.model = this.mapFormToModel();
             if (!CommonUtils.isNullOrEmpty(this.model.password)) {
                 this.model.hasUserPassLogin = true;
@@ -153,9 +158,8 @@ export class CreateProfileComponent implements OnInit, OnDestroy {
                                         this.invalidEgnLnchServerMessage = error.messages.join(';');
                                     }
 
-                                    const egn = this.registerForm.controls.egnControl;
-                                    egn.setErrors({ 'invalid': true });
-                                    egn.markAsTouched();
+                                    this.invalidEgnLnch = true;
+                                    this.registerForm.updateValueAndValidity({ emitEvent: false });
                                 }
                                 else if (error.code === ErrorCode.InvalidEmail) {
                                     if (error.messages?.length === 1) {
@@ -204,17 +208,6 @@ export class CreateProfileComponent implements OnInit, OnDestroy {
                     case 'invalid':
                         return new TLError({
                             text: this.invalidEmailServerMessage,
-                            type: 'error'
-                        });
-                    default:
-                        return undefined;
-                }
-            }
-            case 'egn': {
-                switch (errorCode) {
-                    case 'invalid':
-                        return new TLError({
-                            text: this.invalidEgnLnchServerMessage,
                             type: 'error'
                         });
                     default:

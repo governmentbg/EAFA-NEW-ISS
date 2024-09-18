@@ -131,7 +131,7 @@
                                                     class="external-link-to-certificate-button"
                                                     iconClass="accent-color"
                                                     tooltipText="{{ 'fishing-capacity.table-detail-issue-from-navigate-to-duplicate-from' | tlTranslate }}"
-                                                    (buttonClicked)="navigateToCertificate(row.data.history.createdFromApplication)">
+                                                    (buttonClicked)="navigateToCertificate(row.data.history.createdFromApplication.duplicateCapacityCertificateId)">
                                     </tl-icon-button>
                                 </div>
                             </tl-card-content>
@@ -212,7 +212,7 @@
                                                     class="external-link-to-certificate-button"
                                                     iconClass="accent-color"
                                                     tooltipText="{{ 'fishing-capacity.table-detail-used-in-navigate-to-duplicate-to' | tlTranslate }}"
-                                                    (buttonClicked)="navigateToCertificate(row.data.history.usedInApplication)">
+                                                    (buttonClicked)="navigateToCertificate(row.data.history.usedInApplication.duplicateCapacityCertificateId)">
                                     </tl-icon-button>
                                 </div>
                             </tl-card-content>
@@ -286,7 +286,7 @@
                                                                 class="external-link-to-certificate-button"
                                                                 iconClass="accent-color"
                                                                 tooltipText="{{ 'fishing-capacity.table-detail-transferred-to-navigate-to' | tlTranslate }}"
-                                                                (buttonClicked)="navigateToCertificate(row.data)">
+                                                                (buttonClicked)="navigateToCertificate(row.data.id)">
                                                 </tl-icon-button>
                                             </div>
                                         </ng-template>
@@ -363,7 +363,7 @@
                                                                 class="external-link-to-certificate-button"
                                                                 iconClass="accent-color"
                                                                 tooltipText="{{ 'fishing-capacity.table-detail-remainder-transferred-to-navigate-to' | tlTranslate }}"
-                                                                (buttonClicked)="navigateToCertificate(row.data)">
+                                                                (buttonClicked)="navigateToCertificate(row.data.id)">
                                                 </tl-icon-button>
                                             </div>
                                         </ng-template>
