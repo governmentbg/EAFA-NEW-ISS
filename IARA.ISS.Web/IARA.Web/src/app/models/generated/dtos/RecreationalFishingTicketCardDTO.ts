@@ -59,5 +59,8 @@ export class RecreationalFishingTicketCardDTO {
     public percentOfPeriodCompleted?: number;
 
     @StrictlyTyped(Boolean)
+    public hasDeliveryTerritoryUnit?: boolean;
+
+    @StrictlyTyped(Boolean)
     public isExpiringSoon?: boolean;
 }

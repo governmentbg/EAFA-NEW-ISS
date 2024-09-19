@@ -390,12 +390,26 @@ export class EditUserComponent implements OnInit, IDialogComponent {
     }
 
     public getControlErrorLabelText(controlName: string, errorValue: unknown, errorCode: string): TLError | undefined {
-        if (controlName === 'idControl') {
-            if (errorCode === 'datesOverlap') {
-                return new TLError({
-                    text: this.translationService.getValue('users-page.dates-overlap-with-other-record'),
-                    type: 'error'
-                });
+        switch (controlName) {
+            case 'idControl': {
+                if (errorCode === 'datesOverlap') {
+                    return new TLError({
+                        text: this.translationService.getValue('users-page.dates-overlap-with-other-record'),
+                        type: 'error'
+                    });
+                }
+            } break;
+            case 'password':
+            case 'passwordConfirmation': {
+                if (errorCode === 'passwordsNotMatching') {
+                    return new TLError({
+                        text: this.translationService.getValue('users-page.passwords-must-match'),
+                        type: 'error'
+                    });
+                }
+            } break;
+            default: {
+                return undefined;
             }
         }
 

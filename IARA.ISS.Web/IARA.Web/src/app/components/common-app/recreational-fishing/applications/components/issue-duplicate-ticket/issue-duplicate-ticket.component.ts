@@ -2,14 +2,12 @@
 import { FormControl, Validators } from '@angular/forms';
 import { StepperSelectionEvent } from '@angular/cdk/stepper';
 
-import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 import { IRecreationalFishingService } from '@app/interfaces/common-app/recreational-fishing.interface';
 import { IActionInfo } from '@app/shared/components/dialog-wrapper/interfaces/action-info.interface';
 import { DialogCloseCallback, IDialogComponent } from '@app/shared/components/dialog-wrapper/interfaces/dialog-content.interface';
 import { DialogWrapperData } from '@app/shared/components/dialog-wrapper/models/dialog-action-buttons.model';
 import { RecreationalFishingTicketDuplicateDTO } from '@app/models/generated/dtos/RecreationalFishingTicketDuplicateDTO';
 import { TLValidators } from '@app/shared/utils/tl-validators';
-import { TLError } from '@app/shared/components/input-controls/models/tl-error.model';
 import { TariffNomenclatureDTO } from '@app/models/generated/dtos/TariffNomenclatureDTO';
 import { NomenclatureStore } from '@app/shared/utils/nomenclatures.store';
 import { NomenclatureTypes } from '@app/enums/nomenclature.types';
@@ -18,8 +16,9 @@ import { PaymentSummaryDTO } from '@app/models/generated/dtos/PaymentSummaryDTO'
 import { TariffCodesEnum } from '@app/enums/tariff-codes.enum';
 import { PaymentTariffDTO } from '@app/models/generated/dtos/PaymentTariffDTO';
 import { IssueDuplicateTicketDialogParams } from '../../models/issue-duplicate-ticket-dialog-params.model';
-import { GetControlErrorLabelTextCallback } from '@app/shared/components/input-controls/base-tl-control';
 import { FileInfoDTO } from '@app/models/generated/dtos/FileInfoDTO';
+import { PaymentTypesEnum } from '@app/enums/payment-types.enum';
+import { PaymentDataDTO } from '@app/models/generated/dtos/PaymentDataDTO';
 
 @Component({
     selector: 'issue-duplicate-ticket',
@@ -32,6 +31,7 @@ export class IssueDuplicateTicketComponent implements OnInit, IDialogComponent {
     public paymentDataControl: FormControl;
 
     public paymentSummary!: PaymentSummaryDTO;
+    public payment: PaymentDataDTO | undefined;
 
     private ticketId!: number;
     private associationId: number | undefined;
@@ -123,6 +123,12 @@ export class IssueDuplicateTicketComponent implements OnInit, IDialogComponent {
     public onStepChange(step: StepperSelectionEvent): void {
         if (step.selectedIndex === 1) {
             this.checkTicketNumber();
+
+            this.paymentDataControl.setValue(new PaymentDataDTO({
+                paymentType: PaymentTypesEnum.CASH,
+                paymentDateTime: this.currentDate,
+                totalPaidPrice: this.paymentSummary.totalPrice
+            }));
         }
     }
 

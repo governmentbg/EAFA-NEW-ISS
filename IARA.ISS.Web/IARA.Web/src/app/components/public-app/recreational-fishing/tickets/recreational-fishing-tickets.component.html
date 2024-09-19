@@ -83,7 +83,8 @@
                                                     (buttonClicked)="editTicket(ticket, false)">
                                     </tl-icon-button>
                                     <tl-icon-button *ngIf="ticket.applicationStatus === applicationStatuses.CONFIRMED_ISSUED_TICKET
-                                                        && ticket.ticketStatus === ticketStatuses.EXPIRED"
+                                                        && ticket.ticketStatus === ticketStatuses.EXPIRED
+                                                        && ticket.hasDeliveryTerritoryUnit"
                                                     icon="fa-ticket-alt"
                                                     iconClass="accent-color"
                                                     tooltipText="{{ 'recreational-fishing.renew-ticket' | tlTranslate }}"

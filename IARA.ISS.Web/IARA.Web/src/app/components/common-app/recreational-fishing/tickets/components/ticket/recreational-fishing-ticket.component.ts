@@ -526,6 +526,7 @@ export class RecreationalFishingTicketComponent extends CustomFormControl<Recrea
                     const tickets = new RecreationalFishingTicketsDTO({
                         associationId: model.membershipCard?.associationId,
                         tickets: [model],
+                        hasPaymentData: false,
                         paymentData: undefined
                     });
                     this.service.addTickets(tickets).subscribe({

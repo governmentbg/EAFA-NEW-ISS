@@ -395,12 +395,11 @@ namespace IARA.Mobile.Insp.Application.Transactions
             {
                 return (
                     from patrolVehicle in context.PatrolVehicles
-                    where (search == null
+                    where search == null
                         || patrolVehicle.NormalizedExternalMark.Contains(search)
                         || patrolVehicle.NormalizedName.Contains(search)
                         || patrolVehicle.NormalizedExternalMark.Contains(search)
                         || patrolVehicle.RegistrationNumber.Contains(search)
-                        ) && types.Contains(patrolVehicle.VehicleType)
                     orderby patrolVehicle.Id
                     select new SelectNomenclatureDto
                     {

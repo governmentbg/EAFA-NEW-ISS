@@ -36,8 +36,7 @@
                         <egn-lnc-input gdArea="egnArea"
                                        [readonly]="isEgnLnchReadonly"
                                        formControlName="egnControl"
-                                       appearance="outline"
-                                       [getControlErrorLabelText]="getControlErrorLabelTextMethod">
+                                       appearance="outline">
                         </egn-lnc-input>
                         <tl-input gdArea="emailArea"
                                   appearance="outline"
@@ -46,6 +45,9 @@
                                   [getControlErrorLabelText]="getControlErrorLabelTextMethod">
                         </tl-input>
                     </div>
+                    <mat-error *ngIf="invalidEgnLnch">
+                        * {{ invalidEgnLnchServerMessage }}
+                    </mat-error>
                 </tl-expansion-panel>
                 <tl-expansion-panel title="{{ 'user-registration.login-with-email-and-password-title' | tlTranslate }}">
                     <div fxLayout="row"

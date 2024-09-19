@@ -332,9 +332,9 @@ export class FishingCapacityCertificatesRegisterComponent implements AfterViewIn
             editDialogTCtor = EditShipComponent;
             service = this.shipsService;
             auditButton = {
-                id: data.applicationId!,
+                id: data.shipId!,
                 getAuditRecordData: this.shipsService.getSimpleAudit.bind(this.shipsService),
-                tableName: 'ShipsRegister'
+                tableName: 'ShipRegister'
             };
         }
         else if (data.pageCode === PageCodeEnum.DeregShip) {
@@ -343,9 +343,9 @@ export class FishingCapacityCertificatesRegisterComponent implements AfterViewIn
             editDialogTCtor = ShipDeregistrationComponent;
             service = this.shipsService;
             auditButton = {
-                id: data.applicationId!,
+                id: data.shipId!,
                 getAuditRecordData: this.shipsService.getSimpleAudit.bind(this.shipsService),
-                tableName: 'ShipsRegister'
+                tableName: 'ShipRegister'
             };
         }
         else if (data.pageCode === PageCodeEnum.IncreaseFishCap) {
@@ -421,15 +421,10 @@ export class FishingCapacityCertificatesRegisterComponent implements AfterViewIn
         dialog.subscribe();
     }
 
-    public navigateToCertificate(data: CapacityCertificateHistoryTransferredToDTO | CapacityCertificateHistoryApplDTO): void {
+    public navigateToCertificate(certificateId: number | undefined): void {
         this.navigatingToCertificate = true;
 
-        if (data instanceof CapacityCertificateHistoryTransferredToDTO) {
-            this.grid.advancedFilters = new FishingCapacityCertificatesFilters({ certificateId: data.id });
-        }
-        else {
-            this.grid.advancedFilters = new FishingCapacityCertificatesFilters({ certificateId: data.duplicateCapacityCertificateId });
-        }
+        this.grid.advancedFilters = new FishingCapacityCertificatesFilters({ certificateId: certificateId });
         this.grid.refreshData();
     }
 
@@ -454,7 +449,7 @@ export class FishingCapacityCertificatesRegisterComponent implements AfterViewIn
                 service: this.deliveryService,
                 pageCode: certificate.pageCode,
                 registerId: certificate.id,
-                viewMode: !this.canEditRecords 
+                viewMode: !this.canEditRecords
             }),
             headerCancelButton: {
                 cancelBtnClicked: this.closeDeliveryDataDialogBtnClicked.bind(this)
@@ -487,7 +482,7 @@ export class FishingCapacityCertificatesRegisterComponent implements AfterViewIn
             } break;
         }
 
-        
+
     }
 
     private closeDeliveryDataDialogBtnClicked(closeFn: HeaderCloseFunction): void {
