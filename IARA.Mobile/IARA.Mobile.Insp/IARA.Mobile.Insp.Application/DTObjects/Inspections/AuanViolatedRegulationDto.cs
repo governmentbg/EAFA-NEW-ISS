@@ -14,6 +14,6 @@ namespace IARA.Mobile.Insp.Application.DTObjects.Inspections
         public string Law { get; set; }
         public string LawText { get; set; }
         public string Comments { get; set; }
-        public bool? IsActive { get; set; }
+        public bool? IsActive { get; set; } = true;
     }
 }
