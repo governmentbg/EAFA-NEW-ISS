@@ -877,7 +877,13 @@ export class CommercialFishingRegisterComponent implements OnInit, AfterViewInit
             permitIsSuspendedControl: new FormControl(),
             permitIsExpiredControl: new FormControl(),
             permitLicenseIsSuspendedControl: new FormControl(),
-            permitLicenseIsExpiredControl: new FormControl()
+            permitLicenseIsExpiredControl: new FormControl(),
+            permitFisherNameControl: new FormControl(),
+            permitFisherIdentifierControl: new FormControl(),
+            permitFisherRegistrationNumControl: new FormControl(),
+            permitLicenseFisherNameControl: new FormControl(),
+            permitLicenseFisherIdentifierControl: new FormControl(),
+            permitLicenseFisherRegistrationNumControl: new FormControl()
         });
     }
 
@@ -908,6 +914,12 @@ export class CommercialFishingRegisterComponent implements OnInit, AfterViewInit
             permitSubmittedForIdentifier: filters.getValue('permitSubmittedForIdentifierControl'),
             permitLicenseSubmittedForIdentifier: filters.getValue('permitLicenseSubmittedForIdentifierControl'),
             logbookNumber: filters.getValue('logBookNumberControl'),
+            permitFisherName: filters.getValue('permitFisherNameControl'),
+            permitFisherIdentifier: filters.getValue('permitFisherIdentifierControl'),
+            permitFisherRegistrationNum: filters.getValue('permitFisherRegistrationNumControl'),
+            permitLicenseFisherName: filters.getValue('permitLicenseFisherNameControl'),
+            permitLicenseFisherIdentifier: filters.getValue('permitLicenseFisherIdentifierControl'),
+            permitLicenseFisherRegistrationNum: filters.getValue('permitLicenseFisherRegistrationNumControl'),
             permitTerritoryUnitId: this.hasPermitsReadAllPermission ? filters.getValue('permitTerritoryUnitControl') : undefined,
             permitLicenseTerritoryUnitId: this.hasPermitLicenseReadAllPermission ? filters.getValue('permitLicenseTerritoryUnitControl') : undefined
         });

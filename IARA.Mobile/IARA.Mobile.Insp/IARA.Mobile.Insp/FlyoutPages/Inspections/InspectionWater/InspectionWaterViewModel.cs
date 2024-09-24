@@ -345,6 +345,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.InspectionWater
                         Catches = Catches,
                         ViolatedRegulations = AdditionalInfo.ViolatedRegulations.ViolatedRegulations.Value.Select(x => (AuanViolatedRegulationDto)x).ToList(),
                         Personnel = HasOffenders.Value ? Offenders.Value.ToList() : null,
+                        IsActive = true,
                     };
                     List<FileModel> signatures = null;
                     if (submitType == SubmitType.Finish)
