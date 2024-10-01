@@ -269,6 +269,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.AquacultureFarmInspection
                         }.Where(f => !string.IsNullOrWhiteSpace(f.Text)).ToList(),
                         PatrolVehicles = PatrolVehicles,
                         ViolatedRegulations = AdditionalInfo.ViolatedRegulations.ViolatedRegulations.Value.Select(x => (AuanViolatedRegulationDto)x).ToList(),
+                        IsActive = true,
                     };
 
                     List<FileModel> signatures = null;

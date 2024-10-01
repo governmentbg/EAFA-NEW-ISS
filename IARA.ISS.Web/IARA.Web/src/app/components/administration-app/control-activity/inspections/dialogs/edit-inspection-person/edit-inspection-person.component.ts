@@ -23,6 +23,7 @@ import { TLValidators } from '@app/shared/utils/tl-validators';
 import { ShipNomenclatureDTO } from '@app/models/generated/dtos/ShipNomenclatureDTO';
 import { TLConfirmDialog } from '@app/shared/components/confirmation-dialog/tl-confirm-dialog';
 import { EgnLncDTO } from '@app/models/generated/dtos/EgnLncDTO';
+import { InspectionSubjectPersonnelDTO } from '@app/models/generated/dtos/InspectionSubjectPersonnelDTO';
 
 @Component({
     selector: 'edit-inspection-person',
@@ -65,30 +66,14 @@ export class EditInspectionPersonComponent extends BaseInspectionsComponent impl
         }
 
         const nomenclatureTables = await forkJoin([
-            NomenclatureStore.instance.getNomenclature(
-                NomenclatureTypes.Institutions, this.nomenclatures.getInstitutions.bind(this.nomenclatures), false
-            ),
-            NomenclatureStore.instance.getNomenclature(
-                NomenclatureTypes.Countries, this.nomenclatures.getCountries.bind(this.nomenclatures), false
-            ),
-            NomenclatureStore.instance.getNomenclature(
-                NomenclatureTypes.Ships, this.nomenclatures.getShips.bind(this.nomenclatures), false
-            ),
-            NomenclatureStore.instance.getNomenclature(
-                NomenclatureTypes.Fishes, this.nomenclatures.getFishTypes.bind(this.nomenclatures), false
-            ),
-            NomenclatureStore.instance.getNomenclature(
-                NomenclatureTypes.CatchTypes, this.nomenclatures.getCatchInspectionTypes.bind(this.nomenclatures), false
-            ),
-            NomenclatureStore.instance.getNomenclature(
-                NomenclatureTypes.CatchZones, this.nomenclatures.getCatchZones.bind(this.nomenclatures), false
-            ),
-            NomenclatureStore.instance.getNomenclature(
-                NomenclatureTypes.FishSex, this.nomenclatures.getFishSex.bind(this.nomenclatures), false
-            ),
-            NomenclatureStore.instance.getNomenclature(
-                NomenclatureTypes.TurbotSizeGroups, this.nomenclatures.getTurbotSizeGroups.bind(this.nomenclatures), false
-            ),
+            NomenclatureStore.instance.getNomenclature(NomenclatureTypes.Institutions, this.nomenclatures.getInstitutions.bind(this.nomenclatures), false),
+            NomenclatureStore.instance.getNomenclature(NomenclatureTypes.Countries, this.nomenclatures.getCountries.bind(this.nomenclatures), false),
+            NomenclatureStore.instance.getNomenclature(NomenclatureTypes.Ships, this.nomenclatures.getShips.bind(this.nomenclatures), false),
+            NomenclatureStore.instance.getNomenclature(NomenclatureTypes.Fishes, this.nomenclatures.getFishTypes.bind(this.nomenclatures), false),
+            NomenclatureStore.instance.getNomenclature(NomenclatureTypes.CatchTypes, this.nomenclatures.getCatchInspectionTypes.bind(this.nomenclatures), false),
+            NomenclatureStore.instance.getNomenclature(NomenclatureTypes.CatchZones, this.nomenclatures.getCatchZones.bind(this.nomenclatures), false),
+            NomenclatureStore.instance.getNomenclature(NomenclatureTypes.FishSex, this.nomenclatures.getFishSex.bind(this.nomenclatures), false),
+            NomenclatureStore.instance.getNomenclature(NomenclatureTypes.TurbotSizeGroups, this.nomenclatures.getTurbotSizeGroups.bind(this.nomenclatures), false),
             this.service.getCheckTypesForInspection(InspectionTypesEnum.IFP)
         ]).toPromise();
 
@@ -105,8 +90,8 @@ export class EditInspectionPersonComponent extends BaseInspectionsComponent impl
 
         if (this.id !== null && this.id !== undefined) {
             this.service.get(this.id, this.inspectionCode).subscribe({
-                next: (dto: InspectionFisherDTO) => {
-                    this.model = dto;
+                next: (inspection: InspectionFisherDTO) => {
+                    this.model = inspection;
 
                     this.fillForm();
                 }
@@ -120,14 +105,17 @@ export class EditInspectionPersonComponent extends BaseInspectionsComponent impl
                 next: (tickets: NomenclatureDTO<number>[]) => {
                     this.form.get('ticketControl')!.setValue(undefined);
 
-                    this.tickets = tickets;
+                    this.tickets = tickets ?? [];
                     this.hasValidTickets = tickets.length > 0;
 
-                    if (tickets.length === 1) {
+                    if (tickets.length === 1 && this.hasTicket) {
                         this.form.get('ticketControl')!.setValue(tickets[0]);
                     }
                 }
             });
+        }
+        else {
+            this.tickets = [];
         }
     }
 
@@ -139,7 +127,7 @@ export class EditInspectionPersonComponent extends BaseInspectionsComponent impl
             addressControl: new FormControl(undefined, Validators.maxLength(500)),
             personControl: new FormControl(undefined),
             hasTicketControl: new FormControl(true),
-            ticketControl: new FormControl(undefined, Validators.maxLength(50)),
+            ticketControl: new FormControl(undefined, [Validators.required, Validators.maxLength(50)]),
             fishingGearCountControl: new FormControl(undefined, [Validators.required, TLValidators.number(0, undefined, 0)]),
             hookCountControl: new FormControl(undefined, [Validators.required, TLValidators.number(0, undefined, 0)]),
             catchesControl: new FormControl(undefined),
@@ -170,8 +158,6 @@ export class EditInspectionPersonComponent extends BaseInspectionsComponent impl
                 byEmergencySignal: this.model.byEmergencySignal,
             }));
 
-            this.form.get('filesControl')!.setValue(this.model.files);
-
             this.form.get('additionalInfoControl')!.setValue(new InspectionAdditionalInfoModel({
                 actionsTaken: this.model.actionsTaken,
                 administrativeViolation: this.model.administrativeViolation,
@@ -180,32 +166,33 @@ export class EditInspectionPersonComponent extends BaseInspectionsComponent impl
                 violatedRegulations: this.model.violatedRegulations
             }));
 
+            this.form.get('filesControl')!.setValue(this.model.files);
             this.form.get('mapControl')!.setValue(this.model.inspectionLocation);
-
             this.form.get('catchTogglesControl')!.setValue(this.model.checks);
-
             this.form.get('catchesControl')!.setValue(this.model.catchMeasures);
-
             this.form.get('addressControl')!.setValue(this.model.inspectionAddress);
-
             this.form.get('patrolVehiclesControl')!.setValue(this.model.patrolVehicles);
-
             this.form.get('fishermanCommentControl')!.setValue(this.model.fishermanComment);
-
             this.form.get('fishingGearCountControl')!.setValue(this.model.fishingRodsCount);
-
             this.form.get('hookCountControl')!.setValue(this.model.fishingHooksCount);
+
+            if (this.model.personnel !== null && this.model.personnel !== undefined) {
+                const person: InspectionSubjectPersonnelDTO | undefined = this.model.personnel.find(x => x.type === InspectedPersonTypeEnum.CaptFshmn);
+                this.form.get('personControl')!.setValue(person);
+
+                if (person !== undefined && person !== null) {
+                    this.getFishingTicketsByPersonEgn(person.egnLnc);
+                }
+            }
 
             if (this.model.ticketNum !== null && this.model.ticketNum !== undefined) {
                 this.hasTicket = true;
                 this.form.get('hasTicketControl')!.setValue(true);
                 this.form.get('ticketControl')!.setValue(this.model.ticketNum);
             }
-
-            if (this.model.personnel !== null && this.model.personnel !== undefined) {
-                this.form.get('personControl')!.setValue(
-                    this.model.personnel.find(f => f.type === InspectedPersonTypeEnum.CaptFshmn)
-                );
+            else {
+                this.hasTicket = false;
+                this.form.get('hasTicketControl')!.setValue(false);
             }
         }
     }
@@ -222,13 +209,12 @@ export class EditInspectionPersonComponent extends BaseInspectionsComponent impl
         this.model.byEmergencySignal = generalInfo.byEmergencySignal;
         this.model.isActive = true;
 
-        this.model.files = this.form.get('filesControl')!.value;
-
         this.model.actionsTaken = additionalInfo?.actionsTaken;
         this.model.administrativeViolation = additionalInfo?.administrativeViolation === true;
         this.model.inspectorComment = additionalInfo?.inspectorComment;
         this.model.violatedRegulations = additionalInfo?.violatedRegulations;
 
+        this.model.files = this.form.get('filesControl')!.value;
         this.model.checks = this.form.get('catchTogglesControl')!.value;
         this.model.inspectionLocation = this.form.get('mapControl')!.value;
         this.model.catchMeasures = this.form.get('catchesControl')!.value;
@@ -259,17 +245,32 @@ export class EditInspectionPersonComponent extends BaseInspectionsComponent impl
         }
     }
 
+    private getFishingTicketsByPersonEgn(egnLnc: EgnLncDTO | undefined): void {
+        if (egnLnc !== undefined && egnLnc !== null && egnLnc.egnLnc !== undefined && egnLnc.egnLnc !== null) {
+            this.service.getValidFishingTicketsByEgn(egnLnc.egnLnc).subscribe({
+                next: (tickets: NomenclatureDTO<number>[]) => {
+                    this.tickets = tickets;
+                    this.hasValidTickets = tickets.length > 0;
+                }
+            });
+        }
+    }
+
     private onHasTicketChanged(value: boolean): void {
         this.hasTicket = value;
 
         if (!this.viewMode) {
             if (!this.hasTicket) {
+                this.form.get('ticketControl')!.clearValidators();
                 this.form.get('ticketControl')!.setValue(undefined);
                 this.form.get('ticketControl')!.disable();
             }
             else {
                 this.form.get('ticketControl')!.enable();
+                this.form.get('ticketControl')!.setValidators(Validators.required);
             }
+
+            this.form.get('ticketControl')!.updateValueAndValidity({ emitEvent: false });
         }
     }
 }

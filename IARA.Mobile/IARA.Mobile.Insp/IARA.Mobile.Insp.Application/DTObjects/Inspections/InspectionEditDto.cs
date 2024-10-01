@@ -25,6 +25,7 @@ namespace IARA.Mobile.Insp.Application.DTObjects.Inspections
         public List<InspectionCheckDto> Checks { get; set; }
         public List<VesselDuringInspectionDto> PatrolVehicles { get; set; }
         public List<InspectionObservationTextDto> ObservationTexts { get; set; }
+        public bool IsActive { get; set; }
 
         /// <summary>
         /// Passed in from the ViewModel to the transaction.

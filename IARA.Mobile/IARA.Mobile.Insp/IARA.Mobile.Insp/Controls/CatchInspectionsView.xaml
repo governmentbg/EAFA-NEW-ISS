@@ -146,6 +146,7 @@
                             IsEnabled="{Binding BindingContext.Inspection.ActivityType, Converter={StaticResource IsNotReview}, Source={Reference view}}" />
                     <tl:TLEntry Title="{rt:Translate UnloadedQuantity, Group=CatchInspection}"
                             ValidState="{Binding UnloadedQuantity}"
+                            IsVisible="{Binding CatchInspections.ShowUnloadedQuantity}"
                             Keyboard="Numeric"
                             IsEnabled="{Binding BindingContext.Inspection.ActivityType, Converter={StaticResource IsNotReview}, Source={Reference view}}" />
                     <tl:TLEntry Title="{rt:Translate AllowedDeviation, Group=CatchInspection}"
@@ -156,6 +157,7 @@
                     <tl:TLNativePicker Title="{rt:Translate TurbotSizeGroup, Group=CatchInspection}"
                             ValidState="{Binding TurbotSizeGroup}"
                             ItemsSource="{Binding BindingContext.TurbotSizeGroups, Source={Reference view}}"
+                            IsVisible="{Binding CatchInspections.ShowTurbotSizeGroups}"
                             IsEnabled="{Binding BindingContext.Inspection.ActivityType, Converter={StaticResource IsNotReview}, Source={Reference view}}" />
                     <tl:TLPicker Title="{rt:Translate CatchArea, Group=CatchInspection}"
                             ValidState="{Binding CatchArea}"

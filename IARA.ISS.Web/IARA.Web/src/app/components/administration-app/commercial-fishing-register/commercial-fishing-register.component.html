@@ -166,15 +166,47 @@
                           label="{{ 'commercial-fishing.fishing-gear-pinger-number' | tlTranslate }}"
                           tooltipResourceName="commercial-fishing.fishing-gear-pinger-number-helper">
                 </tl-input>
-                <div fxFlex="25"></div>
-            </div>
-            <div fxFlexFill fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
                 <tl-input fxFlex="25"
                           formControlName="logBookNumberControl"
                           label="{{ 'commercial-fishing.log-book-number' | tlTranslate }}"
                           tooltipResourceName="commercial-fishing.log-book-number-helper">
                 </tl-input>
-                <div fxFlex="75"></div>
+            </div>
+            <div fxFlexFill fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                <tl-input fxFlex="25"
+                          formControlName="permitFisherNameControl"
+                          label="{{ 'commercial-fishing.permit-fisher-names-filter' | tlTranslate }}"
+                          tooltipResourceName="commercial-fishing.permit-fisher-names-filter-helper">
+                </tl-input>
+                <tl-input fxFlex="25"
+                          formControlName="permitFisherIdentifierControl"
+                          label="{{ 'commercial-fishing.permit-fisher-identifier' | tlTranslate }}"
+                          tooltipResourceName="commercial-fishing.permit-fisher-identifier-helper">
+                </tl-input>
+                <tl-input fxFlex="25"
+                          formControlName="permitFisherRegistrationNumControl"
+                          label="{{ 'commercial-fishing.permit-fisher-registration-num' | tlTranslate }}"
+                          tooltipResourceName="commercial-fishing.permit-fisher-registration-num-helper">
+                </tl-input>
+                <div fxFlex="25"></div>
+            </div>
+            <div fxFlexFill fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                <tl-input fxFlex="25"
+                          formControlName="permitLicenseFisherNameControl"
+                          label="{{ 'commercial-fishing.permit-license-fisher-names-filter' | tlTranslate }}"
+                          tooltipResourceName="commercial-fishing.permit-license-fisher-names-filter-helper">
+                </tl-input>
+                <tl-input fxFlex="25"
+                          formControlName="permitLicenseFisherIdentifierControl"
+                          label="{{ 'commercial-fishing.permit-license-fisher-identifier' | tlTranslate }}"
+                          tooltipResourceName="commercial-fishing.permit-license-fisher-identifier-helper">
+                </tl-input>
+                <tl-input fxFlex="25"
+                          formControlName="permitLicenseFisherRegistrationNumControl"
+                          label="{{ 'commercial-fishing.permit-license-fisher-registration-num' | tlTranslate }}"
+                          tooltipResourceName="commercial-fishing.permit-license-fisher-registration-num-helper">
+                </tl-input>
+                <div fxFlex="25"></div>
             </div>
         </div>
     </search-panel>

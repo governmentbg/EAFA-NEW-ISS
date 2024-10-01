@@ -49,7 +49,8 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FishermanInspection
                 showAllowedDeviation: false,
                 showUndersizedCheck: true,
                 showType: false,
-                showTurbotSizeGroups: false
+                showTurbotSizeGroups: false,
+                showUnloadedQuantity: false
             );
             InspectionFiles = new InspectionFilesViewModel(this);
             AdditionalInfo = new AdditionalInfoViewModel(this);
@@ -304,6 +305,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FishermanInspection
                         }.Where(f => !string.IsNullOrWhiteSpace(f.Text)).ToList(),
                         PatrolVehicles = PatrolVehicles,
                         ViolatedRegulations = AdditionalInfo.ViolatedRegulations.ViolatedRegulations.Value.Select(x => (AuanViolatedRegulationDto)x).ToList(),
+                        IsActive = true,
                     };
                     List<FileModel> signatures = null;
                     if (submitType == SubmitType.Finish)

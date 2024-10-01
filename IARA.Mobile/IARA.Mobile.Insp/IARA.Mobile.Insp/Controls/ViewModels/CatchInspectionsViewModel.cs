@@ -36,7 +36,8 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
             bool showType = true,
             bool showUndersizedCheck = false,
             bool showTurbotSizeGroups = true,
-            bool isUnloadedQuantityRequired = false
+            bool isUnloadedQuantityRequired = false,
+            bool showUnloadedQuantity = true
         )
         {
             Inspection = inspection;
@@ -49,6 +50,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
             ShowUndersizedCheck = showUndersizedCheck;
             ShowTurbotSizeGroups = showTurbotSizeGroups;
             IsUnloadedQuantityRequired = isUnloadedQuantityRequired;
+            ShowUnloadedQuantity = showUnloadedQuantity;
 
             AddCatch = CommandBuilder.CreateFrom(OnAddCatch);
             RemoveCatch = CommandBuilder.CreateFrom<CatchInspectionViewModel>(OnRemoveCatch);
@@ -70,6 +72,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
         public bool ShowType { get; }
         public bool ShowUndersizedCheck { get; }
         public bool ShowTurbotSizeGroups { get; }
+        public bool ShowUnloadedQuantity { get; }
 
         [DuplicateMarketCatches]
         [AtLeastOne(ErrorMessageResourceName = "AtLeastOneCatch")]

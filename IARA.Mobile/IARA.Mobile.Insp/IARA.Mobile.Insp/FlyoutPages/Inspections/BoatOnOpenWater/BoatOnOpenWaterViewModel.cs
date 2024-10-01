@@ -350,6 +350,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.BoatOnOpenWater
                             AdditionalInfo.ObservationsOrViolations,
                         }.Where(f => !string.IsNullOrWhiteSpace(f.Text)).ToList(),
                         ViolatedRegulations = AdditionalInfo.ViolatedRegulations.ViolatedRegulations.Value.Select(x => (AuanViolatedRegulationDto)x).ToList(),
+                        IsActive = true,
                     };
                     List<FileModel> signatures = null;
                     if (submitType == SubmitType.Finish)
