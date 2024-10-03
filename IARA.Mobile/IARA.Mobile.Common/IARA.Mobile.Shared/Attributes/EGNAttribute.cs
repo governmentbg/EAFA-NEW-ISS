@@ -1,8 +1,8 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
-using IARA.Mobile.Domain.Enums;
+﻿using IARA.Mobile.Domain.Enums;
 using IARA.Mobile.Shared.Helpers;
 using IARA.Mobile.Shared.ViewModels.Models;
+using System;
+using System.ComponentModel.DataAnnotations;
 using TechnoLogica.Xamarin.ViewModels.Interfaces;
 using TechnoLogica.Xamarin.ViewModels.Models;
 
@@ -38,7 +38,7 @@ namespace IARA.Mobile.Shared.Attributes
                 return ValidationResult.Success;
             }
 
-            return new ValidationResult(FormatErrorMessage(null));
+            return new ValidationResult(FormatErrorMessage(""));
         }
 
         public override string FormatErrorMessage(string name)

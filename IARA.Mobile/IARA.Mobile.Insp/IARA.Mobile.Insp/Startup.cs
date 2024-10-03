@@ -115,6 +115,9 @@ namespace IARA.Mobile.Insp
 
             // Set login as successful
             builder.Call<ISettings>(SetLoginAsSuccessful);
+
+            // Remind for unsigned inspections
+            builder.Call(ShowReminderForUnsignedInspections);
         }
 
         private void SetupVariables(IStates states)
@@ -131,7 +134,7 @@ namespace IARA.Mobile.Insp
                 ? "MobileInspections"
                 : "Inspections";
 #if DEBUG
-            serverUrl.Environment = Environments.DEVELOPMENT_INTERNAL;
+            serverUrl.Environment = Environments.DEVELOPMENT_LOCAL;
 #elif PRODRELEASE
             serverUrl.Environment =  Environments.PRODUCTION;
 #else
@@ -385,6 +388,21 @@ namespace IARA.Mobile.Insp
                 string.Format(TranslateExtension.Translator[group + "/InspectorNotAllowedMessage"], inspectorName),
                 TranslateExtension.Translator[group + "/Okay"]
             );
+        }
+
+        private async Task ShowReminderForUnsignedInspections()
+        {
+            const string group = nameof(GroupResourceEnum.Common);
+            int unsignedInspectionCount = DependencyService.Resolve<IInspectionsTransaction>().GetUnsignedInspectionCount();
+
+            if (unsignedInspectionCount > 0)
+            {
+                await App.Current.MainPage.DisplayAlert(
+                    TranslateExtension.Translator[group + "/UnsignedInspectionsTitle"],
+                    string.Format(TranslateExtension.Translator[group + "/UnsignedInspectionsMessage"], unsignedInspectionCount),
+                    TranslateExtension.Translator[group + "/Okay"]
+                );
+            }
         }
     }
 }

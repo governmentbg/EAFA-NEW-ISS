@@ -10,7 +10,7 @@ namespace IARA.Mobile.Insp.Application.Filters
         public DateTime? UpdatedAfter { get; set; }
         public List<int> StateIds { get; set; }
         public string ReportNumber { get; set; }
-        public bool? ShowOnlyUserInspections { get; set; }
+        public int? InspectorId { get; set; }
 
         public bool ShowInactiveRecords { get; set; }
     }

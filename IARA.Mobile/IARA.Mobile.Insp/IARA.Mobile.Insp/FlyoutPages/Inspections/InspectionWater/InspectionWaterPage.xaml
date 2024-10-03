@@ -35,9 +35,10 @@
                             ItemsSource="{Binding WaterTypes}"
                             IsEnabled="{Binding ActivityType, Converter={StaticResource IsNotReview}}" />
                 </tl:TLFlex>
-                <lc:TLGeneratedToggles IsEnabled="{Binding ActivityType, Converter={StaticResource IsNotReview}}"
+                <!--<lc:TLGeneratedToggles IsEnabled="{Binding ActivityType, Converter={StaticResource IsNotReview}}"
                         IsVisible="{Binding Toggles.Value.Count, Converter={StaticResource NotEqual}, ConverterParameter=0}"
-                        ValidState="{Binding Toggles}" />
+                        ValidState="{Binding Toggles}" />-->
+                <lc:ValidationTogglesView BindingContext="{Binding Toggles}" />
                 <lc:TLLocationView Title="{rt:Translate GPSCoordinates, Group=InspectionWater}" ValidState="{Binding Location}" />
                 <lc:WaterFishingGearsView BindingContext="{Binding FishingGears}" />
                 <lc:WaterVesselsView BindingContext="{Binding Vessels}" />

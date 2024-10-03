@@ -112,4 +112,33 @@ namespace IARA.Mobile.Insp.Base
             await TLLoadingHelper.HideFullLoadingScreen();
         }
     }
+
+    public class EmptyCopy : InspectionPageViewModel
+    {
+        public EmptyCopy(ViewActivityType viewActivityType)
+        {
+            ActivityType = viewActivityType;
+        }
+        public override GroupResourceEnum[] GetPageIndexes()
+        {
+            return new[]
+            {
+                GroupResourceEnum.ShipChecks,
+                GroupResourceEnum.FishingShip,
+                GroupResourceEnum.CatchInspection,
+                GroupResourceEnum.FishingGear,
+                GroupResourceEnum.InspectedPerson,
+                GroupResourceEnum.InspectedShipData,
+                GroupResourceEnum.PatrolVehicle,
+                GroupResourceEnum.HarbourInspection,
+                GroupResourceEnum.Validation,
+                GroupResourceEnum.DeclarationCatch,
+            };
+        }
+
+        public override Task Initialize(object sender)
+        {
+            return Task.CompletedTask;
+        }
+    }
 }

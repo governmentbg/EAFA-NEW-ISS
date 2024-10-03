@@ -258,7 +258,7 @@ namespace IARA.Mobile.Insp.Application.Transactions
             }
         }
 
-        public async Task<List<InspectionDto>> GetAll(int page, InspectionsFilters filters = null)
+        public async Task<List<InspectionDto>> GetAll(int page, InspectionsFilters filters = null, bool reset = false)
         {
             if (IsSendingOfflineInspection)
             {
@@ -278,19 +278,37 @@ namespace IARA.Mobile.Insp.Application.Transactions
             DateTime? lastFetchDate = Settings.LastInspectionFetchDate;
             DateTime now = DateTime.Now;
 
-
-            if (filters == null)
+            if (reset)
             {
-                filters = new InspectionsFilters
+                if (filters == null)
                 {
-                    UpdatedAfter = lastFetchDate,
-                    ShowInactiveRecords = lastFetchDate.HasValue
-                };
+                    filters = new InspectionsFilters
+                    {
+                        UpdatedAfter = null,
+                        ShowInactiveRecords = false
+                    };
+                }
+                else
+                {
+                    filters.UpdatedAfter = null;
+                    filters.ShowInactiveRecords = false;
+                }
             }
             else
             {
-                filters.UpdatedAfter = lastFetchDate;
-                filters.ShowInactiveRecords = lastFetchDate.HasValue;
+                if (filters == null)
+                {
+                    filters = new InspectionsFilters
+                    {
+                        UpdatedAfter = lastFetchDate,
+                        ShowInactiveRecords = lastFetchDate.HasValue
+                    };
+                }
+                else
+                {
+                    filters.UpdatedAfter = lastFetchDate;
+                    filters.ShowInactiveRecords = lastFetchDate.HasValue;
+                }
             }
             GridRequest<InspectionsFilters> gridRequest = new GridRequest<InspectionsFilters>(filters)
             {
@@ -326,6 +344,7 @@ namespace IARA.Mobile.Insp.Application.Transactions
                             ? new List<string>()
                             : dto.InspectionSubjects.Split(new[] { ", " }, StringSplitOptions.RemoveEmptyEntries).Distinct();
 
+                        string inspectorsIds = string.Join(", ", dto.InspectorsIds);
                         return new Inspection
                         {
                             Id = dto.Id,
@@ -339,6 +358,7 @@ namespace IARA.Mobile.Insp.Application.Transactions
                             SubmitType = dto.InspectionState == InspectionState.Draft ? SubmitType.Draft : SubmitType.Finish,
                             InspectionSubjects = string.Join(", ", inspectionSubjects),
                             Inspectors = dto.Inspectors,
+                            InspectorsIds = inspectorsIds,
                             LastUpdatedDate = dto.LastUpdateDate,
                             CreatedByCurrentUser = dto.CreatedByCurrentUser,
                         };
@@ -479,7 +499,7 @@ namespace IARA.Mobile.Insp.Application.Transactions
                                                      && (filters.DateTo == null ? true : (insp.StartDate.Date <= filters.DateTo.Value.Date))
                                                      && (filters.StateIds == null ? true : (insp.InspectionStateId == filters.StateIds.First()))
                                                      && (string.IsNullOrEmpty(filters.ReportNumber) ? true : insp.ReportNr.Contains(filters.ReportNumber))
-                                                     && (filters.ShowOnlyUserInspections == null ? true : insp.CreatedByCurrentUser))
+                                                     && (filters.InspectorId == null ? true : insp.InspectorsIds.Split(new string[] { ", " }, StringSplitOptions.None).Contains(filters.InspectorId.ToString())))
                         select insp
                     ).Count();
                 }
@@ -1134,6 +1154,20 @@ namespace IARA.Mobile.Insp.Application.Transactions
 
             if (result.IsSuccessful)
             {
+                result.Content.ForEach(x => x.LogBookType = type);
+
+                return result.Content;
+            }
+
+            return null;
+        }
+
+        public async Task<InspectedLogBookPageDataDto> GetInspectedLogBookPageData(DeclarationLogBookType type, int logBookPageId)
+        {
+            HttpResult<InspectedLogBookPageDataDto> result = await RestClient.GetAsync<InspectedLogBookPageDataDto>("InspectionData/GetInspectedLogBookPageData", new { logBookPageId, type });
+
+            if (result.IsSuccessful)
+            {
                 return result.Content;
             }
 
@@ -1264,7 +1298,7 @@ namespace IARA.Mobile.Insp.Application.Transactions
                                                  && (filters.DateTo == null ? true : (insp.StartDate.Date <= filters.DateTo.Value.Date))
                                                  && (filters.StateIds == null ? true : (insp.InspectionStateId == filters.StateIds.First()))
                                                  && (string.IsNullOrEmpty(filters.ReportNumber) ? true : insp.ReportNr.Contains(filters.ReportNumber))
-                                                 && (filters.ShowOnlyUserInspections == null ? true : insp.CreatedByCurrentUser))
+                                                 && (filters.InspectorId == null ? true : insp.InspectorsIds.Split(new string[] { ", " }, StringSplitOptions.None).Contains(filters.InspectorId.ToString())))
 
                     orderby insp.StartDate descending
                     select new InspectionDto

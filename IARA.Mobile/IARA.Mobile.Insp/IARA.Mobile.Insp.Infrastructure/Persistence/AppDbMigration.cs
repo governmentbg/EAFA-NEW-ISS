@@ -25,12 +25,14 @@ namespace IARA.Mobile.Insp.Infrastructure.Persistence
         /// <summary>
         /// Represents the current version of the migrations
         /// </summary>
-        private const int CURRENT_VERSION = 7;
+        private const int CURRENT_VERSION = 8;
 
         private readonly INomenclatureDatesClear nomenclatureDatesClear;
         private readonly IExceptionHandler exceptionHandler;
         private readonly IDbSettings dbSettings;
         private readonly IAuthenticationProvider authenticationProvider;
+
+        // Needs to be a service provider because of the circular dependency
         private readonly IServiceProvider serviceProvider;
 
         public AppDbMigration(INomenclatureDatesClear nomenclatureDatesClear, IExceptionHandler exceptionHandler, IDbSettings dbSettings, IAuthenticationProvider authenticationProvider, IServiceProvider serviceProvider)
@@ -70,6 +72,7 @@ namespace IARA.Mobile.Insp.Infrastructure.Persistence
                             new Version5(authenticationProvider, serviceProvider.GetService<ICommonLogout>()),
                             new Version6(),
                             new Version7(authenticationProvider, serviceProvider.GetService<ICommonLogout>()),
+                            new Version8(authenticationProvider, serviceProvider.GetService<ICommonLogout>()),
                         };
 
                         for (int i = lastVersion; i < CURRENT_VERSION; i++)

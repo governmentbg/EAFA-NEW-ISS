@@ -17,7 +17,7 @@ namespace IARA.Mobile.Insp.Domain.Entities.Inspections
         public string LastName { get; set; }
         public string CardNum { get; set; }
         public string TerritoryCode { get; set; }
-
+        public bool IsCurrentUser { get; set; }
         public string NormalizedName { get; set; }
         public string NormalizedCardNum { get; set; }
     }

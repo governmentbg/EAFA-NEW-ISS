@@ -203,7 +203,8 @@
         'succ-change-permit-license-suspensions': 'Successfully changed suspensions data form commercial fishing permit license',
         'send-history-to-flux-success': 'The events were sent to FLUX',
         'send-event-to-flux-success': 'The event was sent to FLUX',
-        'succ-applied-deactivated-profile': 'Successufully applied to delete your profile. Your profile should be deactivated by an administrator.'
+        'succ-applied-deactivated-profile': 'Successufully applied to delete your profile. Your profile should be deactivated by an administrator.',
+        'inspection-sent-to-flux-success': 'Report is sent to FLUX'
     },
     'navigation': {
         'applications': 'Applications',
@@ -2646,6 +2647,7 @@
         'move-mark-to-inspected': 'Move mark to inspected',
         'fishing-gear-registered': 'Corresponds to the registered fishing gear',
         'print-inspection': 'Print',
+        'send-inspection-to-flux': 'Send to FLUX',
         'transshipment': 'Transshipment',
         'transshipment-catches': 'Transshipped catches',
         'has-transshipment': 'Transshipment has taken place',
@@ -2798,6 +2800,8 @@
         'not-inspector': 'The chief inspector must be added to the list of inspectors (Administration -> Inspectors) in order to complete an inspection',
         'inspection-already-submitted': 'Inspection is already signed',
         'cannot-edit-inspection-of-this-inspection-type': 'You cannot edit inspection of this type',
+        'inspection-send-to-flux-error': 'An error occured when sending report data to FLUX',
+        'cannot-send-to-flux-not-signed-inspection-error': 'You cannot send an unsigned report to FLUX',
         'user-not-inspector-title': 'You haven\'t been added as an inspector',
         'user-not-inspector-msg': 'You must be added to the list of inspectors (Administration -> Inspectors), in order to begin an inspection.',
         'okay': 'Okay',

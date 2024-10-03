@@ -2,11 +2,18 @@
 
 namespace IARA.Mobile.Insp.Converters
 {
-    public class IsNotEmptyOrNotNullConverter : BaseValueConverter<bool, string>
+    public class IsNotEmptyOrNotNullConverter : BaseValueConverter<bool, object>
     {
-        public override bool ConvertTo(string value)
+        public override bool ConvertTo(object value)
         {
-            return !string.IsNullOrEmpty(value);
+            if (value is string stringValue)
+            {
+                return !string.IsNullOrEmpty(stringValue);
+            }
+            else
+            {
+                return value != null;
+            }
         }
     }
 }

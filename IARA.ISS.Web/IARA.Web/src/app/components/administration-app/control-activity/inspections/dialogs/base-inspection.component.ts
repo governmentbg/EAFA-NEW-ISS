@@ -174,8 +174,15 @@ export abstract class BaseInspectionsComponent implements IDialogComponent {
         else if (actionInfo.id === 'print') {
             this.service.downloadReport(this.id!, this.model.reportNum!).subscribe();
         }
-        else if (actionInfo.id === 'flux') {
-            this.service.downloadFluxXml(this.id!, this.model.inspectionType!).subscribe();
+        else if (actionInfo.id === 'send-to-flux') {
+            this.service.sendInspectionToFlux(this.id!).subscribe({
+                next: () => {
+                    //nothing to do
+                },
+                error: (errorResponse: HttpErrorResponse) => {
+                    this.handleErrorResponse(errorResponse);
+                }
+            });
         }
         else if (actionInfo.id === 'more-corrections-needed') {
             this.model.id = this.id;
@@ -245,8 +252,14 @@ export abstract class BaseInspectionsComponent implements IDialogComponent {
             if (response.error?.code === ErrorCode.AlreadySubmitted) {
                 message = this.translate.getValue('inspections.inspection-already-submitted');
             }
-            else if (response.error?.code == ErrorCode.InvalidInspectionType) {
+            else if (response.error?.code === ErrorCode.InvalidInspectionType) {
                 message = this.translate.getValue('inspections.cannot-edit-inspection-of-this-inspection-type');
+            }
+            else if (response.error?.code === ErrorCode.SendFLUXISRFailed) {
+                message = this.translate.getValue('inspections.inspection-send-to-flux-error');
+            }
+            else if (response.error?.code === ErrorCode.InspectionNotSigned) {
+                message = this.translate.getValue('inspections.cannot-send-to-flux-not-signed-inspection-error')
             }
 
             if (message !== undefined && message !== null && message !== '') {

@@ -6,5 +6,6 @@
     ACDRDomain,
     PLGDomain,
     TelemDomain,
-    GZDomain
+    GZDomain,
+    ISRDomain
 }

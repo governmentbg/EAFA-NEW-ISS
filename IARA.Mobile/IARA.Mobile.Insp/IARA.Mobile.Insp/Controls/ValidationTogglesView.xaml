@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<StackLayout xmlns="http://xamarin.com/schemas/2014/forms"
+        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+        x:Class="IARA.Mobile.Insp.Controls.ValidationTogglesView"
+        xmlns:vm="clr-namespace:IARA.Mobile.Insp.Controls.ViewModels"
+        x:DataType="vm:ValidationTogglesViewModel"
+        xmlns:lc="clr-namespace:IARA.Mobile.Insp.Controls">
+    <lc:TLGeneratedToggles IsEnabled="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}"
+            IsVisible="{Binding Toggles.Value.Count, Converter={StaticResource NotEqual}, ConverterParameter=0}"
+            ValidState="{Binding Toggles}" />
+</StackLayout>

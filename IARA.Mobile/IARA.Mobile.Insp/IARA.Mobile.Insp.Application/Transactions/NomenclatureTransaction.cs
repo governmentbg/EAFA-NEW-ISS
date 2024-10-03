@@ -220,13 +220,14 @@ namespace IARA.Mobile.Insp.Application.Transactions
                     where search == null
                         || insp.NormalizedName.Contains(search)
                         || insp.NormalizedCardNum.Contains(search)
-                    orderby insp.Id
+                    orderby insp.IsCurrentUser descending, insp.NormalizedName ascending
                     select new InspectorNomenclatureDto
                     {
                         Id = insp.Id,
                         Code = insp.CardNum,
                         Name = $"{insp.FirstName} {(insp.MiddleName == null ? string.Empty : insp.MiddleName + " ")}{insp.LastName}",
                         UserId = insp.UserId,
+                        IsCurrentUser = insp.IsCurrentUser,
                     }
                 ).Skip(page * count).Take(count).ToList();
             }

@@ -8,10 +8,12 @@ using IARA.Mobile.Insp.Domain.Enums;
 using IARA.Mobile.Insp.Helpers;
 using IARA.Mobile.Shared.Attributes;
 using IARA.Mobile.Shared.ViewModels.Models;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using TechnoLogica.Xamarin.Attributes;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Helpers;
 using TechnoLogica.Xamarin.ResourceTranslator;
@@ -32,7 +34,10 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
             SearchPerson = CommandBuilder.CreateFrom(OnSearchPerson);
             SearchLegal = CommandBuilder.CreateFrom(OnSearchLegal);
 
-            this.AddValidation();
+            this.AddValidation(groups: new Dictionary<string, Func<bool>>(){
+                {nameof(SubjectType.Legal), () => Action.Code == nameof(SubjectType.Legal)},
+                {nameof(SubjectType.Person), () => Action.Code == nameof(SubjectType.Person)}
+            });
 
             IsRequired.AddFakeValidation();
 
@@ -41,10 +46,9 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
             if (isRequired)
             {
                 FirstName.HasAsterisk = true;
-                MiddleName.HasAsterisk = true;
                 LastName.HasAsterisk = true;
                 EGN.HasAsterisk = true;
-                Address.HasAsterisk = true;
+                EIK.HasAsterisk = true;
                 Nationality.HasAsterisk = true;
             }
 
@@ -88,27 +92,34 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
 
         public ValidStateBool IsRequired { get; set; }
 
-        [RequiredIfBooleanEquals(nameof(IsRequired), ErrorMessageResourceName = "Required")]
+        [RequiredIfBooleanEquals(nameof(IsRequired), false, ErrorMessageResourceName = "Required")]
         [MaxLength(200)]
         public ValidState FirstName { get; set; }
 
-        [RequiredIfBooleanEquals(nameof(IsRequired), ErrorMessageResourceName = "Required")]
         [MaxLength(200)]
         public ValidState MiddleName { get; set; }
 
-        [RequiredIfBooleanEquals(nameof(IsRequired), ErrorMessageResourceName = "Required")]
+        [RequiredIfBooleanEquals(nameof(IsRequired), false, ErrorMessageResourceName = "Required")]
         [MaxLength(200)]
+        [ValidGroup(nameof(SubjectType.Person))]
         public ValidState LastName { get; set; }
 
-        [RequiredIfBooleanEquals(nameof(IsRequired), ErrorMessageResourceName = "Required")]
         [MaxLength(20)]
         [EGN(nameof(EGN))]
+        [RequiredIfBooleanEquals(nameof(IsRequired), false, ErrorMessageResourceName = "Required")]
+        [ValidGroup(nameof(SubjectType.Person))]
         public EgnLncValidState EGN { get; set; }
+
+        [EIKValidation(ErrorMessageResourceName = "EIKNotValid")]
+        [RequiredIfBooleanEquals(nameof(IsRequired), false, ErrorMessageResourceName = "Required")]
+        [ValidGroup(nameof(SubjectType.Legal))]
+        public ValidState EIK { get; set; }
+
 
         [MaxLength(500)]
         public ValidState Address { get; set; }
 
-        [RequiredIfBooleanEquals(nameof(IsRequired), ErrorMessageResourceName = "Required")]
+        [RequiredIfBooleanEquals(nameof(IsRequired), false, ErrorMessageResourceName = "Required")]
         public ValidStateSelect<SelectNomenclatureDto> Nationality { get; set; }
 
         public List<SelectNomenclatureDto> Actions { get; }
@@ -150,7 +161,6 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
                 if (subject.IsLegal)
                 {
                     Action = Actions.Find(f => f.Code == nameof(SubjectType.Legal));
-                    EGN.IdentifierType = IdentifierTypeEnum.EGN;
                 }
                 else if (subject.EgnLnc != null)
                 {
@@ -166,7 +176,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
 
                 if (subject.IsLegal)
                 {
-                    EGN.AssignFrom(subject.Eik);
+                    EIK.AssignFrom(subject.Eik);
                 }
                 else
                 {
@@ -191,7 +201,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
 
         private async Task OnSearchLegal()
         {
-            LegalFullDataDto data = await InspectionsTransaction.GetLegalFullData(EGN.Value);
+            LegalFullDataDto data = await InspectionsTransaction.GetLegalFullData(EIK.Value);
 
             if (data?.Legal != null)
             {
@@ -213,7 +223,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
                     IsRegistered = false,
                     Type = viewModel.LegalType,
                     FirstName = viewModel.FirstName,
-                    Eik = viewModel.EGN.Value,
+                    Eik = viewModel.EIK.Value,
                     IsLegal = true,
                     Address = viewModel.Address,
                     CitizenshipId = viewModel.Nationality.Value,

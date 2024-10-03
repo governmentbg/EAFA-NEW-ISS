@@ -5,6 +5,7 @@ using IARA.Mobile.Domain.Enums;
 using IARA.Mobile.Domain.Models;
 using IARA.Mobile.Insp.Application;
 using IARA.Mobile.Insp.Application.DTObjects.Inspections;
+using IARA.Mobile.Insp.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Insp.Application.Filters;
 using IARA.Mobile.Insp.Application.Interfaces.Transactions;
 using IARA.Mobile.Insp.Base;
@@ -58,11 +59,17 @@ namespace IARA.Mobile.Insp.FlyoutPages.InspectionsPage
             OpenInspection = CommandBuilder.CreateFrom<InspectionDto>(OnOpenInspection);
             DeleteInspection = CommandBuilder.CreateFrom<InspectionDto>(OnDeleteInspection);
             Inspections.GoToPage = CommandBuilder.CreateFrom<int>(OnGoToPage);
+            ResetInspections = CommandBuilder.CreateFrom<InspectorNomenclatureDto>(OnResetInspections);
 
             Filter = CommandBuilder.CreateFrom(OnFilter);
             ClearFilters = CommandBuilder.CreateFrom(OnClearFilters);
 
             this.AddValidation();
+
+            Inspector.ItemsSource = new TLObservableCollection<InspectorNomenclatureDto>();
+            Inspector.GetMore = (int page, int pageSize, string search) =>
+                DependencyService.Resolve<INomenclatureTransaction>()
+                    .GetInspectors(page, pageSize, search);
         }
 
         public TLPagedCollection<InspectionDto> Inspections { get; }
@@ -71,8 +78,6 @@ namespace IARA.Mobile.Insp.FlyoutPages.InspectionsPage
             get => _inspectionStates;
             set => SetProperty(ref _inspectionStates, value);
         }
-
-
         public ICommand SignInspection { get; }
         public ICommand GoToAddInspection { get; }
         public ICommand OpenInspection { get; }
@@ -81,6 +86,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.InspectionsPage
         public ICommand GetStartupData { get; }
         public ICommand Filter { get; }
         public ICommand ClearFilters { get; }
+        public ICommand ResetInspections { get; }
 
         public override GroupResourceEnum[] GetPageIndexes()
         {
@@ -91,7 +97,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.InspectionsPage
         public ValidStateDate EndDate { get; set; }
         public ValidStateSelect<SelectNomenclatureDto> InspectionStateSelect { get; set; }
         public ValidState ReportNumber { get; set; }
-        public ValidStateBool ShowIsnpectionCratedByCurrentUser { get; set; }
+        public ValidStateInfiniteSelect<InspectorNomenclatureDto> Inspector { get; set; }
 
         public override async void OnAppearing()
         {
@@ -120,7 +126,22 @@ namespace IARA.Mobile.Insp.FlyoutPages.InspectionsPage
                     Name = TranslateExtension.Translator[nameof(GroupResourceEnum.Common) + "/Submitted"]
                 },
             };
+            Inspector.ItemsSource.AddRange(DependencyService.Resolve<INomenclatureTransaction>().GetInspectors(0, CommonGlobalVariables.PullItemsCount));
             return Task.CompletedTask;
+        }
+        private async Task OnResetInspections(InspectorNomenclatureDto dto)
+        {
+            bool result = await App.Current.MainPage.DisplayAlert(null,
+                TranslateExtension.Translator[nameof(GroupResourceEnum.GeneralInfo) + "/ReloadInspectionsMessage"],
+                TranslateExtension.Translator[nameof(GroupResourceEnum.Common) + "/Yes"],
+                TranslateExtension.Translator[nameof(GroupResourceEnum.Common) + "/No"]
+            );
+
+            if (result)
+            {
+                _ = InspectionsTransaction.GetAll(1, reset: true);
+                await OnReload();
+            }
         }
 
         private async void OnConnectivityOfflineDataPosted(object sender, EventArgs e)
@@ -234,26 +255,16 @@ namespace IARA.Mobile.Insp.FlyoutPages.InspectionsPage
 
         private Task OnFilter()
         {
-            _inspectionsFilters = new InspectionsFilters();
-            if (StartDate.Value != null)
+            _inspectionsFilters = new InspectionsFilters()
             {
-                _inspectionsFilters.DateFrom = StartDate.Value.Value;
-            }
-            if (EndDate.Value != null)
+                DateFrom = StartDate.Value,
+                DateTo = EndDate.Value,
+                StateIds = InspectionStateSelect.Value != null ? new List<int>() { InspectionStateSelect.Value.Id } : null,
+                ReportNumber = ReportNumber.Value
+            };
+            if (Inspector.Value != null)
             {
-                _inspectionsFilters.DateTo = EndDate.Value.Value;
-            }
-            if (InspectionStateSelect.Value != null)
-            {
-                _inspectionsFilters.StateIds = new List<int>() { InspectionStateSelect.Value.Id };
-            }
-            if (ReportNumber.Value != null)
-            {
-                _inspectionsFilters.ReportNumber = ReportNumber.Value;
-            }
-            if (ShowIsnpectionCratedByCurrentUser.Value != false)
-            {
-                _inspectionsFilters.ShowOnlyUserInspections = true;
+                _inspectionsFilters.InspectorId = Inspector.Value.Id;
             }
             Inspections.Page = 1;
 
@@ -267,7 +278,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.InspectionsPage
             EndDate.Value = null;
             InspectionStateSelect.Value = null;
             ReportNumber.Value = null;
-            ShowIsnpectionCratedByCurrentUser.Value = false;
+            Inspector.Value = null;
             Inspections.Page = 1;
 
             return OnReload();

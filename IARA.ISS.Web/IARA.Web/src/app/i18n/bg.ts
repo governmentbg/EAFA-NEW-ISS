@@ -202,7 +202,8 @@
         'send-history-to-flux-success': 'Събитията са изпратени към FLUX',
         'send-event-to-flux-success': 'Събитието е изпратено към FLUX',
         'succ-applied-deactivated-profile': 'Успешно заявихте деактивиране на профила си. Вашата заявка трябва да бъде одобрена от администратор.',
-        'succ-exec-cross-checks': 'Успешно изпълнени кръстосани проверки'
+        'succ-exec-cross-checks': 'Успешно изпълнени кръстосани проверки',
+        'inspection-sent-to-flux-success': 'Докладът е изпратен към FLUX'
     },
     'navigation': {
         'applications': 'Приложения',
@@ -2701,6 +2702,7 @@
         'move-mark-to-inspected': 'Премести марката като инспектирана',
         'fishing-gear-registered': 'Кореспондира с регистриран риболовен уред',
         'print-inspection': 'Отпечатай',
+        'send-inspection-to-flux': 'Изпращане към FLUX',
         'transshipment': 'Трансбордиране',
         'transshipment-catches': 'Трансбордиран улов',
         'has-transshipment': 'Извършено е трансбордиране',
@@ -2856,6 +2858,8 @@
         'not-inspector': 'Трябва главния инспектор да бъде добавен в списъка с инспектори (Администрация -> Инспектори), за да можете да приключите инспекция',
         'inspection-already-submitted': 'Инспекцията вече е приключена',
         'cannot-edit-inspection-of-this-inspection-type': 'Не може да се редактира инспекция от този вид',
+        'inspection-send-to-flux-error': 'Настъпи грешка при изпращането на данни за доклада към FLUX',
+        'cannot-send-to-flux-not-signed-inspection-error': 'Не може да се изпрати към FLUX доклад, който не е подписан',
         'user-not-inspector-title': 'Не сте добавен като инспектор',
         'user-not-inspector-msg': 'Трябва да бъдете добавен в списъка с инспектори (Администрация -> Инспектори), за да можете да започнете инспекция.',
         'okay': 'Добре',

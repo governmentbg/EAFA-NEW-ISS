@@ -1,29 +1,44 @@
-﻿using System;
+﻿using IARA.Mobile.Application.DTObjects.Nomenclatures;
+using IARA.Mobile.Application.Interfaces.Utilities;
+using IARA.Mobile.Domain.Enums;
+using IARA.Mobile.Insp.Application.Interfaces.Transactions;
+using IARA.Mobile.Insp.Base;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using IARA.Mobile.Application.DTObjects.Nomenclatures;
-using IARA.Mobile.Domain.Enums;
-using IARA.Mobile.Insp.Application.Interfaces.Utilities;
-using IARA.Mobile.Insp.Base;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Helpers;
+using ISettings = IARA.Mobile.Insp.Application.Interfaces.Utilities.ISettings;
 
 namespace IARA.Mobile.Insp.FlyoutPages.SettingsPage
 {
     public class SettingsViewModel : PageViewModel
     {
+        private readonly IAppDbMigration _appDbMigration;
+        private readonly IDbSettings _dbSettings;
         private readonly ISettings _settings;
+        private readonly IStartupTransaction _startupTransaction;
+        private readonly INomenclatureDatesClear _nomenclatureDates;
+        private readonly IInspectionsTransaction _inspectionsTransaction;
+
         private List<SelectNomenclatureDto> _fleets;
         private bool _hasFleetFilter;
         private double _fontSize;
 
-        public SettingsViewModel(ISettings settings)
+        public SettingsViewModel(ISettings settings, IAppDbMigration appDbMigration, IDbSettings dbSettings, INomenclatureDatesClear nomenclatureDates, IInspectionsTransaction inspectionsTransaction, IStartupTransaction startupTransaction)
         {
             _settings = settings;
+            _startupTransaction = startupTransaction;
+            _appDbMigration = appDbMigration;
+            _dbSettings = dbSettings;
+            _nomenclatureDates = nomenclatureDates;
+            _inspectionsTransaction = inspectionsTransaction;
+
             FontSizeChanged = CommandBuilder.CreateFrom(OnFontSizeChanged);
             FleetFilterChanged = CommandBuilder.CreateFrom(OnFleetFilterChanged);
+            ResetDatabase = CommandBuilder.CreateFrom(OnResetDatabase);
 
             SelectedFleets = new TLObservableCollection<SelectNomenclatureDto>();
         }
@@ -52,6 +67,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.SettingsPage
 
         public ICommand FontSizeChanged { get; }
         public ICommand FleetFilterChanged { get; }
+        public ICommand ResetDatabase { get; }
 
         public override GroupResourceEnum[] GetPageIndexes()
         {
@@ -88,5 +104,20 @@ namespace IARA.Mobile.Insp.FlyoutPages.SettingsPage
                 _settings.Fleets = Array.Empty<int>();
             }
         }
+
+        private async Task OnResetDatabase()
+        {
+            await TLLoadingHelper.ShowFullLoadingScreen();
+
+            _appDbMigration.DropDatabase();
+            _nomenclatureDates.Clear();
+            _dbSettings.Clear();
+            _appDbMigration.CheckForMigrations();
+            await _startupTransaction.GetInitialData(true, null, null);
+            _ = await _inspectionsTransaction.GetAll(1, reset: true);
+
+            await TLLoadingHelper.HideFullLoadingScreen();
+        }
+
     }
 }

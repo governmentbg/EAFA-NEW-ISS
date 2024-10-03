@@ -89,5 +89,8 @@
                     Command="{Binding FleetFilterChanged}"
                     IsVisible="{Binding HasFleetFilter}" />
         </StackLayout>
+        <Button Margin="5"
+                Text="{rt:Translate ResetDatabase, Group=Settings}"
+                Command="{Binding ResetDatabase}" />
     </StackLayout>
 </sv:BasePage>

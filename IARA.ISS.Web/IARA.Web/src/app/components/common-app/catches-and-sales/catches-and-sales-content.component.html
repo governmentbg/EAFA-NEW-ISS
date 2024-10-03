@@ -377,14 +377,12 @@
                                                 [attr.data-logbook-id]="row.data.id"
                                                 [tooltipText]="row.data.allowNewLogBookPages
                                                                 ? addLogBookPageTooltip
-                                                                : row.data.isShipForbiddenForPages
-                                                                    ? shipForbiddenForPagesTooltip
-                                                                    : row.data.isLogBookFinished
-                                                                        ? logBookFishinedTooltip
-                                                                        : row.data.isLogBookSuspended
-                                                                            ? logBookHasSuspendedLicenseTooltip
-                                                                            : addLogBookPageTooltip"
-                                                [disabled]="(!row.data.allowNewLogBookPages && (row.data.isLogBookFinished || row.data.isLogBookSuspended)) || row.data.isShipForbiddenForPages">
+                                                                : row.data.isLogBookFinished
+                                                                    ? logBookFishinedTooltip
+                                                                    : row.data.isLogBookSuspended
+                                                                        ? logBookHasSuspendedLicenseTooltip
+                                                                        : addLogBookPageTooltip"
+                                                [disabled]="!row.data.allowNewLogBookPages && (row.data.isLogBookFinished || row.data.isLogBookSuspended)">
                                 </tl-icon-button>
 
                                 <tl-icon-button *ngIf="row.data.typeCode === logBookTypesEnum.FirstSale && canAddFirstSaleLogBookRecords"

@@ -1,7 +1,8 @@
 ﻿using IARA.Mobile.Application;
-using IARA.Mobile.Application.Attributes;
 using IARA.Mobile.Application.DTObjects.Nomenclatures;
+using IARA.Mobile.Application.Interfaces.Utilities;
 using IARA.Mobile.Domain.Enums;
+using IARA.Mobile.Domain.Models;
 using IARA.Mobile.Insp.Application.DTObjects.Inspections;
 using IARA.Mobile.Insp.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Insp.Application.Interfaces.Transactions;
@@ -30,12 +31,14 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.DeclarationCatchDialo
 {
     public class DeclarationCatchDialogViewModel : TLBaseDialogViewModel<DeclarationCatchModel>
     {
-        private List<SelectNomenclatureDto> _fishTypes;
         private List<SelectNomenclatureDto> _catchTypes;
-        private List<SelectNomenclatureDto> _presentations;
         private List<CatchZoneNomenclatureDto> _catchZones;
         private List<SelectNomenclatureDto> _declarationTypes;
         private List<DeclarationLogBookPageDto> _logBookPages;
+        private List<SelectNomenclatureDto> _fishTypes;
+        private List<SelectNomenclatureDto> _presentations;
+        private InspectedLogBookPageDataDto _connectedDeclarations;
+
         private bool _isDeclarationRegistered;
         private bool _onlyUnregisteredDeclaration;
         private bool _isLogBookPageSelected;
@@ -51,10 +54,14 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.DeclarationCatchDialo
             PageSelected = CommandBuilder.CreateFrom<DeclarationLogBookPageDto>(OnPageSelected);
             AquacultureChosen = CommandBuilder.CreateFrom<SelectNomenclatureDto>(OnAquacultureChosen);
             AddPage = CommandBuilder.CreateFrom<string>(OnAddPage);
+            AddCatch = CommandBuilder.CreateFrom(OnAddCatch);
+            ViewCatch = CommandBuilder.CreateFrom<InspectedDeclarationCatchDto>(OnViewCatch);
+            EditCatch = CommandBuilder.CreateFrom<InspectedDeclarationCatchDto>(OnEditCatch);
+            RemoveCatch = CommandBuilder.CreateFrom<InspectedDeclarationCatchDto>(OnRemoveCatch);
+            GeneratePageProducts = CommandBuilder.CreateFrom(OnGeneratePageProducts);
             SubjectType = DeclarationLogBookType.NNN;
             _onlyUnregisteredDeclaration = true;
         }
-
         public DeclarationCatchModel Edit { get; set; }
         public int? ShipUid { get; set; }
         public bool HasCatchType { get; set; }
@@ -79,21 +86,6 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.DeclarationCatchDialo
         public ValidStateBool IsAquacultureInRegistered { get; set; }
 
         [Required]
-        public ValidStateSelect<SelectNomenclatureDto> FishType { get; set; }
-
-        [TLRange(1, 10000, true)]
-        public ValidState CatchCount { get; set; }
-
-        public ValidStateBool UndersizedFish { get; set; }
-
-        [Required]
-        [TLRange(1, 10000, true)]
-        public ValidState CatchQuantity { get; set; }
-
-        [Required]
-        public ValidStateSelect<SelectNomenclatureDto> Presentation { get; set; }
-
-        [Required]
         public ValidStateSelect<SelectNomenclatureDto> DeclarationType { get; set; }
 
         public ValidStateSelect<DeclarationLogBookPageDto> LogBookPage { get; set; }
@@ -102,12 +94,30 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.DeclarationCatchDialo
 
         public ValidStateDate LogBookPageDate { get; set; }
 
+        [MaxLength(4000)]
+        public ValidState InvoiceInformation { get; set; }
+
+        public ValidStateTable<InspectedDeclarationCatchDto> DeclarationCatches { get; set; }
+
         public ValidState DocumentOriginNumber { get; set; }
 
         public ValidStateDate LogBookPageOriginDate { get; set; }
 
-        [MaxLength(4000)]
-        public ValidState InvoiceInformation { get; set; }
+        public ValidState DocumentTransportNumber { get; set; }
+
+        public ValidStateDate DocumentTransportDate { get; set; }
+
+        public ValidState DocumentAdmissionNumber { get; set; }
+
+        public ValidStateDate DeclarationAdmissionDate { get; set; }
+
+        public ValidState DocumentFirstSaleNumber { get; set; }
+
+        public ValidStateDate DocumentFirstSaleDate { get; set; }
+
+        public ValidState DocumentAquacultureNumber { get; set; }
+
+        public ValidStateDate DocumentAquacultureDate { get; set; }
 
         public bool IsDeclarationRegistered
         {
@@ -146,20 +156,10 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.DeclarationCatchDialo
             set => SetProperty(ref _subjectType, value);
         }
 
-        public List<SelectNomenclatureDto> FishTypes
-        {
-            get => _fishTypes;
-            set => SetProperty(ref _fishTypes, value);
-        }
         public List<SelectNomenclatureDto> CatchTypes
         {
             get => _catchTypes;
             set => SetProperty(ref _catchTypes, value);
-        }
-        public List<SelectNomenclatureDto> Presentations
-        {
-            get => _presentations;
-            set => SetProperty(ref _presentations, value);
         }
         public List<CatchZoneNomenclatureDto> CatchZones
         {
@@ -176,16 +176,38 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.DeclarationCatchDialo
             get => _logBookPages;
             set => SetProperty(ref _logBookPages, value);
         }
+        public List<SelectNomenclatureDto> FishTypes
+        {
+            get => _fishTypes;
+            set => SetProperty(ref _fishTypes, value);
+        }
+        public List<SelectNomenclatureDto> Presentations
+        {
+            get => _presentations;
+            set => SetProperty(ref _presentations, value);
+        }
+
+        public InspectedLogBookPageDataDto ConnectedDeclarations
+        {
+            get => _connectedDeclarations;
+            set => SetProperty(ref _connectedDeclarations, value);
+        }
+
 
         public ICommand Save { get; }
         public ICommand DeclarationSelected { get; }
         public ICommand AquacultureChosen { get; }
         public ICommand PageSelected { get; }
         public ICommand AddPage { get; set; }
+        public ICommand AddCatch { get; set; }
+        public ICommand ViewCatch { get; set; }
+        public ICommand EditCatch { get; set; }
+        public ICommand RemoveCatch { get; set; }
+        public ICommand GeneratePageProducts { get; set; }
 
         public void OnInit()
         {
-            InspectedShip = new InspectedShipDataViewModel(Inspection, false)
+            InspectedShip = new InspectedShipDataViewModel(new EmptyCopy(DialogType), false)
             {
                 ShipSelected = CommandBuilder.CreateFrom<ShipSelectNomenclatureDto>(OnShipSelected)
             };
@@ -196,9 +218,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.DeclarationCatchDialo
             }, groups: new Dictionary<string, Func<bool>>
             {
                 { "IsAquaculture", () => SubjectType == DeclarationLogBookType.AquacultureLogBook },
-                {
-                    "IsShip",
-                    () => SubjectType == DeclarationLogBookType.ShipLogBook
+                { "IsShip", () => SubjectType == DeclarationLogBookType.ShipLogBook
                         || SubjectType == DeclarationLogBookType.FirstSaleLogBook
                         || SubjectType == DeclarationLogBookType.TransportationLogBook
                         || SubjectType == DeclarationLogBookType.AdmissionLogBook
@@ -221,8 +241,8 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.DeclarationCatchDialo
 
             List<CatchZoneNomenclatureDto> catchZones = nomTransaction.GetCatchZones();
 
-            FishTypes = nomTransaction.GetFishes();
             CatchTypes = nomTransaction.GetCatchInspectionTypes();
+            FishTypes = nomTransaction.GetFishes();
             Presentations = nomTransaction.GetFishPresentations();
             CatchZones = catchZones;
 
@@ -251,23 +271,19 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.DeclarationCatchDialo
 
             if (Edit != null)
             {
-                CatchCount.AssignFrom(Edit.Dto.CatchCount);
-                CatchQuantity.AssignFrom(Edit.Dto.CatchQuantity);
-                FishType.AssignFrom(Edit.Dto.FishTypeId, FishTypes);
-                Presentation.AssignFrom(Edit.Dto.PresentationId, Presentations);
-                UndersizedFish.AssignFrom(Edit.Dto.Undersized);
-                DeclarationType.AssignFrom(Edit.Dto.LogBookType.ToString(), DeclarationTypes);
+                DeclarationCatches.Value.AddRange(Edit.InspectionLogBookPage.InspectionCatchMeasures);
+                DeclarationType.AssignFrom(Edit.InspectionLogBookPage.LogBookType.ToString(), DeclarationTypes);
                 await OnDeclarationSelected(DeclarationType.Value);
-                SubjectType = Edit.Dto.LogBookType.Value;
+                SubjectType = Edit.InspectionLogBookPage.LogBookType.Value;
 
-                if (Edit.Dto.OriginShip != null)
+                if (Edit.InspectionLogBookPage.OriginShip != null)
                 {
-                    InspectedShip.OnEdit(Edit.Dto.OriginShip);
+                    InspectedShip.OnEdit(Edit.InspectionLogBookPage.OriginShip);
 
-                    if (Edit.Dto.OriginShip.IsRegistered == true
-                        && Edit.Dto.OriginShip.ShipId != null)
+                    if (Edit.InspectionLogBookPage.OriginShip.IsRegistered == true
+                        && Edit.InspectionLogBookPage.OriginShip.ShipId != null)
                     {
-                        ShipSelectNomenclatureDto ship = nomTransaction.GetShipNomenclature(Edit.Dto.OriginShip.ShipId.Value);
+                        ShipSelectNomenclatureDto ship = nomTransaction.GetShipNomenclature(Edit.InspectionLogBookPage.OriginShip.ShipId.Value);
 
                         if (ship != null)
                         {
@@ -275,34 +291,61 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.DeclarationCatchDialo
                         }
                     }
                 }
-                else if (Edit.Dto.AquacultureId != null)
+                else if (Edit.InspectionLogBookPage.AquacultureId != null)
                 {
                     IsAquacultureInRegistered.AssignFrom(true);
-                    SelectNomenclatureDto aquaculture = nomTransaction.GetAquaculture(Edit.Dto.AquacultureId.Value);
+                    SelectNomenclatureDto aquaculture = nomTransaction.GetAquaculture(Edit.InspectionLogBookPage.AquacultureId.Value);
                     Aquaculture.Value = aquaculture;
                     await OnAquacultureChosen(aquaculture);
                 }
-                else if (Edit.Dto.LogBookType == DeclarationLogBookType.AquacultureLogBook)
+                else if (Edit.InspectionLogBookPage.LogBookType == DeclarationLogBookType.AquacultureLogBook)
                 {
                     IsAquacultureInRegistered.AssignFrom(false);
-                    UnregisteredAquaculture.AssignFrom(Edit.Dto.UnregisteredEntityData);
+                    UnregisteredAquaculture.AssignFrom(Edit.InspectionLogBookPage.UnregisteredEntityData);
                 }
                 else
                 {
-                    InvoiceInformation.AssignFrom(Edit.Dto.UnregisteredEntityData);
+                    InvoiceInformation.AssignFrom(Edit.InspectionLogBookPage.UnregisteredEntityData);
                 }
 
-                if (LogBookPages != null && Edit.Dto.LogBookPageId != null)
+                if (LogBookPages != null && LogBookPages.Count() > 0)
                 {
-                    DeclarationLogBookPageDto declaration = LogBookPages.Find(f => f.Id == Edit.Dto.LogBookPageId.Value);
-                    LogBookPage.Value = declaration;
-                    OnPageSelected(declaration);
+                    int? logBookId = null;
+                    switch (Edit.InspectionLogBookPage.LogBookType.Value)
+                    {
+                        case DeclarationLogBookType.FirstSaleLogBook:
+                            logBookId = Edit.InspectionLogBookPage.FirstSaleLogBookPageId;
+                            break;
+                        case DeclarationLogBookType.TransportationLogBook:
+                            logBookId = Edit.InspectionLogBookPage.TransportationLogBookPageId;
+                            break;
+                        case DeclarationLogBookType.AdmissionLogBook:
+                            logBookId = Edit.InspectionLogBookPage.AdmissionLogBookPageId;
+                            break;
+                        case DeclarationLogBookType.ShipLogBook:
+                            logBookId = Edit.InspectionLogBookPage.ShipLogBookPageId;
+                            break;
+                        case DeclarationLogBookType.AquacultureLogBook:
+                            logBookId = Edit.InspectionLogBookPage.AquacultureLogBookPageId;
+                            break;
+                        default:
+                            break;
+                    }
+
+                    if (logBookId != null)
+                    {
+                        DeclarationLogBookPageDto declaration = LogBookPages.Find(f => f.Id == logBookId.Value);
+                        LogBookPage.Value = declaration;
+                        await OnPageSelected(declaration);
+                    }
                 }
                 else
                 {
-                    OnAddPage(Edit.Dto.UnregisteredPageNum);
-                    LogBookNum.AssignFrom(Edit.Dto.UnregisteredLogBookNum);
-                    LogBookPageDate.AssignFrom(Edit.Dto.UnregisteredPageDate);
+                    OnAddPage(Edit.InspectionLogBookPage.UnregisteredPageNum);
+                    LogBookNum.AssignFrom(Edit.InspectionLogBookPage.UnregisteredLogBookNum);
+                    LogBookPageDate.AssignFrom(Edit.InspectionLogBookPage.UnregisteredPageDate);
+
+                    DeclarationCatches.Value.AddRange(Edit.InspectionLogBookPage.InspectionCatchMeasures);
                 }
 
                 if (DialogType == ViewActivityType.Edit)
@@ -310,12 +353,58 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.DeclarationCatchDialo
                     Validation.Force();
                 }
             }
-            else
+        }
+        private async Task OnRemoveCatch(InspectedDeclarationCatchDto dto)
+        {
+            bool result = await App.Current.MainPage.DisplayAlert(null,
+                TranslateExtension.Translator[nameof(GroupResourceEnum.Common) + "/DeleteMessage"],
+                TranslateExtension.Translator[nameof(GroupResourceEnum.Common) + "/Yes"],
+                TranslateExtension.Translator[nameof(GroupResourceEnum.Common) + "/No"]
+            );
+
+            if (result)
             {
-                Presentation.Value = Presentations.Find(f => f.Code == "WHL");
+                DeclarationCatches.Value.Remove(dto);
             }
         }
 
+        private async Task OnEditCatch(InspectedDeclarationCatchDto dto)
+        {
+            InspectedDeclarationCatchDto declarationCatchDto = await TLDialogHelper.ShowDialog(new CatchDialog.CatchDialog(ViewActivityType.Add, dto, FishTypes, Presentations));
+            if (declarationCatchDto != null)
+            {
+                dto.FishTypeId = declarationCatchDto.FishTypeId;
+                dto.CatchCount = declarationCatchDto.CatchCount;
+                dto.CatchQuantity = declarationCatchDto.CatchQuantity;
+                dto.PresentationId = declarationCatchDto.PresentationId;
+
+                DeclarationCatches.Value.Replace(dto, declarationCatchDto);
+            }
+        }
+
+        private Task OnViewCatch(InspectedDeclarationCatchDto dto)
+        {
+            return TLDialogHelper.ShowDialog(new CatchDialog.CatchDialog(ViewActivityType.Review, dto, _fishTypes, _presentations));
+        }
+
+        private void OnGeneratePageProducts()
+        {
+            if (ConnectedDeclarations != null && ConnectedDeclarations.InspectionCatchMeasures != null)
+            {
+                DeclarationCatches.Value.Clear();
+                DeclarationCatches.Value.AddRange(ConnectedDeclarations.InspectionCatchMeasures);
+            }
+        }
+
+        private async Task OnAddCatch()
+        {
+            InspectedDeclarationCatchDto dto = await TLDialogHelper.ShowDialog(new CatchDialog.CatchDialog(ViewActivityType.Add, null, _fishTypes, _presentations));
+
+            if (dto != null)
+            {
+                DeclarationCatches.Value.Add(dto);
+            }
+        }
 
         private void OnAddPage(string text)
         {
@@ -325,20 +414,71 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.DeclarationCatchDialo
             };
             LogBookPages.Add(newPage);
             LogBookPage.Value = newPage;
+
+            LogBookNum.AssignFrom("");
+            LogBookPageDate.AssignFrom(null);
+            //IsLogBookPageSelected = false;
+            DeclarationCatches.Value.Clear();
+            ConnectedDeclarations = null;
+            DocumentOriginNumber.AssignFrom("");
+            LogBookPageOriginDate.AssignFrom(null);
+            DocumentTransportNumber.AssignFrom("");
+            DocumentTransportDate.AssignFrom(null);
+            DocumentAdmissionNumber.AssignFrom("");
+            DeclarationAdmissionDate.AssignFrom(null);
+            DocumentFirstSaleNumber.AssignFrom("");
+            DocumentFirstSaleDate.AssignFrom(null);
+            DocumentAquacultureNumber.AssignFrom("");
+            DocumentAquacultureDate.AssignFrom(null);
         }
 
-
-        private void OnPageSelected(DeclarationLogBookPageDto dto)
+        private async Task OnPageSelected(DeclarationLogBookPageDto dto)
         {
             if (dto != null)
             {
                 if (dto.Id != null)
                 {
-                    IsLogBookPageSelected = true;
+                    if (dto.LogBookType != DeclarationLogBookType.AquacultureLogBook)
+                    {
+                        IsLogBookPageSelected = true;
+                    }
                     LogBookNum.AssignFrom(dto.LogBookNumber);
                     LogBookPageDate.AssignFrom(dto.Date);
-                    DocumentOriginNumber.AssignFrom(dto.LogBookPageOrigin);
-                    LogBookPageOriginDate.AssignFrom(dto.LogBookPageOriginDate);
+
+                    int logBookPageId = dto.Id.Value;
+                    DeclarationLogBookType type = dto.LogBookType;
+                    HttpResult<InspectedLogBookPageDataDto> result = await DependencyService.Resolve<IRestClient>().GetAsync<InspectedLogBookPageDataDto>("InspectionData/GetInspectedLogBookPageData", new { logBookPageId, type });
+                    if (result.IsSuccessful)
+                    {
+                        ConnectedDeclarations = result.Content;
+
+                        DocumentOriginNumber.AssignFrom(ConnectedDeclarations.ShipLogBookPageNumber);
+                        LogBookPageOriginDate.AssignFrom(ConnectedDeclarations.ShipPageFillDate);
+
+                        if (dto.LogBookType != DeclarationLogBookType.TransportationLogBook && ConnectedDeclarations.TransportationLogBookPageId != null)
+                        {
+                            DocumentTransportNumber.AssignFrom(ConnectedDeclarations.TransportationLogBookPageNumber);
+                            DocumentTransportDate.AssignFrom(ConnectedDeclarations.TransportationPageLoadingDate);
+                        }
+
+                        if (dto.LogBookType != DeclarationLogBookType.AdmissionLogBook && ConnectedDeclarations.AdmissionLogBookPageId != null)
+                        {
+                            DocumentAdmissionNumber.AssignFrom(ConnectedDeclarations.AdmissionLogBookPageNumber);
+                            DeclarationAdmissionDate.AssignFrom(ConnectedDeclarations.AdmissionPageHandoverDate);
+                        }
+
+                        if (dto.LogBookType != DeclarationLogBookType.FirstSaleLogBook && ConnectedDeclarations.FirstSaleLogBookPageId != null)
+                        {
+                            DocumentFirstSaleNumber.AssignFrom(ConnectedDeclarations.FirstSaleLogBookPageNumber);
+                            DocumentFirstSaleDate.AssignFrom(ConnectedDeclarations.FirstSalePageSaleDate);
+                        }
+
+                        if (dto.LogBookType != DeclarationLogBookType.AquacultureLogBook && ConnectedDeclarations.AquacultureLogBookPageId != null)
+                        {
+                            DocumentAquacultureNumber.AssignFrom(ConnectedDeclarations.AquacultureLogBookPageNumber);
+                            DocumentAquacultureDate.AssignFrom(ConnectedDeclarations.AquaculturePageFillingDate);
+                        }
+                    }
                 }
             }
         }
@@ -467,29 +607,34 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.DeclarationCatchDialo
         private Task OnSave()
         {
             Validation.Force();
-            var a = Validation.ValidStates.Where(x => x.Value.IsValid == false);
             if (Validation.IsValid)
             {
+                DeclarationLogBookType type = ParseHelper.ParseEnum<DeclarationLogBookType>(DeclarationType.Value.Code).Value;
                 return HideDialog(new DeclarationCatchModel
                 {
-                    Type = FishType.Value?.DisplayValue,
-                    Presentation = Presentation.Value?.Name,
-                    Dto = new InspectedDeclarationCatchDto
+                    DocumentType = TranslateExtension.Translator[nameof(GroupResourceEnum.DeclarationCatch) + $"/{type.ToString()}"],
+                    PageNumber = LogBookPage.Value.Num,
+                    PageDate = LogBookPageDate.Value.Value,
+                    Information = string.Join(", ", DeclarationCatches.Value.Select(x =>
                     {
-                        Id = Edit?.Dto.Id,
-                        CatchQuantity = ParseHelper.ParseDecimal(CatchQuantity.Value),
-                        CatchCount = ParseHelper.ParseInteger(CatchCount.Value),
-                        FishTypeId = FishType.Value,
-                        PresentationId = Presentation.Value,
+                        return $"{FishTypes.Where(f => f.Id == x.FishTypeId).First().DisplayValue} - {x.CatchQuantity:f2}кг";
+                    }).ToArray()),
+                    InspectionLogBookPage = new InspectionLogBookPageDto
+                    {
+                        Id = Edit?.InspectionLogBookPage.Id,
                         OriginShip = InspectedShip,
-                        LogBookType = ParseHelper.ParseEnum<DeclarationLogBookType>(DeclarationType.Value?.Code),
-                        LogBookPageId = LogBookPage.Value?.Id,
+                        LogBookType = type,
+                        FirstSaleLogBookPageId = type == DeclarationLogBookType.FirstSaleLogBook ? LogBookPage.Value?.Id : null,
+                        TransportationLogBookPageId = type == DeclarationLogBookType.TransportationLogBook ? LogBookPage.Value?.Id : null,
+                        AdmissionLogBookPageId = type == DeclarationLogBookType.AdmissionLogBook ? LogBookPage.Value?.Id : null,
+                        ShipLogBookPageId = type == DeclarationLogBookType.ShipLogBook ? LogBookPage.Value?.Id : null,
+                        AquacultureLogBookPageId = type == DeclarationLogBookType.AquacultureLogBook ? LogBookPage.Value?.Id : null,
                         UnregisteredPageNum = LogBookPage.Value?.Num,
                         UnregisteredPageDate = LogBookPageDate.Value,
                         UnregisteredLogBookNum = LogBookNum.Value,
                         AquacultureId = Aquaculture.Value?.Id,
                         UnregisteredEntityData = SubjectType == DeclarationLogBookType.AquacultureLogBook ? UnregisteredAquaculture.Value : InvoiceInformation.Value,
-                        Undersized = UndersizedFish,
+                        InspectionCatchMeasures = DeclarationCatches.Value.ToList(),
                     }
                 });
             }

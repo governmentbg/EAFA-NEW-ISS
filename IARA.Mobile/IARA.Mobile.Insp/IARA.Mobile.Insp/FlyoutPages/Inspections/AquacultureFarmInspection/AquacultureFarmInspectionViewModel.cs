@@ -92,6 +92,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.AquacultureFarmInspection
 
         public ValidStateValidatableTable<ToggleViewModel> InspectionToggles { get; set; }
 
+        [Required]
         public ValidStateLocation Location { get; set; }
 
         [Required]

@@ -12,36 +12,25 @@
         Title="{rt:Translate Catches, Group=DeclarationCatch}"
         ValidState="{Binding Catches}">
     <tl:TLResponsiveTable.TableColumns>
-        <tl:TLTableColumn Text="{rt:Translate Type, Group=DeclarationCatch}" Width="*" />
-        <tl:TLTableColumn Text="{rt:Translate CatchType, Group=DeclarationCatch}"
-                Width="150"
-                IsVisible="{Binding HasCatchType}" />
-        <tl:TLTableColumn Text="{rt:Translate CatchQuantity, Group=CatchInspection}" Width="150" />
-        <tl:TLTableColumn Text="{rt:Translate UnloadedQuantity, Group=DeclarationCatch}" Width="150" />
-        <tl:TLTableColumn Text="{rt:Translate Presentation, Group=DeclarationCatch}" Width="150" />
-        <tl:TLTableColumn Text="{rt:Translate CatchZone, Group=DeclarationCatch}" Width="150" />
+        <tl:TLTableColumn Text="{rt:Translate DocumentType, Group=DeclarationCatch}" Width="*" />
+        <tl:TLTableColumn Text="{rt:Translate PageNumber, Group=DeclarationCatch}" Width="*" />
+        <tl:TLTableColumn Text="{rt:Translate PageDate, Group=DeclarationCatch}" Width="*" />
+        <tl:TLTableColumn Text="{rt:Translate Information, Group=DeclarationCatch}" Width="2*" />
         <tl:TLTableColumn Width="{Binding BindingContext.Inspection.ActivityType, Converter={StaticResource ReviewDialogToWidth}, ConverterParameter=140, Source={Reference view}}" />
     </tl:TLResponsiveTable.TableColumns>
     <tl:TLResponsiveTable.DefaultItemTemplate>
         <DataTemplate>
             <tl:TLTableRow x:DataType="m:DeclarationCatchModel">
-                <Label Text="{Binding Type}"
+                <Label Text="{Binding DocumentType}"
                         LineBreakMode="WordWrap"
                         VerticalOptions="Center" />
-                <Label Text="{Binding CatchType}"
-                        LineBreakMode="WordWrap"
-                        VerticalOptions="Center"
-                        IsVisible="{Binding BindingContext.HasCatchType, Source={Reference view}}" />
-                <Label Text="{Binding Dto.CatchQuantity}"
+                <Label Text="{Binding PageNumber}"
                         LineBreakMode="WordWrap"
                         VerticalOptions="Center" />
-                <Label Text="{Binding Dto.UnloadedQuantity}"
+                <Label Text="{Binding PageDate, Converter={StaticResource DateTimeToString}}"
                         LineBreakMode="WordWrap"
                         VerticalOptions="Center" />
-                <Label Text="{Binding Presentation}"
-                        LineBreakMode="WordWrap"
-                        VerticalOptions="Center" />
-                <Label Text="{Binding CatchZone}"
+                <Label Text="{Binding Information}"
                         LineBreakMode="WordWrap"
                         VerticalOptions="Center" />
                 <StackLayout Orientation="Horizontal" VerticalOptions="Start">
