@@ -3,8 +3,7 @@
      fxLayout="column"
      fxLayoutGap="1em">
     <!-- Данни за билета -->
-    <tl-card *ngIf="!dialogData?.showOnlyRegiXData"
-             tooltipResourceName="recreational-fishing.ticket-info-helper">
+    <tl-card tooltipResourceName="recreational-fishing.ticket-info-helper">
         <tl-card-title>{{ 'recreational-fishing.ticket-info' | tlTranslate }}</tl-card-title>
 
         <tl-card-content fxLayout="column" fxLayoutGap="1em">
@@ -29,7 +28,7 @@
             </div>
 
             <!-- Регистров запис -->
-            <div *ngIf="isRegisterEntry; else isNotRegisterEntry" fxLayout="row wrap" fxLayoutAlign="space-between center" fxLayoutGap="1em 0em grid">
+            <div *ngIf="isRegisterEntry || isIssuedEntry; else isNotRegisterEntry" fxLayout="row wrap" fxLayoutAlign="space-between center" fxLayoutGap="1em 0em grid">
                 <tl-input fxFlex="25"
                           fxFlex.lt-md="50"
                           fxFlex.lt-sm="100"

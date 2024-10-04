@@ -217,7 +217,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.VehicleInspection
                 await InspectionGeneralInfo.OnEdit(Edit);
                 InspectionFiles.OnEdit(Edit);
                 Signatures.OnEdit(Edit.Files, fileTypes);
-                Catches.OnEdit(Edit.CatchMeasures);
+                Catches.OnEdit(Edit.InspectionLogBookPages);
                 Owner.OnEdit(Edit.Personnel);
                 Driver.OnEdit(Edit.Personnel);
                 Buyer.OnEdit(Edit.Personnel);
@@ -296,7 +296,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.VehicleInspection
                             .ToList(),
                         IsOfflineOnly = IsLocal,
                         CountryId = Country.Value,
-                        CatchMeasures = Catches,
+                        InspectionLogBookPages = Catches,
                         IsSealed = IsSealed,
                         SealCondition = SealCondition,
                         SealInstitutionId = InstitutionWhoPutTheSeals.Value,
@@ -320,6 +320,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.VehicleInspection
                             AdditionalInfo.ObservationsOrViolations,
                         }.Where(f => !string.IsNullOrWhiteSpace(f.Text)).ToList(),
                         ViolatedRegulations = AdditionalInfo.ViolatedRegulations.ViolatedRegulations.Value.Select(x => (AuanViolatedRegulationDto)x).ToList(),
+                        IsActive = true,
                     };
                     List<FileModel> signatures = null;
                     if (submitType == SubmitType.Finish)

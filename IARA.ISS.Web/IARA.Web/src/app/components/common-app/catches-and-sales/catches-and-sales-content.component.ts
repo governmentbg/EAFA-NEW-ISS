@@ -400,7 +400,7 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
                             const row = rows!.find(x => x.id!.toString() === iconButton.getAttribute('data-logbook-id'));
 
                             if (row !== null && row !== undefined) {
-                                if (iconButton.getAttribute('no-enable') === 'true' && (!row.allowNewLogBookPages && (row.isShipForbiddenForPages || row.isLogBookFinished || row.isLogBookSuspended))) {
+                                if (iconButton.getAttribute('no-enable') === 'true' && (!row.allowNewLogBookPages && (row.isLogBookFinished || row.isLogBookSuspended))) {
                                     const button = iconButton.getElementsByTagName('button')[0];
 
                                     button.disabled = true;

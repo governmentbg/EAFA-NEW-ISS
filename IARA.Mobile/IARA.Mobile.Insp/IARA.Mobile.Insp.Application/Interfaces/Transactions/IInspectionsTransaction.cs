@@ -27,7 +27,7 @@ namespace IARA.Mobile.Insp.Application.Interfaces.Transactions
 
         List<RecentInspectorDto> GetRecentInspectors();
 
-        Task<List<InspectionDto>> GetAll(int page, InspectionsFilters filters = null);
+        Task<List<InspectionDto>> GetAll(int page, InspectionsFilters filters = null, bool reset = false);
 
         int GetPageCount(InspectionsFilters filters = null);
 
@@ -79,5 +79,6 @@ namespace IARA.Mobile.Insp.Application.Interfaces.Transactions
         void ReturnForEdit(int id);
         int GetInspectionStateId(InspectionState inspectionState);
         int GetUnsignedInspectionCount();
+        Task<InspectedLogBookPageDataDto> GetInspectedLogBookPageData(DeclarationLogBookType type, int logBookPageId);
     }
 }

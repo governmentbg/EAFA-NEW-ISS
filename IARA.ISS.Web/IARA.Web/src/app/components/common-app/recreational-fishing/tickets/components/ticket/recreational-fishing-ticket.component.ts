@@ -80,6 +80,7 @@ export class RecreationalFishingTicketComponent extends CustomFormControl<Recrea
     public isDialog: boolean = false;
     public refreshFileTypes: Subject<void> = new Subject<void>();
     public isRegisterEntry: boolean = false;
+    public isIssuedEntry: boolean = false;
     public isDuplicate: boolean = false;
     public isPaid: boolean = false;
     public isOnlinePayment: boolean = false;
@@ -194,6 +195,11 @@ export class RecreationalFishingTicketComponent extends CustomFormControl<Recrea
                         this.regixChecksData = result.regiXDataModel;
                         this.setupValidators();
                         this.writeValue(result.dialogDataModel!);
+                        this.isIssuedEntry = true;
+
+                        if (result.dialogDataModel!.price !== undefined && result.dialogDataModel!.price !== null) {
+                            this.price = result.dialogDataModel!.price;
+                        }
 
                         if (result.dialogDataModel!.personPhoto !== null && result.dialogDataModel!.personPhoto !== undefined) {
                             this.personPhotoMethod = this.service.getPhoto.bind(this.service, result.dialogDataModel!.personPhoto.id!);
@@ -211,6 +217,7 @@ export class RecreationalFishingTicketComponent extends CustomFormControl<Recrea
                             }
                         }
 
+                        this.form.get('validFromControl')!.clearValidators();
                         this.form.get('filesControl')?.disable();
                         this.form.get('deliveryTerritoryUnitControl')?.disable();
                     }
@@ -788,7 +795,7 @@ export class RecreationalFishingTicketComponent extends CustomFormControl<Recrea
             this.form.get('telkNumControl')!.clearValidators();
             this.form.get('telkValidToControl')!.clearValidators();
         }
-        
+
         this.form.updateValueAndValidity({ emitEvent: false });
     }
 

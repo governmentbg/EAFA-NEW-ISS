@@ -105,6 +105,8 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
 
     private gridManager!: DataTableManager<InspectionDTO, InspectionsFilters>;
 
+    private readonly fluxReportInspectionTypes: InspectionTypesEnum[] = [];
+
     private readonly service: InspectionsService;
     private readonly nomenclatures: CommonNomenclatures;
     private readonly router: Router;
@@ -151,6 +153,15 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
         this.canEditLockedInspections = permissions.has(PermissionsEnum.InspectionLockedEdit);
 
         this.userId = authService.User!.userId!;
+
+        this.fluxReportInspectionTypes = [
+            InspectionTypesEnum.IBP,
+            InspectionTypesEnum.ITB,
+            InspectionTypesEnum.IBS,
+            InspectionTypesEnum.IFS,
+            InspectionTypesEnum.IVH,
+            InspectionTypesEnum.OFS
+        ];
 
         this.buildForm();
     }
@@ -478,13 +489,26 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
                     if (this.canDownloadRecords) {
                         rightSideButtons.push({
                             id: 'print',
-                            color: 'primary',
+                            color: 'accent',
                             translateValue: 'inspections.print-inspection',
                             isVisibleInViewMode: true,
                         });
-                        //TODO Add export btn
                     }
                 }
+            }
+
+            if (this.canExportRecords
+                && (this.shipId === null || this.shipId === undefined)
+                && entry.inspectionState === InspectionStatesEnum.Signed
+                && this.fluxReportInspectionTypes.includes(entry.inspectionType!)
+            ) {
+                rightSideButtons.push({
+                    id: 'send-to-flux',
+                    color: 'accent',
+                    translateValue: 'inspections.send-inspection-to-flux',
+                    icon: { id: 'send' },
+                    isVisibleInViewMode: true
+                });
             }
 
             //ако няма правото за връщане за редакция, може да коригира само своите инспекции, ако не са минали 48 часа от създаването им
@@ -495,10 +519,10 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
             ) {
                 rightSideButtons.push({
                     id: 'more-corrections-needed',
-                    color: 'primary',
+                    color: 'accent',
                     translateValue: 'inspections.confirm-need-for-corrections',
                     icon: { id: 'ic-fluent-doc-person-20-regular', size: this.icIconSize },
-                    isVisibleInViewMode: true,
+                    isVisibleInViewMode: true
                 });
             }
 

@@ -46,6 +46,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.InspectionWater
             InspectionFiles = new InspectionFilesViewModel(this);
             AdditionalInfo = new AdditionalInfoViewModel(this);
             Signatures = new SignaturesViewModel(this);
+            Toggles = new ValidationTogglesViewModel(this);
 
             AddOffender = CommandBuilder.CreateFrom(OnAddOffender);
             ViewOffender = CommandBuilder.CreateFrom<InspectionSubjectPersonnelDto>(OnViewOffender);
@@ -63,6 +64,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.InspectionWater
                 InspectionFiles,
                 AdditionalInfo,
                 Signatures,
+                Toggles
             });
         }
         public InspectionCheckWaterObjectDto Edit
@@ -86,9 +88,9 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.InspectionWater
         public InspectionFilesViewModel InspectionFiles { get; }
         public AdditionalInfoViewModel AdditionalInfo { get; }
         public SignaturesViewModel Signatures { get; }
-        public List<SelectNomenclatureDto> Counties { get; set; }
+        public ValidationTogglesViewModel Toggles { get; set; }
 
-        public ValidStateValidatableTable<ToggleViewModel> Toggles { get; set; }
+        public List<SelectNomenclatureDto> Counties { get; set; }
 
         [Required]
         [MaxLength(500)]
@@ -149,7 +151,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.InspectionWater
 
             WaterTypes = nomTransaction.GetWaterBodyTypes();
 
-            Toggles.Value.AddRange(
+            Toggles.Toggles.Value.AddRange(
                 checkTypes.ConvertAll(f => new ToggleViewModel(f.IsMandatory, f.HasDescription)
                 {
                     CheckTypeId = f.Id,
@@ -171,7 +173,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.InspectionWater
                 Signatures.OnEdit(Edit.Files, fileTypes);
                 AdditionalInfo.OnEdit(Edit);
 
-                Toggles.AssignFrom(Edit.Checks);
+                Toggles.Toggles.AssignFrom(Edit.Checks);
 
                 if (Edit.FishingGears?.Count > 0)
                 {
@@ -334,7 +336,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.InspectionWater
                         Engines = Engines,
                         PatrolVehicles = PatrolVehicles,
                         ObjectName = ObjectName,
-                        Checks = Toggles
+                        Checks = Toggles.Toggles
                             .Select(f => (InspectionCheckDto)f)
                             .Where(f => f != null)
                             .ToList(),

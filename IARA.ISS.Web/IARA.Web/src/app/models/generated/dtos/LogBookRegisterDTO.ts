@@ -76,9 +76,6 @@ export class LogBookRegisterDTO {
     public shipPages?: ShipLogBookPageRegisterDTO[];
 
     @StrictlyTyped(Boolean)
-    public isShipForbiddenForPages?: boolean;
-
-    @StrictlyTyped(Boolean)
     public hasLogBookPermitLicenses?: boolean;
 
     @StrictlyTyped(AdmissionLogBookPageRegisterDTO)

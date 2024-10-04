@@ -398,6 +398,15 @@ export class InspectionsService extends BaseAuditService {
         return this.requestService.downloadPost(this.area, this.controller, service, '', id);
     }
 
+    public sendInspectionToFlux(inspectionId: number): Observable<void> {
+        const params = new HttpParams().append('inspectionId', inspectionId.toString());
+
+        return this.requestService.post(this.area, this.controller, 'SendInspectionToFlux', undefined, {
+            httpParams: params,
+            successMessage: 'inspection-sent-to-flux-success'
+        });
+    }
+
     public unregisteredInspectorExists(inspector: InspectorDuringInspectionDTO): Observable<boolean> {
         return this.requestService.post(this.area, this.controller, 'UnregisteredInspectorExists', inspector);
     }

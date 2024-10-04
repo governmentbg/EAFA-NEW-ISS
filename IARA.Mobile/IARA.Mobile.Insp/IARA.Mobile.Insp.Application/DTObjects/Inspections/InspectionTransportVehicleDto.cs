@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using IARA.Mobile.Application.DTObjects.Common;
+﻿using IARA.Mobile.Application.DTObjects.Common;
+using System.Collections.Generic;
 
 namespace IARA.Mobile.Insp.Application.DTObjects.Inspections
 {
@@ -18,6 +18,7 @@ namespace IARA.Mobile.Insp.Application.DTObjects.Inspections
         public string InspectionAddress { get; set; }
         public LocationDto InspectionLocation { get; set; }
         public string TransportDestination { get; set; }
-        public List<InspectedDeclarationCatchDto> CatchMeasures { get; set; }
+        public List<InspectionLogBookPageDto> InspectionLogBookPages { get; set; }
+
     }
 }

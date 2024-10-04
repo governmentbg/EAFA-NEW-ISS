@@ -1,5 +1,6 @@
-﻿using System;
-using IARA.Mobile.Insp.Domain.Enums;
+﻿using IARA.Mobile.Insp.Domain.Enums;
+using System;
+using System.Collections.Generic;
 
 namespace IARA.Mobile.Insp.Application.DTObjects.Inspections.API
 {
@@ -11,6 +12,7 @@ namespace IARA.Mobile.Insp.Application.DTObjects.Inspections.API
         public InspectionType InspectionType { get; set; }
         public InspectionState InspectionState { get; set; }
         public string Inspectors { get; set; }
+        public List<int> InspectorsIds { get; set; }
         public string InspectionSubjects { get; set; }
         public DateTime LastUpdateDate { get; set; }
         public bool CreatedByCurrentUser { get; set; } = true;

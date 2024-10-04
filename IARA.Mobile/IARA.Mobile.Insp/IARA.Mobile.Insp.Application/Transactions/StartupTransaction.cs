@@ -31,12 +31,14 @@ namespace IARA.Mobile.Insp.Application.Transactions
     {
         private readonly INomenclatureDates nomenclatureDates;
         private readonly IMobileInfo mobileInfo;
+        private readonly ICurrentUser currentUser;
 
-        public StartupTransaction(BaseTransactionProvider provider, INomenclatureDates nomenclatureDates, IMobileInfo mobileInfo)
+        public StartupTransaction(BaseTransactionProvider provider, INomenclatureDates nomenclatureDates, IMobileInfo mobileInfo, ICurrentUser currentUser)
             : base(provider)
         {
             this.nomenclatureDates = nomenclatureDates ?? throw new ArgumentNullException(nameof(nomenclatureDates));
             this.mobileInfo = mobileInfo ?? throw new ArgumentNullException(nameof(mobileInfo));
+            this.currentUser = currentUser ?? throw new ArgumentNullException(nameof(mobileInfo));
         }
 
         public Task<bool> HealthCheck()
@@ -225,6 +227,7 @@ namespace IARA.Mobile.Insp.Application.Transactions
                     nomenclatureDates,
                     DateTimeProvider,
                     ContextBuilder,
+                    currentUser,
                     inspNoms[i],
                     personsToPull,
                     legalsToPull,

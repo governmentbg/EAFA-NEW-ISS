@@ -17,33 +17,6 @@ export class RecreationalFishingTicketDTO extends RecreationalFishingTicketBaseR
         }
     }
   
-    @StrictlyTyped(String)
-    public ticketNum?: string;
-
-    @StrictlyTyped(String)
-    public paperNum?: string;
-
-    @StrictlyTyped(String)
-    public duplicateOfTicketNum?: string;
-
-    @StrictlyTyped(Number)
-    public typeId?: number;
-
-    @StrictlyTyped(Number)
-    public periodId?: number;
-
-    @StrictlyTyped(Number)
-    public price?: number;
-
-    @StrictlyTyped(Date)
-    public validFrom?: Date;
-
-    @StrictlyTyped(Date)
-    public validTo?: Date;
-
-    @StrictlyTyped(Date)
-    public issuedOn?: Date;
-
     @StrictlyTyped(RecreationalFishingMembershipCardDTO)
     public membershipCard?: RecreationalFishingMembershipCardDTO;
 

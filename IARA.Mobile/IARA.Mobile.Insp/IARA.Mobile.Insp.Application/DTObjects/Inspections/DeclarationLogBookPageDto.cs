@@ -17,5 +17,7 @@ namespace IARA.Mobile.Insp.Application.DTObjects.Inspections
         public DateTime? LogBookPageOriginDate { get; set; }
 
         public string DisplayValue => Num;
+
+        public DeclarationLogBookType LogBookType { get; set; }
     }
 }

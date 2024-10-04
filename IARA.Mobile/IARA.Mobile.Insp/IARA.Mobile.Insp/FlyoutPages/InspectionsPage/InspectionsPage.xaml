@@ -9,6 +9,7 @@
         xmlns:local="clr-namespace:IARA.Mobile.Insp.FlyoutPages.InspectionsPage"
         xmlns:rt="clr-namespace:TechnoLogica.Xamarin.ResourceTranslator;assembly=TechnoLogica.Xamarin"
         xmlns:sv="clr-namespace:IARA.Mobile.Shared.Views;assembly=IARA.Mobile.Shared"
+        xmlns:nom="clr-namespace:IARA.Mobile.Insp.Application.DTObjects.Nomenclatures;assembly=IARA.Mobile.Insp.Application"
         xmlns:tl="clr-namespace:TechnoLogica.Xamarin.Controls;assembly=TechnoLogica.Xamarin"
         xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
         x:Name="page"
@@ -48,11 +49,18 @@
                         <xct:Expander Margin="7">
                             <xct:Expander.Header>
                                 <Frame>
-                                    <Label Text="{rt:Translate Filters, Group=Inspections}" HorizontalOptions="Start" />
+                                    <StackLayout Orientation="Horizontal" VerticalOptions="Center">
+                                        <Label Text="{rt:Translate Filters, Group=Inspections}"
+                                                HorizontalOptions="Start"
+                                                VerticalOptions="Center" />
+                                        <BoxView HorizontalOptions="FillAndExpand" HeightRequest="1" />
+                                        <Image Source="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Filter}, Size=25, Color={StaticResource SecondaryDark}}" VerticalOptions="Center" />
+
+                                    </StackLayout>
                                 </Frame>
                             </xct:Expander.Header>
                             <Frame Margin="0,4">
-                                <StackLayout Orientation="Vertical">
+                                <StackLayout Orientation="Vertical" Spacing="12">
                                     <tl:TLFlex GrowUnit="200">
                                         <tl:TLDatePicker Title="{rt:Translate StarDate, Group=Inspections}" ValidState="{Binding StartDate}" />
                                         <tl:TLDatePicker Title="{rt:Translate EndDate, Group=Inspections}" ValidState="{Binding EndDate}" />
@@ -61,19 +69,48 @@
                                                 DisplayValue="DisplayValue"
                                                 DialogTitle="{rt:Translate InspectionState, Group=Common}"
                                                 Title="{rt:Translate InspectionState, Group=Common}" />
+                                        <lc:CustomInfinitePicker Title="{rt:Translate Inspector, Group=GeneralInfo}"
+                                                ValidState="{Binding Inspector}">
+                                            <DataTemplate>
+                                                <Grid x:DataType="nom:InspectorNomenclatureDto"
+                                                        RowDefinitions="Auto,Auto,1"
+                                                        RowSpacing="0">
+                                                    <Label Margin="5,5,5,0" Text="{Binding Name}" />
+                                                    <StackLayout Grid.Row="1"
+                                                            Margin="5,0,5,10"
+                                                            Orientation="Horizontal">
+                                                        <Label Text="{Binding Code}" />
+                                                        <tl:TLRichLabel IsVisible="{Binding IsCurrentUser}">
+                                                            <Span Text=" (" />
+                                                            <Span Text="{rt:Translate CurrentInspector, Group=GeneralInfo}" />
+                                                            <Span Text=")" />
+                                                        </tl:TLRichLabel>
+                                                    </StackLayout>
+                                                    <BoxView Grid.Row="2"
+                                                            Margin="5,0"
+                                                            Color="LightGray" />
+                                                </Grid>
+                                            </DataTemplate>
+                                        </lc:CustomInfinitePicker>
                                         <tl:TLEntry ValidState="{Binding ReportNumber}" Title="{rt:Translate ReportNumber, Group=Common}" />
-                                        <tl:TLCheckView ValidState="{Binding ShowIsnpectionCratedByCurrentUser}" Text="{rt:Translate ShowIsnpectionCratedByCurrentUser, Group=Common}" />
                                     </tl:TLFlex>
-                                    <StackLayout Orientation="Horizontal">
-                                        <Button Text="{rt:Translate Clear, Group=Inspections}"
-                                                WidthRequest="130"
-                                                Command="{Binding ClearFilters}"
-                                                BackgroundColor="{StaticResource Secondary}" />
+                                    <StackLayout>
+                                        <StackLayout Orientation="Horizontal">
 
-                                        <BoxView HorizontalOptions="FillAndExpand" />
-                                        <Button Text="{rt:Translate Filter, Group=Inspections}"
-                                                WidthRequest="130"
-                                                Command="{Binding Filter}" />
+                                            <Button Text="{rt:Translate Clear, Group=Inspections}"
+                                                    WidthRequest="130"
+                                                    Command="{Binding ClearFilters}"
+                                                    BackgroundColor="{StaticResource Secondary}" />
+
+                                            <BoxView HorizontalOptions="FillAndExpand" HeightRequest="1" />
+                                            <Button Text="{rt:Translate Filter, Group=Inspections}"
+                                                    WidthRequest="130"
+                                                    Command="{Binding Filter}" />
+                                        </StackLayout>
+
+                                        <Button Text="{rt:Translate ReloadInspections, Group=GeneralInfo}"
+                                                BackgroundColor="{StaticResource Secondary}"
+                                                Command="{Binding ResetInspections}" />
                                     </StackLayout>
                                 </StackLayout>
 

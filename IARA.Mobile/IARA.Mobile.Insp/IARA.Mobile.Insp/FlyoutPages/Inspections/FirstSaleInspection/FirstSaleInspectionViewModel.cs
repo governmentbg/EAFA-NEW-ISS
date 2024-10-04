@@ -163,7 +163,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FirstSaleInspection
                 await InspectionGeneralInfo.OnEdit(Edit);
                 InspectionFiles.OnEdit(Edit);
                 Signatures.OnEdit(Edit.Files, fileTypes);
-                Catches.OnEdit(Edit.CatchMeasures);
+                Catches.OnEdit(Edit.InspectionLogBookPages);
                 Owner.OnEdit(Edit.Personnel);
                 Representative.OnEdit(Edit.Personnel);
                 Importer.OnEdit(Edit.Personnel);
@@ -240,7 +240,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FirstSaleInspection
                             .Where(f => f != null)
                             .ToList(),
                         IsOfflineOnly = IsLocal,
-                        CatchMeasures = Catches,
+                        InspectionLogBookPages = Catches,
                         RepresentativeComment = RepresentativeComment,
                         SubjectAddress = SubjectAddress,
                         SubjectName = SubjectName,
@@ -256,6 +256,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FirstSaleInspection
                             CatchObservationsOrViolations,
                         }.Where(f => !string.IsNullOrWhiteSpace(f.Text)).ToList(),
                         ViolatedRegulations = AdditionalInfo.ViolatedRegulations.ViolatedRegulations.Value.Select(x => (AuanViolatedRegulationDto)x).ToList(),
+                        IsActive = true,
                     };
                     List<FileModel> signatures = null;
                     if (submitType == SubmitType.Finish)

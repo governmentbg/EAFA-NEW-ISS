@@ -1,67 +1,67 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
-  <PropertyGroup Label="Globals">
-    <SccProjectName>SAK</SccProjectName>
-    <SccProvider>SAK</SccProvider>
-    <SccAuxPath>SAK</SccAuxPath>
-    <SccLocalPath>SAK</SccLocalPath>
-  </PropertyGroup>
+    <PropertyGroup Label="Globals">
+        <SccProjectName>SAK</SccProjectName>
+        <SccProvider>SAK</SccProvider>
+        <SccAuxPath>SAK</SccAuxPath>
+        <SccLocalPath>SAK</SccLocalPath>
+    </PropertyGroup>
 
-  <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-    <RuntimeIdentifiers>win-x64;win10-x64;linux-x64;rhel-x64;</RuntimeIdentifiers>
-    <Nullable>disable</Nullable>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <RuntimeIdentifiers>win-x64;linux-x64;</RuntimeIdentifiers>
+        <Nullable>disable</Nullable>
+    </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Test|AnyCPU'">
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-  </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Test|AnyCPU'">
+        <DefineConstants>DEBUG;TRACE</DefineConstants>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.DependencyValidation.Analyzers" Version="0.11.0" />
-    <PackageReference Include="Microsoft.TypeScript.MSBuild" Version="4.0.6">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Microsoft.DependencyValidation.Analyzers" Version="0.11.0" />
+        <PackageReference Include="Microsoft.TypeScript.MSBuild" Version="4.0.6">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+    </ItemGroup>
 
-  <!--<ItemGroup>
+    <!--<ItemGroup>
     <Content Include="tsconfig.json" />
   </ItemGroup>-->
 
-  <ItemGroup>
-    <Compile Remove="e2e\**" />
-    <Content Remove="e2e\**" />
-    <EmbeddedResource Remove="e2e\**" />
-    <None Remove="e2e\**" />
-    <TypeScriptCompile Remove="e2e\**" />
+    <ItemGroup>
+        <Compile Remove="e2e\**" />
+        <Content Remove="e2e\**" />
+        <EmbeddedResource Remove="e2e\**" />
+        <None Remove="e2e\**" />
+        <TypeScriptCompile Remove="e2e\**" />
 
 
-    <Compile Remove="out-tsc\**" />
-    <Content Remove="out-tsc\**" />
-    <EmbeddedResource Remove="out-tsc\**" />
-    <None Remove="out-tsc\**" />
-    <TypeScriptCompile Remove="out-tsc\**" />
+        <Compile Remove="out-tsc\**" />
+        <Content Remove="out-tsc\**" />
+        <EmbeddedResource Remove="out-tsc\**" />
+        <None Remove="out-tsc\**" />
+        <TypeScriptCompile Remove="out-tsc\**" />
 
-    <Compile Remove="wwwroot\**" />
-    <Content Remove="wwwroot\**" />
-    <EmbeddedResource Remove="wwwroot\**" />
-    <None Remove="wwwroot\**" />
+        <Compile Remove="wwwroot\**" />
+        <Content Remove="wwwroot\**" />
+        <EmbeddedResource Remove="wwwroot\**" />
+        <None Remove="wwwroot\**" />
 
-    <Compile Remove="node_modules\**" />
-    <Content Remove="node_modules\**" />
-    <EmbeddedResource Remove="node_modules\**" />
-    <None Remove="node_modules\**" />
-    <TypeScriptCompile Remove="node_modules\**" />
-  </ItemGroup>
+        <Compile Remove="node_modules\**" />
+        <Content Remove="node_modules\**" />
+        <EmbeddedResource Remove="node_modules\**" />
+        <None Remove="node_modules\**" />
+        <TypeScriptCompile Remove="node_modules\**" />
+    </ItemGroup>
 
-  <ItemGroup>
-    <None Remove="IARA.Web.csproj.vspscc" />
-  </ItemGroup>
+    <ItemGroup>
+        <None Remove="IARA.Web.csproj.vspscc" />
+    </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="src\app\shared\models\" />
-    <Folder Include="src\assets\icons\payment\" />
-  </ItemGroup>
+    <ItemGroup>
+        <Folder Include="src\app\shared\models\" />
+        <Folder Include="src\assets\icons\payment\" />
+    </ItemGroup>
 
 </Project>

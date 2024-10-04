@@ -1,7 +1,7 @@
-﻿using System;
-using IARA.Mobile.Domain.Interfaces;
+﻿using IARA.Mobile.Domain.Interfaces;
 using IARA.Mobile.Insp.Domain.Enums;
 using SQLite;
+using System;
 
 namespace IARA.Mobile.Insp.Domain.Entities.Inspections
 {
@@ -21,6 +21,7 @@ namespace IARA.Mobile.Insp.Domain.Entities.Inspections
         public DateTime StartDate { get; set; }
         public bool CreatedByCurrentUser { get; set; } = true;
         public string Inspectors { get; set; }
+        public string InspectorsIds { get; set; }
         public string InspectionSubjects { get; set; }
         public bool IsStatusChanged { get; set; }
         public bool HasJsonContent { get; set; }

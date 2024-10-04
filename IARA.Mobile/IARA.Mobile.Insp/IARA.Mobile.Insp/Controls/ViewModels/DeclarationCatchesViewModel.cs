@@ -60,7 +60,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
         public ICommand Edit { get; }
         public ICommand Remove { get; }
 
-        public void OnEdit(List<InspectedDeclarationCatchDto> catches)
+        public void OnEdit(List<InspectionLogBookPageDto> catches)
         {
             if (catches == null || catches.Count == 0)
             {
@@ -76,11 +76,11 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
 
             Catches.Value.ReplaceRange(catches.ConvertAll(f => new DeclarationCatchModel
             {
-                CatchType = catchTypes.Find(s => s.Id == f.FishTypeId)?.DisplayValue,
-                Type = fishTypes.Find(s => s.Id == f.FishTypeId)?.DisplayValue,
-                CatchZone = catchZones.Find(s => s.Id == f.CatchZoneId)?.Name,
-                Presentation = presentations.Find(s => s.Id == f.PresentationId)?.Name,
-                Dto = f,
+                DocumentType = TranslateExtension.Translator[nameof(GroupResourceEnum.DeclarationCatch) + $"/{f.LogBookType.ToString()}"],
+                PageNumber = f.UnregisteredPageNum,
+                PageDate = f.UnregisteredPageDate,
+                Information = f.CatchMeasuresText,
+                InspectionLogBookPage = f
             }));
         }
 
@@ -93,7 +93,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
         {
             DeclarationCatchModel result = await TLDialogHelper.ShowDialog(new DeclarationCatchDialog(this, Inspection, HasCatchType, HasUndersizedCheck, HasUnloadedQuantity, ViewActivityType.Add, null, HasUndersizedFishControl));
 
-            if (result != null && result.Dto != null)
+            if (result != null && result.InspectionLogBookPage != null)
             {
                 Catches.Value.Add(result);
                 SetSummary();
@@ -102,37 +102,37 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
 
         public void SetSummary()
         {
-            Summary = Catches.Value.Count == 0 ?
-                "" :
-                string.Join("; ", Catches.Value.GroupBy(
-                    c => c.Dto.FishTypeId.Value,
-                    c => c.Dto,
-                    (fishType, catches) =>
-                    {
-                        if (fishType == null)
-                        {
-                            return "";
-                        }
-                        var quantity = catches.Select(ci => ci.UnloadedQuantity);
+            //Summary = Catches.Value.Count == 0 ?
+            //    "" :
+            //    string.Join("; ", Catches.Value.GroupBy(
+            //        c => c.Dto.FishTypeId.Value,
+            //        c => c.Dto,
+            //        (fishType, catches) =>
+            //        {
+            //            if (fishType == null)
+            //            {
+            //                return "";
+            //            }
+            //            var quantity = catches.Select(ci => ci.UnloadedQuantity);
 
-                        if (quantity.Count() == 0)
-                        {
-                            return "";
-                        }
-                        if (quantity.First() == null)
-                        {
-                            quantity = catches.Select(ci => ci.CatchQuantity);
-                        }
-                        return $"{_fishTypes.Where(f => f.Id == fishType).First().DisplayValue}: {quantity.Sum(x => x.HasValue ? x.Value : 0):f2} кг";
-                    }
-                ).Where(c => !string.IsNullOrEmpty(c)));
+            //            if (quantity.Count() == 0)
+            //            {
+            //                return "";
+            //            }
+            //            if (quantity.First() == null)
+            //            {
+            //                quantity = catches.Select(ci => ci.CatchQuantity);
+            //            }
+            //            return $"{_fishTypes.Where(f => f.Id == fishType).First().DisplayValue}: {quantity.Sum(x => x.HasValue ? x.Value : 0):f2} кг";
+            //        }
+            //    ).Where(c => !string.IsNullOrEmpty(c)));
         }
 
         private async Task OnEdit(DeclarationCatchModel model)
         {
             DeclarationCatchModel result = await TLDialogHelper.ShowDialog(new DeclarationCatchDialog(this, Inspection, HasCatchType, HasUndersizedCheck, HasUnloadedQuantity, ViewActivityType.Edit, model, HasUndersizedFishControl));
 
-            if (result != null && result.Dto != null)
+            if (result != null && result.InspectionLogBookPage != null)
             {
                 Catches.Value.Replace(model, result);
             }
@@ -152,10 +152,10 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
             }
         }
 
-        public static implicit operator List<InspectedDeclarationCatchDto>(DeclarationCatchesViewModel viewModel)
+        public static implicit operator List<InspectionLogBookPageDto>(DeclarationCatchesViewModel viewModel)
         {
             return viewModel.Catches
-                .Select(f => f.Dto)
+                .Select(f => f.InspectionLogBookPage)
                 .ToList();
         }
     }

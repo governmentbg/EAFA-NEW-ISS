@@ -20,7 +20,7 @@ namespace IARA.Mobile.Insp.Application.Helpers
     {
         private interface IPullData
         {
-            Task<bool> Pull(IRestClient restClient, INomenclatureDates nomenclatureDates, IDateTime dateTime, IAppDbContextBuilder contextBuilder);
+            Task<bool> Pull(IRestClient restClient, INomenclatureDates nomenclatureDates, IDateTime dateTime, IAppDbContextBuilder contextBuilder, ICurrentUser currentUser);
         }
 
         private class PullData<TDto, TEntity> : IPullData
@@ -42,7 +42,7 @@ namespace IARA.Mobile.Insp.Application.Helpers
                 this.before = before;
             }
 
-            public async Task<bool> Pull(IRestClient restClient, INomenclatureDates nomenclatureDates, IDateTime dateTime, IAppDbContextBuilder contextBuilder)
+            public async Task<bool> Pull(IRestClient restClient, INomenclatureDates nomenclatureDates, IDateTime dateTime, IAppDbContextBuilder contextBuilder, ICurrentUser currentUser)
             {
                 DateTime? date = nomenclatureDates[nomenclatureEnum];
                 DateTime now = dateTime.Now;
@@ -133,7 +133,7 @@ namespace IARA.Mobile.Insp.Application.Helpers
             }
         }
 
-        public static Task<bool> MapInspectionNomenclature(IRestClient restClient, INomenclatureDates nomenclatureDates, IDateTime dateTime, IAppDbContextBuilder contextBuilder, NomenclatureEnum nomenclatureEnum, HashSet<int> personsToPull, HashSet<int> legalsToPull, HashSet<int> personsToDelete, HashSet<int> legalsToDelete)
+        public static Task<bool> MapInspectionNomenclature(IRestClient restClient, INomenclatureDates nomenclatureDates, IDateTime dateTime, IAppDbContextBuilder contextBuilder, ICurrentUser currentUser, NomenclatureEnum nomenclatureEnum, HashSet<int> personsToPull, HashSet<int> legalsToPull, HashSet<int> personsToDelete, HashSet<int> legalsToDelete)
         {
             IPullData pullData;
 
@@ -143,7 +143,7 @@ namespace IARA.Mobile.Insp.Application.Helpers
                     pullData = PullCatches();
                     break;
                 case NomenclatureEnum.Inspector:
-                    pullData = PullInspectors();
+                    pullData = PullInspectors(currentUser);
                     break;
                 case NomenclatureEnum.PatrolVehicle:
                     pullData = PullPatrolVehicles();
@@ -197,7 +197,7 @@ namespace IARA.Mobile.Insp.Application.Helpers
                     throw new NotImplementedException($"{nameof(nomenclatureEnum)} doesn't have specified {nameof(NomenclatureEnum)} implemented ({nomenclatureEnum})");
             }
 
-            return pullData.Pull(restClient, nomenclatureDates, dateTime, contextBuilder);
+            return pullData.Pull(restClient, nomenclatureDates, dateTime, contextBuilder, currentUser);
         }
 
         private static IPullData PullCatches()
@@ -222,7 +222,7 @@ namespace IARA.Mobile.Insp.Application.Helpers
             );
         }
 
-        private static IPullData PullInspectors()
+        private static IPullData PullInspectors(ICurrentUser currentUser)
         {
             return new PullData<InspectorDto, Inspector>(
                 NomenclatureEnum.Inspector,
@@ -240,6 +240,7 @@ namespace IARA.Mobile.Insp.Application.Helpers
                     LastName = f.LastName,
                     UnregisteredPersonId = f.UnregisteredPersonId,
                     UserId = f.UserId,
+                    IsCurrentUser = f.UserId == currentUser.Id,
                     NormalizedCardNum = f.CardNum?.ToLower(),
                     NormalizedName = $"{f.FirstName} {f.MiddleName ?? string.Empty} {f.LastName}".ToLower(),
                 },
