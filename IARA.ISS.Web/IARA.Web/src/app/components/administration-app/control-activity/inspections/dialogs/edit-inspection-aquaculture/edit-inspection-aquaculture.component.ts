@@ -21,7 +21,7 @@ import { NomenclatureStore } from '@app/shared/utils/nomenclatures.store';
 import { NomenclatureTypes } from '@app/enums/nomenclature.types';
 import { ShipNomenclatureDTO } from '@app/models/generated/dtos/ShipNomenclatureDTO';
 import { TLConfirmDialog } from '@app/shared/components/confirmation-dialog/tl-confirm-dialog';
-import { InspectionSubjectPersonnelDTO } from '../../../../../../models/generated/dtos/InspectionSubjectPersonnelDTO';
+import { InspectionSubjectPersonnelDTO } from '@app/models/generated/dtos/InspectionSubjectPersonnelDTO';
 
 @Component({
     selector: 'edit-inspection-aquaculture',
@@ -60,29 +60,15 @@ export class EditInspectionAquacultureComponent extends BaseInspectionsComponent
         }
 
         const nomenclatureTables = await forkJoin([
-            NomenclatureStore.instance.getNomenclature(
-                NomenclatureTypes.Institutions, this.nomenclatures.getInstitutions.bind(this.nomenclatures), false
-            ),
-            NomenclatureStore.instance.getNomenclature(
-                NomenclatureTypes.Countries, this.nomenclatures.getCountries.bind(this.nomenclatures), false
-            ),
-            NomenclatureStore.instance.getNomenclature(
-                NomenclatureTypes.Fishes, this.nomenclatures.getFishTypes.bind(this.nomenclatures), false
-            ),
-            NomenclatureStore.instance.getNomenclature(
-                NomenclatureTypes.CatchTypes, this.nomenclatures.getCatchInspectionTypes.bind(this.nomenclatures), false
-            ),
-            NomenclatureStore.instance.getNomenclature(
-                NomenclatureTypes.CatchZones, this.nomenclatures.getCatchZones.bind(this.nomenclatures), false
-            ),
-            NomenclatureStore.instance.getNomenclature(
-                NomenclatureTypes.FishSex, this.nomenclatures.getFishSex.bind(this.nomenclatures), false
-            ),
-            NomenclatureStore.instance.getNomenclature(
-                NomenclatureTypes.TurbotSizeGroups, this.nomenclatures.getTurbotSizeGroups.bind(this.nomenclatures), false
-            ),
+            NomenclatureStore.instance.getNomenclature(NomenclatureTypes.Institutions, this.nomenclatures.getInstitutions.bind(this.nomenclatures), false),
+            NomenclatureStore.instance.getNomenclature(NomenclatureTypes.Countries, this.nomenclatures.getCountries.bind(this.nomenclatures), false),
+            NomenclatureStore.instance.getNomenclature(NomenclatureTypes.Fishes, this.nomenclatures.getFishTypes.bind(this.nomenclatures), false),
+            NomenclatureStore.instance.getNomenclature(NomenclatureTypes.CatchTypes, this.nomenclatures.getCatchInspectionTypes.bind(this.nomenclatures), false),
+            NomenclatureStore.instance.getNomenclature(NomenclatureTypes.CatchZones, this.nomenclatures.getCatchZones.bind(this.nomenclatures), false),
+            NomenclatureStore.instance.getNomenclature(NomenclatureTypes.FishSex, this.nomenclatures.getFishSex.bind(this.nomenclatures), false),
+            NomenclatureStore.instance.getNomenclature(NomenclatureTypes.TurbotSizeGroups, this.nomenclatures.getTurbotSizeGroups.bind(this.nomenclatures), false),
             this.service.getAquacultures(),
-            this.service.getCheckTypesForInspection(InspectionTypesEnum.IAQ),
+            this.service.getCheckTypesForInspection(InspectionTypesEnum.IAQ)
         ]).toPromise();
 
         this.institutions = nomenclatureTables[0];
@@ -98,9 +84,8 @@ export class EditInspectionAquacultureComponent extends BaseInspectionsComponent
 
         if (this.id !== null && this.id !== undefined) {
             this.service.get(this.id, this.inspectionCode).subscribe({
-                next: (dto: InspectionAquacultureDTO) => {
-                    this.model = dto;
-
+                next: (value: InspectionAquacultureDTO) => {
+                    this.model = value;
                     this.fillForm();
                 }
             });
@@ -179,34 +164,34 @@ export class EditInspectionAquacultureComponent extends BaseInspectionsComponent
         const generalInfo: InspectionGeneralInfoModel = this.form.get('generalInfoControl')!.value;
         const additionalInfo: InspectionAdditionalInfoModel = this.form.get('additionalInfoControl')!.value;
 
-        this.model = new InspectionAquacultureDTO({
-            id: this.model.id,
-            startDate: generalInfo.startDate,
-            endDate: generalInfo.endDate,
-            inspectors: generalInfo.inspectors,
-            reportNum: generalInfo.reportNum,
-            files: this.form.get('filesControl')!.value,
-            actionsTaken: additionalInfo?.actionsTaken,
-            administrativeViolation: additionalInfo?.administrativeViolation === true,
-            byEmergencySignal: generalInfo.byEmergencySignal,
-            inspectionType: InspectionTypesEnum.IAQ,
-            inspectorComment: additionalInfo?.inspectorComment,
-            violatedRegulations: additionalInfo?.violatedRegulations,
-            isActive: true,
-            checks: this.form.get('catchTogglesControl')!.value,
-            location: this.form.get('mapControl')!.value,
-            catchMeasures: this.form.get('catchesControl')!.value,
-            aquacultureId: this.form.get('aquacultureControl')!.value?.value,
-            representativeComment: this.form.get('representativeControl')!.value,
-            patrolVehicles: this.form.get('patrolVehiclesControl')!.value,
-            otherFishingGear: this.form.get('otherFishingGearControl')!.value,
-            observationTexts: [
-                additionalInfo?.violation,
-            ].filter(f => f !== null && f !== undefined) as InspectionObservationTextDTO[],
-            personnel: [
-                this.form.get('representerControl')!.value,
-            ].filter(f => f !== null && f !== undefined),
-        });
+        this.model.inspectionType = InspectionTypesEnum.IAQ;
+        this.model.isActive = true;
+        this.model.startDate = generalInfo.startDate;
+        this.model.endDate = generalInfo.endDate;
+        this.model.inspectors = generalInfo.inspectors;
+        this.model.reportNum = generalInfo.reportNum;
+        this.model.byEmergencySignal = generalInfo?.byEmergencySignal;
+        this.model.actionsTaken = additionalInfo?.actionsTaken;
+        this.model.administrativeViolation = additionalInfo?.administrativeViolation === true;
+        this.model.inspectorComment = additionalInfo?.inspectorComment;
+        this.model.violatedRegulations = additionalInfo?.violatedRegulations;
+
+        this.model.files = this.form.get('filesControl')!.value;
+        this.model.checks = this.form.get('catchTogglesControl')!.value;
+        this.model.location = this.form.get('mapControl')!.value;
+        this.model.catchMeasures = this.form.get('catchesControl')!.value;
+        this.model.aquacultureId = this.form.get('aquacultureControl')!.value?.value;
+        this.model.representativeComment = this.form.get('representativeControl')!.value;
+        this.model.patrolVehicles = this.form.get('patrolVehiclesControl')!.value;
+        this.model.otherFishingGear = this.form.get('otherFishingGearControl')!.value;
+
+        this.model.observationTexts = [
+            additionalInfo?.violation,
+        ].filter(x => x !== null && x !== undefined) as InspectionObservationTextDTO[];
+
+        this.model.personnel = [
+            this.form.get('representerControl')!.value,
+        ].filter(x => x !== null && x !== undefined);
     }
 
     private onAquacultureChanged(aqua: NomenclatureDTO<number> | undefined): void {

@@ -1,6 +1,6 @@
 ﻿import { Component, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { forkJoin } from 'rxjs';
 
 import { IDialogComponent } from '@app/shared/components/dialog-wrapper/interfaces/dialog-content.interface';
@@ -24,6 +24,7 @@ import { InspectionVesselActivityNomenclatureDTO } from '@app/models/generated/d
 import { InspectionObservationTextDTO } from '@app/models/generated/dtos/InspectionObservationTextDTO';
 import { ShipNomenclatureDTO } from '@app/models/generated/dtos/ShipNomenclatureDTO';
 import { TLConfirmDialog } from '@app/shared/components/confirmation-dialog/tl-confirm-dialog';
+import { TLValidators } from '@app/shared/utils/tl-validators';
 
 @Component({
     selector: 'edit-observation-at-sea',
@@ -63,40 +64,19 @@ export class EditObservationAtSeaComponent extends BaseInspectionsComponent impl
             this.form.disable();
         }
 
-        const nomenclatureTables = await forkJoin([
-            NomenclatureStore.instance.getNomenclature(
-                NomenclatureTypes.ObservationTools, this.nomenclatures.getObservationTools.bind(this.nomenclatures), false
-            ),
-            NomenclatureStore.instance.getNomenclature(
-                NomenclatureTypes.VesselActivities, this.nomenclatures.getVesselActivities.bind(this.nomenclatures), false
-            ),
-            NomenclatureStore.instance.getNomenclature(
-                NomenclatureTypes.Ships, this.nomenclatures.getShips.bind(this.nomenclatures), false
-            ),
-            NomenclatureStore.instance.getNomenclature(
-                NomenclatureTypes.Institutions, this.nomenclatures.getInstitutions.bind(this.nomenclatures), false
-            ),
-            NomenclatureStore.instance.getNomenclature(
-                NomenclatureTypes.VesselTypes, this.nomenclatures.getVesselTypes.bind(this.nomenclatures), false
-            ),
-            NomenclatureStore.instance.getNomenclature(
-                NomenclatureTypes.Countries, this.nomenclatures.getCountries.bind(this.nomenclatures), false
-            ),
+        const nomenclatureTables: (NomenclatureDTO<number>[] | InspectionObservationToolNomenclatureDTO[] | InspectionVesselActivityNomenclatureDTO[])[] = await forkJoin([
+            NomenclatureStore.instance.getNomenclature(NomenclatureTypes.ObservationTools, this.nomenclatures.getObservationTools.bind(this.nomenclatures), false),
+            NomenclatureStore.instance.getNomenclature(NomenclatureTypes.VesselActivities, this.nomenclatures.getVesselActivities.bind(this.nomenclatures), false),
+            NomenclatureStore.instance.getNomenclature(NomenclatureTypes.Ships, this.nomenclatures.getShips.bind(this.nomenclatures), false),
+            NomenclatureStore.instance.getNomenclature(NomenclatureTypes.Institutions, this.nomenclatures.getInstitutions.bind(this.nomenclatures), false),
+            NomenclatureStore.instance.getNomenclature(NomenclatureTypes.VesselTypes, this.nomenclatures.getVesselTypes.bind(this.nomenclatures), false),
+            NomenclatureStore.instance.getNomenclature(NomenclatureTypes.Countries, this.nomenclatures.getCountries.bind(this.nomenclatures), false)
         ]).toPromise();
 
-        this.onBoardObservationTools = (nomenclatureTables[0] as InspectionObservationToolNomenclatureDTO[])
-            .filter(f => f.onBoard === ObservationToolOnBoardEnum.OnBoard
-                || f.onBoard === ObservationToolOnBoardEnum.Both);
-
-        this.centerObservationTools = (nomenclatureTables[0] as InspectionObservationToolNomenclatureDTO[])
-            .filter(f => f.onBoard === ObservationToolOnBoardEnum.Center
-                || f.onBoard === ObservationToolOnBoardEnum.Both);
-
-        this.onBoardActivities = (nomenclatureTables[1] as InspectionVesselActivityNomenclatureDTO[])
-            .filter(f => f.isFishingActivity === false);
-
-        this.fishingActivities = (nomenclatureTables[1] as InspectionVesselActivityNomenclatureDTO[])
-            .filter(f => f.isFishingActivity === true);
+        this.onBoardObservationTools = (nomenclatureTables[0] as InspectionObservationToolNomenclatureDTO[]).filter(x => x.onBoard === ObservationToolOnBoardEnum.OnBoard || x.onBoard === ObservationToolOnBoardEnum.Both);
+        this.centerObservationTools = (nomenclatureTables[0] as InspectionObservationToolNomenclatureDTO[]).filter(x => x.onBoard === ObservationToolOnBoardEnum.Center || x.onBoard === ObservationToolOnBoardEnum.Both);
+        this.onBoardActivities = (nomenclatureTables[1] as InspectionVesselActivityNomenclatureDTO[]).filter(x => x.isFishingActivity === false);
+        this.fishingActivities = (nomenclatureTables[1] as InspectionVesselActivityNomenclatureDTO[]).filter(x => x.isFishingActivity === true);
 
         this.ships = nomenclatureTables[2];
         this.institutions = nomenclatureTables[3];
@@ -105,9 +85,8 @@ export class EditObservationAtSeaComponent extends BaseInspectionsComponent impl
 
         if (this.id !== null && this.id !== undefined) {
             this.service.get(this.id, this.inspectionCode).subscribe({
-                next: (dto: InspectionObservationAtSeaDTO) => {
-                    this.model = dto;
-
+                next: (inspection: InspectionObservationAtSeaDTO) => {
+                    this.model = inspection;
                     this.fillForm();
                 }
             });
@@ -119,19 +98,19 @@ export class EditObservationAtSeaComponent extends BaseInspectionsComponent impl
             generalInfoControl: new FormControl(undefined),
             patrolVehiclesControl: new FormControl([]),
             onBoardObservationToolsControl: new FormControl([]),
-            otherOnBoardObservationToolsControl: new FormControl({ value: undefined, disabled: true }),
+            otherOnBoardObservationToolsControl: new FormControl(undefined, Validators.maxLength(100)),
             shipControl: new FormControl(undefined),
-            courseControl: new FormControl(undefined),
-            speedControl: new FormControl(undefined),
+            courseControl: new FormControl(undefined, Validators.maxLength(20)),
+            speedControl: new FormControl(undefined, TLValidators.number(0)),
             centerObservationToolsControl: new FormControl([]),
-            otherCenterObservationToolsControl: new FormControl({ value: undefined, disabled: true }),
+            otherCenterObservationToolsControl: new FormControl(undefined, Validators.maxLength(100)),
             hasShipCommunicationControl: new FormControl(false),
             hasShipContactControl: new FormControl(false),
             onBoardActivitiesControl: new FormControl([]),
-            otherOnBoardActivitiesControl: new FormControl({ value: undefined, disabled: true }),
+            otherOnBoardActivitiesControl: new FormControl(undefined, Validators.maxLength(4000)),
             fishingActivitiesControl: new FormControl([]),
-            otherFishingActivitiesControl: new FormControl({ value: undefined, disabled: true }),
-            shipCommunicationControl: new FormControl(undefined),
+            otherFishingActivitiesControl: new FormControl(undefined, Validators.maxLength(4000)),
+            shipCommunicationControl: new FormControl(undefined, Validators.maxLength(4000)),
             additionalInfoControl: new FormControl(undefined),
             filesControl: new FormControl([])
         });
@@ -166,51 +145,40 @@ export class EditObservationAtSeaComponent extends BaseInspectionsComponent impl
                 startDate: this.model.startDate,
                 endDate: this.model.endDate,
                 inspectors: this.model.inspectors,
-                byEmergencySignal: this.model.byEmergencySignal,
+                byEmergencySignal: this.model.byEmergencySignal
             }));
-
-            this.form.get('patrolVehiclesControl')!.setValue(this.model.patrolVehicles);
-
-            this.form.get('filesControl')!.setValue(this.model.files);
 
             this.form.get('additionalInfoControl')!.setValue(new InspectionAdditionalInfoModel({
                 actionsTaken: this.model.actionsTaken,
                 administrativeViolation: this.model.administrativeViolation,
                 inspectorComment: this.model.inspectorComment,
-                violation: this.model.observationTexts?.find(f => f.category === InspectionObservationCategoryEnum.AdditionalInfo),
-                violatedRegulations: this.model.violatedRegulations,
+                violation: this.model.observationTexts?.find(x => x.category === InspectionObservationCategoryEnum.AdditionalInfo),
+                violatedRegulations: this.model.violatedRegulations
             }));
 
+            this.form.get('patrolVehiclesControl')!.setValue(this.model.patrolVehicles);
+            this.form.get('filesControl')!.setValue(this.model.files);
             this.form.get('shipControl')!.setValue(this.model.observedVessel);
-
             this.form.get('shipCommunicationControl')!.setValue(this.model.shipCommunicationDescription);
-
             this.form.get('courseControl')!.setValue(this.model.course);
-
             this.form.get('speedControl')!.setValue(this.model.speed);
-
             this.form.get('hasShipCommunicationControl')!.setValue(this.model.hasShipCommunication);
-
             this.form.get('hasShipContactControl')!.setValue(this.model.hasShipContact);
 
             if (this.model.observationTools !== null && this.model.observationTools !== undefined) {
                 this.form.get('onBoardObservationToolsControl')!.setValue(
-                    this.onBoardObservationTools.filter(f =>
-                        this.model.observationTools!.find(s => s.isOnBoard === true && s.observationToolId === f.value)
-                    )
+                    this.onBoardObservationTools.filter(f => this.model.observationTools!.find(s => s.isOnBoard === true && s.observationToolId === f.value))
                 );
 
                 this.form.get('centerObservationToolsControl')!.setValue(
-                    this.centerObservationTools.filter(f =>
-                        this.model.observationTools!.find(s => s.isOnBoard === false && s.observationToolId === f.value)
-                    )
+                    this.centerObservationTools.filter(f => this.model.observationTools!.find(s => s.isOnBoard === false && s.observationToolId === f.value))
                 );
 
-                const otherOnBoardId = this.onBoardObservationTools.find(f => f.code === 'Other')!.value;
-                const otherCenterId = this.centerObservationTools.find(f => f.code === 'Other')!.value;
+                const otherOnBoardId: number | undefined = this.onBoardObservationTools.find(x => x.code === 'Other')!.value;
+                const otherCenterId: number | undefined = this.centerObservationTools.find(x => x.code === 'Other')!.value;
 
-                const onBoardDesc = this.model.observationTools.find(f => f.isOnBoard === true && f.observationToolId === otherOnBoardId);
-                const centerDesc = this.model.observationTools.find(f => f.isOnBoard === false && f.observationToolId === otherCenterId);
+                const onBoardDesc: InspectionObservationToolDTO | undefined = this.model.observationTools.find(x => x.isOnBoard === true && x.observationToolId === otherOnBoardId);
+                const centerDesc: InspectionObservationToolDTO | undefined = this.model.observationTools.find(x => x.isOnBoard === false && x.observationToolId === otherCenterId);
 
                 if (onBoardDesc !== null && onBoardDesc !== undefined) {
                     this.form.get('otherOnBoardObservationToolsControl')!.setValue(onBoardDesc.description);
@@ -225,31 +193,26 @@ export class EditObservationAtSeaComponent extends BaseInspectionsComponent impl
 
             if (this.model.observedVesselActivities !== null && this.model.observedVesselActivities !== undefined) {
                 this.form.get('onBoardActivitiesControl')!.setValue(
-                    this.model.observedVesselActivities.filter(f => f.isFishingActivity === false)
+                    this.model.observedVesselActivities.filter(x => x.isFishingActivity === false)
                 );
 
-                const fishingId = this.onBoardActivities.find(f => f.code === 'Fishing')!.value;
-                const otherOnBoardId = this.onBoardActivities.find(f => f.code === 'Other')!.value;
-
-                const onBoardDesc = this.model.observedVesselActivities.find(f => f.isFishingActivity === false && f.value === otherOnBoardId);
+                const fishingId: number | undefined = this.onBoardActivities.find(x => x.code === 'Fishing')!.value;
+                const otherOnBoardId: number | undefined = this.onBoardActivities.find(x => x.code === 'Other')!.value;
+                const onBoardDesc: InspectionVesselActivityNomenclatureDTO | undefined = this.model.observedVesselActivities.find(x => x.isFishingActivity === false && x.value === otherOnBoardId);
 
                 if (onBoardDesc !== null && onBoardDesc !== undefined) {
                     this.form.get('otherOnBoardActivitiesControl')!.setValue(onBoardDesc.description);
                     this.otherActivitySelected = true;
                 }
 
-                const fishing = this.model.observedVesselActivities.find(f => f.isFishingActivity === false && f.value === fishingId);
+                const fishing = this.model.observedVesselActivities.find(x => x.isFishingActivity === false && x.value === fishingId);
 
                 if (fishing !== null && fishing !== undefined) {
                     this.fishingActivitySelected = true;
+                    this.form.get('fishingActivitiesControl')!.setValue(this.model.observedVesselActivities.filter(x => x.isFishingActivity === true));
 
-                    this.form.get('fishingActivitiesControl')!.setValue(
-                        this.model.observedVesselActivities.filter(f => f.isFishingActivity === true)
-                    );
-
-                    const otherFishingId = this.fishingActivities.find(f => f.code === 'OF')!.value;
-
-                    const fishingDesc = this.model.observedVesselActivities.find(f => f.isFishingActivity === true && f.value === otherFishingId);
+                    const otherFishingId: number | undefined = this.fishingActivities.find(x => x.code === 'OF')!.value;
+                    const fishingDesc: InspectionVesselActivityNomenclatureDTO | undefined = this.model.observedVesselActivities.find(x => x.isFishingActivity === true && x.value === otherFishingId);
 
                     if (fishingDesc !== null && fishingDesc !== undefined) {
                         this.form.get('otherFishingActivitiesControl')!.setValue(fishingDesc.description);
@@ -263,38 +226,33 @@ export class EditObservationAtSeaComponent extends BaseInspectionsComponent impl
     protected fillModel(): void {
         const generalInfo: InspectionGeneralInfoModel = this.form.get('generalInfoControl')!.value;
         const additionalInfo: InspectionAdditionalInfoModel = this.form.get('additionalInfoControl')!.value;
-        const ship: VesselDuringInspectionDTO = this.form.get('shipControl')!.value;
-        const speed: string = this.form.get('speedControl')!.value;
 
-        this.model = new InspectionObservationAtSeaDTO({
-            id: this.model.id,
-            startDate: generalInfo.startDate,
-            endDate: generalInfo.endDate,
-            inspectors: generalInfo.inspectors,
-            reportNum: generalInfo.reportNum,
-            patrolVehicles: this.form.get('patrolVehiclesControl')!.value,
-            files: this.form.get('filesControl')!.value,
-            actionsTaken: additionalInfo?.actionsTaken,
-            administrativeViolation: additionalInfo?.administrativeViolation === true,
-            byEmergencySignal: generalInfo.byEmergencySignal,
-            inspectionType: InspectionTypesEnum.OFS,
-            inspectorComment: additionalInfo?.inspectorComment,
-            violatedRegulations: additionalInfo?.violatedRegulations,
-            isActive: true,
-            shipCommunicationDescription: this.form.get('shipCommunicationControl')!.value,
-            observedVessel: ship,
-            course: this.form.get('courseControl')!.value,
-            speed: speed !== null && speed !== undefined
-                ? Number(speed)
-                : undefined,
-            hasShipCommunication: this.form.get('hasShipCommunicationControl')!.value,
-            hasShipContact: this.form.get('hasShipContactControl')!.value,
-            observationTools: this.mapObservationTools(),
-            observedVesselActivities: this.mapVesselActivities(),
-            observationTexts: [
-                additionalInfo?.violation,
-            ].filter(f => f !== null && f !== undefined) as InspectionObservationTextDTO[],
-        });
+        this.model.inspectionType = InspectionTypesEnum.OFS;
+        this.model.isActive = true;
+        this.model.startDate = generalInfo.startDate;
+        this.model.endDate = generalInfo.endDate;
+        this.model.inspectors = generalInfo.inspectors;
+        this.model.reportNum = generalInfo.reportNum;
+        this.model.byEmergencySignal = generalInfo?.byEmergencySignal;
+        this.model.actionsTaken = additionalInfo?.actionsTaken;
+        this.model.administrativeViolation = additionalInfo?.administrativeViolation === true;
+        this.model.inspectorComment = additionalInfo?.inspectorComment;
+        this.model.violatedRegulations = additionalInfo?.violatedRegulations;
+
+        this.model.patrolVehicles = this.form.get('patrolVehiclesControl')!.value;
+        this.model.files = this.form.get('filesControl')!.value;
+        this.model.shipCommunicationDescription = this.form.get('shipCommunicationControl')!.value;
+        this.model.observedVessel = this.form.get('shipControl')!.value;
+        this.model.course = this.form.get('courseControl')!.value;
+        this.model.hasShipCommunication = this.form.get('hasShipCommunicationControl')!.value;
+        this.model.hasShipContact = this.form.get('hasShipContactControl')!.value;
+        this.model.speed = this.form.get('speedControl')!.value;
+        this.model.observationTools = this.mapObservationTools();
+        this.model.observedVesselActivities = this.mapVesselActivities();
+
+        this.model.observationTexts = [
+            additionalInfo?.violation
+        ].filter(x => x !== null && x !== undefined) as InspectionObservationTextDTO[];
     }
 
     private onOnBoardObservationToolsChanged(values: InspectionObservationToolNomenclatureDTO[]): void {

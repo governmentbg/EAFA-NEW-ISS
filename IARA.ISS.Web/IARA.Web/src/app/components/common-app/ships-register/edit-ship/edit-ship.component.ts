@@ -301,12 +301,7 @@ export class EditShipComponent extends CustomFormControl<ShipRegisterEditDTO | n
 
             this.form.get('ersControl')!.valueChanges.subscribe({
                 next: (value: boolean) => {
-                    if (value === true) {
-                        this.form.get('hasERSExceptionControl')!.setValue(false);
-                    }
-                    else {
-                        this.form.get('hasERSExceptionControl')!.setValue(true);
-                    }
+                    this.updateErsException();
                 }
             });
 
@@ -805,6 +800,17 @@ export class EditShipComponent extends CustomFormControl<ShipRegisterEditDTO | n
         return model;
     }
 
+    private updateErsException(): void {
+        const ers: boolean = this.form.get('ersControl')!.value;
+
+        if (ers) {
+            this.form.get('hasERSExceptionControl')!.setValue(false);
+        }
+        else {
+            this.form.get('hasERSExceptionControl')!.setValue(true);
+        }
+    }
+
     private loadData(): void {
         if (this.isThirdPartyShip) {
             this.model = new ShipRegisterEditDTO({
@@ -1024,7 +1030,7 @@ export class EditShipComponent extends CustomFormControl<ShipRegisterEditDTO | n
         form.addControl('vmsControl', new FormControl(false));
         form.addControl('regNumberControl', new FormControl(null));
 
-        form.addControl('hasERSExceptionControl', new FormControl(false));
+        form.addControl('hasERSExceptionControl', new FormControl({ value: false, disabled: true }));
         form.addControl('forbiddenForRSRControl', new FormControl(false));
         form.addControl('forbiddenReasonControl', new FormControl(null));
         form.addControl('forbiddenStartDateControl', new FormControl(this.today));

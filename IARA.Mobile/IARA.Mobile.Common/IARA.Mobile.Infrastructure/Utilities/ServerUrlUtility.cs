@@ -1,11 +1,11 @@
-﻿using System;
+﻿using IARA.Mobile.Application;
+using IARA.Mobile.Application.Interfaces.Factories;
+using IARA.Mobile.Application.Interfaces.Utilities;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Web;
-using IARA.Mobile.Application;
-using IARA.Mobile.Application.Interfaces.Factories;
-using IARA.Mobile.Application.Interfaces.Utilities;
 
 namespace IARA.Mobile.Infrastructure.Utilities
 {
@@ -107,7 +107,11 @@ namespace IARA.Mobile.Infrastructure.Utilities
         {
             if (value is DateTime date)
             {
+#if !DEBUG
                 return date.ToString(CommonConstants.DateTimeFormat);
+#else
+                return date.ToUniversalTime().ToString(CommonConstants.DateTimeFormat);
+#endif
             }
             else
             {
