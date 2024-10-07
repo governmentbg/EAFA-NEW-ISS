@@ -67,39 +67,17 @@ export class EditInspectionAtPortComponent extends BaseInspectionsComponent impl
         }
 
         const nomenclatureTables = await forkJoin([
-            NomenclatureStore.instance.getNomenclature(
-                NomenclatureTypes.Institutions, this.nomenclatures.getInstitutions.bind(this.nomenclatures), false
-            ),
-            NomenclatureStore.instance.getNomenclature(
-                NomenclatureTypes.Countries, this.nomenclatures.getCountries.bind(this.nomenclatures), false
-            ),
-            NomenclatureStore.instance.getNomenclature(
-                NomenclatureTypes.Ports, this.nomenclatures.getPorts.bind(this.nomenclatures), false
-            ),
-            NomenclatureStore.instance.getNomenclature(
-                NomenclatureTypes.Fishes, this.nomenclatures.getFishTypes.bind(this.nomenclatures), false
-            ),
-            NomenclatureStore.instance.getNomenclature(
-                NomenclatureTypes.CatchTypes, this.nomenclatures.getCatchInspectionTypes.bind(this.nomenclatures), false
-            ),
-            NomenclatureStore.instance.getNomenclature(
-                NomenclatureTypes.CatchZones, this.nomenclatures.getCatchZones.bind(this.nomenclatures), false
-            ),
-            NomenclatureStore.instance.getNomenclature(
-                NomenclatureTypes.FishSex, this.nomenclatures.getFishSex.bind(this.nomenclatures), false
-            ),
-            NomenclatureStore.instance.getNomenclature(
-                NomenclatureTypes.Ships, this.nomenclatures.getShips.bind(this.nomenclatures), false
-            ),
-            NomenclatureStore.instance.getNomenclature(
-                NomenclatureTypes.VesselTypes, this.nomenclatures.getVesselTypes.bind(this.nomenclatures), false
-            ),
-            NomenclatureStore.instance.getNomenclature(
-                NomenclatureTypes.ShipAssociations, this.nomenclatures.getShipAssociations.bind(this.nomenclatures), false
-            ),
-            NomenclatureStore.instance.getNomenclature(
-                NomenclatureTypes.TurbotSizeGroups, this.nomenclatures.getTurbotSizeGroups.bind(this.nomenclatures), false
-            ),
+            NomenclatureStore.instance.getNomenclature(NomenclatureTypes.Institutions, this.nomenclatures.getInstitutions.bind(this.nomenclatures), false),
+            NomenclatureStore.instance.getNomenclature(NomenclatureTypes.Countries, this.nomenclatures.getCountries.bind(this.nomenclatures), false),
+            NomenclatureStore.instance.getNomenclature(NomenclatureTypes.Ports, this.nomenclatures.getPorts.bind(this.nomenclatures), false),
+            NomenclatureStore.instance.getNomenclature(NomenclatureTypes.Fishes, this.nomenclatures.getFishTypes.bind(this.nomenclatures), false),
+            NomenclatureStore.instance.getNomenclature(NomenclatureTypes.CatchTypes, this.nomenclatures.getCatchInspectionTypes.bind(this.nomenclatures), false),
+            NomenclatureStore.instance.getNomenclature(NomenclatureTypes.CatchZones, this.nomenclatures.getCatchZones.bind(this.nomenclatures), false),
+            NomenclatureStore.instance.getNomenclature(NomenclatureTypes.FishSex, this.nomenclatures.getFishSex.bind(this.nomenclatures), false),
+            NomenclatureStore.instance.getNomenclature(NomenclatureTypes.Ships, this.nomenclatures.getShips.bind(this.nomenclatures), false),
+            NomenclatureStore.instance.getNomenclature(NomenclatureTypes.VesselTypes, this.nomenclatures.getVesselTypes.bind(this.nomenclatures), false),
+            NomenclatureStore.instance.getNomenclature(NomenclatureTypes.ShipAssociations, this.nomenclatures.getShipAssociations.bind(this.nomenclatures), false),
+            NomenclatureStore.instance.getNomenclature(NomenclatureTypes.TurbotSizeGroups, this.nomenclatures.getTurbotSizeGroups.bind(this.nomenclatures), false),
             this.service.getCheckTypesForInspection(InspectionTypesEnum.IBP)
         ]).toPromise();
 
@@ -119,9 +97,8 @@ export class EditInspectionAtPortComponent extends BaseInspectionsComponent impl
 
         if (this.id !== null && this.id !== undefined) {
             this.service.get(this.id, this.inspectionCode).subscribe({
-                next: (dto: InspectionTransboardingDTO) => {
-                    this.model = dto;
-
+                next: (value: InspectionTransboardingDTO) => {
+                    this.model = value;
                     this.fillForm();
                 }
             });
@@ -136,8 +113,8 @@ export class EditInspectionAtPortComponent extends BaseInspectionsComponent impl
             hasTransshipmentControl: new FormControl(false),
             transshipmentShipControl: new FormControl({ value: undefined, disabled: true }),
             catchesControl: new FormControl([]),
-            transshipmentViolationControl: new FormControl(undefined),
-            nnnShipStatusControl: new FormControl(undefined),
+            transshipmentViolationControl: new FormControl(undefined, Validators.maxLength(4000)),
+            nnnShipStatusControl: new FormControl(undefined, Validators.maxLength(4000)),
             captainCommentControl: new FormControl(undefined, Validators.maxLength(4000)),
             additionalInfoControl: new FormControl(undefined, Validators.maxLength(4000)),
             filesControl: new FormControl([])
@@ -165,10 +142,9 @@ export class EditInspectionAtPortComponent extends BaseInspectionsComponent impl
             }));
 
             this.form.get('filesControl')!.setValue(this.model.files);
-
             this.form.get('catchesControl')!.setValue(this.model.transboardedCatchMeasures);
 
-            const transshipmentViolation = this.model.observationTexts?.find(f => f.category === InspectionObservationCategoryEnum.Transshipment);
+            const transshipmentViolation: InspectionObservationTextDTO | undefined = this.model.observationTexts?.find(x => x.category === InspectionObservationCategoryEnum.Transshipment);
 
             if (transshipmentViolation !== null && transshipmentViolation !== undefined) {
                 this.form.get('transshipmentViolationControl')!.setValue(transshipmentViolation.text);
@@ -193,18 +169,19 @@ export class EditInspectionAtPortComponent extends BaseInspectionsComponent impl
                     permits: this.model.receivingShipInspection.permits,
                     personnel: this.model.receivingShipInspection.personnel,
                     ship: this.model.receivingShipInspection.inspectedShip,
-                    port: this.model.receivingShipInspection.lastPortVisit,
+                    port: this.model.receivingShipInspection.lastPortVisit
                 }));
 
                 if (this.model.receivingShipInspection.inspectionPortId || this.model.receivingShipInspection.unregisteredPortName) {
                     this.form.get('portControl')!.setValue(new PortVisitDTO({
                         portId: this.model.receivingShipInspection.inspectionPortId,
                         portName: this.model.receivingShipInspection.unregisteredPortName,
-                        portCountryId: this.model.receivingShipInspection.unregisteredPortCountryId,
+                        portCountryId: this.model.receivingShipInspection.unregisteredPortCountryId
                     }));
                 }
 
                 this.form.get('captainCommentControl')!.setValue(this.model.receivingShipInspection.captainComment);
+                this.form.get('nnnShipStatusControl')!.setValue(this.model.receivingShipInspection.nnnShipStatus);
             }
 
             if (this.model.sendingShipInspection !== null && this.model.sendingShipInspection !== undefined) {
@@ -221,55 +198,56 @@ export class EditInspectionAtPortComponent extends BaseInspectionsComponent impl
         const shipSections: InspectedShipSectionsModel = this.form.get('shipSectionsControl')!.value;
         const hasTransshipment: boolean = this.form.get('hasTransshipmentControl')!.value;
         const receivingShip: VesselDTO = this.form.get('transshipmentShipControl')!.value;
-        const receivingShipCatches: InspectionCatchMeasureDTO[] = this.form.get('catchesControl')!.value;
         const transshipmentViolation: string = this.form.get('transshipmentViolationControl')!.value;
         const port: PortVisitDTO = this.form.get('portControl')!.value;
 
-        this.model = new InspectionTransboardingDTO({
-            id: this.model.id,
-            startDate: generalInfo.startDate,
-            endDate: generalInfo.endDate,
-            inspectors: generalInfo.inspectors,
-            reportNum: generalInfo.reportNum,
-            files: this.form.get('filesControl')!.value,
-            actionsTaken: additionalInfo?.actionsTaken,
-            administrativeViolation: additionalInfo?.administrativeViolation === true,
-            byEmergencySignal: generalInfo.byEmergencySignal,
-            inspectionType: InspectionTypesEnum.IBP,
-            inspectorComment: additionalInfo?.inspectorComment,
-            violatedRegulations: additionalInfo?.violatedRegulations,
-            isActive: true,
-            fishingGears: shipSections?.fishingGears,
-            transboardedCatchMeasures: receivingShipCatches,
-            observationTexts: [
-                ...(shipSections.observationTexts ?? []),
-                additionalInfo?.violation,
-                !CommonUtils.isNullOrWhiteSpace(transshipmentViolation)
-                    ? new InspectionObservationTextDTO({
-                        category: InspectionObservationCategoryEnum.Transshipment,
-                        text: transshipmentViolation
-                    }) : undefined
-            ].filter(f => f !== null && f !== undefined) as InspectionObservationTextDTO[],
-            receivingShipInspection: new InspectionTransboardingShipDTO({
-                captainComment: this.form.get('captainCommentControl')!.value,
-                catchMeasures: shipSections?.catches,
-                checks: shipSections?.checks,
-                inspectedShip: shipSections?.ship,
-                lastPortVisit: shipSections?.port,
-                inspectionPortId: port?.portId,
-                unregisteredPortCountryId: port?.portCountryId,
-                unregisteredPortName: port?.portName,
-                logBooks: shipSections?.logBooks,
-                permitLicenses: shipSections?.permitLicenses,
-                permits: shipSections?.permits,
-                personnel: shipSections?.personnel,
-                nnnShipStatus: this.form.get('nnnShipStatusControl')!.value,
-            }),
-            sendingShipInspection: hasTransshipment
-                ? new InspectionTransboardingShipDTO({
-                    inspectedShip: receivingShip,
-                }) : undefined,
+        this.model.inspectionType = InspectionTypesEnum.IBP;
+        this.model.isActive = true;
+        this.model.startDate = generalInfo?.startDate;
+        this.model.endDate = generalInfo?.endDate;
+        this.model.inspectors = generalInfo?.inspectors;
+        this.model.reportNum = generalInfo?.reportNum;
+        this.model.byEmergencySignal = generalInfo?.byEmergencySignal;
+        this.model.actionsTaken = additionalInfo?.actionsTaken;
+        this.model.administrativeViolation = additionalInfo?.administrativeViolation === true;
+        this.model.inspectorComment = additionalInfo?.inspectorComment;
+        this.model.violatedRegulations = additionalInfo?.violatedRegulations;
+
+        this.model.fishingGears = shipSections?.fishingGears;
+
+        this.model.files = this.form.get('filesControl')!.value;
+        this.model.transboardedCatchMeasures = this.form.get('catchesControl')!.value;
+
+        this.model.receivingShipInspection = new InspectionTransboardingShipDTO({
+            captainComment: this.form.get('captainCommentControl')!.value,
+            nnnShipStatus: this.form.get('nnnShipStatusControl')!.value,
+            catchMeasures: shipSections?.catches,
+            checks: shipSections?.checks,
+            inspectedShip: shipSections?.ship,
+            lastPortVisit: shipSections?.port,
+            inspectionPortId: port?.portId,
+            unregisteredPortCountryId: port?.portCountryId,
+            unregisteredPortName: port?.portName,
+            logBooks: shipSections?.logBooks,
+            permitLicenses: shipSections?.permitLicenses,
+            permits: shipSections?.permits,
+            personnel: shipSections?.personnel
         });
+
+        this.model.sendingShipInspection = hasTransshipment ?
+            new InspectionTransboardingShipDTO({
+                inspectedShip: receivingShip,
+            }) : undefined;
+
+        this.model.observationTexts = [
+            ...(shipSections.observationTexts ?? []),
+            additionalInfo?.violation,
+            !CommonUtils.isNullOrWhiteSpace(transshipmentViolation) ?
+                new InspectionObservationTextDTO({
+                    category: InspectionObservationCategoryEnum.Transshipment,
+                    text: transshipmentViolation
+                }) : undefined
+        ].filter(f => f !== null && f !== undefined) as InspectionObservationTextDTO[];
     }
 
     private onHasTransshipmentChanged(value: boolean): void {

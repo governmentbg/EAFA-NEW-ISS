@@ -20,6 +20,7 @@ import { InspectionCheckModel } from '../../models/inspection-check.model';
 import { InspectionObservationTextDTO } from '@app/models/generated/dtos/InspectionObservationTextDTO';
 import { InspectionCheckWaterObjectDTO } from '@app/models/generated/dtos/InspectionCheckWaterObjectDTO';
 import { TLConfirmDialog } from '@app/shared/components/confirmation-dialog/tl-confirm-dialog';
+import { InspectionCheckTypeNomenclatureDTO } from '@app/models/generated/dtos/InspectionCheckTypeNomenclatureDTO';
 
 @Component({
     selector: 'edit-check-water-object',
@@ -55,20 +56,12 @@ export class EditCheckWaterObjectComponent extends BaseInspectionsComponent impl
             this.form.disable();
         }
 
-        const nomenclatureTables = await forkJoin([
-            NomenclatureStore.instance.getNomenclature(
-                NomenclatureTypes.Institutions, this.nomenclatures.getInstitutions.bind(this.nomenclatures), false
-            ),
-            NomenclatureStore.instance.getNomenclature(
-                NomenclatureTypes.WaterBodyTypes, this.nomenclatures.getWaterBodyTypes.bind(this.nomenclatures), false
-            ),
-            NomenclatureStore.instance.getNomenclature(
-                NomenclatureTypes.Fishes, this.nomenclatures.getFishTypes.bind(this.nomenclatures), false
-            ),
-            NomenclatureStore.instance.getNomenclature(
-                NomenclatureTypes.Countries, this.nomenclatures.getCountries.bind(this.nomenclatures), false
-            ),
-            this.service.getCheckTypesForInspection(InspectionTypesEnum.CWO),
+        const nomenclatureTables: (NomenclatureDTO<number>[] | InspectionCheckTypeNomenclatureDTO[])[] = await forkJoin([
+            NomenclatureStore.instance.getNomenclature(NomenclatureTypes.Institutions, this.nomenclatures.getInstitutions.bind(this.nomenclatures), false),
+            NomenclatureStore.instance.getNomenclature(NomenclatureTypes.WaterBodyTypes, this.nomenclatures.getWaterBodyTypes.bind(this.nomenclatures), false),
+            NomenclatureStore.instance.getNomenclature(NomenclatureTypes.Fishes, this.nomenclatures.getFishTypes.bind(this.nomenclatures), false),
+            NomenclatureStore.instance.getNomenclature(NomenclatureTypes.Countries, this.nomenclatures.getCountries.bind(this.nomenclatures), false),
+            this.service.getCheckTypesForInspection(InspectionTypesEnum.CWO)
         ]).toPromise();
 
         this.institutions = nomenclatureTables[0];
@@ -76,7 +69,7 @@ export class EditCheckWaterObjectComponent extends BaseInspectionsComponent impl
         this.fishes = nomenclatureTables[2];
         this.countries = nomenclatureTables[3];
 
-        this.toggles = nomenclatureTables[4].map(x => new InspectionCheckModel(x));
+        this.toggles = (nomenclatureTables[4] as InspectionCheckTypeNomenclatureDTO[]).map(x => new InspectionCheckModel(x));
 
         if (this.id !== null && this.id !== undefined) {
             this.service.get(this.id, this.inspectionCode).subscribe({
@@ -149,7 +142,6 @@ export class EditCheckWaterObjectComponent extends BaseInspectionsComponent impl
 
             this.form.get('generalInfoControl')!.setValue(generalInfo);
             this.form.get('additionalInfoControl')!.setValue(additionalInfo);
-
             this.form.get('togglesControl')!.setValue(this.model.checks);
             this.form.get('patrolVehiclesControl')!.setValue(this.model.patrolVehicles);
             this.form.get('nameControl')!.setValue(this.model.objectName);
@@ -203,7 +195,7 @@ export class EditCheckWaterObjectComponent extends BaseInspectionsComponent impl
         this.model.observationTexts = [
             additionalInfo?.violation
         ].filter(x => x !== null && x !== undefined) as InspectionObservationTextDTO[];
-   
+
         if (this.hasOffender) {
             this.model.personnel = this.form.get('offendersControl')!.value;
         }
