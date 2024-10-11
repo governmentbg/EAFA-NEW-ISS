@@ -1,8 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using IARA.Mobile.Domain.Entities.Exceptions;
+﻿using IARA.Mobile.Domain.Entities.Exceptions;
 using IARA.Mobile.Domain.Entities.Nomenclatures;
 using IARA.Mobile.Domain.Models;
 using IARA.Mobile.Pub.Application.Interfaces.Database;
@@ -12,6 +8,11 @@ using IARA.Mobile.Pub.Domain.Entities.FishingTicket;
 using IARA.Mobile.Pub.Domain.Entities.Nomenclatures;
 using IARA.Mobile.Pub.Domain.Entities.ScientificFishing;
 using SQLite;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace IARA.Mobile.Pub.Infrastructure.Persistence
 {
@@ -110,6 +111,11 @@ namespace IARA.Mobile.Pub.Infrastructure.Persistence
         public TLTableQuery<TEntity> TLTable<TEntity>()
         {
             return new TLTableQuery<TEntity>(this);
+        }
+
+        public void DeleteAll(Type tableType)
+        {
+            DeleteAll(new TableMapping(tableType));
         }
     }
 }

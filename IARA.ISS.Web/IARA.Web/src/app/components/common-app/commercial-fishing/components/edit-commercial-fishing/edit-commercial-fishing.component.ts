@@ -106,6 +106,7 @@ import { PermissionsService } from '@app/shared/services/permissions.service';
 import { PermissionsEnum } from '@app/shared/enums/permissions.enum';
 import { DateUtils } from '@app/shared/utils/date.utils';
 import { FishingGearUtils } from '../../utils/fishing-gear.utils';
+import { PortNomenclatureDTO } from '@app/models/generated/dtos/PortNomenclatureDTO';
 
 type AquaticOrganismsToAddType = NomenclatureDTO<number> | NomenclatureDTO<number>[] | string | undefined | null;
 type SaveApplicationDraftFnType = ((applicationId: number, model: IApplicationRegister, dialogClose: HeaderCloseFunction) => void) | undefined;
@@ -196,8 +197,8 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
     public holderShipRelations: NomenclatureDTO<boolean>[] = [];
     public groundForUseTypes: NomenclatureDTO<number>[] = [];
     public poundNets: IGroupedOptions<number>[] = []; // needed only when Permit/Permit License is for pound net
-    public allPorts: NomenclatureDTO<number>[] = []; // needed only for CatchQuotaSpecies Permit License
-    public ports: NomenclatureDTO<number>[] = []; // needed only for CatchQuotaSpecies Permit License
+    public allPorts: PortNomenclatureDTO[] = []; // needed only for CatchQuotaSpecies Permit License
+    public ports: PortNomenclatureDTO[] = []; // needed only for CatchQuotaSpecies Permit License
     public quotaAquaticOrganismsForm: FormGroup | undefined; // need only for CatchQuotaSpecies Permit License
     public quotaAquaticOrganisms: QuotaAquaticOrganismDTO[] = []; // need only for CatchQuotaSpecies Permit License
     public allPermits: PermitNomenclatureDTO[] = [] //needed only when RecordType == Application && PageCode is PermitLicense/Quota/PoundNetLicense
@@ -1339,7 +1340,22 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
                 .map(x => x.permittedPorts ?? [])
                 .reduce(x => x);
 
-            const ports: NomenclatureDTO<number>[] = this.allPorts.filter(x => permittedPorts.some(y => y.portId === x.value));
+            let ports: PortNomenclatureDTO[];
+
+            const selectedWaterType: NomenclatureDTO<number> | undefined = this.form.get('waterTypeControl')!.value;
+            if (selectedWaterType !== undefined && selectedWaterType !== null) {
+                const waterType: WaterTypesEnum = WaterTypesEnum[selectedWaterType.code as keyof typeof WaterTypesEnum];
+
+                if (waterType === WaterTypesEnum.DANUBE) {
+                    ports = this.allPorts.filter(x => permittedPorts.some(y => y.portId === x.value && y.isDunabe === true));
+                }
+                else {
+                    ports = this.allPorts.filter(x => permittedPorts.some(y => y.portId === x.value && y.isBlackSea === true));
+                }
+            }
+            else {
+                ports = this.allPorts.filter(x => permittedPorts.some(y => y.portId === x.value));
+            }
 
             for (const port of ports) {
                 port.isActive = port.isActive && permittedPorts.find(x => x.portId === port.value)!.isActive;

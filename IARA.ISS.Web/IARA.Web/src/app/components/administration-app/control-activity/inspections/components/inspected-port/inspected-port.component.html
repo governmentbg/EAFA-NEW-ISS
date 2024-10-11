@@ -9,7 +9,7 @@
     <tl-autocomplete *ngIf="isFromRegister"
                      formControlName="portControl"
                      label="{{ 'inspections.port' | tlTranslate }}"
-                     [options]="ports"
+                     [groupedOptions]="portsGrouped"
                      tooltipResourceName="inspections.port-helper">
     </tl-autocomplete>
 

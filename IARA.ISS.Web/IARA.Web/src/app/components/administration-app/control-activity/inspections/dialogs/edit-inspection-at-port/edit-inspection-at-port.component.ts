@@ -26,6 +26,9 @@ import { NomenclatureTypes } from '@app/enums/nomenclature.types';
 import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
 import { ShipNomenclatureDTO } from '@app/models/generated/dtos/ShipNomenclatureDTO';
 import { TLConfirmDialog } from '@app/shared/components/confirmation-dialog/tl-confirm-dialog';
+import { PortNomenclatureDTO } from '@app/models/generated/dtos/PortNomenclatureDTO';
+import { VesselDuringInspectionDTO } from '@app/models/generated/dtos/VesselDuringInspectionDTO';
+import { ShipsUtils } from '@app/shared/utils/ships.utils';
 
 @Component({
     selector: 'edit-inspection-at-port',
@@ -36,7 +39,7 @@ export class EditInspectionAtPortComponent extends BaseInspectionsComponent impl
 
     public institutions: NomenclatureDTO<number>[] = [];
     public countries: NomenclatureDTO<number>[] = [];
-    public ports: NomenclatureDTO<number>[] = [];
+    public ports: PortNomenclatureDTO[] = [];
     public fishes: NomenclatureDTO<number>[] = [];
     public catchTypes: NomenclatureDTO<number>[] = [];
     public catchZones: NomenclatureDTO<number>[] = [];
@@ -45,10 +48,14 @@ export class EditInspectionAtPortComponent extends BaseInspectionsComponent impl
     public vesselTypes: NomenclatureDTO<number>[] = [];
     public associations: NomenclatureDTO<number>[] = [];
     public turbotSizeGroups: NomenclatureDTO<number>[] = [];
+    public permittedPortIds: number[] = [];
 
     public toggles: InspectionCheckModel[] = [];
 
     public hasTransshipment: boolean = false;
+
+    private hasDanubePermit: boolean = false;
+    private hasBlackSeaPermit: boolean = false;
 
     public constructor(
         service: InspectionsService,
@@ -102,6 +109,15 @@ export class EditInspectionAtPortComponent extends BaseInspectionsComponent impl
                     this.fillForm();
                 }
             });
+        }
+    }
+
+    public onShipSelected(vessel: VesselDuringInspectionDTO): void {
+        if (vessel !== undefined && vessel !== null) {
+            this.filterPermittedPortIdsByShipId(vessel.shipId);
+        }
+        else {
+            this.permittedPortIds = [];
         }
     }
 
@@ -182,6 +198,8 @@ export class EditInspectionAtPortComponent extends BaseInspectionsComponent impl
 
                 this.form.get('captainCommentControl')!.setValue(this.model.receivingShipInspection.captainComment);
                 this.form.get('nnnShipStatusControl')!.setValue(this.model.receivingShipInspection.nnnShipStatus);
+
+                this.filterPermittedPortIdsByShipId(this.model.receivingShipInspection.inspectedShip?.shipId);
             }
 
             if (this.model.sendingShipInspection !== null && this.model.sendingShipInspection !== undefined) {
@@ -263,6 +281,16 @@ export class EditInspectionAtPortComponent extends BaseInspectionsComponent impl
             this.form.get('catchesControl')!.disable();
             this.form.get('transshipmentViolationControl')!.disable();
         }
+    }
+
+    private filterPermittedPortIdsByShipId(shipId: number | undefined): void {
+        if (shipId !== undefined && shipId !== null) {
+            const ship: ShipNomenclatureDTO = ShipsUtils.get(this.ships, shipId);
+            this.hasDanubePermit = ShipsUtils.hasDanubePermit(ship);
+            this.hasBlackSeaPermit = ShipsUtils.hasBlackSeaPermit(ship);
+        }
+
+        this.permittedPortIds = this.ports.filter(x => (this.hasDanubePermit && x.isDanube) || (this.hasBlackSeaPermit && x.isBlackSea)).map(x => x.value!);
     }
 
     private atLeastOneCatchValidator(): ValidatorFn {

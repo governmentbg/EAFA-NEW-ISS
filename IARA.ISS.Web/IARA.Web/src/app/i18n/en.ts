@@ -2839,6 +2839,12 @@
         'date-of-page': 'Date',
         'log-book': 'Log book num',
 
+        'permitted-ports': 'Permitted ports',
+        'not-permitted-ports': 'Other ports',
+        'other-ports-danube': 'Danube ports',
+        'other-ports-black-sea': 'Black sea ports',
+        'other-ports-country': 'Other ports',
+
         'add-catch-ship-dialog-title': 'Add ship',
         'edit-catch-ship-dialog-title': 'Edit ship',
         'view-catch-ship-dialog-title': 'Review ship',

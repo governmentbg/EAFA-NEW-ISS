@@ -69,8 +69,7 @@
                                                 DisplayValue="DisplayValue"
                                                 DialogTitle="{rt:Translate InspectionState, Group=Common}"
                                                 Title="{rt:Translate InspectionState, Group=Common}" />
-                                        <lc:CustomInfinitePicker Title="{rt:Translate Inspector, Group=GeneralInfo}"
-                                                ValidState="{Binding Inspector}">
+                                        <lc:CustomInfinitePicker Title="{rt:Translate Inspector, Group=GeneralInfo}" ValidState="{Binding Inspector}">
                                             <DataTemplate>
                                                 <Grid x:DataType="nom:InspectorNomenclatureDto"
                                                         RowDefinitions="Auto,Auto,1"
@@ -97,10 +96,17 @@
                                     <StackLayout>
                                         <StackLayout Orientation="Horizontal">
 
-                                            <Button Text="{rt:Translate Clear, Group=Inspections}"
-                                                    WidthRequest="130"
-                                                    Command="{Binding ClearFilters}"
-                                                    BackgroundColor="{StaticResource Secondary}" />
+                                            <StackLayout Spacing="10">
+
+                                                <Button Text="{rt:Translate Clear, Group=Inspections}"
+                                                        WidthRequest="130"
+                                                        Command="{Binding ClearFilters}"
+                                                        BackgroundColor="{StaticResource Secondary}" />
+                                                <Button Text="{rt:Translate ReloadInspections, Group=GeneralInfo}"
+                                                        BackgroundColor="{StaticResource Secondary}"
+                                                        Command="{Binding ResetInspections}" />
+                                            </StackLayout>
+
 
                                             <BoxView HorizontalOptions="FillAndExpand" HeightRequest="1" />
                                             <Button Text="{rt:Translate Filter, Group=Inspections}"
@@ -108,9 +114,6 @@
                                                     Command="{Binding Filter}" />
                                         </StackLayout>
 
-                                        <Button Text="{rt:Translate ReloadInspections, Group=GeneralInfo}"
-                                                BackgroundColor="{StaticResource Secondary}"
-                                                Command="{Binding ResetInspections}" />
                                     </StackLayout>
                                 </StackLayout>
 

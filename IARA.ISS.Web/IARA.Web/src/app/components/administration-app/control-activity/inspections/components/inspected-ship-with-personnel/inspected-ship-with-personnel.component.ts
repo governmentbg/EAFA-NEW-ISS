@@ -17,6 +17,8 @@ import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureD
 import { ValidityCheckerDirective } from '@app/shared/directives/validity-checker/validity-checker.directive';
 import { ShipNomenclatureDTO } from '@app/models/generated/dtos/ShipNomenclatureDTO';
 import { InspectionSubjectPersonnelDTO } from '@app/models/generated/dtos/InspectionSubjectPersonnelDTO';
+import { PortNomenclatureDTO } from '@app/models/generated/dtos/PortNomenclatureDTO';
+import { ShipsUtils } from '@app/shared/utils/ships.utils';
 
 @Component({
     selector: 'inspected-ship-with-personnel',
@@ -45,7 +47,7 @@ export class InspectedShipWithPersonnelComponent extends CustomFormControl<ShipW
     public countries: NomenclatureDTO<number>[] = [];
 
     @Input()
-    public ports: NomenclatureDTO<number>[] = [];
+    public ports: PortNomenclatureDTO[] = [];
 
     @Input()
     public vesselTypes: NomenclatureDTO<number>[] = [];
@@ -57,6 +59,10 @@ export class InspectedShipWithPersonnelComponent extends CustomFormControl<ShipW
     public users: InspectionShipSubjectNomenclatureDTO[] = [];
     public representatives: InspectionShipSubjectNomenclatureDTO[] = [];
     public captains: InspectionShipSubjectNomenclatureDTO[] = [];
+    public permittedPortIds: number[] = [];
+
+    public hasDanubePermit: boolean = false;
+    public hasBlackSeaPermit: boolean = false;
 
     public readonly inspectedPersonTypeEnum: typeof InspectedPersonTypeEnum = InspectedPersonTypeEnum;
 
@@ -105,6 +111,7 @@ export class InspectedShipWithPersonnelComponent extends CustomFormControl<ShipW
             this.form.get('shipControl')!.setValue(value.ship);
             this.form.get('togglesControl')!.setValue(value.toggles);
             this.form.get('portControl')!.setValue(value.port);
+            this.filterPortsByShipPermits(value.ship?.shipId);
 
             const violation = value.observationTexts?.find(f => f.category === this.shipObservationCategory);
 
@@ -133,6 +140,7 @@ export class InspectedShipWithPersonnelComponent extends CustomFormControl<ShipW
             this.users = [];
             this.representatives = [];
             this.captains = [];
+            this.permittedPortIds = [];
         }
 
         this.onChanged(this.getValue());
@@ -144,8 +152,8 @@ export class InspectedShipWithPersonnelComponent extends CustomFormControl<ShipW
         if (ship !== undefined && ship !== null) {
             if (ship.shipId !== undefined && ship.shipId !== null) {
                 const personnel: InspectionShipSubjectNomenclatureDTO[] = await this.service.getShipPersonnel(ship.shipId).toPromise();
-
                 this.assignPersonnel(personnel);
+                this.filterPortsByShipPermits(ship.shipId);
             }
         }
         else {
@@ -158,6 +166,7 @@ export class InspectedShipWithPersonnelComponent extends CustomFormControl<ShipW
             this.users = [];
             this.representatives = [];
             this.captains = [];
+            this.permittedPortIds = [];
         }
     }
 
@@ -251,6 +260,16 @@ export class InspectedShipWithPersonnelComponent extends CustomFormControl<ShipW
                     text: observation
                 })] : [],
         })
+    }
+
+    private filterPortsByShipPermits(shipId: number | undefined): void {
+        if (shipId !== undefined && shipId !== null) {
+            const ship: ShipNomenclatureDTO = ShipsUtils.get(this.ships, shipId);
+            this.hasDanubePermit = ShipsUtils.hasDanubePermit(ship);
+            this.hasBlackSeaPermit = ShipsUtils.hasBlackSeaPermit(ship);
+        }
+
+        this.permittedPortIds = this.ports.filter(x => (this.hasDanubePermit && x.isDanube) || (this.hasBlackSeaPermit && x.isBlackSea)).map(x => x.value!);
     }
 
     private fillPersonnelControls(personnel: InspectionSubjectPersonnelDTO[]): void {

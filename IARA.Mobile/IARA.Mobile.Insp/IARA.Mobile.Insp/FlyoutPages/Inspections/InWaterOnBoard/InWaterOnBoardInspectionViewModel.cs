@@ -84,7 +84,10 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.InWaterOnBoard
         {
             GlobalVariables.IsAddingInspection = false;
         }
-
+        protected override string GetInspectionJson()
+        {
+            return System.Text.Json.JsonSerializer.Serialize(Edit);
+        }
         public override GroupResourceEnum[] GetPageIndexes()
         {
             return new[]

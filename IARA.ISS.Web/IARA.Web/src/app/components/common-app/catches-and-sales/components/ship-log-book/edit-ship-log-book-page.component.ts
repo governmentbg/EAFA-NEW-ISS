@@ -63,6 +63,8 @@ import { FishPreservationCodesEnum } from '@app/enums/fish-preservation-codes.en
 import { SecurityService } from '@app/services/common-app/security.service';
 import { FishGroupedQuantitiesModel } from '../../models/fish-grouped-quantities.model';
 import { WaterTypesEnum } from '@app/enums/water-types.enum';
+import { PortNomenclatureDTO } from '@app/models/generated/dtos/PortNomenclatureDTO';
+import { LogBookPageStatusesEnum } from '@app/enums/log-book-page-statuses.enum';
 
 const PERCENT_TOLERANCE: number = 10;
 const QUALITY_DIFF_VALIDATOR_NAME: string = 'quantityDifferences';
@@ -96,7 +98,7 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
 
     public ships: ShipNomenclatureDTO[] = [];
     public fishingGearsRegister: FishingGearRegisterNomenclatureDTO[] = [];
-    public ports: NomenclatureDTO<number>[] = [];
+    public ports: PortNomenclatureDTO[] = [];
     public aquaticOrganisms: FishNomenclatureDTO[] = [];
     public catchStates: NomenclatureDTO<number>[] = [];
     public catchPresentations: NomenclatureDTO<number>[] = [];
@@ -232,6 +234,12 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
 
                     this.fishingGearsRegister = await this.service.getFishingGearsRegister(this.model.permitLicenseId!).toPromise();
 
+                    if (this.model.statusCode === LogBookPageStatusesEnum.Missing) {
+                        const isDunabeWaters: boolean = value.permitLicenseWaterType === WaterTypesEnum.DANUBE;
+                        const isBlackSeaWaters: boolean = value.permitLicenseWaterType === WaterTypesEnum.BLACK_SEA;
+                        this.ports = this.ports.filter(x => x.isDanube === isDunabeWaters && x.isBlackSea === isBlackSeaWaters);
+                    }
+
                     this.fillForm();
                 }
             });
@@ -239,6 +247,11 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
         else {
             this.isAdd = true;
             this.fishingGearsRegister = await this.service.getFishingGearsRegister(this.model.permitLicenseId!).toPromise();
+
+            const isDunabeWaters: boolean = this.model.permitLicenseWaterType === WaterTypesEnum.DANUBE;
+            const isBlackSeaWaters: boolean = this.model.permitLicenseWaterType === WaterTypesEnum.BLACK_SEA;
+            this.ports = this.ports.filter(x => x.isDanube === isDunabeWaters && x.isBlackSea === isBlackSeaWaters);
+
             this.fillForm();
         }
 

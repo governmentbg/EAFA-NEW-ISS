@@ -139,7 +139,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.InspectionsPage
 
             if (result)
             {
-                _ = InspectionsTransaction.GetAll(1, reset: true);
+                _ = await InspectionsTransaction.GetAll(1, reset: true);
                 await OnReload();
             }
         }

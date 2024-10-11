@@ -109,7 +109,10 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FirstSaleInspection
 
         [MaxLength(4000)]
         public ValidState RepresentativeComment { get; set; }
-
+        protected override string GetInspectionJson()
+        {
+            return System.Text.Json.JsonSerializer.Serialize(Edit);
+        }
         public override void OnDisappearing()
         {
             GlobalVariables.IsAddingInspection = false;

@@ -7,9 +7,9 @@ using IARA.Mobile.Insp.Application.Interfaces.Transactions;
 using IARA.Mobile.Insp.Domain.Enums;
 using IARA.Mobile.Insp.FlyoutPages.InspectionsPage;
 using IARA.Mobile.Insp.Helpers;
+using IARA.Mobile.Shared.Menu;
 using System;
 using System.Collections.Generic;
-using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using TechnoLogica.Xamarin.Commands;
@@ -64,23 +64,25 @@ namespace IARA.Mobile.Insp.Base
 
         private async Task OnReturnForEdit()
         {
-            IInspectionsTransaction inspectionsTransaction = DependencyService.Resolve<IInspectionsTransaction>();
             ProtectedEdit.InspectionState = InspectionState.Draft;
+            string json = GetInspectionJson();
             HttpResult result = await DependencyService.Resolve<IRestClient>().PostAsFormDataAsync("Inspections/SendForFurtherCorrections", new InspectionDraftDto()
             {
                 Id = ProtectedEdit.Id.Value,
-                Json = JsonSerializer.Serialize(ProtectedEdit)
+                Json = json
             });
 
             if (result.IsSuccessful)
             {
-                App.Current.SetMainPage(new InspectionsPage());
+                await MainNavigator.Current.GoToPageAsync(nameof(InspectionsPage));
             }
             else
             {
                 await TLSnackbar.Show(TranslateExtension.Translator[nameof(GroupResourceEnum.Common) + "/InspectionLocked"], App.GetResource<Color>("ErrorColor"));
             }
         }
+
+        protected abstract string GetInspectionJson();
 
         private async Task OnPrint()
         {
@@ -139,6 +141,11 @@ namespace IARA.Mobile.Insp.Base
         public override Task Initialize(object sender)
         {
             return Task.CompletedTask;
+        }
+
+        protected override string GetInspectionJson()
+        {
+            return string.Empty;
         }
     }
 }

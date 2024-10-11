@@ -142,6 +142,10 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.BoatOnOpenWater
             set => SetProperty(ref _fishingObservedVesselActivities, value);
         }
 
+        protected override string GetInspectionJson()
+        {
+            return System.Text.Json.JsonSerializer.Serialize(Edit);
+        }
         public override void OnDisappearing()
         {
             GlobalVariables.IsAddingInspection = false;

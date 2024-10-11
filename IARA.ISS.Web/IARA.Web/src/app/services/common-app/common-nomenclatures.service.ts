@@ -14,6 +14,7 @@ import { PopulatedAreaNomenclatureExtendedDTO } from '@app/models/generated/dtos
 import { ShipNomenclatureDTO } from '@app/models/generated/dtos/ShipNomenclatureDTO';
 import { SubmittedByRoleNomenclatureDTO } from '@app/models/generated/dtos/SubmittedByRoleNomenclatureDTO';
 import { TariffNomenclatureDTO } from '@app/models/generated/dtos/TariffNomenclatureDTO';
+import { PortNomenclatureDTO } from '@app/models/generated/dtos/PortNomenclatureDTO';
 import { AreaTypes } from '@app/shared/enums/area-type.enum';
 import { RequestService } from '@app/shared/services/request.service';
 import { ShipsUtils } from '@app/shared/utils/ships.utils';
@@ -204,8 +205,8 @@ export class CommonNomenclatures {
         return this.requestService.get(this.area, this.controller, 'GetObservationTools', { responseTypeCtr: InspectionObservationToolNomenclatureDTO });
     }
 
-    public getPorts(): Observable<NomenclatureDTO<number>[]> {
-        return this.requestService.get(this.area, this.controller, 'GetPorts', { responseTypeCtr: NomenclatureDTO });
+    public getPorts(): Observable<PortNomenclatureDTO[]> {
+        return this.requestService.get(this.area, this.controller, 'GetPorts', { responseTypeCtr: PortNomenclatureDTO });
     }
 
     public getVesselActivities(): Observable<InspectionVesselActivityNomenclatureDTO[]> {

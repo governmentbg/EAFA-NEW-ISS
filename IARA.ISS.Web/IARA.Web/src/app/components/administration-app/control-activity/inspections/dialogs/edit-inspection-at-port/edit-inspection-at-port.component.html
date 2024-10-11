@@ -22,7 +22,8 @@
             <inspected-port formControlName="portControl"
                             [hasDate]="false"
                             [ports]="ports"
-                            [countries]="countries">
+                            [countries]="countries"
+                            [permittedPortIds]="permittedPortIds">
             </inspected-port>
         </div>
     </tl-expansion-panel>
@@ -42,7 +43,8 @@
                              [ports]="ports"
                              [vesselTypes]="vesselTypes"
                              [turbotSizeGroups]="turbotSizeGroups"
-                             [validityChecker]="form">
+                             [validityChecker]="form"
+                             (shipSelected)="onShipSelected($event)">
     </inspected-ship-sections>
 
     <!-- Трансбордиране -->

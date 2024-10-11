@@ -107,11 +107,14 @@ namespace IARA.Mobile.Infrastructure.Utilities
         {
             if (value is DateTime date)
             {
-#if !DEBUG
-                return date.ToString(CommonConstants.DateTimeFormat);
-#else
+                //#if !DEBUG
+                //                return date.ToString(CommonConstants.DateTimeFormat);
+                //#else
+                //                return date.ToUniversalTime().ToString(CommonConstants.DateTimeFormat);
+                //#endif
+
                 return date.ToUniversalTime().ToString(CommonConstants.DateTimeFormat);
-#endif
+
             }
             else
             {
