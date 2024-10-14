@@ -4,6 +4,7 @@ using IARA.Mobile.Insp.Application.Interfaces.Database;
 using IARA.Mobile.Insp.Domain.Entities.Inspections;
 using IARA.Mobile.Insp.Domain.Entities.Nomenclatures;
 using SQLite;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -110,6 +111,11 @@ namespace IARA.Mobile.Insp.Infrastructure.Persistence
             {
                 DeleteAll(new TableMapping(table.PropertyType.GetGenericArguments()[0]));
             }
+        }
+
+        public void DeleteAll(Type tableType)
+        {
+            DeleteAll(new TableMapping(tableType));
         }
 
         public TLTableQuery<TEntity> TLTable<TEntity>([CallerMemberName] string propertyName = "")

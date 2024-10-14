@@ -13,6 +13,7 @@ using IARA.Mobile.Insp.Domain.Enums;
 using IARA.Mobile.Insp.Helpers;
 using IARA.Mobile.Insp.ViewModels.Models;
 using IARA.Mobile.Shared.Views;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -106,6 +107,10 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.AquacultureFarmInspection
 
         public ICommand AquacultureChosen { get; }
 
+        protected override string GetInspectionJson()
+        {
+            return System.Text.Json.JsonSerializer.Serialize(Edit);
+        }
         public override void OnDisappearing()
         {
             GlobalVariables.IsAddingInspection = false;
@@ -179,7 +184,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.AquacultureFarmInspection
 
                     ShipPersonnelDetailedDto owner = NomenclaturesTransaction.GetAquacultureOwner(Edit.AquacultureId.Value);
 
-                    if (owner != null)
+                    if (owner != null && owner.Address != null)
                     {
                         LegalEntity.Nationality.AssignFrom(owner.Address.CountryId, LegalEntity.Nationalities);
                         LegalEntity.Address.Value = owner.Address.BuildAddress();

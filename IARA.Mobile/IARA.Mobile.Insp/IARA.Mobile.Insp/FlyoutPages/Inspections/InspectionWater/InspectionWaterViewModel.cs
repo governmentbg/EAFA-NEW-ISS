@@ -116,7 +116,10 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.InspectionWater
             get => _waterTypes;
             set => SetProperty(ref _waterTypes, value);
         }
-
+        protected override string GetInspectionJson()
+        {
+            return System.Text.Json.JsonSerializer.Serialize(Edit);
+        }
         public override void OnDisappearing()
         {
             GlobalVariables.IsAddingInspection = false;

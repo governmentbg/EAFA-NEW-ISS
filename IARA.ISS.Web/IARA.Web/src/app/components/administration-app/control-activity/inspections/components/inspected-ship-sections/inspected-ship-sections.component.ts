@@ -1,4 +1,4 @@
-﻿import { Component, Input, OnChanges, OnInit, Self, SimpleChanges } from '@angular/core';
+﻿import { Component, EventEmitter, Input, OnChanges, OnInit, Output, Self, SimpleChanges } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, NgControl, Validators } from '@angular/forms';
 import { forkJoin } from 'rxjs';
 
@@ -27,6 +27,7 @@ import { ValidityCheckerDirective } from '@app/shared/directives/validity-checke
 import { ShipNomenclatureDTO } from '@app/models/generated/dtos/ShipNomenclatureDTO';
 import { InspectionCatchMeasureDTO } from '@app/models/generated/dtos/InspectionCatchMeasureDTO';
 import { ShipsUtils } from '@app/shared/utils/ships.utils';
+import { PortNomenclatureDTO } from '@app/models/generated/dtos/PortNomenclatureDTO';
 
 @Component({
     selector: 'inspected-ship-sections',
@@ -94,13 +95,16 @@ export class InspectedShipSectionsComponent extends CustomFormControl<InspectedS
     public countries: NomenclatureDTO<number>[] = [];
 
     @Input()
-    public ports: NomenclatureDTO<number>[] = [];
+    public ports: PortNomenclatureDTO[] = [];
 
     @Input()
     public vesselTypes: NomenclatureDTO<number>[] = [];
 
     @Input()
     public turbotSizeGroups: NomenclatureDTO<number>[] = [];
+
+    @Output()
+    public shipSelected: EventEmitter<VesselDuringInspectionDTO> = new EventEmitter<VesselDuringInspectionDTO>();
 
     public shipToggles: InspectionCheckModel[] = [];
     public checkToggles: InspectionCheckModel[] = [];
@@ -249,6 +253,8 @@ export class InspectedShipSectionsComponent extends CustomFormControl<InspectedS
     }
 
     public async onShipSelected(ship: VesselDuringInspectionDTO | undefined): Promise<void> {
+        this.shipSelected.emit(ship);
+
         if (ship === null || ship === undefined) {
             this.form.get('permitsControl')!.setValue(undefined);
             this.form.get('permitLicensesControl')!.setValue(undefined);

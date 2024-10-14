@@ -189,7 +189,10 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FishingGearInspection
         {
             GlobalVariables.IsAddingInspection = false;
         }
-
+        protected override string GetInspectionJson()
+        {
+            return System.Text.Json.JsonSerializer.Serialize(Edit);
+        }
         public override GroupResourceEnum[] GetPageIndexes()
         {
             return new[]

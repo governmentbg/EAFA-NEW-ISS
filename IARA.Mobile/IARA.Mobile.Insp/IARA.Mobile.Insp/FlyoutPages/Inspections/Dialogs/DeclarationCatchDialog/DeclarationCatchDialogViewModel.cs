@@ -610,11 +610,13 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.DeclarationCatchDialo
             if (Validation.IsValid)
             {
                 DeclarationLogBookType type = ParseHelper.ParseEnum<DeclarationLogBookType>(DeclarationType.Value.Code).Value;
+
+                string name = _declarationTypes.Where(x => x.Code == type.ToString()).FirstOrDefault()?.Name;
                 return HideDialog(new DeclarationCatchModel
                 {
-                    DocumentType = TranslateExtension.Translator[nameof(GroupResourceEnum.DeclarationCatch) + $"/{type.ToString()}"],
-                    PageNumber = LogBookPage.Value.Num,
-                    PageDate = LogBookPageDate.Value.Value,
+                    DocumentType = name,
+                    PageNumber = LogBookPage.Value?.Num,
+                    PageDate = LogBookPageDate.Value,
                     Information = string.Join(", ", DeclarationCatches.Value.Select(x =>
                     {
                         return $"{FishTypes.Where(f => f.Id == x.FishTypeId).First().DisplayValue} - {x.CatchQuantity:f2}кг";

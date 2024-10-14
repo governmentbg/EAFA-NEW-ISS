@@ -93,6 +93,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.FloppyDiskInspectionD
 
             Content = new ScrollView
             {
+                Margin = 10,
                 Content = new StackLayout
                 {
                     Spacing = 10,

@@ -1,8 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using IARA.Mobile.Application.DTObjects.Nomenclatures;
+﻿using IARA.Mobile.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Domain.Enums;
 using IARA.Mobile.Insp.Application.DTObjects.Inspections;
 using IARA.Mobile.Insp.Attributes;
@@ -11,10 +7,15 @@ using IARA.Mobile.Insp.Domain.Enums;
 using IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.InspectorDialog;
 using IARA.Mobile.Insp.Models;
 using IARA.Mobile.Shared.Popups;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows.Input;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Helpers;
 using TechnoLogica.Xamarin.ResourceTranslator;
 using TechnoLogica.Xamarin.ViewModels.Models;
+using Xamarin.Forms.Internals;
 
 namespace IARA.Mobile.Insp.Controls.ViewModels
 {
@@ -121,7 +122,24 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
                 return;
             }
 
-            inspectors[0].IsInCharge = true;
+            int? inspectorInChargeId = inspectors.Where(f => f.IsInCharge).FirstOrDefault().InspectorId.Value;
+            if (inspectorInChargeId != null)
+            {
+                var inspectorInCharge = inspectors.Where(f => f.InspectorId == inspectorInChargeId).FirstOrDefault();
+                if (inspectorInCharge != null)
+                {
+                    inspectors.Where(x => x.IsInCharge).ForEach(x => x.IsInCharge = false);
+                    inspectorInCharge.IsInCharge = true;
+                }
+                else
+                {
+                    inspectors[0].IsInCharge = true;
+                }
+            }
+            else
+            {
+                inspectors[0].IsInCharge = true;
+            }
 
             await OnEdit(inspectors, true);
         }

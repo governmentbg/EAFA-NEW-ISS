@@ -16,8 +16,8 @@ import { CommonUtils } from '@app/shared/utils/common.utils';
 import { IS_PUBLIC_APP } from '@app/shared/modules/application.modules';
 import { CustomFormControl } from '@app/shared/utils/custom-form-control';
 import { ChoosePermitLicenseFromInspectionComponent } from './components/choose-permit-license-from-inspection/choose-permit-license-from-inspection.component';
-import { ChoosePermitLicenseFromInspectionDialogParams } from './components/choose-permit-license-from-inspection/models/choose-permit-license-from-inspection-dialog-params.model';
 import { ShipNomenclatureDTO } from '@app/models/generated/dtos/ShipNomenclatureDTO';
+import { ChooseFromInspectionDialogParams } from './components/choose-permit-license-from-inspection/models/choose-from-inspection-dialog-params.model';
 
 @Component({
     selector: 'fishing-gears',
@@ -214,7 +214,7 @@ export class FishingGearsComponent extends CustomFormControl<FishingGearDTO[]> i
     public choosePermitLicenseFromInspection(): void {
         const dialog = this.choosePermitLicenseFromInspectionDialog.openWithTwoButtons({
             title: this.translate.getValue('fishing-gears.choose-permit-license-from-inspection-dialog-title'),
-            componentData: new ChoosePermitLicenseFromInspectionDialogParams({
+            componentData: new ChooseFromInspectionDialogParams({
                 shipId: this.shipId,
                 service: this.service,
                 ships: this.ships

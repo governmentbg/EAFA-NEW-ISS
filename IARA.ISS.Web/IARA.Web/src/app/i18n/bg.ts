@@ -2897,6 +2897,12 @@
         'date-of-page': 'Дата',
         'log-book': 'Номер на дневник',
 
+        'permitted-ports': 'Пристанища, за които корабът има РСР',
+        'not-permitted-ports': 'Пристанища, за които корабът няма РСР',
+        'other-ports-danube': 'Дунавски пристанища',
+        'other-ports-black-sea': 'Черноморски пристанища',
+        'other-ports-country': 'Вътрешни пристанища',
+
         'add-catch-ship-dialog-title': 'Добави кораб',
         'edit-catch-ship-dialog-title': 'Редактирай кораб',
         'view-catch-ship-dialog-title': 'Преглед на кораб',

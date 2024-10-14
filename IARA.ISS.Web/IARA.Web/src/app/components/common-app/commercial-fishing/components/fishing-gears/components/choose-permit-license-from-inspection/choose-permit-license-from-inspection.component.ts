@@ -2,7 +2,6 @@
 import { DialogCloseCallback, IDialogComponent } from '@app/shared/components/dialog-wrapper/interfaces/dialog-content.interface';
 import { IActionInfo } from '@app/shared/components/dialog-wrapper/interfaces/action-info.interface';
 import { DialogWrapperData } from '@app/shared/components/dialog-wrapper/models/dialog-action-buttons.model';
-import { ChoosePermitLicenseFromInspectionDialogParams } from './models/choose-permit-license-from-inspection-dialog-params.model';
 import { ICommercialFishingService } from '@app/interfaces/common-app/commercial-fishing.interface';
 import { ShipNomenclatureDTO } from '@app/models/generated/dtos/ShipNomenclatureDTO';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
@@ -13,6 +12,7 @@ import { CommonUtils } from '@app/shared/components/search-panel/utils';
 import { InspectedPermitLicenseNomenclatureDTO } from '@app/models/generated/dtos/InspectedPermitLicenseNomenclatureDTO';
 import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
 import { ShipsUtils } from '@app/shared/utils/ships.utils';
+import { ChooseFromInspectionDialogParams } from './models/choose-from-inspection-dialog-params.model';
 
 @Component({
     selector: 'choose-permit-license-from-inspection',
@@ -148,7 +148,7 @@ export class ChoosePermitLicenseFromInspectionComponent implements IDialogCompon
         });
     }
 
-    public setData(data: ChoosePermitLicenseFromInspectionDialogParams, wrapperData: DialogWrapperData): void {
+    public setData(data: ChooseFromInspectionDialogParams, wrapperData: DialogWrapperData): void {
         this.service = data.service;
         this.shipId = data.shipId;
         this.ships = data.ships;

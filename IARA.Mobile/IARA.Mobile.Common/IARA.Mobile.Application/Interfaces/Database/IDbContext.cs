@@ -1,6 +1,6 @@
-﻿using System;
-using IARA.Mobile.Domain.Entities.Exceptions;
+﻿using IARA.Mobile.Domain.Entities.Exceptions;
 using IARA.Mobile.Domain.Models;
+using System;
 
 namespace IARA.Mobile.Application.Interfaces.Database
 {
@@ -16,5 +16,10 @@ namespace IARA.Mobile.Application.Interfaces.Database
         /// Removes all entities from all tables
         /// </summary>
         void DeleteAllTables();
+
+        /// <summary>
+        /// Removes all entities from a table
+        /// </summary>
+        void DeleteAll(Type tableType);
     }
 }

@@ -330,6 +330,13 @@ namespace IARA.Mobile.Insp.Application.Transactions
                 {
                     return null;
                 }
+                if (reset)
+                {
+                    using (IAppDbContext context = ContextBuilder.CreateContext())
+                    {
+                        context.DeleteAll(typeof(Inspection));
+                    }
+                }
 
                 using (IAppDbContext context = ContextBuilder.CreateContext())
                 {
@@ -498,7 +505,7 @@ namespace IARA.Mobile.Insp.Application.Transactions
                         where filters == null ? true : ((filters.DateFrom == null ? true : (insp.StartDate.Date >= filters.DateFrom.Value.Date))
                                                      && (filters.DateTo == null ? true : (insp.StartDate.Date <= filters.DateTo.Value.Date))
                                                      && (filters.StateIds == null ? true : (insp.InspectionStateId == filters.StateIds.First()))
-                                                     && (string.IsNullOrEmpty(filters.ReportNumber) ? true : insp.ReportNr.Contains(filters.ReportNumber))
+                                                     && (string.IsNullOrEmpty(filters.ReportNumber) ? true : insp.ReportNr == (filters.ReportNumber))
                                                      && (filters.InspectorId == null ? true : insp.InspectorsIds.Split(new string[] { ", " }, StringSplitOptions.None).Contains(filters.InspectorId.ToString())))
                         select insp
                     ).Count();
@@ -1297,7 +1304,7 @@ namespace IARA.Mobile.Insp.Application.Transactions
                     where filters == null ? true : ((filters.DateFrom == null ? true : (insp.StartDate.Date >= filters.DateFrom.Value.Date))
                                                  && (filters.DateTo == null ? true : (insp.StartDate.Date <= filters.DateTo.Value.Date))
                                                  && (filters.StateIds == null ? true : (insp.InspectionStateId == filters.StateIds.First()))
-                                                 && (string.IsNullOrEmpty(filters.ReportNumber) ? true : insp.ReportNr.Contains(filters.ReportNumber))
+                                                 && (string.IsNullOrEmpty(filters.ReportNumber) ? true : insp.ReportNr == (filters.ReportNumber))
                                                  && (filters.InspectorId == null ? true : insp.InspectorsIds.Split(new string[] { ", " }, StringSplitOptions.None).Contains(filters.InspectorId.ToString())))
 
                     orderby insp.StartDate descending
@@ -1455,6 +1462,8 @@ namespace IARA.Mobile.Insp.Application.Transactions
 
                 if (localInspection != null)
                 {
+                    localInspection.JsonContent = null;
+                    localInspection.HasJsonContent = false;
                     localInspection.InspectionState = InspectionState.Draft;
                     context.Inspections.Update(localInspection);
                 }

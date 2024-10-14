@@ -11,5 +11,11 @@ export class QuotaSpiciesPortDTO {
     public portId?: number;
 
     @StrictlyTyped(Boolean)
+    public isDunabe?: boolean;
+
+    @StrictlyTyped(Boolean)
+    public isBlackSea?: boolean;
+
+    @StrictlyTyped(Boolean)
     public isActive?: boolean;
 }

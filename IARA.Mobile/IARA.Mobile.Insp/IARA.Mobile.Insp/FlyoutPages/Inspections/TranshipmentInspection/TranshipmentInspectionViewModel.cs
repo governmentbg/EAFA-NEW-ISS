@@ -127,7 +127,10 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.TranshipmentInspection
                 GroupResourceEnum.DeclarationCatch,
             };
         }
-
+        protected override string GetInspectionJson()
+        {
+            return System.Text.Json.JsonSerializer.Serialize(Edit);
+        }
         public override async Task Initialize(object sender)
         {
             InspectionHelper.Initialize(this, Edit);
