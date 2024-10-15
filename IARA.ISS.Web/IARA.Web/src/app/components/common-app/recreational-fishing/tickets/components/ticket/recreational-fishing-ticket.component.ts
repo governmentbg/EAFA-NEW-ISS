@@ -844,6 +844,10 @@ export class RecreationalFishingTicketComponent extends CustomFormControl<Recrea
     private getTicketBaseRegixData(): RecreationalFishingTicketBaseRegixDataDTO {
         const result: RecreationalFishingTicketBaseRegixDataDTO = new RecreationalFishingTicketBaseRegixDataDTO({
             id: this.dialogData!.id,
+            typeId: this.type?.value,
+            periodId: this.period?.value,
+            price: this.price,
+            validFrom: this.form.get('validFromControl')?.value ?? undefined,
             applicationId: this.dialogData!.applicationId,
             person: this.form.get('regixDataControl')?.value,
             personAddressRegistrations: this.form.get('addressControl')?.value,
