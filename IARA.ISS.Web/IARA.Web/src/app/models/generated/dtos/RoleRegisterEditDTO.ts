@@ -37,4 +37,7 @@ export class RoleRegisterEditDTO {
 
     @StrictlyTyped(Number)
     public permissionIds?: number[];
+
+    @StrictlyTyped(Number)
+    public reportPermissionIds?: number[];
 }

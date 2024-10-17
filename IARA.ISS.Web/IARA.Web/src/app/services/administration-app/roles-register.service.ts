@@ -14,6 +14,7 @@ import { AreaTypes } from '@app/shared/enums/area-type.enum';
 import { RequestProperties } from '@app/shared/services/request-properties';
 import { RequestService } from '@app/shared/services/request.service';
 import { BaseAuditService } from '@app/services/common-app/base-audit.service';
+import { ReportRoleGroupDTO } from '@app/models/generated/dtos/ReportRoleGroupDTO';
 
 @Injectable({
     providedIn: 'root'
@@ -70,6 +71,12 @@ export class RolesRegisterService extends BaseAuditService implements IRolesRegi
     public getPermissionGroups(): Observable<PermissionGroupDTO[]> {
         return this.requestService.get(this.area, this.controller, 'GetPermissionGroups', {
             responseTypeCtr: PermissionGroupDTO
+        });
+    }
+
+    public getReportGroups(): Observable<ReportRoleGroupDTO[]> {
+        return this.requestService.get(this.area, this.controller, 'GetReportGroups', {
+            responseTypeCtr: ReportRoleGroupDTO
         });
     }
 

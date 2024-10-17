@@ -997,7 +997,11 @@
         'user-public-access': 'External users',
         'user-internal-access': 'Internal users',
         'user-internal-public-access': 'All',
-        'user-no-internal-public-access': 'None'
+        'user-no-internal-public-access': 'None',
+
+        'reports': 'Reports',
+        'report-group': 'Report group',
+        'search-report': 'Search'
     },
     'nomenclatures-page': {
         'filters-code': 'Code',
@@ -5959,6 +5963,7 @@
 
         'edit-decree-is-recurent-violation': 'Penal decree is recurent violation',
         'edit-decree-comments': 'Comments',
+        'edit-penal-decree-comments': 'Comments',
 
         'edit-resolution-basic-data': 'Reasons',
         'edit-reasons': 'Reasons',
@@ -5966,6 +5971,7 @@
         'edit-zann': 'ZANN',
         'edit-zra': 'ZRA',
         'edit-material-evidence': 'Material evidence',
+        'edit-material-evidence-comments': 'Material evidence',
 
         'edit-decree-status': 'Penal decree status',
         'edit-warning-status': 'Warning status',
@@ -6028,6 +6034,7 @@
 
         'edit-decree-appliance': 'Seized appliances',
         'edit-appeal-data': 'Appeal court',
+        'edit-constatation': 'Constatation',
         'edit-constatation-comments': 'Constatation comments',
 
         'edit-decree-files': 'Files',

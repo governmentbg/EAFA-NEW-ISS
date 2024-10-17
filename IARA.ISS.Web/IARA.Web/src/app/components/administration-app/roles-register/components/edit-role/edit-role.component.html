@@ -176,4 +176,57 @@
             </data-column-inline>
         </tl-data-table>
     </tl-expansion-panel>
+
+    <!-- Справки -->
+    <tl-expansion-panel title="{{ 'roles-register.reports' | tlTranslate }}"
+                        tooltipResourceName="roles-register.reports-helper">
+        <div fxLayout="row">
+            <tl-input fxFlex="33"
+                      [formControl]="reportFilterControl"
+                      label="{{ 'roles-register.search-report' | tlTranslate }}"
+                      tooltipResourceName="roles-register.search-report-helper">
+            </tl-input>
+        </div>
+
+        <div *ngIf="form.controls.reportsGroup" [formGroup]="form.controls.reportsGroup">
+            <ngx-datatable #reportsTable
+                           class="material"
+                           [rows]="reportGroups"
+                           [columnMode]="'flex'"
+                           [headerHeight]="50"
+                           [footerHeight]="0"
+                           rowHeight="auto">
+                <ngx-datatable-column [flexGrow]="0">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                        <div fxFlex="32px"
+                             fxLayout="column"
+                             fxLayoutAlign="center center"
+                             [class.datatable-icon-right]="!row.expanded"
+                             [class.datatable-icon-down]="row.expanded"
+                             class="primary-color"
+                             (click)="toggleDetail(row)">
+                        </div>
+                    </ng-template>
+                </ngx-datatable-column>
+
+                <ngx-datatable-row-detail rowHeight="auto">
+                    <ng-template let-row="row" ngx-datatable-row-detail-template>
+                        <div *ngFor="let report of row.reports" class="report-row" fxLayout="row" fxLayoutAlign="start center">
+                            <div fxFlex="4"></div>
+                            <span fxFlex="70" class="overflow">{{ report.displayName }}</span>
+                            <tl-checkbox fxFlex="26"
+                                         [formControl]="form.controls.reportsGroup.controls[report.displayName]">
+                            </tl-checkbox>
+                        </div>
+                    </ng-template>
+                </ngx-datatable-row-detail>
+
+                <ngx-datatable-column name="{{ 'roles-register.report-group' | tlTranslate }}" [flexGrow]="0.98">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                        <span>{{ row.parentGroup }}</span>
+                    </ng-template>
+                </ngx-datatable-column>
+            </ngx-datatable>
+        </div>
+    </tl-expansion-panel>
 </div>

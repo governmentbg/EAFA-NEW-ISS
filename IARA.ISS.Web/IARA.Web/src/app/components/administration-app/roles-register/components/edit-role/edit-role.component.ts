@@ -19,6 +19,8 @@ import { CommonUtils } from '@app/shared/utils/common.utils';
 import { IRolesRegisterService } from '@app/interfaces/administration-app/roles-register.interface';
 import { DateRangeData } from '@app/shared/components/input-controls/tl-date-range/tl-date-range.component';
 import { GetControlErrorLabelTextCallback } from '@app/shared/components/input-controls/base-tl-control';
+import { ReportRoleGroupDTO } from '@app/models/generated/dtos/ReportRoleGroupDTO';
+import { DatatableComponent } from '@swimlane/ngx-datatable';
 
 type TreeStatus = 'collapsed' | 'expanded' | 'disabled';
 
@@ -32,11 +34,13 @@ class PermissionGroupTreeDTO extends PermissionGroupDTO {
 
 @Component({
     selector: 'edit-role',
-    templateUrl: './edit-role.component.html'
+    templateUrl: './edit-role.component.html',
+    styleUrls: ['./edit-role.component.scss']
 })
 export class EditRoleComponent implements OnInit, AfterViewInit, IDialogComponent {
     public form!: FormGroup;
     public permissionFilterControl: FormControl = new FormControl();
+    public reportFilterControl: FormControl = new FormControl();
     public usersForm!: FormGroup;
     public readOnly: boolean = false;
 
@@ -46,10 +50,16 @@ export class EditRoleComponent implements OnInit, AfterViewInit, IDialogComponen
     public permissionGroups: PermissionGroupTreeDTO[] = [];
     public allPermissionGroups: PermissionGroupTreeDTO[] = [];
 
+    public reportGroups: ReportRoleGroupDTO[] = [];
+    public allReportGroups: ReportRoleGroupDTO[] = [];
+
     public getDatesOverlappingErrorTextMethod: GetControlErrorLabelTextCallback = this.getDatesOverlappingErrorText.bind(this);
 
     @ViewChild('usersTable')
     private readonly usersTable!: TLDataTableComponent;
+
+    @ViewChild('reportsTable')
+    private readonly reportsTable!: DatatableComponent;
 
     private readonly service: IRolesRegisterService;
     private readonly nomenclatures: CommonNomenclatures;
@@ -72,18 +82,22 @@ export class EditRoleComponent implements OnInit, AfterViewInit, IDialogComponen
     }
 
     public async ngOnInit(): Promise<void> {
-        const nomenclatures: [NomenclatureDTO<number>[], PermissionGroupDTO[]] = await forkJoin(
+        const nomenclatures: [NomenclatureDTO<number>[], PermissionGroupDTO[], ReportRoleGroupDTO[]] = await forkJoin(
             this.nomenclatures.getUserNames(),
-            this.service.getPermissionGroups()
+            this.service.getPermissionGroups(),
+            this.service.getReportGroups()
         ).toPromise();
 
         this.users = nomenclatures[0];
         this.allPermissionGroups = nomenclatures[1].map(group => new PermissionGroupTreeDTO(group));
+        this.allReportGroups = nomenclatures[2];
+        this.reportGroups = nomenclatures[2];
 
         this.organizeAndInitPermissionGroups();
         this.calculateChildrenIndices();
         this.initTreeStatuses();
         this.buildPermissionsFormGroup();
+        this.buildReportsFormGroup();
 
         if (this.roleId === undefined) {
             this.model = new RoleRegisterEditDTO();
@@ -133,6 +147,28 @@ export class EditRoleComponent implements OnInit, AfterViewInit, IDialogComponen
                 }
 
                 this.setBackgroundColorToRows();
+            }
+        });
+
+        this.reportFilterControl.valueChanges.subscribe({
+            next: (value: string) => {
+                if (value !== undefined && value !== null && value.length > 0) {
+                    value = value.toLowerCase();
+
+                    this.reportGroups = this.allReportGroups.filter((group: ReportRoleGroupDTO) => {
+                        if (group.parentGroup?.toLowerCase().includes(value)) {
+                            return true;
+                        }
+
+                        if (group.reports?.some(x => x.displayName?.toLowerCase().includes(value))) {
+                            return true;
+                        }
+                        return false;
+                    });
+                }
+                else {
+                    this.reportGroups = this.allReportGroups;
+                }
             }
         });
     }
@@ -185,6 +221,11 @@ export class EditRoleComponent implements OnInit, AfterViewInit, IDialogComponen
 
         this.setBackgroundColorToRows();
         this.permissionGroups = [...this.permissionGroups];
+    }
+
+    public toggleDetail(row: any): void {
+        row.expanded = !row.expanded;
+        this.reportsTable.rowDetail.toggleExpandRow(row);
     }
 
     public getDatesOverlappingErrorText(controlName: string, error: unknown, errorCode: string): TLError | undefined {
@@ -259,6 +300,13 @@ export class EditRoleComponent implements OnInit, AfterViewInit, IDialogComponen
             }
         }
 
+        if (this.model.reportPermissionIds) {
+            for (const reportId of this.model.reportPermissionIds) {
+                const control: FormControl = this.getReportControlById(reportId);
+                control.setValue(true);
+            }
+        }
+
         if (this.readOnly) {
             this.form.disable();
         }
@@ -290,6 +338,14 @@ export class EditRoleComponent implements OnInit, AfterViewInit, IDialogComponen
         for (const key of Object.keys(controls)) {
             if (this.form.get('permissionsGroup')!.get(key)!.value === true) {
                 this.model.permissionIds.push(this.getPermissionIdByName(key));
+            }
+        }
+
+        const reportControls: { [key: string]: AbstractControl } = (this.form.get('reportsGroup') as FormGroup).controls;
+        this.model.reportPermissionIds = [];
+        for (const key of Object.keys(reportControls)) {
+            if (this.form.get('reportsGroup')!.get(key)?.value === true) {
+                this.model.reportPermissionIds.push(this.getReportIdByName(key));
             }
         }
     }
@@ -441,6 +497,19 @@ export class EditRoleComponent implements OnInit, AfterViewInit, IDialogComponen
         this.form.addControl('permissionsGroup', formGroup);
     }
 
+    private buildReportsFormGroup(): void {
+        const formGroup: FormGroup = new FormGroup({});
+        for (const group of this.allReportGroups) {
+            if (group.reports) {
+                for (const report of group.reports) {
+                    formGroup.addControl(`${report.displayName}`, new FormControl());
+                }
+            }
+        }
+
+        this.form.addControl('reportsGroup', formGroup);
+    }
+
     private getPermissionControlById(id: number): FormControl {
         let permissionName: string | undefined;
 
@@ -514,6 +583,32 @@ export class EditRoleComponent implements OnInit, AfterViewInit, IDialogComponen
             }
         }
         throw new Error(`Could not find permission with name ${name}`);
+    }
+
+    private getReportControlById(id: number): FormControl {
+        for (const group of this.allReportGroups) {
+            if (group.reports) {
+                for (const report of group.reports) {
+                    if (report.value === id) {
+                        return this.form.get('reportsGroup')!.get(report.displayName!) as FormControl;
+                    }
+                }
+            }
+        }
+        throw new Error(`Could not find report with id ${id}`);
+    }
+
+    private getReportIdByName(name: string): number {
+        for (const group of this.allReportGroups) {
+            if (group.reports) {
+                for (const report of group.reports) {
+                    if (report.displayName === name) {
+                        return report.value!;
+                    }
+                }
+            }
+        }
+        throw new Error(`Could not find report with name ${name}`);
     }
 
     private getTableRows(): HTMLElement[] {
