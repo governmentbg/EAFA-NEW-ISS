@@ -73,25 +73,6 @@
         </div>
     </tl-expansion-panel>
 
-    <!-- Установих, че -->
-    <tl-expansion-panel title="{{ 'penal-decrees.edit-constatation-comments' | tlTranslate }}"
-                        tooltipResourceName="penal-decrees.edit-constatation-comments-helper"
-                        [validityChecker]="form">
-        <div fxLayout="row" fxLayoutGap="1em">
-            <div fxLayout="column" fxLayoutGap="1em" fxFlex="100">
-                <tl-textarea formControlName="constatationCommentsControl"
-                             tooltipResourceName="penal-decree.edit-auan-constatation-comments-helper"
-                             label="{{ 'penal-decrees.edit-auan-constatation-comments' | tlTranslate }}">
-                </tl-textarea>
-
-                <tl-textarea formControlName="evidenceCommentsControl"
-                             tooltipResourceName="penal-decree.edit-evidence-comments-helper"
-                             label="{{ 'penal-decrees.edit-evidence-comments' | tlTranslate }}">
-                </tl-textarea>
-            </div>
-        </div>
-    </tl-expansion-panel>
-
     <!-- Законови разпоредби от АУАН -->
     <tl-expansion-panel title="{{ 'penal-decrees.edit-auan-violated-regulations' | tlTranslate }}"
                         tooltipResourceName="penal-decree.edit-auan-violated-regulations-helper"
@@ -108,30 +89,22 @@
         </div>
     </tl-expansion-panel>
 
-    <!-- Глоба -->
-    <tl-expansion-panel title="{{ 'penal-decrees.edit-decree-agreement-fines' | tlTranslate }}"
-                        tooltipResourceName="penal-decrees.edit-decree-agreement-fines-helper"
+    <!-- Установих, че -->
+    <tl-expansion-panel title="{{ 'penal-decrees.edit-constatation-comments' | tlTranslate }}"
+                        tooltipResourceName="penal-decrees.edit-constatation-comments-helper"
                         [validityChecker]="form">
         <div fxLayout="row" fxLayoutGap="1em">
-            <tl-input fxFlex="25"
-                      formControlName="fineControl"
-                      label="{{ 'penal-decrees.edit-agreement-fine' | tlTranslate }}"
-                      tooltipResourceName="penal-decrees.edit-agreement-fine-helper">
-            </tl-input>
+            <div fxLayout="column" fxLayoutGap="1em" fxFlex="100">
+                <tl-textarea formControlName="constatationCommentsControl"
+                             tooltipResourceName="penal-decree.edit-auan-constatation-comments-helper"
+                             label="{{ 'penal-decrees.edit-auan-constatation-comments' | tlTranslate }}">
+                </tl-textarea>
 
-            <tl-input fxFlex="25"
-                      formControlName="finePercentControl"
-                      label="{{ 'penal-decrees.edit-agreement-fine-percent' | tlTranslate }}"
-                      tooltipResourceName="penal-decrees.edit-agreement-fine-percent-helper">
-            </tl-input>
-        </div>
-
-        <div fxLayout="row" fxLayoutGap="1em">
-            <tl-textarea fxFlex="100"
-                         formControlName="commentsControl"
-                         label="{{ 'penal-decrees.edit-decree-comments' | tlTranslate }}"
-                         tooltipResourceName="penal-decrees.edit-decree-comments-helper">
-            </tl-textarea>
+                <tl-textarea formControlName="evidenceCommentsControl"
+                             tooltipResourceName="penal-decree.edit-evidence-comments-helper"
+                             label="{{ 'penal-decrees.edit-evidence-comments' | tlTranslate }}">
+                </tl-textarea>
+            </div>
         </div>
     </tl-expansion-panel>
 
@@ -184,6 +157,33 @@
                     </tl-card-content>
                 </tl-card>
             </div>
+        </div>
+    </tl-expansion-panel>
+
+    <!-- Глоба -->
+    <tl-expansion-panel title="{{ 'penal-decrees.edit-decree-agreement-fines' | tlTranslate }}"
+                        tooltipResourceName="penal-decrees.edit-decree-agreement-fines-helper"
+                        [validityChecker]="form">
+        <div fxLayout="row" fxLayoutGap="1em">
+            <tl-input fxFlex="25"
+                      formControlName="fineControl"
+                      label="{{ 'penal-decrees.edit-agreement-fine' | tlTranslate }}"
+                      tooltipResourceName="penal-decrees.edit-agreement-fine-helper">
+            </tl-input>
+
+            <tl-input fxFlex="25"
+                      formControlName="finePercentControl"
+                      label="{{ 'penal-decrees.edit-agreement-fine-percent' | tlTranslate }}"
+                      tooltipResourceName="penal-decrees.edit-agreement-fine-percent-helper">
+            </tl-input>
+        </div>
+
+        <div fxLayout="row" fxLayoutGap="1em">
+            <tl-textarea fxFlex="100"
+                         formControlName="commentsControl"
+                         label="{{ 'penal-decrees.edit-decree-comments' | tlTranslate }}"
+                         tooltipResourceName="penal-decrees.edit-decree-comments-helper">
+            </tl-textarea>
         </div>
     </tl-expansion-panel>
 

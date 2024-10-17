@@ -7,6 +7,7 @@ import { RoleRegisterDTO } from '@app/models/generated/dtos/RoleRegisterDTO';
 import { RoleRegisterEditDTO } from '@app/models/generated/dtos/RoleRegisterEditDTO';
 import { RolesRegisterFilters } from '@app/models/generated/filters/RolesRegisterFilters';
 import { IBaseAuditService } from '@app/interfaces/base-audit.interface';
+import { ReportRoleGroupDTO } from '@app/models/generated/dtos/ReportRoleGroupDTO';
 
 export interface IRolesRegisterService extends IBaseAuditService {
     getAllRoles(request: GridRequestModel<RolesRegisterFilters>): Observable<GridResultModel<RoleRegisterDTO>>;
@@ -18,4 +19,5 @@ export interface IRolesRegisterService extends IBaseAuditService {
     undoDeleteRole(id: number): Observable<void>;
 
     getPermissionGroups(): Observable<PermissionGroupDTO[]>;
+    getReportGroups(): Observable<ReportRoleGroupDTO[]>;
 }

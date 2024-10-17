@@ -984,7 +984,11 @@
         'user-public-access': 'Външни потребители',
         'user-internal-access': 'Вътрешни потребители',
         'user-internal-public-access': 'Всички',
-        'user-no-internal-public-access': 'Няма'
+        'user-no-internal-public-access': 'Няма',
+
+        'reports': 'Справки, които може да изпълнява ролята',
+        'report-group': 'Група справки',
+        'search-report': 'Търсене'
     },
     'nomenclatures-page': {
         'filters-code': 'Код',
@@ -6024,6 +6028,7 @@
 
         'edit-decree-is-recurent-violation': 'Има установена повтаряемост на нарушението',
         'edit-decree-comments': 'Бележки',
+        'edit-penal-decree-comments': 'Постановявам',
 
         'edit-resolution-basic-data': 'Причини за резолюция',
         'edit-reasons': 'Причини за прекратяване на административнонаказателното производство',
@@ -6031,6 +6036,7 @@
         'edit-zann': 'Основание от ЗАНН',
         'edit-zra': 'Основание от ЗРА',
         'edit-material-evidence': 'Разпореждане с веществени доказателства',
+        'edit-material-evidence-comments': 'Разпореждам',
 
         'edit-decree-status': 'Статус на наказателното постановление',
         'edit-warning-status': 'Статус на предупреждението',
@@ -6093,6 +6099,7 @@
 
         'edit-decree-appliance': 'Иззети приспособления',
         'edit-constatation-comments': 'Установих, че',
+        'edit-constatation': 'Постанових',
         'edit-appeal-data': 'Подлежи на обжалване пред',
 
         'edit-decree-files': 'Файлове',
