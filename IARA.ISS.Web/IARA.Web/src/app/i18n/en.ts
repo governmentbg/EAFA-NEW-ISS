@@ -254,6 +254,7 @@
         'scientific-fishing-applications': 'Scientific fishing applications',
         'control-activity': 'Control activity',
         'checks-and-inspections': 'Checks and inspections',
+        'inspection-reports': 'Inspection reports',
         'administrative-violation-act': 'Administrative violation acts',
         'awarded-points': 'Given violation points',
         'penal-decrees': 'Penal decrees, warnings, agreements',
@@ -2842,6 +2843,7 @@
         'log-book-page-status-submitted': 'Submitted',
         'date-of-page': 'Date',
         'log-book': 'Log book num',
+        'market-products-info': 'Products information',
 
         'permitted-ports': 'Permitted ports',
         'not-permitted-ports': 'Other ports',
@@ -4028,7 +4030,8 @@
         'ship-log-book-pages-card': 'Ship log book pages',
         'admission-declarations-card': 'Admission declarations',
         'transportation-documents-card': 'Transportation documents',
-        'inspected-pages': 'Inspections and checks where of this page',
+        'inspected-pages': 'Inspections and checks of this page',
+        'inspection-reports-for-page': 'Inspection reports of this page',
         'no-inspections-attached-to-admission-page': 'There are no inspections and checks of this admission page',
         'no-inspections-attached-to-aquaculture-page': 'There are no inspections and checks of this aquaculture page',
         'no-inspections-attached-to-first-sale-page': 'There are no inspections and checks of this first sale page',
@@ -6065,7 +6068,12 @@
         'complete-edit-resolution-confirm-dialog-message': 'Are you sure that you are done with the changes for this resolution?',
         'complete-add-resolution-confirm-dialog-message': 'Are you sure that you are done with the changes for this resolution?',
         'complete-resolution-confirm-dialog-title': 'Complete resolution',
-        'complete-resolution-confirm-dialog-ok-btn-label': 'Complete'
+        'complete-resolution-confirm-dialog-ok-btn-label': 'Complete',
+
+        'penal-decree-num-already-exist-error': 'Penal decree number already exists',
+        'agreement-num-already-exist-error': 'Agreement number already exists',
+        'warning-num-already-exist-error': 'Warning number already exists',
+        'resolution-num-already-exist-error': 'Resolution number already exists'
     },
     'catch-quotas': {
         'ship': 'Ship',

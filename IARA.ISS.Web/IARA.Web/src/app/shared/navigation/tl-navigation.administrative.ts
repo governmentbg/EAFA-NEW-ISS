@@ -554,7 +554,7 @@ export class Navigation {
                 {
                     id: 'checks_and_inspections',
                     title: 'Checks and inspections',
-                    translate: 'navigation.checks-and-inspections',
+                    translate: 'navigation.inspection-reports',
                     type: 'item',
                     icon: 'fa-bug',
                     url: '/inspections-register',

@@ -266,7 +266,7 @@ export class ReportExecutionComponent implements AfterViewInit {
         return parameterValues;
     }
 
-    private buildParametersFormGroup(parameters: ReportParameterExecuteDTO[]): FormGroup {
+    private buildParametersFormGroup(parameters: ExecutionParamDTO[]): FormGroup {
 
         const parametersFormGroup = new FormGroup({});
 
@@ -300,7 +300,7 @@ export class ReportExecutionComponent implements AfterViewInit {
                 }
             }
 
-            switch (parameter.dataType) {
+            switch (parameter.type) {
                 case ReportParameterTypeEnum.Int: {
                     if (validator !== null && validator !== undefined) {
                         parametersFormGroup.controls[controlName].setValidators([

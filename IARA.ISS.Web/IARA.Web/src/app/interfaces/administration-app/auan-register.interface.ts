@@ -13,6 +13,7 @@ import { InspDeliveryTypesNomenclatureDTO } from '@app/models/generated/dtos/Ins
 import { AuanInspectionDTO } from '@app/models/generated/dtos/AuanInspectionDTO';
 import { AuanLawSectionDTO } from '@app/models/generated/dtos/AuanLawSectionDTO';
 import { AuanDrafterNomenclatureDTO } from '@app/models/generated/dtos/AuanDrafterNomenclatureDTO';
+import { InspectorUserNomenclatureDTO } from '@app/models/generated/dtos/InspectorUserNomenclatureDTO';
 
 export interface IAuanRegisterService extends IBaseAuditService {
     getAllAuans(request: GridRequestModel<AuanRegisterFilters>): Observable<GridResultModel<AuanRegisterDTO>>;
@@ -37,5 +38,5 @@ export interface IAuanRegisterService extends IBaseAuditService {
     getAuanLawSections(): Observable<AuanLawSectionDTO[]>;
     getConfiscatedAppliances(): Observable<NomenclatureDTO<number>[]>;
     getTurbotSizeGroups(): Observable<NomenclatureDTO<number>[]>;
-    getInspectorUsernames(): Observable<NomenclatureDTO<number>[]>;
+    getInspectorUsernames(): Observable<InspectorUserNomenclatureDTO[]>;
 }

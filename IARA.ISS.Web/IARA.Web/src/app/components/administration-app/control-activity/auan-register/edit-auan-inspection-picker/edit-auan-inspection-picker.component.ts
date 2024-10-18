@@ -21,6 +21,7 @@ import { NomenclatureStore } from '@app/shared/utils/nomenclatures.store';
 import { NomenclatureTypes } from '@app/enums/nomenclature.types';
 import { PermissionsEnum } from '@app/shared/enums/permissions.enum';
 import { PermissionsService } from '@app/shared/services/permissions.service';
+import { InspectorUserNomenclatureDTO } from '@app/models/generated/dtos/InspectorUserNomenclatureDTO';
 
 @Component({
     selector: 'edit-auan-inspection-picker',
@@ -31,7 +32,7 @@ export class EditAuanInspectionPickerComponent implements OnInit, AfterViewInit,
     public isThirdParty: boolean = false;
 
     public inspectionReports: NomenclatureDTO<number>[] = [];
-    public users: NomenclatureDTO<number>[] = [];
+    public users: InspectorUserNomenclatureDTO[] = [];
     public territoryUnits: NomenclatureDTO<number>[] = [];
 
     public readonly today: Date = new Date();
@@ -79,7 +80,7 @@ export class EditAuanInspectionPickerComponent implements OnInit, AfterViewInit,
         });
 
         this.service.getInspectorUsernames().subscribe({
-            next: (result: NomenclatureDTO<number>[]) => {
+            next: (result: InspectorUserNomenclatureDTO[]) => {
                 this.users = result;
             }
         });

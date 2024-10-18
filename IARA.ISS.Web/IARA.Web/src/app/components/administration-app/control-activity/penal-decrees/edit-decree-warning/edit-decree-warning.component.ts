@@ -23,6 +23,9 @@ import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.
 import { forkJoin, Observable } from 'rxjs';
 import { TLConfirmDialog } from '@app/shared/components/confirmation-dialog/tl-confirm-dialog';
 import { EditPenalDecreeDialogParams } from '../models/edit-penal-decree-params.model';
+import { InspectorUserNomenclatureDTO } from '@app/models/generated/dtos/InspectorUserNomenclatureDTO';
+import { TLError } from '@app/shared/components/input-controls/models/tl-error.model';
+import { GetControlErrorLabelTextCallback } from '@app/shared/components/input-controls/base-tl-control';
 
 @Component({
     selector: 'edit-decree-warning',
@@ -41,10 +44,12 @@ export class EditDecreeWarningComponent implements OnInit, AfterViewInit, IDialo
     public isThirdParty: boolean = false;
     public violatedRegulationsTouched: boolean = false;
 
+    public decreeNumErrorLabelTextMethod: GetControlErrorLabelTextCallback = this.decreeNumErrorLabelText.bind(this);
+
     public territoryUnits: NomenclatureDTO<number>[] = [];
-    public users: NomenclatureDTO<number>[] = [];
     public courts: NomenclatureDTO<number>[] = [];
     public sectors: NomenclatureDTO<number>[] = [];
+    public users: InspectorUserNomenclatureDTO[] = [];
     public violatedRegulations: AuanViolatedRegulationDTO[] = [];
 
     @ViewChild(ValidityCheckerGroupDirective)
@@ -80,7 +85,7 @@ export class EditDecreeWarningComponent implements OnInit, AfterViewInit, IDialo
         this.isAdding = this.penalDecreeId === undefined || this.penalDecreeId === null;
         this.isThirdParty = this.auanId === undefined || this.auanId === null;
 
-        const nomenclatures: NomenclatureDTO<number>[][] = await forkJoin(
+        const nomenclatures: (NomenclatureDTO<number> | InspectorUserNomenclatureDTO)[][] = await forkJoin(
             NomenclatureStore.instance.getNomenclature(NomenclatureTypes.TerritoryUnits, this.nomenclatures.getTerritoryUnits.bind(this.nomenclatures)),
             NomenclatureStore.instance.getNomenclature(NomenclatureTypes.Courts, this.service.getCourts.bind(this.service), false),
             NomenclatureStore.instance.getNomenclature(NomenclatureTypes.Sectors, this.nomenclatures.getSectors.bind(this.nomenclatures), false),
@@ -93,8 +98,6 @@ export class EditDecreeWarningComponent implements OnInit, AfterViewInit, IDialo
         this.users = nomenclatures[3];
 
         if (this.auanId !== undefined && this.auanId !== null) {
-            this.form.get('territoryUnitControl')!.disable();
-
             this.service.getPenalDecreeAuanData(this.auanId).subscribe({
                 next: (data: PenalDecreeAuanDataDTO) => {
                     this.fillAuanData(data);
@@ -119,6 +122,17 @@ export class EditDecreeWarningComponent implements OnInit, AfterViewInit, IDialo
     }
 
     public ngAfterViewInit(): void {
+        this.form.get('drafterControl')!.valueChanges.subscribe({
+            next: (drafter: InspectorUserNomenclatureDTO | undefined) => {
+                if (drafter !== undefined && drafter !== null) {
+                    this.form.get('issuerPositionControl')!.setValue(drafter.issuerPosition);
+                }
+                else {
+                    this.form.get('issuerPositionControl')!.setValue(undefined);
+                }
+            }
+        });
+
         this.form.get('auanViolatedRegulationsControl')!.valueChanges.subscribe({
             next: (result: AuanViolatedRegulationDTO[] | undefined) => {
                 if (result !== undefined && result !== null) {
@@ -243,6 +257,15 @@ export class EditDecreeWarningComponent implements OnInit, AfterViewInit, IDialo
         }
     }
 
+    public decreeNumErrorLabelText(controlName: string, error: unknown, errorCode: string): TLError | undefined {
+        if (controlName === 'decreeNumControl') {
+            if (errorCode === 'decreeNumExists' && error === true) {
+                return new TLError({ type: 'error', text: this.translate.getValue('penal-decrees.warning-num-already-exist-error') });
+            }
+        }
+        return undefined;
+    }
+
     private buildForm(): void {
         this.form = new FormGroup({
             decreeNumControl: new FormControl(null, [Validators.required, Validators.maxLength(20)]),
@@ -278,10 +301,10 @@ export class EditDecreeWarningComponent implements OnInit, AfterViewInit, IDialo
         this.form.get('decreeNumControl')!.setValue(this.model.decreeNum);
         this.form.get('issueDateControl')!.setValue(this.model.issueDate);
         this.form.get('effectiveDateControl')!.setValue(this.model.effectiveDate);
-        this.form.get('issuerPositionControl')!.setValue(this.model.issuerPosition);
         this.form.get('drafterControl')!.setValue(this.users.find(x => x.value === this.model.issuerUserId));
         this.form.get('courtControl')!.setValue(this.courts.find(x => x.value === this.model.appealCourtId));
         this.form.get('sectorControl')!.setValue(this.sectors.find(x => x.value === this.model.appealSectorId));
+        this.form.get('issuerPositionControl')!.setValue(this.model.issuerPosition);
 
         this.form.get('isRecurrentViolationControl')!.setValue(this.model.isRecurrentViolation);
         this.form.get('commentsControl')!.setValue(this.model.comments);
@@ -414,6 +437,12 @@ export class EditDecreeWarningComponent implements OnInit, AfterViewInit, IDialo
         if (response.error?.code === ErrorCode.AuanNumAlreadyExists) {
             this.form.get('auanControl')!.setErrors({ 'auanNumExists': true });
             this.form.get('auanControl')!.markAsTouched();
+            this.validityCheckerGroup.validate();
+        }
+
+        if (response.error?.code === ErrorCode.PenalDecreeNumAlreadyExists) {
+            this.form.get('decreeNumControl')!.setErrors({ 'decreeNumExists': true });
+            this.form.get('decreeNumControl')!.markAsTouched();
             this.validityCheckerGroup.validate();
         }
     }

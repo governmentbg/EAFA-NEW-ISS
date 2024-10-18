@@ -86,5 +86,6 @@ export enum ErrorCode {
     InvalidInspectionType = 64,
     FishingAssociationAlreadyExists = 65,
     SendFLUXISRFailed = 66,
-    InspectionNotSigned = 67
+    InspectionNotSigned = 67,
+    PenalDecreeNumAlreadyExists = 68
 }

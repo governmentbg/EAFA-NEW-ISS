@@ -26,6 +26,7 @@ import { PenalDecreeStatusEditDTO } from '@app/models/generated/dtos/PenalDecree
 import { PermissionsEnum } from '@app/shared/enums/permissions.enum';
 import { IInspDeliveryService } from '@app/interfaces/administration-app/insp-delivery.interface';
 import { AuanDeliveryDataDTO } from '@app/models/generated/dtos/AuanDeliveryDataDTO';
+import { InspectorUserNomenclatureDTO } from '@app/models/generated/dtos/InspectorUserNomenclatureDTO';
 
 @Injectable({
     providedIn: 'root'
@@ -253,8 +254,8 @@ export class PenalDecreesService extends BaseAuditService implements IPenalDecre
         return this.requestService.get(this.area, this.controller, 'GetTurbotSizeGroups', { responseTypeCtr: NomenclatureDTO });
     }
 
-    public getInspectorUsernames(): Observable<NomenclatureDTO<number>[]> {
-        return this.requestService.get(this.area, this.controller, 'GetInspectorUsernames', { responseTypeCtr: NomenclatureDTO });
+    public getInspectorUsernames(): Observable<InspectorUserNomenclatureDTO[]> {
+        return this.requestService.get(this.area, this.controller, 'GetInspectorUsernames', { responseTypeCtr: InspectorUserNomenclatureDTO });
     }
 
     //Audits

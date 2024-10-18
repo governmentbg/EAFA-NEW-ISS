@@ -12,7 +12,7 @@
         <ng-template let-row="row" ngx-datatable-row-detail-template>
             <div fxFlexFill fxLayout="column" fxLayoutGap="1em">
                 <tl-card *ngIf="row.data.hasInspections">
-                    <tl-card-title>{{ 'catches-and-sales.inspected-pages' | tlTranslate }}</tl-card-title>
+                    <tl-card-title>{{ 'catches-and-sales.inspection-reports-for-page' | tlTranslate }}</tl-card-title>
                     <tl-card-content fxFlexFill>
                         <inspections-register [logBookPageId]="row.data.id"
                                               [logBookType]="logBookTypesEnum.Admission">

@@ -12,6 +12,7 @@ import { SimpleAuditDTO } from '@app/models/generated/dtos/SimpleAuditDTO';
 import { AuanConfiscationActionsNomenclatureDTO } from '@app/models/generated/dtos/AuanConfiscationActionsNomenclatureDTO';
 import { InspDeliveryTypesNomenclatureDTO } from '@app/models/generated/dtos/InspDeliveryTypesNomenclatureDTO';
 import { PenalDecreeStatusEditDTO } from '@app/models/generated/dtos/PenalDecreeStatusEditDTO';
+import { InspectorUserNomenclatureDTO } from '@app/models/generated/dtos/InspectorUserNomenclatureDTO';
 
 export interface IPenalDecreesService extends IBaseAuditService {
     getAllPenalDecrees(request: GridRequestModel<PenalDecreesFilters>): Observable<GridResultModel<PenalDecreeDTO>>;
@@ -38,7 +39,7 @@ export interface IPenalDecreesService extends IBaseAuditService {
     getConfiscationActions(): Observable<AuanConfiscationActionsNomenclatureDTO[]>;
     getConfiscatedAppliances(): Observable<NomenclatureDTO<number>[]>;
     getTurbotSizeGroups(): Observable<NomenclatureDTO<number>[]>;
-    getInspectorUsernames(): Observable<NomenclatureDTO<number>[]>;
+    getInspectorUsernames(): Observable<InspectorUserNomenclatureDTO[]>;
     getPenalDecreeStatusAudit(id: number): Observable<SimpleAuditDTO>;
 
     addPenalDecreeStatus(status: PenalDecreeStatusEditDTO): Observable<number>;

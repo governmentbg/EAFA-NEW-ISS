@@ -1,11 +1,12 @@
 ﻿<div fxLayout="column"
      fxLayoutGap="1em"
-     validityCheckerGroup 
+     validityCheckerGroup
      [formGroup]="form">
     <tl-radio-button-group *ngIf="!isFromRegister"
                            fxFlex="100"
                            formControlName="isInspectedEntityPersonControl"
                            [options]="inspectedEntityOptions"
+                           [readonly]="isFromRegister"
                            direction="row"
                            gap="1em"
                            tooltipResourceName="auan-register.edit-is-inspected-entity-person-helper">
@@ -20,17 +21,20 @@
                         [hideDocument]="true"
                         [isIdReadOnly]="isIdReadOnly"
                         [middleNameRequired]="true"
+                        [readonly]="isFromRegister"
                         (downloadDataBtnClicked)="downloadedPersonData($event)"
                         checkboxLabel="{{ 'auan-register.has-bulgarian-address-registration' | tlTranslate }}">
             </regix-data>
 
             <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="start center">
                 <tl-input fxFlex="25"
+                          [readonly]="isFromRegister"
                           formControlName="personWorkPlaceControl"
                           label="{{ 'auan-register.edit-inspected-entity-work-place' | tlTranslate }}">
                 </tl-input>
 
                 <tl-input fxFlex="25"
+                          [readonly]="isFromRegister"
                           formControlName="personWorkPositionControl"
                           label="{{ 'auan-register.edit-inspected-entity-work-position' | tlTranslate }}">
                 </tl-input>
@@ -40,6 +44,7 @@
 
             <address-registration formControlName="personAddressesControl"
                                   validityChecker
+                                  [readonly]="isFromRegister"
                                   addressLabel="{{ 'common.permanent-address' | tlTranslate : 'cap' }}"
                                   secondAddressLabel="{{ 'common.correspondence-address' | tlTranslate : 'cap' }}"
                                   checkboxLabel="{{ 'auan-register.permanent-address-same-as-correspondence' | tlTranslate }}">
@@ -53,6 +58,7 @@
                         validityChecker
                         [showCustodianOfProperty]="false"
                         [isIdReadOnly]="isIdReadOnly"
+                        [readonly]="isFromRegister"
                         (downloadDataBtnClicked)="downloadedLegalData($event)"
                         checkboxLabel="{{ 'auan-regster.has-bulgarian-address-registration' | tlTranslate }}">
             </regix-data>
@@ -60,6 +66,7 @@
             <address-registration formControlName="legalAddressesControl"
                                   validityChecker
                                   addressLabel="{{ 'common.company-headquarters-address' | tlTranslate : 'cap' }}"
+                                  [readonly]="isFromRegister"
                                   [addressType]="companyHeadquartersType">
             </address-registration>
         </div>

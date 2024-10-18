@@ -94,7 +94,7 @@ export class EditWaterCatchComponent implements OnInit, IDialogComponent {
 
     protected buildForm(): void {
         this.form = new FormGroup({
-            typeControl: new FormControl(null),
+            typeControl: new FormControl(null, Validators.required),
             quantityControl: new FormControl(null, TLValidators.number(0)),
             takenControl: new FormControl(null),
             storedControl: new FormControl(null, [Validators.required]),

@@ -23,6 +23,9 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { ErrorCode, ErrorModel } from '@app/models/common/exception.model';
 import { TLConfirmDialog } from '@app/shared/components/confirmation-dialog/tl-confirm-dialog';
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
+import { InspectorUserNomenclatureDTO } from '@app/models/generated/dtos/InspectorUserNomenclatureDTO';
+import { TLError } from '@app/shared/components/input-controls/models/tl-error.model';
+import { GetControlErrorLabelTextCallback } from '@app/shared/components/input-controls/base-tl-control';
 
 @Component({
     selector: 'edit-decree-agreement',
@@ -41,8 +44,10 @@ export class EditDecreeAgreementComponent implements OnInit, AfterViewInit, IDia
     public isThirdParty: boolean = false;
     public violatedRegulationsTouched: boolean = false;
 
+    public decreeNumErrorLabelTextMethod: GetControlErrorLabelTextCallback = this.decreeNumErrorLabelText.bind(this);
+
     public territoryUnits: NomenclatureDTO<number>[] = [];
-    public users: NomenclatureDTO<number>[] = [];
+    public users: InspectorUserNomenclatureDTO[] = [];
     public violatedRegulations: AuanViolatedRegulationDTO[] = [];
 
     @ViewChild(ValidityCheckerGroupDirective)
@@ -74,9 +79,8 @@ export class EditDecreeAgreementComponent implements OnInit, AfterViewInit, IDia
         this.isAdding = this.penalDecreeId === undefined || this.penalDecreeId === null;
         this.isThirdParty = this.auanId === undefined || this.auanId === null;
 
-        const nomenclatures: NomenclatureDTO<number>[][] = await forkJoin(
-            NomenclatureStore.instance.getNomenclature(
-                NomenclatureTypes.TerritoryUnits, this.nomenclatures.getTerritoryUnits.bind(this.nomenclatures)),
+        const nomenclatures: (NomenclatureDTO<number> | InspectorUserNomenclatureDTO)[][] = await forkJoin(
+            NomenclatureStore.instance.getNomenclature(NomenclatureTypes.TerritoryUnits, this.nomenclatures.getTerritoryUnits.bind(this.nomenclatures)),
             this.service.getInspectorUsernames()
         ).toPromise();
 
@@ -84,8 +88,6 @@ export class EditDecreeAgreementComponent implements OnInit, AfterViewInit, IDia
         this.users = nomenclatures[1];
 
         if (this.auanId !== undefined && this.auanId !== null) {
-            this.form.get('territoryUnitControl')!.disable();
-
             this.service.getPenalDecreeAuanData(this.auanId).subscribe({
                 next: (data: PenalDecreeAuanDataDTO) => {
                     this.fillAuanData(data);
@@ -110,7 +112,18 @@ export class EditDecreeAgreementComponent implements OnInit, AfterViewInit, IDia
     }
 
     public ngAfterViewInit(): void {
-        this.form.controls.fineControl.valueChanges.subscribe({
+        this.form.get('drafterControl')!.valueChanges.subscribe({
+            next: (drafter: InspectorUserNomenclatureDTO | undefined) => {
+                if (drafter !== undefined && drafter !== null) {
+                    this.form.get('issuerPositionControl')!.setValue(drafter.issuerPosition);
+                }
+                else {
+                    this.form.get('issuerPositionControl')!.setValue(undefined);
+                }
+            }
+        });
+
+        this.form.get('fineControl')!.valueChanges.subscribe({
             next: (fineAmount: number | undefined) => {
                 if (fineAmount !== undefined && fineAmount !== null) {
                     const finePercent: string = (fineAmount * 0.7).toFixed(2);
@@ -238,6 +251,15 @@ export class EditDecreeAgreementComponent implements OnInit, AfterViewInit, IDia
         }
     }
 
+    public decreeNumErrorLabelText(controlName: string, error: unknown, errorCode: string): TLError | undefined {
+        if (controlName === 'decreeNumControl') {
+            if (errorCode === 'decreeNumExists' && error === true) {
+                return new TLError({ type: 'error', text: this.translate.getValue('penal-decrees.agreement-num-already-exist-error') });
+            }
+        }
+        return undefined;
+    }
+
     private buildForm(): void {
         this.form = new FormGroup({
             decreeNumControl: new FormControl(null, [Validators.required, Validators.maxLength(20)]),
@@ -266,8 +288,8 @@ export class EditDecreeAgreementComponent implements OnInit, AfterViewInit, IDia
         this.form.get('decreeNumControl')!.setValue(this.model.decreeNum);
         this.form.get('issueDateControl')!.setValue(this.model.issueDate);
         this.form.get('effectiveDateControl')!.setValue(this.model.effectiveDate);
-        this.form.get('issuerPositionControl')!.setValue(this.model.issuerPosition);
         this.form.get('drafterControl')!.setValue(this.users.find(x => x.value === this.model.issuerUserId));
+        this.form.get('issuerPositionControl')!.setValue(this.model.issuerPosition);
 
         this.form.get('fineControl')!.setValue(this.model.fineAmount?.toFixed(2));
         this.form.get('commentsControl')!.setValue(this.model.comments);
@@ -376,6 +398,12 @@ export class EditDecreeAgreementComponent implements OnInit, AfterViewInit, IDia
             if (response.error?.code === ErrorCode.AuanNumAlreadyExists) {
                 this.form.get('auanControl')!.setErrors({ 'auanNumExists': true });
                 this.form.get('auanControl')!.markAsTouched();
+                this.validityCheckerGroup.validate();
+            }
+
+            if (response.error?.code === ErrorCode.PenalDecreeNumAlreadyExists) {
+                this.form.get('decreeNumControl')!.setErrors({ 'decreeNumExists': true });
+                this.form.get('decreeNumControl')!.markAsTouched();
                 this.validityCheckerGroup.validate();
             }
         }
