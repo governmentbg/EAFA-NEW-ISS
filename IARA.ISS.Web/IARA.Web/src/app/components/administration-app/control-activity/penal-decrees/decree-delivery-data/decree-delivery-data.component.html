@@ -18,7 +18,7 @@
         </div>
 
         <div *ngIf="deliveryType !== undefined && deliveryType !== null" fxLayout="row" fxLayoutGap="1em">
-            <tl-autocomplete fxFlex="50"
+            <tl-autocomplete fxFlex="65"
                              formControlName="confirmationTypeControl"
                              [options]="confirmationTypes"
                              label="{{ 'penal-decrees.edit-decree-delivery-confirmation-type' | tlTranslate }}"
@@ -36,7 +36,7 @@
                      tooltipResourceName="penal-decrees.edit-decree-delivery-sent-date-helper">
             </tl-date>
 
-            <tl-input fxFlex="25"
+            <tl-input fxFlex="40"
                       formControlName="deliverySentControl"
                       label="{{ 'penal-decrees.edit-decree-delivery-sent' | tlTranslate }}"
                       tooltipResourceName="penal-decrees.edit-decree-delivery-sent-helper">

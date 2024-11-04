@@ -5,17 +5,20 @@
     <div fxLayout="row" fxLayoutGap="1em">
         <tl-input fxFlex="20"
                   formControlName="auanNumControl"
+                  [readonly]="!isAdding"
                   label="{{ 'penal-decrees.edit-auan-num' | tlTranslate }}">
         </tl-input>
 
         <tl-date fxFlex="20"
                  formControlName="auanDraftDateControl"
                  [max]="today"
+                 [readonly]="!isAdding"
                  label="{{ 'penal-decrees.edit-auan-draft-date' | tlTranslate }}">
         </tl-date>
 
         <tl-input *ngIf="isFromRegister"
                   fxFlex="20"
+                  [readonly]="true"
                   formControlName="auanDrafterControl"
                   label="{{ 'penal-decrees.edit-auan-drafter' | tlTranslate }}">
         </tl-input>
@@ -30,6 +33,7 @@
         </tl-autocomplete>
 
         <tl-input fxFlex="40"
+                  [readonly]="!isAdding"
                   formControlName="auanLocationDescriptionControl"
                   label="{{ 'penal-decrees.edit-auan-location-description' | tlTranslate }}">
         </tl-input>

@@ -5,6 +5,7 @@ import { CustomFormControl } from '@app/shared/utils/custom-form-control';
 import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
 import { PenalDecreesService } from '@app/services/administration-app/penal-decrees.service';
 import { ValidityCheckerDirective } from '@app/shared/directives/validity-checker/validity-checker.directive';
+import { InspectorUserNomenclatureDTO } from '@app/models/generated/dtos/InspectorUserNomenclatureDTO';
 
 @Component({
     selector: 'decree-auan-basic-info',
@@ -17,7 +18,7 @@ export class DecreeAuanBasicInfoComponent extends CustomFormControl<PenalDecreeA
     public auan: PenalDecreeAuanDataDTO | undefined;
     public isFromRegister: boolean = false;
 
-    public users: NomenclatureDTO<number>[] = [];
+    public users: InspectorUserNomenclatureDTO[] = [];
 
     public readonly today: Date = new Date();
 
@@ -38,16 +39,16 @@ export class DecreeAuanBasicInfoComponent extends CustomFormControl<PenalDecreeA
 
         if (!this.isAdding) {
             this.isFromRegister = true;
-            this.setDisabledState(true);
         }
         else {
             this.service.getInspectorUsernames().subscribe({
-                next: (result: NomenclatureDTO<number>[]) => {
+                next: (result: InspectorUserNomenclatureDTO[]) => {
                     this.users = result;
                 }
             });
 
             this.form.get('drafterUserControl')!.setValidators(Validators.required);
+            this.form.get('auanLocationDescriptionControl')!.setValidators([Validators.required, Validators.maxLength(400)]);
         }
     }
 
@@ -80,9 +81,9 @@ export class DecreeAuanBasicInfoComponent extends CustomFormControl<PenalDecreeA
         return new FormGroup({
             auanNumControl: new FormControl(null, [Validators.required, Validators.maxLength(20)]),
             auanDraftDateControl: new FormControl(null, Validators.required),
-            auanDrafterControl: new FormControl({ value: null, disabled: true }),
+            auanDrafterControl: new FormControl(null),
             drafterUserControl: new FormControl(null),
-            auanLocationDescriptionControl: new FormControl(null, [Validators.required, Validators.maxLength(400)]),
+            auanLocationDescriptionControl: new FormControl(null, Validators.maxLength(400)),
             auanInspectedEntityControl: new FormControl(null)
         });
     }

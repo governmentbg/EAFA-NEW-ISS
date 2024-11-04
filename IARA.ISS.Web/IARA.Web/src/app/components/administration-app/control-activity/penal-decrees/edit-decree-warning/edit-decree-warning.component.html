@@ -13,6 +13,7 @@
             <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="space-between center">
                 <tl-input fxFlex="25"
                           formControlName="decreeNumControl"
+                          [getControlErrorLabelText]="decreeNumErrorLabelTextMethod"
                           label="{{ 'penal-decrees.edit-warning-num' | tlTranslate }}"
                           tooltipResourceName="penal-decrees.edit-decree-num-helper">
                 </tl-input>
@@ -27,6 +28,8 @@
                 <tl-autocomplete fxFlex="50"
                                  formControlName="drafterControl"
                                  [options]="users"
+                                 [autoMatchTextToOption]="true"
+                                 [templateOptions]="true"
                                  label="{{ 'penal-decrees.edit-drafter' | tlTranslate }}"
                                  tooltipResourceName="penal-decree.edit-drafter-helper">
                 </tl-autocomplete>
@@ -36,6 +39,7 @@
                 <tl-autocomplete fxFlex="25"
                                  formControlName="territoryUnitControl"
                                  [options]="territoryUnits"
+                                 [readonly]="!isThirdParty"
                                  label="{{ 'penal-decrees.edit-territory-unit' | tlTranslate }}"
                                  tooltipResourceName="penal-decrees.edit-territory-unit-helper">
                 </tl-autocomplete>

@@ -26,6 +26,7 @@
                 <tl-autocomplete fxFlex="33"
                                  formControlName="territoryUnitControl"
                                  [options]="territoryUnits"
+                                 [readonly]="true"
                                  label="{{ 'penal-points.edit-territory-unit' | tlTranslate }}"
                                  tooltipResourceName="penal-points.edit-territory-unit-helper">
                 </tl-autocomplete>
@@ -41,30 +42,35 @@
             <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="space-between center">
                 <tl-input fxFlex="20"
                           formControlName="auanNumControl"
+                          [readonly]="true"
                           label="{{ 'penal-points.edit-auan-num' | tlTranslate }}"
                           tooltipResourceName="penal-points.edit-auan-num-helper">
                 </tl-input>
 
                 <tl-date fxFlex="20"
                          formControlName="auanDateControl"
+                         [readonly]="true"
                          label="{{ 'penal-points.edit-auan-date' | tlTranslate }}"
                          tooltipResourceName="penal-points.edit-auan-date-helper">
                 </tl-date>
 
                 <tl-input fxFlex="20"
                           formControlName="decreeNumControl"
+                          [readonly]="true"
                           label="{{ 'penal-points.edit-decree-num' | tlTranslate }}"
                           tooltipResourceName="penal-points.edit-decree-num-helper">
                 </tl-input>
 
                 <tl-date fxFlex="20"
                          formControlName="decreeIssueDateControl"
+                         [readonly]="true"
                          label="{{ 'penal-points.edit-decree-issue-date' | tlTranslate }}"
                          tooltipResourceName="penal-points.edit-decree-issue-date-helper">
                 </tl-date>
 
                 <tl-date fxFlex="20"
                          formControlName="decreeEffectiveDateControl"
+                         [readonly]="true"
                          label="{{ 'penal-points.edit-decree-effective-date' | tlTranslate }}"
                          tooltipResourceName="penal-points.edit-decree-effective-date-helper">
                 </tl-date>
@@ -92,6 +98,7 @@
                                  formControlName="shipControl"
                                  [options]="ships"
                                  [templateOptions]="true"
+                                 [readonly]="true"
                                  label="{{ 'penal-points.edit-ship' | tlTranslate }}"
                                  tooltipResourceName="penal-points.edit-ship-helper">
                 </tl-autocomplete>
@@ -239,8 +246,9 @@
             </tl-data-table>
 
             <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="end center" *ngIf="form.controls.isPermitOwnerControl.value === true">
-                <tl-input fxFlex="15"
+                <tl-input fxFlex="25"
                           formControlName="pointsTotalCountControl"
+                          [readonly]="true"
                           label="{{ 'penal-points.edit-points-total-count' | tlTranslate }}"
                           tooltipResourceName="penal-points.edit-points-total-count-helper">
                 </tl-input>

@@ -381,34 +381,34 @@ export class EditPenalPointsComponent implements OnInit, AfterViewInit, IDialogC
     private buildForm(): void {
         this.form = new FormGroup({
             issuerControl: new FormControl(null, Validators.maxLength(500)),
-            territoryUnitControl: new FormControl({ value: null, disabled: true }),
+            territoryUnitControl: new FormControl(null),
             reportNoteNumControl: new FormControl(null, Validators.maxLength(50)),
             reportNoteDateControl: new FormControl(null),
 
-            auanNumControl: new FormControl({ value: null, disabled: true }),
-            auanDateControl: new FormControl({ value: null, disabled: true }),
-            decreeNumControl: new FormControl({ value: null, disabled: true }),
-            decreeIssueDateControl: new FormControl({ value: null, disabled: true }),
-            decreeEffectiveDateControl: new FormControl({ value: null, disabled: true }),
-            auanInspectedEntityControl: new FormControl({ value: null, disabled: true }),
+            auanNumControl: new FormControl(null),
+            auanDateControl: new FormControl(null),
+            decreeNumControl: new FormControl(null),
+            decreeIssueDateControl: new FormControl(null),
+            decreeEffectiveDateControl: new FormControl(null),
+            auanInspectedEntityControl: new FormControl(null),
 
             permitControl: new FormControl(null),
             permitLicenseControl: new FormControl(null),
             isPermitOwnerControl: new FormControl(true),
             personControl: new FormControl(null),
 
-            shipControl: new FormControl({ value: null, disabled: true }),
+            shipControl: new FormControl(null),
             orderTypeControl: new FormControl(null, Validators.required),
             orderNumControl: new FormControl(null, [Validators.required, Validators.maxLength(20)]),
             issueDateControl: new FormControl(null, Validators.required),
             effectiveDateControl: new FormControl(null),
             deliveryDateControl: new FormControl(null),
             pointsAmountControl: new FormControl(null, [Validators.required, TLValidators.number(0, undefined, 0)]),
-            pointsTotalCountControl: new FormControl({ value: null, disabled: true }),
+            pointsTotalCountControl: new FormControl(null),
 
             captainControl: new FormControl(null),
 
-            commentsControl: new FormControl(null, Validators.maxLength(40000)),
+            commentsControl: new FormControl(null, Validators.maxLength(4000)),
 
             filesControl: new FormControl(null)
         });

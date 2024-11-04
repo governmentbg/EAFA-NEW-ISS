@@ -32,6 +32,9 @@ import { RecordChangedEventArgs } from '@app/shared/components/data-table/models
 import { AuanViolatedRegulationDTO } from '@app/models/generated/dtos/AuanViolatedRegulationDTO';
 import { TLSnackbar } from '@app/shared/components/snackbar/tl.snackbar';
 import { TLConfirmDialog } from '@app/shared/components/confirmation-dialog/tl-confirm-dialog';
+import { InspectorUserNomenclatureDTO } from '@app/models/generated/dtos/InspectorUserNomenclatureDTO';
+import { TLError } from '@app/shared/components/input-controls/models/tl-error.model';
+import { GetControlErrorLabelTextCallback } from '@app/shared/components/input-controls/base-tl-control';
 
 @Component({
     selector: 'edit-penal-decree',
@@ -53,12 +56,15 @@ export class EditPenalDecreeComponent implements OnInit, AfterViewInit, IDialogC
     public fishCompensationFormTouched: boolean = false;
     public violatedRegulationsTouched: boolean = false;
 
+    public decreeNumErrorLabelTextMethod: GetControlErrorLabelTextCallback = this.decreeNumErrorLabelText.bind(this);
+
     public sanctionTypes: NomenclatureDTO<number>[] = [];
     public territoryUnits: NomenclatureDTO<number>[] = [];
-    public users: NomenclatureDTO<number>[] = [];
     public fishes: NomenclatureDTO<number>[] = [];
     public courts: NomenclatureDTO<number>[] = [];
     public sectors: NomenclatureDTO<number>[] = [];
+    public departments: NomenclatureDTO<number>[] = [];
+    public users: InspectorUserNomenclatureDTO[] = [];
 
     public fishCompensations: PenalDecreeFishCompensationDTO[] = [];
     public violatedRegulations: AuanViolatedRegulationDTO[] = [];
@@ -100,12 +106,13 @@ export class EditPenalDecreeComponent implements OnInit, AfterViewInit, IDialogC
         this.isAdding = this.penalDecreeId === undefined || this.penalDecreeId === null;
         this.isThirdParty = this.auanId === undefined || this.auanId === null;
 
-        const nomenclatures: (NomenclatureDTO<number>)[][] = await forkJoin(
+        const nomenclatures: (NomenclatureDTO<number> | InspectorUserNomenclatureDTO)[][] = await forkJoin(
             NomenclatureStore.instance.getNomenclature(NomenclatureTypes.PenalDecreeSanctionTypes, this.service.getPenalDecreeSanctionTypes.bind(this.service), false),
             NomenclatureStore.instance.getNomenclature(NomenclatureTypes.TerritoryUnits, this.nomenclatures.getTerritoryUnits.bind(this.nomenclatures), false),
             NomenclatureStore.instance.getNomenclature(NomenclatureTypes.Fishes, this.nomenclatures.getFishTypes.bind(this.nomenclatures), false),
             NomenclatureStore.instance.getNomenclature(NomenclatureTypes.Courts, this.service.getCourts.bind(this.service), false),
             NomenclatureStore.instance.getNomenclature(NomenclatureTypes.Sectors, this.nomenclatures.getSectors.bind(this.nomenclatures), false),
+            NomenclatureStore.instance.getNomenclature(NomenclatureTypes.Departments, this.nomenclatures.getDepartments.bind(this.nomenclatures), false),
             this.service.getInspectorUsernames()
         ).toPromise();
 
@@ -114,13 +121,12 @@ export class EditPenalDecreeComponent implements OnInit, AfterViewInit, IDialogC
         this.fishes = nomenclatures[2];
         this.courts = nomenclatures[3];
         this.sectors = nomenclatures[4];
-        this.users = nomenclatures[5];
+        this.departments = nomenclatures[5];
+        this.users = nomenclatures[6];
 
         this.addSanctionControls();
 
         if (this.auanId !== undefined && this.auanId !== null) {
-            this.form.get('territoryUnitControl')!.disable();
-
             this.service.getPenalDecreeAuanData(this.auanId).subscribe({
                 next: (data: PenalDecreeAuanDataDTO) => {
                     this.fillAuanData(data);
@@ -145,6 +151,17 @@ export class EditPenalDecreeComponent implements OnInit, AfterViewInit, IDialogC
     }
 
     public ngAfterViewInit(): void {
+        this.form.get('drafterControl')!.valueChanges.subscribe({
+            next: (drafter: InspectorUserNomenclatureDTO | undefined) => {
+                if (drafter !== undefined && drafter !== null) {
+                    this.form.get('issuerPositionControl')!.setValue(drafter.issuerPosition);
+                }
+                else {
+                    this.form.get('issuerPositionControl')!.setValue(undefined);
+                }
+            }
+        });
+
         this.form.get('auanViolatedRegulationsControl')!.valueChanges.subscribe({
             next: (result: AuanViolatedRegulationDTO[] | undefined) => {
                 if (result !== undefined && result !== null) {
@@ -285,6 +302,15 @@ export class EditPenalDecreeComponent implements OnInit, AfterViewInit, IDialogC
         }
     }
 
+    public decreeNumErrorLabelText(controlName: string, error: unknown, errorCode: string): TLError | undefined {
+        if (controlName === 'decreeNumControl') {
+            if (errorCode === 'decreeNumExists' && error === true) {
+                return new TLError({ type: 'error', text: this.translate.getValue('penal-decrees.penal-decree-num-already-exist-error') });
+            }
+        }
+        return undefined;
+    }
+
     private buildForm(): void {
         this.form = new FormGroup({
             decreeNumControl: new FormControl(null, [Validators.required, Validators.maxLength(20)]),
@@ -338,10 +364,10 @@ export class EditPenalDecreeComponent implements OnInit, AfterViewInit, IDialogC
         this.form.get('decreeNumControl')!.setValue(this.model.decreeNum);
         this.form.get('issueDateControl')!.setValue(this.model.issueDate);
         this.form.get('effectiveDateControl')!.setValue(this.model.effectiveDate);
-        this.form.get('issuerPositionControl')!.setValue(this.model.issuerPosition);
         this.form.get('drafterControl')!.setValue(this.users.find(x => x.value === this.model.issuerUserId));
         this.form.get('courtControl')!.setValue(this.courts.find(x => x.value === this.model.appealCourtId));
         this.form.get('sectorControl')!.setValue(this.sectors.find(x => x.value === this.model.appealSectorId));
+        this.form.get('issuerPositionControl')!.setValue(this.model.issuerPosition);
 
         this.form.get('isRecurrentViolationControl')!.setValue(this.model.isRecurrentViolation);
         this.form.get('sanctionDescriptionControl')!.setValue(this.model.sanctionDescription);
@@ -532,6 +558,12 @@ export class EditPenalDecreeComponent implements OnInit, AfterViewInit, IDialogC
         if (response.error?.code === ErrorCode.AuanNumAlreadyExists) {
             this.form.get('auanControl')!.setErrors({ 'auanNumExists': true });
             this.form.get('auanControl')!.markAsTouched();
+            this.validityCheckerGroup.validate();
+        }
+
+        if (response.error?.code === ErrorCode.PenalDecreeNumAlreadyExists) {
+            this.form.get('decreeNumControl')!.setErrors({ 'decreeNumExists': true });
+            this.form.get('decreeNumControl')!.markAsTouched();
             this.validityCheckerGroup.validate();
         }
     }

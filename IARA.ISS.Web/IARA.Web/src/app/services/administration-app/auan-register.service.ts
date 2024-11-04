@@ -25,6 +25,7 @@ import { map } from 'rxjs/operators';
 import { AuanStatusEnum } from '@app/enums/auan-status.enum';
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 import { AuanDrafterNomenclatureDTO } from '@app/models/generated/dtos/AuanDrafterNomenclatureDTO';
+import { InspectorUserNomenclatureDTO } from '@app/models/generated/dtos/InspectorUserNomenclatureDTO';
 
 @Injectable({
     providedIn: 'root'
@@ -223,7 +224,7 @@ export class AuanRegisterService extends BaseAuditService implements IAuanRegist
         return this.requestService.get(this.area, this.controller, 'GetTurbotSizeGroups', { responseTypeCtr: NomenclatureDTO });
     }
 
-    public getInspectorUsernames(): Observable<NomenclatureDTO<number>[]> {
-        return this.requestService.get(this.area, this.controller, 'GetInspectorUsernames', { responseTypeCtr: NomenclatureDTO });
+    public getInspectorUsernames(): Observable<InspectorUserNomenclatureDTO[]> {
+        return this.requestService.get(this.area, this.controller, 'GetInspectorUsernames', { responseTypeCtr: InspectorUserNomenclatureDTO });
     }
 }
