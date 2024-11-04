@@ -26,7 +26,7 @@ import { TransferShipQuotaComponent } from './transfer-ship-quota.component';
 import { ShipNomenclatureDTO } from '@app/models/generated/dtos/ShipNomenclatureDTO';
 import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
 import { HeaderCloseFunction } from '@app/shared/components/dialog-wrapper/interfaces/header-cancel-button.interface';
-import { CommonUtils } from '../../../shared/utils/common.utils';
+import { CommonUtils } from '@app/shared/utils/common.utils';
 
 @Component({
     selector: 'ship-quotas-register',
@@ -45,8 +45,6 @@ export class ShipQuotasComponent extends BasePageComponent implements OnInit, Af
 
     private commonNomenclatureService: CommonNomenclatures;
     private confirmDialog: TLConfirmDialog;
-    private _datatable!: IRemoteTLDatatableComponent;
-    private _searchpanel!: SearchPanelComponent
 
     private service: ShipQuotasService;
     private gridManager!: DataTableManager<ShipQuotaDTO, ShipQuotasFilters>;
@@ -54,14 +52,10 @@ export class ShipQuotasComponent extends BasePageComponent implements OnInit, Af
     private transferDialog: TLMatDialog<TransferShipQuotaComponent>;
 
     @ViewChild(TLDataTableComponent)
-    private set datatable(val: IRemoteTLDatatableComponent) {
-        this._datatable = val;
-    }
+    private datatable!: TLDataTableComponent;
 
     @ViewChild(SearchPanelComponent)
-    private set searchpanel(val: SearchPanelComponent) {
-        this._searchpanel = val;
-    }
+    private searchpanel!: SearchPanelComponent;
 
     public constructor(
         translationService: FuseTranslationLoaderService,
@@ -108,10 +102,10 @@ export class ShipQuotasComponent extends BasePageComponent implements OnInit, Af
         });
     }
 
-    public async ngAfterViewInit(): Promise<void> {
+    public ngAfterViewInit(): void {
         this.gridManager = new DataTableManager<ShipQuotaDTO, ShipQuotasFilters>({
-            tlDataTable: this._datatable,
-            searchPanel: this._searchpanel,
+            tlDataTable: this.datatable,
+            searchPanel: this.searchpanel,
             requestServiceMethod: this.service.getAll.bind(this.service),
             filtersMapper: this.mapFilters.bind(this),
             excelRequestServiceMethod: this.service.downloadShipQuotaExcel.bind(this.service),
@@ -123,14 +117,6 @@ export class ShipQuotasComponent extends BasePageComponent implements OnInit, Af
         if (!CommonUtils.isNullOrEmpty(tableId)) {
             this.gridManager.advancedFilters = new ShipQuotasFilters({ shipQuotaId: tableId });
         }
-
-        this._datatable.activeRecordChanged.subscribe({
-            next: (element: ShipQuotaDTO) => {
-                if (element.isActive) {
-                    this.addEditEntry(element, !this.canEditRecords);
-                }
-            }
-        });
 
         this.gridManager.refreshData();
     }
@@ -163,13 +149,15 @@ export class ShipQuotasComponent extends BasePageComponent implements OnInit, Af
                 cancelBtnClicked: this.closeDialogBtnClicked.bind(this)
             },
             componentData: data,
-            viewMode: readOnly, 
+            viewMode: readOnly,
             translteService: this.translationService
         }, '85em');
 
-        dialogResult.subscribe((entry: ShipQuotaEditDTO) => {
-            if (entry !== undefined && entry !== null) {
-                this.gridManager.refreshData();
+        dialogResult.subscribe({
+            next: (entry: ShipQuotaEditDTO) => {
+                if (entry !== undefined && entry !== null) {
+                    this.gridManager.refreshData();
+                }
             }
         });
     }
@@ -189,9 +177,11 @@ export class ShipQuotasComponent extends BasePageComponent implements OnInit, Af
             translteService: this.translationService
         }, '85em');
 
-        dialogResult.subscribe((entry: ShipQuotaEditDTO[]) => {
-            if (entry !== undefined && entry !== null) {
-                this.gridManager.refreshData();
+        dialogResult.subscribe({
+            next: (entry: ShipQuotaEditDTO[]) => {
+                if (entry !== undefined && entry !== null) {
+                    this.gridManager.refreshData();
+                }
             }
         });
     }
@@ -202,14 +192,16 @@ export class ShipQuotasComponent extends BasePageComponent implements OnInit, Af
                 title: this.translationService.getValue('catch-quotas.delete-entry'),
                 message: `${this.translationService.getValue('catch-quotas.delete-entry-sure')} ${entry.shipName} ${entry.fish} ?`,
                 okBtnLabel: this.translationService.getValue('qualified-fishers-page.do-delete')
-            }).subscribe((result: any) => {
-                if (result) {
-                    if (entry.id != undefined) {
-                        this.service.delete(entry.id).subscribe({
-                            next: () => {
-                                this.gridManager.deleteRecord(entry);
-                            }
-                        });
+            }).subscribe({
+                next: (result: boolean) => {
+                    if (result) {
+                        if (entry.id != undefined) {
+                            this.service.delete(entry.id).subscribe({
+                                next: () => {
+                                    this.gridManager.deleteRecord(entry);
+                                }
+                            });
+                        }
                     }
                 }
             });

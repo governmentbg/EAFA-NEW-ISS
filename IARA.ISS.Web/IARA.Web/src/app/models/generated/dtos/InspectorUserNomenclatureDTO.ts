@@ -17,11 +17,8 @@ export class InspectorUserNomenclatureDTO extends NomenclatureDTO<number> {
     @StrictlyTyped(String)
     public issuerPosition?: string;
 
-    @StrictlyTyped(Number)
-    public sectorId?: number;
-
-    @StrictlyTyped(Number)
-    public departmentId?: number;
+    @StrictlyTyped(String)
+    public departmentName?: string;
 
     @StrictlyTyped(String)
     public departmentAddress?: string;

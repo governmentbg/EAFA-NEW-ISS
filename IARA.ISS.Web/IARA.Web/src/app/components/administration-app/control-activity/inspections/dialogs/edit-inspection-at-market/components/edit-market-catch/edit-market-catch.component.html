@@ -88,7 +88,7 @@
                       tooltipResourceName="inspections.invoice-data-helper">
             </tl-input>
 
-            <!-- допълнителна информация за избраната страница от дневник -->
+            <!-- Допълнителна информация за избраната страница от дневник -->
             <div *ngIf="showShipPageControls"
                  fxLayout="row"
                  fxLayoutGap="1em"
@@ -167,16 +167,20 @@
         </div>
     </tl-expansion-panel>
 
-    <!-- Продукти -->
-    <inspected-catches-array formControlName="inspectedCatchesControl"
-                             validityChecker
-                             [viewMode]="readOnly"
-                             [fishes]="fishes"
-                             [catchTypes]="types"
-                             [presentations]="presentations"
-                             [turbotSizeGroups]="turbotSizeGroups"
-                             [hasCatchType]="hasCatchType"
-                             [hasUndersizedCheck]="hasUndersizedCheck"
-                             [hasDeclaration]="hasDeclaration">
-    </inspected-catches-array>
+    <!-- Информация за продукти -->
+    <tl-expansion-panel title="{{ 'inspections.market-products-info' | tlTranslate }}"
+                        [validityChecker]="form"
+                        tooltipResourceName="inspections.market-products-info-helper">
+        <inspected-catches-array formControlName="inspectedCatchesControl"
+                                 validityChecker
+                                 [viewMode]="readOnly"
+                                 [fishes]="fishes"
+                                 [catchTypes]="types"
+                                 [presentations]="presentations"
+                                 [turbotSizeGroups]="turbotSizeGroups"
+                                 [hasCatchType]="hasCatchType"
+                                 [hasUndersizedCheck]="hasUndersizedCheck"
+                                 [hasDeclaration]="hasDeclaration">
+        </inspected-catches-array>
+    </tl-expansion-panel>
 </div>

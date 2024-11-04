@@ -43,12 +43,12 @@ export class EditDecreeWarningComponent implements OnInit, AfterViewInit, IDialo
     public viewMode: boolean = false;
     public isThirdParty: boolean = false;
     public violatedRegulationsTouched: boolean = false;
+    public drafter: InspectorUserNomenclatureDTO | undefined;
 
     public decreeNumErrorLabelTextMethod: GetControlErrorLabelTextCallback = this.decreeNumErrorLabelText.bind(this);
 
     public territoryUnits: NomenclatureDTO<number>[] = [];
     public courts: NomenclatureDTO<number>[] = [];
-    public sectors: NomenclatureDTO<number>[] = [];
     public users: InspectorUserNomenclatureDTO[] = [];
     public violatedRegulations: AuanViolatedRegulationDTO[] = [];
 
@@ -88,14 +88,12 @@ export class EditDecreeWarningComponent implements OnInit, AfterViewInit, IDialo
         const nomenclatures: (NomenclatureDTO<number> | InspectorUserNomenclatureDTO)[][] = await forkJoin(
             NomenclatureStore.instance.getNomenclature(NomenclatureTypes.TerritoryUnits, this.nomenclatures.getTerritoryUnits.bind(this.nomenclatures)),
             NomenclatureStore.instance.getNomenclature(NomenclatureTypes.Courts, this.service.getCourts.bind(this.service), false),
-            NomenclatureStore.instance.getNomenclature(NomenclatureTypes.Sectors, this.nomenclatures.getSectors.bind(this.nomenclatures), false),
             this.service.getInspectorUsernames()
         ).toPromise();
 
         this.territoryUnits = nomenclatures[0];
         this.courts = nomenclatures[1];
-        this.sectors = nomenclatures[2];
-        this.users = nomenclatures[3];
+        this.users = nomenclatures[2];
 
         if (this.auanId !== undefined && this.auanId !== null) {
             this.service.getPenalDecreeAuanData(this.auanId).subscribe({
@@ -124,6 +122,8 @@ export class EditDecreeWarningComponent implements OnInit, AfterViewInit, IDialo
     public ngAfterViewInit(): void {
         this.form.get('drafterControl')!.valueChanges.subscribe({
             next: (drafter: InspectorUserNomenclatureDTO | undefined) => {
+                this.drafter = drafter;
+
                 if (drafter !== undefined && drafter !== null) {
                     this.form.get('issuerPositionControl')!.setValue(drafter.issuerPosition);
                 }
@@ -275,7 +275,6 @@ export class EditDecreeWarningComponent implements OnInit, AfterViewInit, IDialo
             territoryUnitControl: new FormControl(null),
             effectiveDateControl: new FormControl(null),
             courtControl: new FormControl(null),
-            sectorControl: new FormControl(null),
 
             auanControl: new FormControl(null),
             deliveryControl: new FormControl(null),
@@ -303,7 +302,6 @@ export class EditDecreeWarningComponent implements OnInit, AfterViewInit, IDialo
         this.form.get('effectiveDateControl')!.setValue(this.model.effectiveDate);
         this.form.get('drafterControl')!.setValue(this.users.find(x => x.value === this.model.issuerUserId));
         this.form.get('courtControl')!.setValue(this.courts.find(x => x.value === this.model.appealCourtId));
-        this.form.get('sectorControl')!.setValue(this.sectors.find(x => x.value === this.model.appealSectorId));
         this.form.get('issuerPositionControl')!.setValue(this.model.issuerPosition);
 
         this.form.get('isRecurrentViolationControl')!.setValue(this.model.isRecurrentViolation);
@@ -347,7 +345,6 @@ export class EditDecreeWarningComponent implements OnInit, AfterViewInit, IDialo
         this.model.issuerPosition = this.form.get('issuerPositionControl')!.value;
         this.model.issuerUserId = this.form.get('drafterControl')!.value?.value;
         this.model.appealCourtId = this.form.get('courtControl')!.value?.value;
-        this.model.appealSectorId = this.form.get('sectorControl')!.value?.value;
 
         this.model.isRecurrentViolation = this.form.get('isRecurrentViolationControl')!.value;
         this.model.comments = this.form.get('commentsControl')!.value;

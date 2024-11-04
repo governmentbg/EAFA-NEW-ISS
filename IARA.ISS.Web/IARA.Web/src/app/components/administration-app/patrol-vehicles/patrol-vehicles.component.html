@@ -67,8 +67,7 @@
         <tl-card-content>
             <tl-data-table [showAddButton]="canAddRecords"
                            [showInactiveRecords]="canRestoreRecords"
-                           (addButtonClicked)="createEditPatrolVehicle(undefined, false)"
-                           (activeRecordChanged)="createEditPatrolVehicle($event, !$event.isActive)">
+                           (addButtonClicked)="createEditPatrolVehicle(undefined, false)">
                 <data-column propertyName="name"
                              [flexRate]="0.4"
                              columnName="{{ 'patrol-vehicles.name' | tlTranslate }}">

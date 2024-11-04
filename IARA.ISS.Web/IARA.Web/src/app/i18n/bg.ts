@@ -203,7 +203,8 @@
         'send-event-to-flux-success': 'Събитието е изпратено към FLUX',
         'succ-applied-deactivated-profile': 'Успешно заявихте деактивиране на профила си. Вашата заявка трябва да бъде одобрена от администратор.',
         'succ-exec-cross-checks': 'Успешно изпълнени кръстосани проверки',
-        'inspection-sent-to-flux-success': 'Докладът е изпратен към FLUX'
+        'inspection-sent-to-flux-success': 'Докладът е изпратен към FLUX',
+        'succ-transfered-quota': 'Успешно прехвърлена квота'
     },
     'navigation': {
         'applications': 'Приложения',
@@ -2381,12 +2382,13 @@
         'old-quota': 'Изтекла квота',
         'remaining-quota': 'Неусвоен размер',
         'current-quota': 'Настояща квота',
-        'transfer-size': 'Рамер за прехвърляне (кг)',
-        'from-ship': 'От кораб',
+        'transfer-size': 'Размер за прехвърляне (кг)',
+        'from-ship': 'Прехвърляне от кораб',
         'to-ship': 'Към кораб',
         'quota-unloaded-quantity': 'Разтоварено към днешна дата',
         'quota-confiscated-quantity': 'Иззето от инспекции',
         'quota-leftover': 'Остатък',
+        'transfer-size-should-be-greater-than-zero': 'Неусвоеният размер от квотата, от която се прехвърля, трябва да е по-голям от 0',
 
         'from-ship-helper': 'От кораб',
         'to-ship-helper': 'Към кораб',
@@ -6032,6 +6034,15 @@
         'edit-decree-is-recurent-violation': 'Има установена повтаряемост на нарушението',
         'edit-decree-comments': 'Бележки',
         'edit-penal-decree-comments': 'Постановявам',
+        'edit-decree-comments-panel': 'Постановявам',
+        'edit-decree-seized-description': 'Отнемам',
+        'edit-decree-sanction-description-panel': 'Смекчаващи и отегчаващи отговорността обстоятелства',
+        'edit-auan-violated-regulations-panel': 'Законови разпоредби от АУАН',
+        'edit-violated-regulations-by-inspected-entity': 'съгласно които се наказва',
+        'edit-appeal-drafter': 'Чрез административнонаказващ орган',
+        'edit-appeal-drafter-position': 'С длъжност',
+        'edit-appeal-department': 'От отдел',
+        'edit-appeal-department-address': 'Адрес на отдела',
 
         'edit-resolution-basic-data': 'Причини за резолюция',
         'edit-reasons': 'Причини за прекратяване на административнонаказателното производство',
@@ -6185,9 +6196,11 @@
         'send-vessel-query': 'Заявка за риболовни кораби',
         'send-sales-query': 'Заявка за продажби',
         'send-fa-query': 'Заявка за риболовни дейности',
+        'send-isr-query': 'Заявка за доклади от инспекции',
         'fa-query-request-title': 'Заявка за риболовни дейности',
         'sales-query-request-title': 'Заявка за продажби',
         'vessel-query-request-title': 'Заявка за риболовни кораби',
+        'isr-query-request-title': 'Заявка за доклади от инспекции',
 
         'fa-query-data': 'Параметри на заявката',
         'fa-query-query-type': 'Вид на заявката',
@@ -6221,6 +6234,9 @@
         'vessel-query-ircs': 'IRCS позивна',
         'vessel-query-mmsi': 'MMSI',
         'vessel-query-flag-state': 'Флаг на кораба',
+
+        'isr-query-data': 'Параметри на заявката',
+        'isr-query-type': 'Вид на заявката',
 
         'flap-filters-ship-register': 'Кораб от регистъра',
         'flap-filters-ship-identifier': 'Идентификатор на кораб',

@@ -37,7 +37,7 @@ export class EditShipQuotaComponent implements IDialogComponent, OnInit {
     public isReadOnly: boolean = false;
     public shipQuotaAlreadyExistsErrors: boolean = false;
 
-    public service: ShipQuotasService;
+    private readonly service: ShipQuotasService;
     private readonly commonNomenclatureService: CommonNomenclatures;
     private readonly snackbar: TLSnackbar;
 
@@ -77,6 +77,7 @@ export class EditShipQuotaComponent implements IDialogComponent, OnInit {
 
             this.editForm.get('quotaChangeBasisControl')!.setValidators([Validators.required, Validators.maxLength(4000)]);
             this.editForm.get('quotaChangeBasisControl')!.updateValueAndValidity({ emitEvent: false });
+            this.editForm.get('quotaChangeBasisControl')!.markAsPending();
 
             this.service.get(this.shipQuotaId).subscribe(result => {
                 this.model = result;
@@ -161,7 +162,7 @@ export class EditShipQuotaComponent implements IDialogComponent, OnInit {
             shipsControl: new FormControl(null, Validators.required),
             fishQuotasControl: new FormControl(null, Validators.required),
             quotaSizeControl: new FormControl(null, [Validators.required, TLValidators.number(0)]),
-            quotaChangeBasisControl: new FormControl(null),
+            quotaChangeBasisControl: new FormControl(null, [Validators.required, Validators.maxLength(4000)]),
         });
     }
 

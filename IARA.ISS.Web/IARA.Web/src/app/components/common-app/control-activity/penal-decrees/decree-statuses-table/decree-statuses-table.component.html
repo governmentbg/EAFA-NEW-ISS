@@ -10,9 +10,7 @@
                        [showInactiveRecords]="true"
                        [showAddButton]="showAddButton"
                        [recordsPerPage]="recordsPerPage"
-                       (addButtonClicked)="editPenalDecreeStatus(undefined, false)"
-                       (activeRecordChanged)="editPenalDecreeStatus($event, !$event.isActive
-                                                                         || !canEditPenalDecreeStatuses)">
+                       (addButtonClicked)="editPenalDecreeStatus(undefined, false)">
             <data-column columnName="{{ 'penal-decrees.edit-status-date' | tlTranslate }}"
                          [flexRate]="0.2"
                          propertyName="dateOfChange"

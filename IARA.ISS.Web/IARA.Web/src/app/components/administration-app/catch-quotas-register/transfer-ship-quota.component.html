@@ -7,7 +7,7 @@
 
     <tl-card fxFlexFill>
         <tl-card-title>{{'catch-quotas.quota-data' | tlTranslate}}</tl-card-title>
-        <tl-card-content>
+        <tl-card-content fxLayoutGap="1em">
             <div fxLayout="row" fxLayoutGap="1em">
                 <tl-autocomplete fxFlex="60"
                                  formControlName="fromShipsControl"
@@ -16,26 +16,34 @@
                                  tooltipResourceName="catch-quotas.from-ship-helper"
                                  label="{{ 'catch-quotas.from-ship' | tlTranslate }}">
                 </tl-autocomplete>
+
                 <tl-input fxFlex="40"
                           formControlName="leftoverQuotaSizeControl"
                           tooltipResourceName="catch-quotas.remaining-quota-helper"
                           label="{{ 'catch-quotas.remaining-quota' | tlTranslate }}">
                 </tl-input>
             </div>
+
             <div fxLayout="row" fxLayoutGap="1em">
                 <tl-autocomplete fxFlex="60"
                                  formControlName="toShipsControl"
-                                 [options]="shipQuotas"
+                                 [options]="allShipQuotas"
                                  [autoMatchTextToOption]="true"
                                  tooltipResourceName="catch-quotas.to-ship-helper"
                                  label="{{ 'catch-quotas.to-ship' | tlTranslate }}">
                 </tl-autocomplete>
+
                 <tl-input fxFlex="40"
                           formControlName="quotaSizeControl"
                           tooltipResourceName="catch-quotas.transfer-size-helper"
                           label="{{ 'catch-quotas.transfer-size' | tlTranslate }}">
                 </tl-input>
             </div>
+
+            <mat-error *ngIf="form.errors?.leftoverShouldBeGreaterThanZero" fxLayout="row">
+                * {{ 'catch-quotas.transfer-size-should-be-greater-than-zero' | tlTranslate }}
+            </mat-error>
+
             <div fxLayout="row" fxLayoutGap="1em">
                 <tl-textarea fxFlexFill
                              formControlName="quotaChangeBasisControl"

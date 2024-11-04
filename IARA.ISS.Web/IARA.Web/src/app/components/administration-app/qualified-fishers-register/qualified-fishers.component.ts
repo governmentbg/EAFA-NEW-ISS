@@ -113,20 +113,11 @@ export class QualifiedFishersComponent extends BasePageComponent implements Afte
     }
 
     public ngAfterViewInit(): void {
-
         this.gridManager = new DataTableManager<QualifiedFisherDTO, QualifiedFishersFilters>({
             tlDataTable: this.datatable,
             searchPanel: this.searchpanel,
             requestServiceMethod: this.service.getAll.bind(this.service),
             filtersMapper: this.mapFilters.bind(this)
-        });
-
-        this.datatable.activeRecordChanged.subscribe({
-            next: (element: QualifiedFisherDTO) => {
-                if (element.isActive) {
-                    this.editEntry(element, !this.canEditRecords);
-                }
-            }
         });
 
         const personId: number | undefined = window.history.state?.id;

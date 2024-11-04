@@ -121,12 +121,6 @@ export class UsersContentComponent implements OnInit, AfterViewInit {
             filtersMapper: this.mapFilters
         });
 
-        this.datatable.activeRecordChanged.subscribe({
-            next: (result: UserDTO) => {
-                this.createEditUser(result.id, false);
-            }
-        });
-
         const personId: number | undefined = window.history.state?.id;
         const legalId: number | undefined = window.history.state?.id;
         const tableId: number | undefined = window.history.state.tableId;

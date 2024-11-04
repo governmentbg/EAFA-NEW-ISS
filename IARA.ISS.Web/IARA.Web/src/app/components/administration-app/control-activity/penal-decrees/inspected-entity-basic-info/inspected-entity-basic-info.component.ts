@@ -126,6 +126,10 @@ export class InspectedEntityBasicInfoComponent extends CustomFormControl<AuanIns
 
                     this.form.get('legalAddressesControl')!.setValue(this.inspectedEntity.addresses);
                 }
+
+                if (!this.isFromRegister) {
+                    this.form.get('isInspectedEntityPersonControl')!.setValue(this.inspectedEntityOptions.find(x => x.value === value.isPerson));
+                }
             }
         }
         else {
