@@ -105,7 +105,7 @@
             <inspected-entity-basic-info *ngIf="showInspectedEntity || isFromThirdPartyInspection"
                                          formControlName="inspectedEntityBasicInfoControl"
                                          validityChecker
-                                         [isFromRegister]="!isFromThirdPartyInspection && isFromInspection"
+                                         [isFromRegister]="viewMode"
                                          [isIdReadOnly]="viewMode">
             </inspected-entity-basic-info>
         </div>

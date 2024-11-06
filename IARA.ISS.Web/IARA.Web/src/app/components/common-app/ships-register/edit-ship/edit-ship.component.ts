@@ -1236,6 +1236,8 @@ export class EditShipComponent extends CustomFormControl<ShipRegisterEditDTO | n
                 this.fillFormRegiX(this.model);
             }
         }
+
+        this.updateErsException();
     }
 
     private fillFormRegiX(model: ShipRegisterApplicationEditDTO | ShipRegisterRegixDataDTO): void {

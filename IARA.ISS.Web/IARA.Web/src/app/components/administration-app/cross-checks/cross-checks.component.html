@@ -49,8 +49,7 @@
     <mat-card>
         <tl-data-table [showAddButton]="canAddRecords"
                        [showInactiveRecords]="canRestoreRecords"
-                       (addButtonClicked)="createEditCrossCheck(undefined, false)"
-                       (activeRecordChanged)="createEditCrossCheck($event, !$event.isActive)">
+                       (addButtonClicked)="createEditCrossCheck(undefined, false)">
             <div *ngIf="canExecuteRecords" datatable-add-buttons fxLayout="row" fxLayoutGap="1em">
                 <button mat-raised-button
                         color="primary"

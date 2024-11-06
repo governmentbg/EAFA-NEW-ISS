@@ -283,13 +283,21 @@ export class RecreationalFishingTicketComponent extends CustomFormControl<Recrea
     }
 
     public ngAfterViewInit(): void {
+        const type: TicketTypeEnum = TicketTypeEnum[this.type.code as keyof typeof TicketTypeEnum];
+
         this.form.get('updatePersonalDataControl')?.valueChanges.subscribe({
             next: (checked: boolean) => {
                 this.updatePersonalData.emit(checked);
+
+                if (!this.isRegisterEntry) {
+                    const validFrom: Date | undefined = this.form.get('validFromControl')?.value;
+
+                    if (validFrom !== undefined && validFrom !== null) {
+                        this.setDateOfBirthProperties(type, validFrom);
+                    }
+                }
             }
         });
-
-        const type: TicketTypeEnum = TicketTypeEnum[this.type.code as keyof typeof TicketTypeEnum];
 
         if (!this.isRegisterEntry) {
             this.form.get('validFromControl')?.valueChanges.subscribe({
@@ -943,7 +951,7 @@ export class RecreationalFishingTicketComponent extends CustomFormControl<Recrea
                 if (age < 14) {
                     return { personUnder14: true };
                 }
-                if (age > 18) {
+                if (age >= 18) {
                     return { personAbove18: true };
                 }
             }

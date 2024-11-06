@@ -96,7 +96,7 @@
     </tl-expansion-panel>
 
     <!-- Законови разпоредби от АУАН -->
-    <tl-expansion-panel title="{{ 'penal-decrees.edit-auan-violated-regulations' | tlTranslate }}"
+    <tl-expansion-panel title="{{ 'penal-decrees.edit-auan-violated-regulations-panel' | tlTranslate }}"
                         tooltipResourceName="penal-decree.edit-auan-violated-regulations-helper"
                         [validityCheckerExtraCondition]="form.errors?.atLeastOneViolatedRegulationNeeded !== true"
                         [validityChecker]="form">
@@ -142,7 +142,7 @@
     </tl-expansion-panel>
 
     <!-- Санкции -->
-    <tl-expansion-panel title="{{ 'penal-decrees.edit-resolution-sanctions' | tlTranslate }}"
+    <tl-expansion-panel title="{{ 'penal-decrees.edit-decree-seized-description' | tlTranslate }}"
                         tooltipResourceName="penal-decrees.edit-resolution-sanctions-helper"
                         [validityChecker]="form">
         <div fxLayout="column" fxLayoutGap="1em">
@@ -197,7 +197,7 @@
     </tl-expansion-panel>
 
     <!-- Законови разпоредби -->
-    <tl-expansion-panel title="{{ 'penal-decrees.edit-violated-regulations' | tlTranslate }}"
+    <tl-expansion-panel [title]="violatedRegulationsTitle"
                         tooltipResourceName="penal-decree.edit-violated-regulations-helper"
                         [validityChecker]="form">
         <auan-violated-regulations formControlName="violatedRegulationsControl"
@@ -219,23 +219,37 @@
     <tl-expansion-panel title="{{ 'penal-decrees.edit-appeal-data' | tlTranslate }}"
                         tooltipResourceName="penal-decree.edit-appeal-data-helper"
                         [validityChecker]="form">
-        <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="space-between center">
-            <tl-autocomplete fxFlex="25"
-                             formControlName="courtControl"
-                             [options]="courts"
-                             label="{{ 'penal-decrees.edit-court' | tlTranslate }}"
-                             tooltipResourceName="penal-decree.edit-court-helper">
-            </tl-autocomplete>
+        <div fxLayout="column" fxLayoutGap="1.5em">
+            <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="space-between center">
+                <tl-autocomplete fxFlex="40"
+                                 formControlName="courtControl"
+                                 [options]="courts"
+                                 label="{{ 'penal-decrees.edit-court' | tlTranslate }}"
+                                 tooltipResourceName="penal-decree.edit-court-helper">
+                </tl-autocomplete>
+            </div>
 
+            <div *ngIf="drafter" fxLayout="row" fxLayout.lt-sm="column" fxLayoutGap="1em">
+                <div fxFlex="30" fxLayout="column" fxLayout.lt-sm="row" fxLayoutGap="0.4em">
+                    <b>{{ 'penal-decrees.edit-appeal-drafter' | tlTranslate }}:</b>
+                    <span>{{ drafter.displayName }}</span>
+                </div>
 
-            <tl-autocomplete fxFlex="25"
-                             formControlName="sectorControl"
-                             [options]="sectors"
-                             label="{{ 'penal-decrees.edit-sector' | tlTranslate }}"
-                             tooltipResourceName="penal-decree.edit-sector-helper">
-            </tl-autocomplete>
+                <div fxFlex="20" fxLayout="column" fxLayout.lt-sm="row" fxLayoutGap="0.4em">
+                    <b>{{ 'penal-decrees.edit-appeal-drafter-position' | tlTranslate }}:</b>
+                    <span>{{ drafter.issuerPosition }}</span>
+                </div>
 
-            <div fxFlex="50"></div>
+                <div fxFlex="20" fxLayout="column" fxLayout.lt-sm="row" fxLayoutGap="0.4em">
+                    <b>{{ 'penal-decrees.edit-appeal-department' | tlTranslate }}:</b>
+                    <span>{{ drafter.departmentName }}</span>
+                </div>
+
+                <div fxFlex="30" fxLayout="column" fxLayout.lt-sm="row" fxLayoutGap="0.4em">
+                    <b>{{ 'penal-decrees.edit-appeal-department-address' | tlTranslate }}:</b>
+                    <span>{{ drafter.departmentAddress }}</span>
+                </div>
+            </div>
         </div>
     </tl-expansion-panel>
 

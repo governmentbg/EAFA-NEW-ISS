@@ -78,7 +78,7 @@
     </tl-expansion-panel>
 
     <!-- Законови разпоредби от АУАН -->
-    <tl-expansion-panel title="{{ 'penal-decrees.edit-auan-violated-regulations' | tlTranslate }}"
+    <tl-expansion-panel title="{{ 'penal-decrees.edit-auan-violated-regulations-panel' | tlTranslate }}"
                         tooltipResourceName="penal-decree.edit-auan-violated-regulations-helper"
                         [validityCheckerExtraCondition]="form.errors?.atLeastOneViolatedRegulationNeeded !== true"
                         [validityChecker]="form">
@@ -113,7 +113,7 @@
     </tl-expansion-panel>
 
     <!-- Законови разпоредби -->
-    <tl-expansion-panel title="{{ 'penal-decrees.edit-violated-regulations' | tlTranslate }}"
+    <tl-expansion-panel [title]="violatedRegulationsTitle"
                         tooltipResourceName="penal-decree.edit-violated-regulations-helper"
                         [validityChecker]="form">
         <auan-violated-regulations formControlName="violatedRegulationsControl"
@@ -176,6 +176,7 @@
             </tl-input>
 
             <tl-input fxFlex="25"
+                      [readonly]="true"
                       formControlName="finePercentControl"
                       label="{{ 'penal-decrees.edit-agreement-fine-percent' | tlTranslate }}"
                       tooltipResourceName="penal-decrees.edit-agreement-fine-percent-helper">

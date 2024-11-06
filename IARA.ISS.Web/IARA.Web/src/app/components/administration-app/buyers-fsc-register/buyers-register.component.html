@@ -115,8 +115,7 @@
             <tl-data-table fxFlexFill
                            [showAddButton]="canAddRecords"
                            [showInactiveRecords]="canRestoreRecords"
-                           (addButtonClicked)="addEntry()"
-                           (activeRecordChanged)="editEntry($event, !$event.isActive && !canEditRecords)">
+                           (addButtonClicked)="addEntry()">
                 <data-column [flexRate]="0.2"
                              columnName="{{ 'buyers-and-sales-centers.type' | tlTranslate }}"
                              propertyName="buyerTypeName">

@@ -95,7 +95,10 @@ export class ShipQuotasService extends BaseAuditService implements IShipQuotasSe
             .append('transferValue', transferValue.toString())
             .append('basis', basis);
 
-        return this.requestService.delete(this.area, this.controller, 'Transfer', { httpParams: params });
+        return this.requestService.delete(this.area, this.controller, 'Transfer', {
+            httpParams: params,
+            successMessage: 'succ-transfered-quota'
+        });
     }
 
     public delete(id: number): Observable<void> {

@@ -26,6 +26,7 @@ import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.
 import { InspectorUserNomenclatureDTO } from '@app/models/generated/dtos/InspectorUserNomenclatureDTO';
 import { TLError } from '@app/shared/components/input-controls/models/tl-error.model';
 import { GetControlErrorLabelTextCallback } from '@app/shared/components/input-controls/base-tl-control';
+import { PenalDecreeUtils } from '../utils/penal-decree.utils';
 
 @Component({
     selector: 'edit-decree-agreement',
@@ -43,6 +44,8 @@ export class EditDecreeAgreementComponent implements OnInit, AfterViewInit, IDia
     public viewMode: boolean = false;
     public isThirdParty: boolean = false;
     public violatedRegulationsTouched: boolean = false;
+    public inspectedEnityName: string | undefined;
+    public violatedRegulationsTitle: string | undefined;
 
     public decreeNumErrorLabelTextMethod: GetControlErrorLabelTextCallback = this.decreeNumErrorLabelText.bind(this);
 
@@ -71,6 +74,8 @@ export class EditDecreeAgreementComponent implements OnInit, AfterViewInit, IDia
         this.nomenclatures = nomenclatures;
         this.confirmDialog = confirmDialog;
         this.translate = translate;
+
+        this.violatedRegulationsTitle = this.translate.getValue('penal-decrees.edit-violated-regulations');
 
         this.buildForm();
     }
@@ -141,6 +146,21 @@ export class EditDecreeAgreementComponent implements OnInit, AfterViewInit, IDia
                 }
             }
         });
+
+        if (this.isThirdParty) {
+            this.form.get('auanControl')!.valueChanges.subscribe({
+                next: (auanData: PenalDecreeAuanDataDTO | undefined) => {
+                    if (auanData !== undefined && auanData !== null) {
+                        this.inspectedEnityName = PenalDecreeUtils.getInspectedEntityName(auanData.inspectedEntity);
+                    }
+                    else {
+                        this.inspectedEnityName = undefined;
+                    }
+
+                    this.violatedRegulationsTitle = PenalDecreeUtils.getViolatedRegulationsTitle(this.inspectedEnityName, this.translate);
+                }
+            });
+        }
     }
 
     public setData(data: EditPenalDecreeDialogParams | undefined, wrapperData: DialogWrapperData): void {
@@ -272,7 +292,7 @@ export class EditDecreeAgreementComponent implements OnInit, AfterViewInit, IDia
             auanViolatedRegulationsControl: new FormControl(null),
             violatedRegulationsControl: new FormControl(null),
             fineControl: new FormControl(null, [Validators.required, TLValidators.number(0, undefined, 2)]),
-            finePercentControl: new FormControl({ value: null, disabled: true }),
+            finePercentControl: new FormControl(null),
             commentsControl: new FormControl(null, Validators.maxLength(4000)),
             constatationCommentsControl: new FormControl(null, Validators.maxLength(4000)),
             evidenceCommentsControl: new FormControl(null, Validators.maxLength(4000)),
@@ -353,6 +373,8 @@ export class EditDecreeAgreementComponent implements OnInit, AfterViewInit, IDia
         this.form.get('auanControl')!.setValue(data);
         this.form.get('territoryUnitControl')!.setValue(this.territoryUnits.find(x => x.value === data.territoryUnitId));
         this.form.get('constatationCommentsControl')!.setValue(data.constatationComments);
+        this.inspectedEnityName = PenalDecreeUtils.getInspectedEntityName(data.inspectedEntity);
+        this.violatedRegulationsTitle = PenalDecreeUtils.getViolatedRegulationsTitle(this.inspectedEnityName, this.translate);
 
         if (this.isAdding) {
             setTimeout(() => {

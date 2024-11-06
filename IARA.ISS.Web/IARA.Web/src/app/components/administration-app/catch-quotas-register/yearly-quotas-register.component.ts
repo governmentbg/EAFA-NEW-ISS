@@ -1,4 +1,4 @@
-﻿import { AfterViewInit, Component, ViewChild } from '@angular/core';
+﻿import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 import { NomenclatureTypes } from '@app/enums/nomenclature.types';
@@ -30,7 +30,7 @@ import { HeaderCloseFunction } from '@app/shared/components/dialog-wrapper/inter
     selector: 'yearly-quotas-register',
     templateUrl: './yearly-quotas-register.component.html',
 })
-export class YearlyQuotasComponent extends BasePageComponent implements AfterViewInit {
+export class YearlyQuotasComponent extends BasePageComponent implements OnInit, AfterViewInit {
     public translationService: FuseTranslationLoaderService;
     public filterFormGroup: FormGroup;
     public fishes: FishNomenclatureDTO[] = [];
@@ -42,8 +42,6 @@ export class YearlyQuotasComponent extends BasePageComponent implements AfterVie
 
     private commonNomenclatureService: CommonNomenclatures;
     private confirmDialog: TLConfirmDialog;
-    private _datatable!: IRemoteTLDatatableComponent;
-    private _searchpanel!: SearchPanelComponent
 
     private service: YearlyQuotasService;
     private gridManager!: DataTableManager<YearlyQuotaDTO, YearlyQuotasFilters>;
@@ -51,14 +49,10 @@ export class YearlyQuotasComponent extends BasePageComponent implements AfterVie
     private transferDialog: TLMatDialog<TransferYearlyQuotaComponent>;
 
     @ViewChild(TLDataTableComponent)
-    private set datatable(val: IRemoteTLDatatableComponent) {
-        this._datatable = val;
-    }
+    private datatable!: TLDataTableComponent;
 
     @ViewChild(SearchPanelComponent)
-    private set searchpanel(val: SearchPanelComponent) {
-        this._searchpanel = val;
-    }
+    private searchpanel!: SearchPanelComponent;
 
     public constructor(
         translationService: FuseTranslationLoaderService,
@@ -76,7 +70,7 @@ export class YearlyQuotasComponent extends BasePageComponent implements AfterVie
         this.canEditRecords = permissions.has(PermissionsEnum.YearlyQuotasEditRecords);
         this.canDeleteRecords = permissions.has(PermissionsEnum.YearlyQuotasDeleteRecords);
         this.canRestoreRecords = permissions.has(PermissionsEnum.YearlyQuotasRestoreRecords);
-        
+
         this.translationService = translationService;
         this.service = service;
         this.commonNomenclatureService = commonNomenclatureService;
@@ -90,26 +84,24 @@ export class YearlyQuotasComponent extends BasePageComponent implements AfterVie
         });
     }
 
-    public async ngAfterViewInit(): Promise<void> {
-        this.fishes = await NomenclatureStore.instance.getNomenclature<number>(
-            NomenclatureTypes.Fishes, this.commonNomenclatureService.getFishTypes.bind(this.commonNomenclatureService), false
-        ).toPromise();
+    public ngOnInit(): void {
+        NomenclatureStore.instance.getNomenclature(
+            NomenclatureTypes.TerritoryUnits, this.commonNomenclatureService.getTerritoryUnits.bind(this.commonNomenclatureService), false
+        ).subscribe({
+            next: (result: FishNomenclatureDTO[]) => {
+                this.fishes = result;
+            }
+        });
+    }
 
+    public ngAfterViewInit(): void {
         this.gridManager = new DataTableManager<YearlyQuotaDTO, YearlyQuotasFilters>({
-            tlDataTable: this._datatable,
-            searchPanel: this._searchpanel,
+            tlDataTable: this.datatable,
+            searchPanel: this.searchpanel,
             requestServiceMethod: this.service.getAll.bind(this.service),
             filtersMapper: this.mapFilters.bind(this),
             excelRequestServiceMethod: this.service.downloadYearlyQuotaExcel.bind(this.service),
             excelFilename: this.translationService.getValue('catch-quotas.yearly-excel-filename')
-        });
-
-        this._datatable.activeRecordChanged.subscribe({
-            next: (element: YearlyQuotaDTO) => {
-                if (element.isActive) {
-                    this.addEditEntry(element, !this.canEditRecords);
-                }
-            }
         });
 
         this.gridManager.refreshData();
@@ -147,9 +139,11 @@ export class YearlyQuotasComponent extends BasePageComponent implements AfterVie
             translteService: this.translationService
         }, '85em');
 
-        dialogResult.subscribe((entry: YearlyQuotaEditDTO) => {
-            if (entry !== undefined && entry !== null) {
-                this.gridManager.refreshData();
+        dialogResult.subscribe({
+            next: (entry: YearlyQuotaEditDTO) => {
+                if (entry !== undefined && entry !== null) {
+                    this.gridManager.refreshData();
+                }
             }
         });
     }
@@ -160,14 +154,16 @@ export class YearlyQuotasComponent extends BasePageComponent implements AfterVie
                 title: this.translationService.getValue('catch-quotas.delete-entry'),
                 message: `${this.translationService.getValue('catch-quotas.delete-entry-sure')} ${entry.fish} ${entry.year} ?`,
                 okBtnLabel: this.translationService.getValue('qualified-fishers-page.do-delete')
-            }).subscribe((result: any) => {
-                if (result) {
-                    if (entry.id !== undefined) {
-                        this.service.delete(entry.id).subscribe({
-                            next: () => {
-                                this.gridManager.deleteRecord(entry);
-                            }
-                        });
+            }).subscribe({
+                next: (result: boolean) => {
+                    if (result) {
+                        if (entry.id !== undefined) {
+                            this.service.delete(entry.id).subscribe({
+                                next: () => {
+                                    this.gridManager.deleteRecord(entry);
+                                }
+                            });
+                        }
                     }
                 }
             });
@@ -204,9 +200,11 @@ export class YearlyQuotasComponent extends BasePageComponent implements AfterVie
             translteService: this.translationService
         }, '85em');
 
-        dialogResult.subscribe((entry: YearlyQuotaEditDTO) => {
-            if (entry !== undefined && entry !== null) {
-                this.gridManager.refreshData();
+        dialogResult.subscribe({
+            next: (entry: YearlyQuotaEditDTO) => {
+                if (entry !== undefined && entry !== null) {
+                    this.gridManager.refreshData();
+                }
             }
         });
     }

@@ -204,7 +204,8 @@
         'send-history-to-flux-success': 'The events were sent to FLUX',
         'send-event-to-flux-success': 'The event was sent to FLUX',
         'succ-applied-deactivated-profile': 'Successufully applied to delete your profile. Your profile should be deactivated by an administrator.',
-        'inspection-sent-to-flux-success': 'Report is sent to FLUX'
+        'inspection-sent-to-flux-success': 'Report is sent to FLUX',
+        'succ-transfered-quota': 'Successfully transfered quota'
     },
     'navigation': {
         'applications': 'Applications',
@@ -5967,6 +5968,15 @@
         'edit-decree-is-recurent-violation': 'Penal decree is recurent violation',
         'edit-decree-comments': 'Comments',
         'edit-penal-decree-comments': 'Comments',
+        'edit-decree-comments-panel': 'Penal decree',
+        'edit-decree-seized-description': 'Seizure',
+        'edit-decree-sanction-description-panel': 'Sanction and violation description',
+        'edit-auan-violated-regulations-panel': 'AUAN violated regulations',
+        'edit-violated-regulations-by-inspected-entity': 'by',
+        'edit-appeal-drafter': 'Drafter',
+        'edit-appeal-drafter-position': 'Drafter position',
+        'edit-appeal-department': 'Department',
+        'edit-appeal-department-address': 'Department address',
 
         'edit-resolution-basic-data': 'Reasons',
         'edit-reasons': 'Reasons',
@@ -6116,6 +6126,7 @@
         'quota-unloaded-quantity': 'Unloaded quantity',
         'quota-confiscated-quantity': 'Confiscated quantity',
         'quota-leftover': 'Leftover',
+        'transfer-size-should-be-greater-than-zero': 'Leftover should be greater than 0',
 
         'files-helper': 'Help dialog files',
         'from-ship-helper': 'From ship',
@@ -6183,9 +6194,11 @@
         'send-vessel-query': 'Vessel query',
         'send-sales-query': 'Sales query',
         'send-fa-query': 'Fishing activities query',
+        'send-isr-query': 'Inspection reports query',
         'fa-query-request-title': 'Fishing activities query',
         'sales-query-request-title': 'Sales query',
         'vessel-query-request-title': 'Vessel query',
+        'isr-query-request-title': 'Inspection reports query',
 
         'fa-query-data': 'Query parameters',
         'fa-query-query-type': 'Query type',
@@ -6219,6 +6232,9 @@
         'vessel-query-ircs': 'IRCS',
         'vessel-query-mmsi': 'MMSI',
         'vessel-query-flag-state': 'Vessel flag state',
+
+        'isr-query-data': 'Query parameters',
+        'isr-query-type': 'Inspection report query type',
 
         'flap-filters-ship-register': 'Vessel from the registry',
         'flap-filters-ship-identifier': 'Vessel identification',

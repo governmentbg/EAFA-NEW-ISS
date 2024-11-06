@@ -34,8 +34,7 @@
         <tl-card-content>
             <tl-data-table [showAddButton]="canAddNews"
                            [showInactiveRecords]="canRestoreNews"
-                           (addButtonClicked)="openEditDialog()"
-                           (activeRecordChanged)="openEditDialog($event.id, !$event.isActive || !canEditNews)">
+                           (addButtonClicked)="openEditDialog()">
                 <data-column [flexRate]="0.4"
                              propertyName="title"
                              columnName="{{ 'news-management.table-news-title' | tlTranslate }}">
