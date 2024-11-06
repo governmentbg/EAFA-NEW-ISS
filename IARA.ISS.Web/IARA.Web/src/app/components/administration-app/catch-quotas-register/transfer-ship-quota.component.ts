@@ -125,7 +125,7 @@ export class TransferShipQuotaComponent implements IDialogComponent, OnInit, Aft
             toShipsControl: new FormControl({ value: null, disabled: true }),
             leftoverQuotaSizeControl: new FormControl({ value: null, disabled: true }),
             quotaSizeControl: new FormControl(null, [Validators.required, TLValidators.number(0)]),
-            quotaChangeBasisControl: new FormControl(null, Validators.required),
+            quotaChangeBasisControl: new FormControl(null, [Validators.required, Validators.maxLength(4000)]),
         }, this.leftoverValidator());
 
         form.get('leftoverQuotaSizeControl')!.valueChanges.subscribe({

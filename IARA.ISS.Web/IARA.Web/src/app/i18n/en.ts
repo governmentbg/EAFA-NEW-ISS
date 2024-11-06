@@ -3635,6 +3635,7 @@
         'dialog-group-description': 'Group description',
         'dialog-group-type': 'Group type',
         'dialog-group-order-num': 'Order num',
+        'group-name-already-exist-error': 'Group name already exists',
 
         'invalid-sql': 'Invalid SQL',
 
@@ -6126,6 +6127,7 @@
         'quota-unloaded-quantity': 'Unloaded quantity',
         'quota-confiscated-quantity': 'Confiscated quantity',
         'quota-leftover': 'Leftover',
+        'ship-quota-transfer': 'Transfer from/to ship',
         'transfer-size-should-be-greater-than-zero': 'Leftover should be greater than 0',
 
         'files-helper': 'Help dialog files',
@@ -6235,6 +6237,18 @@
 
         'isr-query-data': 'Query parameters',
         'isr-query-type': 'Inspection report query type',
+        'isr-query-date-time-from': 'From',
+        'isr-query-date-time-to': 'To',
+        'isr-query-cfr': 'CFR',
+        'isr-query-ircs': 'IRCS',
+        'isr-query-uvi': 'UVI',
+        'isr-query-external-mark': 'External mark',
+        'isr-query-flag-state': 'Flag state',
+        'isr-query-tractor-identifier': 'Tractor identifier',
+        'isr-query-trailer-identifier': 'Trailer identifier',
+        'isr-query-registration-country': 'Registration country',
+        'isr-query-at-least-one-vessel-id-required': 'At least one field should be filled',
+        'isr-query-at-least-one-vehicle-id-required': 'Either tractor or trailer identifier is required',
 
         'flap-filters-ship-register': 'Vessel from the registry',
         'flap-filters-ship-identifier': 'Vessel identification',

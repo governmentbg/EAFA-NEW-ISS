@@ -39,6 +39,7 @@ export class YearlyQuotasComponent extends BasePageComponent implements OnInit, 
     public readonly canEditRecords: boolean;
     public readonly canDeleteRecords: boolean;
     public readonly canRestoreRecords: boolean;
+    public readonly canTransferRecords: boolean;
 
     private commonNomenclatureService: CommonNomenclatures;
     private confirmDialog: TLConfirmDialog;
@@ -70,6 +71,7 @@ export class YearlyQuotasComponent extends BasePageComponent implements OnInit, 
         this.canEditRecords = permissions.has(PermissionsEnum.YearlyQuotasEditRecords);
         this.canDeleteRecords = permissions.has(PermissionsEnum.YearlyQuotasDeleteRecords);
         this.canRestoreRecords = permissions.has(PermissionsEnum.YearlyQuotasRestoreRecords);
+        this.canTransferRecords = permissions.has(PermissionsEnum.YearlyQuotasTransferRecords);
 
         this.translationService = translationService;
         this.service = service;

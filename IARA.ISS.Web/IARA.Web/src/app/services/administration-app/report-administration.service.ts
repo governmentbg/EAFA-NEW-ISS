@@ -124,11 +124,15 @@ export class ReportAdministrationService extends BaseAuditService implements IRe
     }
 
     public addGroup(group: ReportGroupDTO): Observable<number> {
-        return this.requestService.post(this.area, this.controller, 'AddGroup', group);
+        return this.requestService.post(this.area, this.controller, 'AddGroup', group, {
+            properties: new RequestProperties({ showException: true, rethrowException: true })
+        });
     }
 
     public editGroup(group: ReportGroupDTO): Observable<void> {
-        return this.requestService.put(this.area, this.controller, 'EditGroup', group);
+        return this.requestService.put(this.area, this.controller, 'EditGroup', group, {
+            properties: new RequestProperties({ showException: true, rethrowException: true })
+        });
     }
 
     public deleteGroup(id: number): Observable<void> {

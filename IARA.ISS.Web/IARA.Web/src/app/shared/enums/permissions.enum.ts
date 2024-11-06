@@ -231,11 +231,13 @@
     YearlyQuotasEditRecords = 'YearlyQuotasEditRecords',
     YearlyQuotasDeleteRecords = 'YearlyQuotasDeleteRecords',
     YearlyQuotasRestoreRecords = 'YearlyQuotasRestoreRecords',
+    YearlyQuotasTransferRecords = 'YearlyQuotasTransferRecords',
     ShipQuotasRead = 'ShipQuotasRead',
     ShipQuotasAddRecords = 'ShipQuotasAddRecords',
     ShipQuotasEditRecords = 'ShipQuotasEditRecords',
     ShipQuotasDeleteRecords = 'ShipQuotasDeleteRecords',
     ShipQuotasRestoreRecords = 'ShipQuotasRestoreRecords',
+    ShipQuotasTransferRecords = 'ShipQuotasTransferRecords',
 
     // System log
     SystemLogRead = 'SystemLogRead',
