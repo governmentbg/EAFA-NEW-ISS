@@ -13,6 +13,12 @@ export class QuotaHistDTO {
     @StrictlyTyped(Number)
     public quotaId?: number;
 
+    @StrictlyTyped(Number)
+    public fromShipQuotaId?: number;
+
+    @StrictlyTyped(String)
+    public fromShipQuotaName?: string;
+
     @StrictlyTyped(Date)
     public timestamp?: Date;
 
@@ -21,9 +27,6 @@ export class QuotaHistDTO {
 
     @StrictlyTyped(Number)
     public newQuotaValueKg?: number;
-
-    @StrictlyTyped(Number)
-    public unloadedByCurrentDateKg?: number;
 
     @StrictlyTyped(String)
     public basis?: string;

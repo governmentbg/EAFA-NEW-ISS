@@ -2388,6 +2388,7 @@
         'quota-unloaded-quantity': 'Разтоварено към днешна дата',
         'quota-confiscated-quantity': 'Иззето от инспекции',
         'quota-leftover': 'Остатък',
+        'ship-quota-transfer': 'Прехвърляне от/към кораб',
         'transfer-size-should-be-greater-than-zero': 'Неусвоеният размер от квотата, от която се прехвърля, трябва да е по-голям от 0',
 
         'from-ship-helper': 'От кораб',
@@ -3685,6 +3686,7 @@
         'dialog-group-description': 'Описание на група',
         'dialog-group-type': 'Тип група',
         'dialog-group-order-num': 'Пореден номер',
+        'group-name-already-exist-error': 'Вече съществува група с това име',
 
         'invalid-sql': 'Невалиден SQL',
 
@@ -6237,6 +6239,18 @@
 
         'isr-query-data': 'Параметри на заявката',
         'isr-query-type': 'Вид на заявката',
+        'isr-query-date-time-from': 'От',
+        'isr-query-date-time-to': 'До',
+        'isr-query-cfr': 'CFR',
+        'isr-query-ircs': 'IRCS позивна',
+        'isr-query-uvi': 'UVI',
+        'isr-query-external-mark': 'Външна маркировка',
+        'isr-query-flag-state': 'Флаг на кораба',
+        'isr-query-tractor-identifier': 'Номер на превозното средство',
+        'isr-query-trailer-identifier': 'Номер на ремарке',
+        'isr-query-registration-country': 'Държава',
+        'isr-query-at-least-one-vessel-id-required': 'Трябва да бъде въведено поне едно от полетата',
+        'isr-query-at-least-one-vehicle-id-required': 'Трябва да цъде въведен поне или номер на превозното средство, или номер на ремарке',
 
         'flap-filters-ship-register': 'Кораб от регистъра',
         'flap-filters-ship-identifier': 'Идентификатор на кораб',

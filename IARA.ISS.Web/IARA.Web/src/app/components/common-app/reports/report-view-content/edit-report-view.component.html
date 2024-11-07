@@ -3,6 +3,7 @@
         <tl-card-content [formGroup]="form" fxLayoutGap="1em">
             <tl-input label="{{ 'report-view.dialog-group-name' | tlTranslate }}"
                       formControlName="nameControl"
+                      [getControlErrorLabelText]="groupNameErrorLabelTextMethod"
                       tooltipResourceName="report-view.dialog-group-name-helper">
             </tl-input>
             <tl-select label="{{ 'report-view.dialog-group-type' | tlTranslate }}"

@@ -87,5 +87,6 @@ export enum ErrorCode {
     FishingAssociationAlreadyExists = 65,
     SendFLUXISRFailed = 66,
     InspectionNotSigned = 67,
-    PenalDecreeNumAlreadyExists = 68
+    PenalDecreeNumAlreadyExists = 68,
+    ReportGroupNameAlreadyExists = 69
 }

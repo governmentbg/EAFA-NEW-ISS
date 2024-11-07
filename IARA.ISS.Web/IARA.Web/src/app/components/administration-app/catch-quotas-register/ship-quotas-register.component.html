@@ -62,6 +62,11 @@
                                              dataType="date">
                                 </data-column>
 
+                                <data-column [flexRate]="0.2"
+                                             propertyName="fromShipQuotaName"
+                                             columnName="{{ 'catch-quotas.ship-quota-transfer' | tlTranslate }}">
+                                </data-column>
+
                                 <data-template-column [flexRate]="0.2"
                                                       propertyName="addRemoveQuota"
                                                       columnName="{{ 'catch-quotas.added-removed-quota' | tlTranslate }}">
@@ -168,7 +173,7 @@
                                         tooltipText="{{ 'catch-quotas.restore-entry-tooltip' | tlTranslate }}">
                         </tl-icon-button>
 
-                        <tl-icon-button *ngIf="row.isActive && canEditRecords"
+                        <tl-icon-button *ngIf="row.isActive && canTransferRecords"
                                         icon="fa-external-link-alt"
                                         (buttonClicked)="transferQuota(row)"
                                         iconClass="accent-color"

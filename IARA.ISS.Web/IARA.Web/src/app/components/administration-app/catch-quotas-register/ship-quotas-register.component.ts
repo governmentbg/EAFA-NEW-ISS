@@ -42,6 +42,7 @@ export class ShipQuotasComponent extends BasePageComponent implements OnInit, Af
     public readonly canEditRecords: boolean;
     public readonly canDeleteRecords: boolean;
     public readonly canRestoreRecords: boolean;
+    public readonly canTransferRecords: boolean;
 
     private commonNomenclatureService: CommonNomenclatures;
     private confirmDialog: TLConfirmDialog;
@@ -73,6 +74,7 @@ export class ShipQuotasComponent extends BasePageComponent implements OnInit, Af
         this.canEditRecords = permissions.has(PermissionsEnum.ShipQuotasEditRecords);
         this.canDeleteRecords = permissions.has(PermissionsEnum.ShipQuotasDeleteRecords);
         this.canRestoreRecords = permissions.has(PermissionsEnum.ShipQuotasRestoreRecords);
+        this.canTransferRecords = permissions.has(PermissionsEnum.ShipQuotasTransferRecords);
 
         this.translationService = translationService;
         this.service = service;

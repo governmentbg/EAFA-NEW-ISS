@@ -162,7 +162,7 @@ export class EditShipQuotaComponent implements IDialogComponent, OnInit {
             shipsControl: new FormControl(null, Validators.required),
             fishQuotasControl: new FormControl(null, Validators.required),
             quotaSizeControl: new FormControl(null, [Validators.required, TLValidators.number(0)]),
-            quotaChangeBasisControl: new FormControl(null, [Validators.required, Validators.maxLength(4000)]),
+            quotaChangeBasisControl: new FormControl(null, [Validators.maxLength(4000)]),
         });
     }
 
