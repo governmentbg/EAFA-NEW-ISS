@@ -239,7 +239,8 @@
                                             tooltipText="{{ 'inspections.view-inspection-dialog-title' | tlTranslate }}">
                             </tl-icon-button>
 
-                            <tl-icon-button *ngIf="row.data.isActive  && row.data.inspectionState === inspectionStatesEnum.Draft
+                            <tl-icon-button *ngIf="row.data.isActive  
+                                                   && row.data.inspectionState === inspectionStatesEnum.Draft
                                                    && canEditRecords
                                                    && isInspector
                                                    && (shipId === null || shipId === undefined)
@@ -250,7 +251,8 @@
                                             tooltipText="{{ 'inspections.edit-inspection-dialog-title' | tlTranslate }}">
                             </tl-icon-button>
 
-                            <tl-icon-button *ngIf="row.data.isActive && row.data.inspectionState === inspectionStatesEnum.Submitted
+                            <tl-icon-button *ngIf="row.data.isActive 
+                                                    && row.data.inspectionState === inspectionStatesEnum.Submitted
                                                     && canEditRecords
                                                     && isInspector
                                                     && (shipId === null || shipId === undefined)
@@ -259,6 +261,21 @@
                                             (buttonClicked)="signEntry(row.data)"
                                             iconClass="accent-color"
                                             tooltipText="{{ 'inspections.sign-inspection' | tlTranslate }}">
+                            </tl-icon-button>
+
+                            <tl-icon-button *ngIf="row.data.isActive 
+                                                    && row.data.inspectionState === inspectionStatesEnum.Signed 
+                                                    && row.data.inspectionType !== inspectionTypesEnum.OTH
+                                                    && row.data.hasInspectedEntities
+                                                    && canEditRecords
+                                                    && isInspector
+                                                    && (shipId === null || shipId === undefined)
+                                                    && (row.data.createdByUserId === userId || canEditInspectionNumber)"
+                                            icon="fa-envelope"
+                                            [size]="faIconSize"
+                                            (buttonClicked)="sendInspectionEmails(row.data)"
+                                            iconClass="accent-color"
+                                            tooltipText="{{ 'inspections.send-inspection-email' | tlTranslate }}">
                             </tl-icon-button>
 
                             <tl-icon-button *ngIf="row.data.isActive

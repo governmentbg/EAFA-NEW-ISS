@@ -17,15 +17,15 @@ export class SignInspectionComponent implements IDialogComponent {
 
     public filesControl: FormControl;
 
+    public inspection!: InspectionDTO;
+
+    public readonly service: InspectionsService;
+
     constructor(service: InspectionsService) {
         this.service = service;
 
         this.filesControl = new FormControl([]);
     }
-
-    public readonly service: InspectionsService;
-
-    public inspection!: InspectionDTO;
 
     public setData(data: InspectionDTO, wrapperData: DialogWrapperData): void {
         this.inspection = data;

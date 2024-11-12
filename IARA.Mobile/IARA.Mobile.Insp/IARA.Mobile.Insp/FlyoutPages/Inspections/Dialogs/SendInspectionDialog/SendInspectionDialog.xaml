@@ -1,0 +1,50 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<tl:TLBaseDialog xmlns="http://xamarin.com/schemas/2014/forms"
+        xmlns:h="clr-namespace:TechnoLogica.Xamarin.Helpers;assembly=TechnoLogica.Xamarin"
+        xmlns:sv="clr-namespace:IARA.Mobile.Shared.Views;assembly=IARA.Mobile.Shared"
+        xmlns:lc="clr-namespace:IARA.Mobile.Insp.Controls"
+        xmlns:c="clr-namespace:IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.SendInspectionDialog.PersonEmailView"
+        xmlns:m="clr-namespace:IARA.Mobile.Domain.Models;assembly=IARA.Mobile.Domain"
+        xmlns:local="clr-namespace:IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.SendInspectionDialog"
+        xmlns:nom="clr-namespace:IARA.Mobile.Application.DTObjects.Nomenclatures;assembly=IARA.Mobile.Application"
+        xmlns:rt="clr-namespace:TechnoLogica.Xamarin.ResourceTranslator;assembly=TechnoLogica.Xamarin"
+        xmlns:tl="clr-namespace:TechnoLogica.Xamarin.Controls;assembly=TechnoLogica.Xamarin"
+        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+        x:Class="IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.SendInspectionDialog.SendInspectionDialog"
+        x:Name="dialog"
+        x:DataType="local:SendInspectionDialogViewModel"
+        x:TypeArguments="local:SendInspectionDialogViewModel"
+        Title="{rt:Translate SendInspectionTitle, Group=Inspections}">
+    <ScrollView>
+        <StackLayout Padding="10">
+            <StackLayout Orientation="Horizontal" HorizontalOptions="End">
+                <Button Text="{rt:Translate ChooseAll, Group=Inspections}"
+                        Grid.Column="0"
+                        HorizontalOptions="Start"
+                        Command="{Binding ChooseAll}" />
+                <Button Text="{rt:Translate RemoveAll, Group=Inspections}"
+                        Grid.Column="1"
+                        HorizontalOptions="End"
+                        Command="{Binding RemoveAll}" />
+            </StackLayout>
+            <StackLayout BindableLayout.ItemsSource="{Binding People}">
+                <BindableLayout.ItemTemplate>
+                    <DataTemplate x:DataType="c:PersonEmailViewModel">
+                        <c:PersonEmailView BindingContext="{Binding}" />
+                    </DataTemplate>
+                </BindableLayout.ItemTemplate>
+            </StackLayout>
+            <Grid ColumnDefinitions="*,*">
+                <Button Text="{rt:Translate Cancel, Group=Common}"
+                        Grid.Column="0"
+                        BackgroundColor="{StaticResource Secondary}"
+                        HorizontalOptions="Start"
+                        Command="{Binding Close}" />
+                <Button Text="{rt:Translate SendEmails, Group=Inspections}"
+                        Grid.Column="1"
+                        HorizontalOptions="End"
+                        Command="{Binding SendEmails}" />
+            </Grid>
+        </StackLayout>
+    </ScrollView>
+</tl:TLBaseDialog>

@@ -44,6 +44,7 @@ namespace IARA.Mobile.Insp.Infrastructure
 
             builder.AddExtension("Services", "Mobile/Administrative/");
             builder.AddExtension("Common", "Common/");
+            builder.AddExtension("Administrative", "Administrative/");
 
             builder.Build(services);
 

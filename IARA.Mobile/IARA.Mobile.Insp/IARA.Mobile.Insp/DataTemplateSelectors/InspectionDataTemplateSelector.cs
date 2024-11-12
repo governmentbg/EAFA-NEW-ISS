@@ -30,38 +30,41 @@ namespace IARA.Mobile.Insp.DataTemplateSelectors
 
             if (item.SubmitType == SubmitType.Finish)
             {
-                //if (item.InspectionState == InspectionState.Submitted && item.CreatedByCurrentUser)
-                //{
-                //    buttonsStack.Children.Add(new ImageButton
-                //    {
-                //        Source = new FontImageSource
-                //        {
-                //            Color = Color.White,
-                //            FontFamily = "FA",
-                //            Glyph = IconFont.Signature,
-                //            Size = 25
-                //        },
-                //        Padding = 10,
-                //        Command = bindingContext.SignInspection,
-                //        CommandParameter = item,
-                //    });
-                //}
-
-                buttonsStack.Children.Add(new ImageButton
+                if (item.InspectionState == InspectionState.Signed && item.CreatedByCurrentUser)
                 {
-                    Source = new FontImageSource
+                    buttonsStack.Children.Add(new ImageButton
                     {
-                        Color = Color.White,
-                        FontFamily = "FA",
-                        Glyph = IconFont.Eye,
-                        Size = 25
-                    },
-                    Padding = 10,
-                    Command = bindingContext.OpenInspection,
-                    CommandParameter = item,
-                });
+                        Source = new FontImageSource
+                        {
+                            Color = Color.White,
+                            FontFamily = "FA",
+                            Glyph = IconFont.Envelope,
+                            Size = 25
+                        },
+                        Padding = 10,
+                        Command = bindingContext.SendInspection,
+                        CommandParameter = item,
+                    });
+                }
+
+                if (item.InspectionState == InspectionState.Submitted)
+                {
+                    buttonsStack.Children.Add(new ImageButton
+                    {
+                        Source = new FontImageSource
+                        {
+                            Color = Color.White,
+                            FontFamily = "FA",
+                            Glyph = IconFont.Signature,
+                            Size = 25
+                        },
+                        Padding = 10,
+                        Command = bindingContext.SignInspection,
+                        CommandParameter = item,
+                    });
+                }
             }
-            else if (item.CreatedByCurrentUser)
+            else
             {
                 buttonsStack.Children.Add(new ImageButton
                 {
@@ -76,7 +79,6 @@ namespace IARA.Mobile.Insp.DataTemplateSelectors
                     Command = bindingContext.OpenInspection,
                     CommandParameter = item,
                 });
-
                 buttonsStack.Children.Add(new ImageButton
                 {
                     Source = new FontImageSource
@@ -91,6 +93,20 @@ namespace IARA.Mobile.Insp.DataTemplateSelectors
                     CommandParameter = item,
                 });
             }
+
+            buttonsStack.Children.Add(new ImageButton
+            {
+                Source = new FontImageSource
+                {
+                    Color = Color.White,
+                    FontFamily = "FA",
+                    Glyph = IconFont.Eye,
+                    Size = 25
+                },
+                Padding = 10,
+                Command = bindingContext.OpenInspection,
+                CommandParameter = item,
+            });
 
             Grid content = new Grid
             {
@@ -113,7 +129,7 @@ namespace IARA.Mobile.Insp.DataTemplateSelectors
                     new ColumnDefinition { Width = GridLength.Star },
                     new ColumnDefinition { Width = GridLength.Star },
                     new ColumnDefinition { Width = 175 },
-                    new ColumnDefinition { Width = 100 },
+                    new ColumnDefinition { Width = 150 },
                 },
                 Children =
                 {

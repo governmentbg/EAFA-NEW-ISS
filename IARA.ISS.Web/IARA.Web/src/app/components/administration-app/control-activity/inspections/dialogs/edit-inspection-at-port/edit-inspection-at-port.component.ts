@@ -187,7 +187,7 @@ export class EditInspectionAtPortComponent extends BaseInspectionsComponent impl
                     ship: this.model.receivingShipInspection.inspectedShip,
                     port: this.model.receivingShipInspection.lastPortVisit
                 }));
-
+          
                 if (this.model.receivingShipInspection.inspectionPortId || this.model.receivingShipInspection.unregisteredPortName) {
                     this.form.get('portControl')!.setValue(new PortVisitDTO({
                         portId: this.model.receivingShipInspection.inspectionPortId,
@@ -221,11 +221,12 @@ export class EditInspectionAtPortComponent extends BaseInspectionsComponent impl
 
         this.model.inspectionType = InspectionTypesEnum.IBP;
         this.model.isActive = true;
-        this.model.startDate = generalInfo?.startDate;
-        this.model.endDate = generalInfo?.endDate;
-        this.model.inspectors = generalInfo?.inspectors;
-        this.model.reportNum = generalInfo?.reportNum;
-        this.model.byEmergencySignal = generalInfo?.byEmergencySignal;
+        this.model.startDate = generalInfo.startDate;
+        this.model.endDate = generalInfo.endDate;
+        this.model.inspectors = generalInfo.inspectors;
+        this.model.reportNum = generalInfo.reportNum;
+        this.model.byEmergencySignal = generalInfo.byEmergencySignal;
+
         this.model.actionsTaken = additionalInfo?.actionsTaken;
         this.model.administrativeViolation = additionalInfo?.administrativeViolation === true;
         this.model.inspectorComment = additionalInfo?.inspectorComment;

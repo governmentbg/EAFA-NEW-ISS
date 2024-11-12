@@ -1,0 +1,128 @@
+﻿<div [formGroup]="form" class="dialog-padding">
+    <tl-card tooltipResourceName="flux-vms-requests.isr-query-data-helper">
+        <tl-card-title>{{ 'flux-vms-requests.isr-query-data' | tlTranslate }}</tl-card-title>
+
+        <tl-card-content>
+            <div fxLayout="column" fxLayoutGap="1em">
+                <div fxLayout="row"
+                     fxLayoutAlign="space-between center"
+                     fxLayoutGap="1em">
+                    <tl-select fxFlex="50"
+                               formControlName="queryTypeControl"
+                               [options]="queryTypes"
+                               label="{{ 'flux-vms-requests.isr-query-type' | tlTranslate }}"
+                               tooltipResourceName="flux-vms-requests.isr-query-query-type-helper">
+                    </tl-select>
+
+                    <div fxFlex="50"></div>
+                </div>
+
+                <div fxLayout="row"
+                     fxLayoutAlign="space-between center"
+                     fxLayoutGap="1em">
+                    <tl-date fxFlex="50"
+                             formControlName="dateTimeFromControl"
+                             [max]="form.controls.dateTimeToControl.value"
+                             tooltipResourceName="flux-vms-requests.isr-query-date-time-from-helper"
+                             label="{{ 'flux-vms-requests.isr-query-date-time-from' | tlTranslate }}">
+                    </tl-date>
+
+                    <tl-date fxFlex="50"
+                             formControlName="dateTimeToControl"
+                             [min]="form.controls.dateTimeFromControl.value"
+                             tooltipResourceName="flux-vms-requests.isr-query-date-time-to-helper"
+                             label="{{ 'flux-vms-requests.isr-query-date-time-to' | tlTranslate }}">
+                    </tl-date>
+                </div>
+
+                <div *ngIf="form.controls.queryTypeControl.value?.value === isrQueryTypes.VESSEL"
+                     formGroupName="vesselIdsGroup">
+                    <div fxLayout="row"
+                         fxLayoutAlign="space-between center"
+                         fxLayoutGap="1em">
+                        <tl-input fxFlex="50"
+                                  formControlName="vesselCfrControl"
+                                  tooltipResourceName="flux-vms-requests.isr-query-cfr-helper"
+                                  label="{{ 'flux-vms-requests.isr-query-cfr' | tlTranslate }}">
+                        </tl-input>
+
+                        <tl-input fxFlex="50"
+                                  formControlName="vesselIrcsControl"
+                                  tooltipResourceName="flux-vms-requests.isr-query-ircs-helper"
+                                  label="{{ 'flux-vms-requests.isr-query-ircs' | tlTranslate }}">
+                        </tl-input>
+                    </div>
+
+                    <div fxLayout="row"
+                         fxLayoutAlign="space-between center"
+                         fxLayoutGap="1em">
+                        <tl-input fxFlex="50"
+                                  formControlName="vesselUviControl"
+                                  tooltipResourceName="flux-vms-requests.isr-query-uvi-helper"
+                                  label="{{ 'flux-vms-requests.isr-query-uvi' | tlTranslate }}">
+                        </tl-input>
+
+                        <tl-input fxFlex="50"
+                                  formControlName="vesselExternalMarkControl"
+                                  tooltipResourceName="flux-vms-requests.isr-query-external-mark-helper"
+                                  label="{{ 'flux-vms-requests.isr-query-external-mark' | tlTranslate }}">
+                        </tl-input>
+                    </div>
+
+                    <div fxLayout="row"
+                         fxLayoutAlign="space-between center"
+                         fxLayoutGap="1em">
+                        <tl-autocomplete fxFlex="50"
+                                         formControlName="vesselFlagStateControl"
+                                         [options]="flagStates"
+                                         tooltipResourceName="flux-vms-requests.isr-query-flag-state-helper"
+                                         label="{{ 'flux-vms-requests.isr-query-flag-state' | tlTranslate }}">
+                        </tl-autocomplete>
+
+                        <div fxFlex="50"></div>
+                    </div>
+
+                    <mat-error *ngIf="form.controls.vesselIdsGroup.touched && form.controls.vesselIdsGroup.errors?.atLeatsOneVesselId === true">
+                        * {{ 'flux-vms-requests.isr-query-at-least-one-vessel-id-required' | tlTranslate }}
+                    </mat-error>
+                </div>
+
+                <div *ngIf="form.controls.queryTypeControl.value?.value === isrQueryTypes.TRANSPORT"
+                     formGroupName="vehicleIdsGroup">
+                    <div fxLayout="row"
+                         fxLayoutAlign="space-between center"
+                         fxLayoutGap="1em">
+                        <tl-input fxFlex="50"
+                                  formControlName="tractorIdentifierControl"
+                                  tooltipResourceName="flux-vms-requests.isr-query-tractor-identifier-helper"
+                                  label="{{ 'flux-vms-requests.isr-query-tractor-identifier' | tlTranslate }}">
+                        </tl-input>
+
+                        <tl-input fxFlex="50"
+                                  formControlName="trailerIdentifierControl"
+                                  tooltipResourceName="flux-vms-requests.isr-query-trailer-identifier-helper"
+                                  label="{{ 'flux-vms-requests.isr-query-trailer-identifier' | tlTranslate }}">
+                        </tl-input>
+                    </div>
+
+                    <div fxLayout="row"
+                         fxLayoutAlign="space-between center"
+                         fxLayoutGap="1em">
+                        <tl-autocomplete fxFlex="50"
+                                         formControlName="registrationCountryControl"
+                                         [options]="flagStates"
+                                         tooltipResourceName="flux-vms-requests.isr-query-registration-country-helper"
+                                         label="{{ 'flux-vms-requests.isr-query-registration-country' | tlTranslate }}">
+                        </tl-autocomplete>
+
+                        <div fxFlex="50"></div>
+                    </div>
+
+                    <mat-error *ngIf="form.controls.vehicleIdsGroup.touched && form.controls.vehicleIdsGroup.errors?.atLeastOneVehicleId === true">
+                        * {{ 'flux-vms-requests.isr-query-at-least-one-vehicle-id-required' | tlTranslate }}
+                    </mat-error>
+                </div>
+            </div>
+        </tl-card-content>
+    </tl-card>
+</div>

@@ -46,6 +46,10 @@
             </tl-input>
         </div>
 
+        <mat-error *ngIf="form.touched && form.errors?.atLeastOneProperty === true">
+            * {{ 'inspections.at-least-one-water-engine-property-error' | tlTranslate }}
+        </mat-error>
+
         <tl-checkbox formControlName="takenControl"
                      label="{{ 'inspections.water-inspection-taken' | tlTranslate }}">
         </tl-checkbox>

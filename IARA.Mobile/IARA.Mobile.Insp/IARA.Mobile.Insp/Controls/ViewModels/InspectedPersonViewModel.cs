@@ -179,9 +179,8 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
                     Eik = subject.Eik,
                 };
 
-                Person.Value = _people.Find(x => x.Id == subject.Id.Value);
-
                 InRegister.Value = true;
+                Person.AssignFrom(subject.Id.Value, People);
                 Address.Value = subject.RegisteredAddress != null
                     ? subject.RegisteredAddress.BuildAddress()
                     : subject.Address;

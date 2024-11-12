@@ -27,6 +27,23 @@ namespace IARA.Mobile.Insp.DataTemplateSelectors
 
             if (item.SubmitType == SubmitType.Finish)
             {
+                if (item.InspectionState == InspectionState.Signed && item.CreatedByCurrentUser)
+                {
+                    buttonsStack.Children.Add(new ImageButton
+                    {
+                        Source = new FontImageSource
+                        {
+                            Color = Color.White,
+                            FontFamily = "FA",
+                            Glyph = IconFont.Envelope,
+                            Size = 25
+                        },
+                        Padding = 10,
+                        Command = bindingContext.SendInspection,
+                        CommandParameter = item,
+                    });
+                }
+
                 if (item.InspectionState == InspectionState.Submitted)
                 {
                     buttonsStack.Children.Add(new ImageButton
@@ -43,20 +60,6 @@ namespace IARA.Mobile.Insp.DataTemplateSelectors
                         CommandParameter = item,
                     });
                 }
-
-                buttonsStack.Children.Add(new ImageButton
-                {
-                    Source = new FontImageSource
-                    {
-                        Color = Color.White,
-                        FontFamily = "FA",
-                        Glyph = IconFont.Eye,
-                        Size = 25
-                    },
-                    Padding = 10,
-                    Command = bindingContext.OpenInspection,
-                    CommandParameter = item,
-                });
             }
             else
             {
@@ -87,6 +90,20 @@ namespace IARA.Mobile.Insp.DataTemplateSelectors
                     CommandParameter = item,
                 });
             }
+
+            buttonsStack.Children.Add(new ImageButton
+            {
+                Source = new FontImageSource
+                {
+                    Color = Color.White,
+                    FontFamily = "FA",
+                    Glyph = IconFont.Eye,
+                    Size = 25
+                },
+                Padding = 10,
+                Command = bindingContext.OpenInspection,
+                CommandParameter = item,
+            });
 
             const string group = nameof(GroupResourceEnum.Inspections);
 

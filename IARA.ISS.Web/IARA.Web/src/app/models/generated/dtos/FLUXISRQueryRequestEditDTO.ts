@@ -1,6 +1,7 @@
 ﻿
 
 import { StrictlyTyped } from '@app/shared/decorators/strictly-typed.decorator';
+import { FluxIsrTypesEnum } from '@app/enums/flux-isr-types.enum';
 
 export class FLUXISRQueryRequestEditDTO { 
     public constructor(obj?: Partial<FLUXISRQueryRequestEditDTO>) {
@@ -8,14 +9,35 @@ export class FLUXISRQueryRequestEditDTO {
     }
 
     @StrictlyTyped(Date)
-    public submittedDateTime?: Date;
+    public dateTimeFrom?: Date;
+
+    @StrictlyTyped(Date)
+    public dateTimeTo?: Date;
+
+    @StrictlyTyped(Number)
+    public queryType?: FluxIsrTypesEnum;
 
     @StrictlyTyped(String)
-    public inspectionType?: string;
+    public vesselCFR?: string;
 
-    @StrictlyTyped(Date)
-    public inspectionStart?: Date;
+    @StrictlyTyped(String)
+    public vesselIRCS?: string;
 
-    @StrictlyTyped(Date)
-    public inspectionEnd?: Date;
+    @StrictlyTyped(String)
+    public vesselUVI?: string;
+
+    @StrictlyTyped(String)
+    public vesselExternalMark?: string;
+
+    @StrictlyTyped(String)
+    public flagStateCode?: string;
+
+    @StrictlyTyped(String)
+    public tractorIdentifier?: string;
+
+    @StrictlyTyped(String)
+    public trailerIdentifier?: string;
+
+    @StrictlyTyped(String)
+    public registrationCountryCode?: string;
 }

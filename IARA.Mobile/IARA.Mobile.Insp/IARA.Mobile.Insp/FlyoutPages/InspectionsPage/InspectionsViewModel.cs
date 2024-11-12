@@ -15,6 +15,7 @@ using IARA.Mobile.Insp.FlyoutPages.Inspections.BoatOnOpenWater;
 using IARA.Mobile.Insp.FlyoutPages.Inspections.ConstativeProtocol;
 using IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.FloppyDiskInspectionDialog;
 using IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.FloppyDiskInspectionUWPDialog;
+using IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.SendInspectionDialog;
 using IARA.Mobile.Insp.FlyoutPages.Inspections.FirstSaleInspection;
 using IARA.Mobile.Insp.FlyoutPages.Inspections.FishermanInspection;
 using IARA.Mobile.Insp.FlyoutPages.Inspections.FishingGearInspection;
@@ -60,6 +61,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.InspectionsPage
             DeleteInspection = CommandBuilder.CreateFrom<InspectionDto>(OnDeleteInspection);
             Inspections.GoToPage = CommandBuilder.CreateFrom<int>(OnGoToPage);
             ResetInspections = CommandBuilder.CreateFrom<InspectorNomenclatureDto>(OnResetInspections);
+            SendInspection = CommandBuilder.CreateFrom<InspectionDto>(OnSendInspection);
 
             Filter = CommandBuilder.CreateFrom(OnFilter);
             ClearFilters = CommandBuilder.CreateFrom(OnClearFilters);
@@ -87,6 +89,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.InspectionsPage
         public ICommand Filter { get; }
         public ICommand ClearFilters { get; }
         public ICommand ResetInspections { get; }
+        public ICommand SendInspection { get; }
 
         public override GroupResourceEnum[] GetPageIndexes()
         {
@@ -186,6 +189,11 @@ namespace IARA.Mobile.Insp.FlyoutPages.InspectionsPage
 
                 await TLLoadingHelper.HideFullLoadingScreen();
             }
+        }
+
+        private async Task OnSendInspection(InspectionDto dto)
+        {
+            await TLDialogHelper.ShowDialog(new SendInspectionDialog(dto));
         }
 
         private async Task OnGetStartupData()

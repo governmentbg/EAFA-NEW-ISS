@@ -48,6 +48,8 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { ErrorCode, ErrorModel } from '@app/models/common/exception.model';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { RequestProperties } from '@app/shared/services/request-properties';
+import { SendInspectionEmailsComponent } from '@app/components/administration-app/control-activity/inspections/dialogs/send-inspection-emails/send-inspection-emails.component';
+import { DialogParamsModel } from '@app/models/common/dialog-params.model';
 
 @Component({
     selector: 'inspections-register',
@@ -84,6 +86,7 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
     public inspectors: NomenclatureDTO<number>[] = [];
 
     public readonly icIconSize: number = CommonUtils.IC_ICON_SIZE;
+    public readonly faIconSize: number = CommonUtils.FA_ICON_SIZE;
     public readonly canReadRecords: boolean;
     public readonly canAddRecords: boolean;
     public readonly canEditRecords: boolean;
@@ -110,11 +113,11 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
     private readonly service: InspectionsService;
     private readonly nomenclatures: CommonNomenclatures;
     private readonly router: Router;
-
     private readonly confirmDialog: TLConfirmDialog;
     private readonly matDialog: MatDialog;
     private readonly addDialog: TLMatDialog<InspectionSelectionComponent>;
     private readonly signDialog: TLMatDialog<SignInspectionComponent>;
+    private readonly sendEmailsDialog: TLMatDialog<SendInspectionEmailsComponent>;
     private readonly snackbar: MatSnackBar;
 
     public constructor(
@@ -125,6 +128,7 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
         confirmDialog: TLConfirmDialog,
         addDialog: TLMatDialog<InspectionSelectionComponent>,
         signDialog: TLMatDialog<SignInspectionComponent>,
+        sendEmailsDialog: TLMatDialog<SendInspectionEmailsComponent>,
         snackbar: MatSnackBar,
         permissions: PermissionsService,
         authService: SecurityService,
@@ -140,6 +144,7 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
 
         this.addDialog = addDialog;
         this.signDialog = signDialog;
+        this.sendEmailsDialog = sendEmailsDialog;
 
         this.canReadRecords = permissions.hasAny(PermissionsEnum.InspectionsReadAll, PermissionsEnum.InspectionsRead);
         this.canAddRecords = permissions.has(PermissionsEnum.InspectionsAddRecords);
@@ -356,28 +361,27 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
     }
 
     public signEntry(entry: InspectionDTO): void {
-        const dialog = this.signDialog.open(
-            {
-                title: this.translate.getValue('inspections.sign-inspection-title'),
-                TCtor: SignInspectionComponent,
-                headerCancelButton: {
-                    cancelBtnClicked: this.closeDialogBtnClicked.bind(this),
-                },
-                componentData: entry,
-                translteService: this.translate,
-                disableDialogClose: true,
-                saveBtn: {
-                    id: 'save',
-                    color: 'accent',
-                    translateValue: this.translate.getValue('inspections.sign-inspection'),
-                },
-                cancelBtn: {
-                    id: 'cancel',
-                    color: 'primary',
-                    translateValue: this.translate.getValue('common.cancel'),
-                },
-                viewMode: false,
-            }, '120em');
+        const dialog = this.signDialog.open({
+            title: this.translate.getValue('inspections.sign-inspection-title'),
+            TCtor: SignInspectionComponent,
+            headerCancelButton: {
+                cancelBtnClicked: this.closeDialogBtnClicked.bind(this),
+            },
+            componentData: entry,
+            translteService: this.translate,
+            disableDialogClose: true,
+            saveBtn: {
+                id: 'save',
+                color: 'accent',
+                translateValue: this.translate.getValue('inspections.sign-inspection'),
+            },
+            cancelBtn: {
+                id: 'cancel',
+                color: 'primary',
+                translateValue: this.translate.getValue('common.cancel'),
+            },
+            viewMode: false
+        }, '120em');
 
         dialog.subscribe({
             next: (result: InspectionDTO | undefined) => {
@@ -385,6 +389,38 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
                     this.gridManager.refreshData();
                 }
             },
+        });
+    }
+
+    public sendInspectionEmails(entry: InspectionDTO): void {
+        const data: DialogParamsModel = new DialogParamsModel({ id: entry.id });
+
+        const dialog = this.sendEmailsDialog.open({
+            title: this.translate.getValue('inspections.send-inspection-emails-title'),
+            TCtor: SendInspectionEmailsComponent,
+            headerCancelButton: {
+                cancelBtnClicked: this.closeDialogBtnClicked.bind(this),
+            },
+            componentData: data,
+            translteService: this.translate,
+            disableDialogClose: true,
+            saveBtn: {
+                id: 'save',
+                color: 'accent',
+                translateValue: this.translate.getValue('inspections.send-emails'),
+            },
+            cancelBtn: {
+                id: 'cancel',
+                color: 'primary',
+                translateValue: this.translate.getValue('common.cancel'),
+            },
+            viewMode: false,
+        }, '120em');
+
+        dialog.subscribe({
+            next: () => {
+                //nothing to do
+            }
         });
     }
 
@@ -438,10 +474,8 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
     }
 
     public openAddSelectionDialog(): void {
-        const title: string = this.translate.getValue('inspections.add-dialog');
-
         const dialog = this.addDialog.open({
-            title: title,
+            title: this.translate.getValue('inspections.add-dialog'),
             TCtor: InspectionSelectionComponent,
             headerAuditButton: undefined,
             headerCancelButton: {
@@ -480,9 +514,7 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
                 tableName: 'InspectionRegister'
             };
 
-            if (entry.inspectionState === InspectionStatesEnum.Submitted ||
-                entry.inspectionState === InspectionStatesEnum.Signed
-            ) {
+            if (entry.inspectionState === InspectionStatesEnum.Submitted || entry.inspectionState === InspectionStatesEnum.Signed) {
                 readOnly = true;
 
                 if (entry.inspectionType !== InspectionTypesEnum.OTH) {

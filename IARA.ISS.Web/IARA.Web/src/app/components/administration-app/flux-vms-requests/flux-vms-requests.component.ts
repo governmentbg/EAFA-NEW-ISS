@@ -21,6 +21,7 @@ import { FluxFAQueryComponent } from './flux-fa-query/flux-fa-query.component';
 import { FluxSalesQueryComponent } from './flux-sales-query/flux-sales-query.component';
 import { FluxVesselQueryComponent } from './flux-vessel-query/flux-vessel-query.component';
 import { ViewFluxVmsRequestsDialogParams } from './models/view-flux-vms-requests-dialog-params.model';
+import { FluxIsrQueryComponent } from './flux-isr-query/flux-isr-query.component';
 
 const FLAP_TAB_INDEX: number = 1;
 const ACDR_TAB_INDEX: number = 2;
@@ -52,6 +53,7 @@ export class FluxVmsRequestsComponent implements OnInit, AfterViewInit {
     private faQueryDialog: TLMatDialog<FluxFAQueryComponent>;
     private salesQueryDialog: TLMatDialog<FluxSalesQueryComponent>;
     private vesselQueryDialog: TLMatDialog<FluxVesselQueryComponent>;
+    private isrQueryDialog: TLMatDialog<FluxIsrQueryComponent>;
 
     public constructor(
         translate: FuseTranslationLoaderService,
@@ -60,7 +62,8 @@ export class FluxVmsRequestsComponent implements OnInit, AfterViewInit {
         confirmDialog: TLConfirmDialog,
         faQueryDialog: TLMatDialog<FluxFAQueryComponent>,
         salesQueryDialog: TLMatDialog<FluxSalesQueryComponent>,
-        vesselQueryDialog: TLMatDialog<FluxVesselQueryComponent>
+        vesselQueryDialog: TLMatDialog<FluxVesselQueryComponent>,
+        isrQueryDialog: TLMatDialog<FluxIsrQueryComponent>
     ) {
         this.translate = translate;
         this.service = service;
@@ -69,6 +72,7 @@ export class FluxVmsRequestsComponent implements OnInit, AfterViewInit {
         this.faQueryDialog = faQueryDialog;
         this.salesQueryDialog = salesQueryDialog;
         this.vesselQueryDialog = vesselQueryDialog;
+        this.isrQueryDialog = isrQueryDialog;
 
         this.buildForm();
     }
@@ -196,6 +200,29 @@ export class FluxVmsRequestsComponent implements OnInit, AfterViewInit {
         this.vesselQueryDialog.openWithTwoButtons({
             title: this.translate.getValue('flux-vms-requests.vessel-query-request-title'),
             TCtor: FluxVesselQueryComponent,
+            headerAuditButton: undefined,
+            headerCancelButton: {
+                cancelBtnClicked: (closeFn: HeaderCloseFunction): void => {
+                    closeFn();
+                }
+            },
+            componentData: undefined,
+            translteService: this.translate
+        }, '1000px').subscribe({
+            next: (result: boolean | undefined) => {
+                if (result) {
+                    setTimeout(() => {
+                        this.gridManager.refreshData();
+                    }, 2000);
+                }
+            }
+        });
+    }
+
+    public openFluxIsrQueryDialog(): void {
+        this.isrQueryDialog.openWithTwoButtons({
+            title: this.translate.getValue('flux-vms-requests.isr-query-request-title'),
+            TCtor: FluxIsrQueryComponent,
             headerAuditButton: undefined,
             headerCancelButton: {
                 cancelBtnClicked: (closeFn: HeaderCloseFunction): void => {

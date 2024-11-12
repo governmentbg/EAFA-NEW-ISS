@@ -71,30 +71,34 @@
                                                       && form.controls?.permitLegalReasonsGroup?.errors?.atLeastOne !== true">
         <div fxLayout="row" fxLayoutGap="1em">
             <tl-input *ngIf="!isApplication"
-                      fxFlex="25"
+                      fxFlex="20"
                       formControlName="requestNumberControl"
                       tooltipResourceName="scientific-fishing.request-number-helper"
                       label="{{ 'scientific-fishing.request-number' | tlTranslate }}">
             </tl-input>
-            <tl-date fxFlex="25"
+            <tl-date [fxFlex]="isApplication ? 25 : 20"
                      formControlName="requestDateControl"
                      tooltipResourceName="scientific-fishing.request-date-helper"
                      [max]="currentDate"
                      label="{{ 'scientific-fishing.request-date' | tlTranslate }}">
             </tl-date>
-            <tl-date-range fxFlex="25"
-                           formControlName="validityDateRangeControl"
-                           tooltipResourceName="scientific-fishing.period-validity-helper"
-                           label="{{ 'scientific-fishing.period-validity' | tlTranslate }}">
-            </tl-date-range>
+            <tl-date [fxFlex]="isApplication ? 25 : 20"
+                     formControlName="validFromControl"
+                     tooltipResourceName="scientific-fishing.period-valid-from-helper"
+                     label="{{ 'scientific-fishing.period-valid-from' | tlTranslate }}">
+            </tl-date>
+            <tl-date [fxFlex]="isApplication ? 25 : 20"
+                     formControlName="validToControl"
+                     tooltipResourceName="scientific-fishing.period-valid-to-helper"
+                     label="{{ 'scientific-fishing.period-valid-to' | tlTranslate }}">
+            </tl-date>
             <tl-select *ngIf="!isApplication"
-                       fxFlex="25"
+                       fxFlex="20"
                        formControlName="statusControl"
                        [options]="statuses"
                        tooltipResourceName="scientific-fishing.status-helper"
                        label="{{ 'scientific-fishing.status' | tlTranslate }}">
             </tl-select>
-            <div *ngIf="isApplication" fxFlex="25"></div>
             <div *ngIf="isApplication" fxFlex="25"></div>
         </div>
 
@@ -247,13 +251,6 @@
                         tooltipResourceName="scientific-fishing.research-information-helper"
                         [validityChecker]="form">
         <div fxLayout="column" fxLayoutGap="1em">
-            <div fxLayout="row">
-                <tl-date-range fxFlex="25"
-                               formControlName="researchPeriodControl"
-                               tooltipResourceName="scientific-fishing.research-period-helper"
-                               label="{{ 'scientific-fishing.research-period' | tlTranslate }}">
-                </tl-date-range>
-            </div>
             <tl-textarea fxFlexFill
                          formControlName="researchWaterAreasControl"
                          tooltipResourceName="scientific-fishing.water-areas-helper"

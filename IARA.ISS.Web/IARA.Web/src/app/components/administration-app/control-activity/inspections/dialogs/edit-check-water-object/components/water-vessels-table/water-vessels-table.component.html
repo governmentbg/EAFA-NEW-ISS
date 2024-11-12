@@ -9,20 +9,44 @@
                        [showAddButton]="!isDisabled"
                        (addButtonClicked)="addEditEntry()"
                        (activeRecordChanged)="addEditEntry($event)">
-            <data-column [flexRate]="0.4"
+            <data-column [flexRate]="0.3"
                          propertyName="number"
                          columnName="{{ 'inspections.water-vessel-number' | tlTranslate }}">
             </data-column>
+
+            <data-column [flexRate]="0.2"
+                         propertyName="length"
+                         columnName="{{ 'inspections.water-vessel-length' | tlTranslate }}">
+            </data-column>
+
+            <data-column [flexRate]="0.2"
+                         propertyName="width"
+                         columnName="{{ 'inspections.water-vessel-width' | tlTranslate }}">
+            </data-column>
+
             <data-column [flexRate]="0.3"
                          propertyName="color"
                          columnName="{{ 'inspections.water-vessel-color' | tlTranslate }}">
             </data-column>
-            <data-column [flexRate]="0.3"
+
+            <data-column [flexRate]="0.2"
                          propertyName="totalCount"
                          columnName="{{ 'inspections.water-vessel-total-count' | tlTranslate }}">
             </data-column>
 
-            <data-template-column [flexRate]="0.5">
+            <data-column [flexRate]="0.2"
+                         propertyName="isTaken"
+                         dataType="boolean"
+                         columnName="{{ 'inspections.water-vessel-is-taken' | tlTranslate }}">
+            </data-column>
+
+            <data-column [flexRate]="0.2"
+                         propertyName="isStored"
+                         dataType="boolean"
+                         columnName="{{ 'inspections.water-vessel-is-stored' | tlTranslate }}">
+            </data-column>
+
+            <data-template-column [flexRate]="0.3">
                 <ng-template let-row="row" ngx-datatable-cell-template>
                     <div fxLayout="row wrap" fxLayoutAlign="end center">
                         <tl-icon-button icon="visibility"
@@ -30,12 +54,14 @@
                                         iconClass="accent-color"
                                         tooltipText="{{ 'inspections.patrol-vehicle-table-view' | tlTranslate }}">
                         </tl-icon-button>
+
                         <tl-icon-button *ngIf="!isDisabled"
                                         icon="edit"
                                         (buttonClicked)="addEditEntry(row.data)"
                                         iconClass="accent-color"
                                         tooltipText="{{ 'inspections.patrol-vehicle-table-edit' | tlTranslate }}">
                         </tl-icon-button>
+
                         <tl-icon-button *ngIf="!isDisabled"
                                         icon="delete"
                                         (buttonClicked)="deleteEntry(row)"

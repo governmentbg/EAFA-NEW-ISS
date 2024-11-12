@@ -230,7 +230,8 @@ export class ShipQuotasComponent extends BasePageComponent implements OnInit, Af
             yearFilterControl: new FormControl(),
             fishesFilterControl: new FormControl(),
             assocFilterControl: new FormControl(),
-            cfrFilterControl: new FormControl()
+            cfrFilterControl: new FormControl(),
+            externalMarkFilterControl: new FormControl()
         });
     }
 
@@ -241,7 +242,8 @@ export class ShipQuotasComponent extends BasePageComponent implements OnInit, Af
             shipId: filters.getValue('shipFilterControl'),
             fishId: filters.getValue('fishesFilterControl'),
             association: filters.getValue('assocFilterControl'),
-            cfr: filters.getValue('cfrFilterControl')
+            cfr: filters.getValue('cfrFilterControl'),
+            externalMark: filters.getValue('externalMarkFilterControl')
         });
 
         const yearValue = filters.getValue('yearFilterControl');

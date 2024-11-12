@@ -46,12 +46,6 @@ export class ScientificFishingApplicationEditDTO extends ScientificFishingPermit
     @StrictlyTyped(ScientificFishingPermitHolderDTO)
     public holders?: ScientificFishingPermitHolderDTO[];
 
-    @StrictlyTyped(Date)
-    public researchPeriodFrom?: Date;
-
-    @StrictlyTyped(Date)
-    public researchPeriodTo?: Date;
-
     @StrictlyTyped(String)
     public researchWaterArea?: string;
 

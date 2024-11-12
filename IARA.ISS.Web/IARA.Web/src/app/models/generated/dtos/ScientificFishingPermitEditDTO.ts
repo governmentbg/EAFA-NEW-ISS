@@ -49,12 +49,6 @@ export class ScientificFishingPermitEditDTO {
     @StrictlyTyped(ScientificFishingPermitHolderDTO)
     public holders?: ScientificFishingPermitHolderDTO[];
 
-    @StrictlyTyped(Date)
-    public researchPeriodFrom?: Date;
-
-    @StrictlyTyped(Date)
-    public researchPeriodTo?: Date;
-
     @StrictlyTyped(String)
     public researchWaterArea?: string;
 

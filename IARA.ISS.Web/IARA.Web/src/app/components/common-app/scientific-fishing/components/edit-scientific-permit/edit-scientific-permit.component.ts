@@ -704,9 +704,9 @@ export class EditScientificPermitComponent implements OnInit, IDialogComponent {
 
                 requestNumberControl: new FormControl({ value: '', disabled: true }),
                 requestDateControl: new FormControl(new Date(), Validators.required),
-                validityDateRangeControl: new FormControl('', Validators.required),
+                validFromControl: new FormControl(''),
+                validToControl: new FormControl('', Validators.required),
 
-                researchPeriodControl: new FormControl('', Validators.required),
                 researchWaterAreasControl: new FormControl('', [Validators.maxLength(4000), Validators.required]),
                 researchGoalsControl: new FormControl('', [Validators.maxLength(4000), Validators.required]),
 
@@ -772,6 +772,25 @@ export class EditScientificPermitComponent implements OnInit, IDialogComponent {
                 this.form.get('coordinationCommitteeControl')!.markAsPending({ emitEvent: false });
                 this.form.get('coordinationLetterNoControl')!.markAsPending({ emitEvent: false });
                 this.form.get('coordinationDateControl')!.markAsPending({ emitEvent: false });
+            });
+        }
+
+        if (!this.isApplication) {
+            this.form.get('statusControl')!.valueChanges.subscribe({
+                next: (status: NomenclatureDTO<number> | undefined) => {
+                    this.form.get('validFromControl')!.clearValidators();
+
+                    if (status !== undefined && status !== null) {
+                        const permitStatus: ScientificPermitStatusEnum | undefined = ScientificPermitStatusEnum[status?.code as keyof typeof ScientificPermitStatusEnum];
+
+                        if (permitStatus === ScientificPermitStatusEnum.Approved) {
+                            this.form.get('validFromControl')!.setValidators(Validators.required);
+                        }
+                    }
+
+                    this.form.get('validFromControl')!.markAsPending();
+                    this.form.get('validFromControl')!.updateValueAndValidity({ emitEvent: false });
+                }
             });
         }
 
@@ -878,10 +897,8 @@ export class EditScientificPermitComponent implements OnInit, IDialogComponent {
         else {
             this.form.get('requestNumberControl')!.setValue(model.eventisNum);
             this.form.get('requestDateControl')!.setValue(model.registrationDate);
-
-            if (model.validFrom || model.validTo) {
-                this.form.get('validityDateRangeControl')!.setValue(new DateRangeData({ start: model.validFrom, end: model.validTo }));
-            }
+            this.form.get('validFromControl')!.setValue(model.validFrom);
+            this.form.get('validToControl')!.setValue(model.validTo);
 
             if (model.permitReasonsIds !== undefined && model.permitReasonsIds !== null) {
                 for (const reasonId of model.permitReasonsIds) {
@@ -933,10 +950,6 @@ export class EditScientificPermitComponent implements OnInit, IDialogComponent {
                     }
                 }
             });
-
-            if (model.researchPeriodFrom || model.researchPeriodTo) {
-                this.form.get('researchPeriodControl')!.setValue(new DateRangeData({ start: model.researchPeriodFrom, end: model.researchPeriodTo }));
-            }
 
             this.form.get('researchWaterAreasControl')!.setValue(model.researchWaterArea);
             this.form.get('researchGoalsControl')!.setValue(model.researchGoalsDescription);
@@ -1042,8 +1055,8 @@ export class EditScientificPermitComponent implements OnInit, IDialogComponent {
 
         if (this.model instanceof ScientificFishingApplicationEditDTO || this.model instanceof ScientificFishingPermitEditDTO) {
             this.model.registrationDate = form.get('requestDateControl')!.value;
-            this.model.validFrom = (form.get('validityDateRangeControl')!.value as DateRangeData)?.start;
-            this.model.validTo = (form.get('validityDateRangeControl')!.value as DateRangeData)?.end;
+            this.model.validFrom = form.get('validFromControl')!.value;
+            this.model.validTo = form.get('validToControl')!.value;
 
             this.model.permitReasonsIds = [];
             for (const reason of this.permitReasons) {
@@ -1086,8 +1099,6 @@ export class EditScientificPermitComponent implements OnInit, IDialogComponent {
                 this.model.coordinationComments = form.get('coordinationCommentsControl')?.value;
             }
 
-            this.model.researchPeriodFrom = (form.get('researchPeriodControl')!.value as DateRangeData)?.start;
-            this.model.researchPeriodTo = (form.get('researchPeriodControl')!.value as DateRangeData)?.end;
             this.model.researchWaterArea = form.get('researchWaterAreasControl')!.value;
             this.model.researchGoalsDescription = form.get('researchGoalsControl')!.value;
 

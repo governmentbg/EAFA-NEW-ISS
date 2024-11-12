@@ -30,8 +30,6 @@ namespace IARA.Mobile.Insp.Base
             Print = CommandBuilder.CreateFrom(OnPrint);
             ReturnForEdit = CommandBuilder.CreateFrom(OnReturnForEdit);
         }
-
-
         protected InspectionEditDto ProtectedEdit { get; set; }
 
         public ViewActivityType ActivityType { get; set; }
@@ -64,17 +62,25 @@ namespace IARA.Mobile.Insp.Base
 
         private async Task OnReturnForEdit()
         {
-            ProtectedEdit.InspectionState = InspectionState.Draft;
-            string json = GetInspectionJson();
-            HttpResult result = await DependencyService.Resolve<IRestClient>().PostAsFormDataAsync("Inspections/SendForFurtherCorrections", new InspectionDraftDto()
+            bool hasPermission = DependencyService.Resolve<IProfileTransaction>().HasPermission("InspectionLockedEdit");
+            if (hasPermission || ProtectedEdit.StartDate.HasValue && ProtectedEdit.StartDate.Value.AddHours(48) > DateTime.Now)
             {
-                Id = ProtectedEdit.Id.Value,
-                Json = json
-            });
+                ProtectedEdit.InspectionState = InspectionState.Draft;
+                string json = GetInspectionJson();
+                HttpResult result = await DependencyService.Resolve<IRestClient>().PostAsFormDataAsync("Inspections/SendForFurtherCorrections", new InspectionDraftDto()
+                {
+                    Id = ProtectedEdit.Id.Value,
+                    Json = json
+                });
 
-            if (result.IsSuccessful)
-            {
-                await MainNavigator.Current.GoToPageAsync(nameof(InspectionsPage));
+                if (result.IsSuccessful)
+                {
+                    await MainNavigator.Current.GoToPageAsync(nameof(InspectionsPage));
+                }
+                else
+                {
+                    await TLSnackbar.Show(TranslateExtension.Translator[nameof(GroupResourceEnum.Common) + "/InspectionLocked"], App.GetResource<Color>("ErrorColor"));
+                }
             }
             else
             {
