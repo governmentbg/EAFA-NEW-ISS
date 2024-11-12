@@ -34,6 +34,8 @@ import { InspectionCatchMeasureDTO } from '@app/models/generated/dtos/Inspection
 import { LogBookPageStatusesEnum } from '@app/enums/log-book-page-statuses.enum';
 import { DatePipe } from '@angular/common';
 import { InspectedLogBookPageDataDTO } from '@app/models/generated/dtos/InspectedLogBookPageDataDTO';
+import { InspectedEntityEmailDTO } from '@app/models/generated/dtos/InspectedEntityEmailDTO';
+import { InspectionEmailDTO } from '@app/models/generated/dtos/InspectionEmailDTO';
 
 
 @Injectable({
@@ -234,6 +236,15 @@ export class InspectionsService extends BaseAuditService {
         });
     }
 
+    public GetInspectedEntityEmail(inspectionId: number): Observable<InspectedEntityEmailDTO[]> {
+        const params = new HttpParams().append('inspectionId', inspectionId.toString());
+
+        return this.requestService.get(this.area, this.controller, 'GetInspectedEntityEmails', {
+            httpParams: params,
+            responseTypeCtr: InspectedEntityEmailDTO,
+        });
+    }
+
     public getBuyers(): Observable<InspectedBuyerNomenclatureDTO[]> {
         return this.requestService.get(this.area, this.controller, 'GetBuyers', {
             responseTypeCtr: InspectedBuyerNomenclatureDTO,
@@ -404,6 +415,15 @@ export class InspectionsService extends BaseAuditService {
         return this.requestService.post(this.area, this.controller, 'SendInspectionToFlux', undefined, {
             httpParams: params,
             successMessage: 'inspection-sent-to-flux-success'
+        });
+    }
+
+    public sendInspectedEntityEmailNotification(inspectionEmail: InspectionEmailDTO): Observable<void> {
+        return this.requestService.post(this.area, this.controller, 'SendInspectedEntityEmailNotification', inspectionEmail, {
+            properties: new RequestProperties({
+                asFormData: true
+            }),
+            successMessage: 'inspection-sent-emails-success'
         });
     }
 

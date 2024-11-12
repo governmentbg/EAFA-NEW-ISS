@@ -1,7 +1,6 @@
 ﻿
 
 import { StrictlyTyped } from '@app/shared/decorators/strictly-typed.decorator';
-import { InspectedPersonTypeEnum } from '@app/enums/inspected-person-type.enum';
 
 export class InspectedEntityEmailDTO { 
     public constructor(obj?: Partial<InspectedEntityEmailDTO>) {
@@ -11,14 +10,11 @@ export class InspectedEntityEmailDTO {
     @StrictlyTyped(Number)
     public inspectionId?: number;
 
+    @StrictlyTyped(Number)
+    public inspectedPersonId?: number;
+
     @StrictlyTyped(String)
     public name?: string;
-
-    @StrictlyTyped(String)
-    public firstName?: string;
-
-    @StrictlyTyped(String)
-    public lastName?: string;
 
     @StrictlyTyped(String)
     public email?: string;
@@ -30,5 +26,11 @@ export class InspectedEntityEmailDTO {
     public legalId?: number;
 
     @StrictlyTyped(Number)
-    public type?: InspectedPersonTypeEnum;
+    public unregisteredPersonId?: number;
+
+    @StrictlyTyped(Boolean)
+    public sendEmail?: boolean;
+
+    @StrictlyTyped(String)
+    public inspectedPersonType?: string;
 }

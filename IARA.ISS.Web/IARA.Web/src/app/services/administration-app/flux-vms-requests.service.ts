@@ -29,6 +29,7 @@ import { FileInfoDTO } from '@app/models/generated/dtos/FileInfoDTO';
 import { FluxAcdrReportDTO } from '@app/models/generated/dtos/FluxAcdrReportDTO';
 import { FluxAcdrRequestFilters } from '@app/models/generated/filters/FluxAcdrRequestFilters';
 import { FluxAcdrReportStatusEnum } from '@app/enums/flux-acdr-report-status.enum';
+import { FLUXISRQueryRequestEditDTO } from '@app/models/generated/dtos/FLUXISRQueryRequestEditDTO';
 
 
 @Injectable({
@@ -94,6 +95,10 @@ export class FluxVmsRequestsService extends BaseAuditService implements IFluxVms
 
     public addAcdrQueryRequest(acdr: FluxAcdrRequestEditDTO): Observable<void> {
         return this.requestService.post(this.area, this.controller, 'AddAcdrQueryRequest', acdr);
+    }
+
+    public addIsrQueryRequest(isr: FLUXISRQueryRequestEditDTO): Observable<void> {
+        return this.requestService.post(this.area, this.controller, 'AddISRQueryRequest', isr);
     }
 
     public importAcdrQueryRequest(id: number, fileInfo: FileInfoDTO): Observable<void> {

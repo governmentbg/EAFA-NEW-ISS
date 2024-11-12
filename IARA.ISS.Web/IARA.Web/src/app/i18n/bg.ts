@@ -204,6 +204,7 @@
         'succ-applied-deactivated-profile': 'Успешно заявихте деактивиране на профила си. Вашата заявка трябва да бъде одобрена от администратор.',
         'succ-exec-cross-checks': 'Успешно изпълнени кръстосани проверки',
         'inspection-sent-to-flux-success': 'Докладът е изпратен към FLUX',
+        'inspection-sent-emails-success': 'Успешно изпратени имейли до инспектирани лица',
         'succ-transfered-quota': 'Успешно прехвърлена квота'
     },
     'navigation': {
@@ -521,6 +522,8 @@
         'basic-information': 'Основна информация',
         'request-date': 'Дата на заявление',
         'period-validity': 'Период на валидност на разрешителното',
+        'period-valid-from': 'Валидно от',
+        'period-valid-to': 'Валидно до',
         'research-information': 'Данни за изследването',
         'research-period': 'Период на изследването',
         'water-areas': 'Водни обекти',
@@ -2352,6 +2355,7 @@
         'fishes': 'Вид риба',
         'association': 'Сдружение',
         'cfr': 'CFR',
+        'external-mark': 'Външна маркировка на кораб',
         'external-marking': 'Маркировка',
         'gt': 'Тонаж',
         'kw': 'Мощност',
@@ -2668,6 +2672,7 @@
         'permit-license-valid-range': 'Валидност',
         'toggle-unchosen': 'Не избран',
         'toggle-unregistered': 'Нерегистриран',
+
         'log-books': 'Дневници на кораб',
         'log-book-number': 'Номер',
         'log-book-valid-from': 'Валидно от',
@@ -2689,6 +2694,7 @@
         'catches-missing-catch-inspection-type-error': 'За всеки ред трябва да бъде избран вид на улова',
         'catches-missing-unloaded-quantity-error': 'За всеки улов трябва да бъде попълнено разтоварено количество',
         'catch-quantity-kg': 'кг',
+
         'inspector-comment': 'Коментар на инспектора',
         'actions-taken': 'Предприети действия',
         'administrative-violation': 'Установено административно нарушение',
@@ -2704,6 +2710,7 @@
         'inspected-gear-delete-message': 'Сигурен ли сте, че искате да премахнете риболовния уред?',
         'inspected-gear-delete-btn-label': 'Премахни',
         'inspected-fishing-gear': 'Инспектиран риболовен уред',
+
         'catch-count': 'Брой каси, риби, чували или др.',
         'fishing-gear': 'Риболовен уред',
         'registered-fishing-gear': 'Регистриран риболовен уред',
@@ -2722,6 +2729,7 @@
         'receiving-ship-data': 'Данни за приемащия кораб',
         'receiving-ship-inspection': 'Инспекция на приемащия кораб',
         'receiving-ship-catch': 'Инспекция на улова на приемащия кораб',
+
         'on-board-observation-tools': 'Средства за наблюдение',
         'ship-communication-description': 'Описание на комуникация с кораба',
         'course': 'Курс',
@@ -2735,6 +2743,7 @@
         'fishing-activities': 'Риболува',
         'other-on-board-activities': 'Друга вид дейност на кораба',
         'other-fishing-activities': 'Друг вид риболовна дейност',
+
         'market-name': 'Име на пазар / помещение',
         'representative-comment': 'Коментар на представителя',
         'market-data': 'Данни за инспекция на пазар / помещение',
@@ -2749,6 +2758,7 @@
         'transport-vehicle-mark': 'Марка на транспортно средство',
         'transport-vehicle-model': 'Модел на транспортно средство',
         'transport-vehicle-trailer-number': 'Рег. номер на ремаркето',
+
         'driver': 'Шофьор',
         'vehicle-data': 'Данни за инспектирано превозно средство',
         'destination': 'Дестинация',
@@ -2776,6 +2786,7 @@
         'fishing-gears-count': 'Брой въдици',
         'hooks-count': 'Брой куки',
         'check-water-object-data': 'Данни от извършената проверка',
+
         'water-object-name': 'Име на обекта',
         'water-object-type': 'Вид воден обект',
         'water-inspection-taken': 'Изземване',
@@ -2790,6 +2801,7 @@
         'add-inspected-person': 'Добави',
         'full-storage-location': 'Място на съхранение / дарение / унищожение',
         'check-water-object-fishing-gears': 'Риболовни уреди',
+
         'water-vessel-number': 'Номер',
         'water-vessel-color': 'Цвят',
         'water-vessel-total-count': 'Общ брой',
@@ -2797,19 +2809,31 @@
         'water-vessel-type': 'Вид',
         'water-vessel-length': 'Дължина',
         'water-vessel-width': 'Ширина',
+        'water-vessel-is-taken': 'Изземване',
+        'water-vessel-is-stored': 'Съхранение',
         'check-water-object-engines': 'Двигатели',
+        'at-least-one-water-vessel-property-error': 'Трябва да бъде въведена стойност за поне едно от полетата номер, цвят, дължина или ширина',
+
         'water-engine-model': 'Модел',
         'water-engine-power': 'Мощност (kw/h)',
+        'water-engine-description': 'Цвят и други отличителни белези',
         'water-engine-total-count': 'Общ брой',
         'water-engine-type': 'Тип',
         'water-engine-color': 'Цвят и други отличителни белези',
+        'water-engine-is-taken': 'Изземване',
+        'water-engine-is-stored': 'Съхранение',
         'check-water-object-catches': 'Наличие на риба и други водни организми',
+        'at-least-one-water-engine-property-error': 'Трябва да бъде въведена стойност за поне едно от полетата модел, тип, мощност или цвят',
+
         'water-catch-type': 'Вид риба',
         'water-catch-quantity': 'Количество (кг.)',
+        'water-catch-storage-location': 'Място на съхранение / дарение / унищожение',
+        'water-catch-is-taken': 'Изземване',
         'water-inspection-returned': 'Върната',
         'water-inspection-donated': 'Дарена',
         'water-inspection-destroyed': 'Унищожена',
         'catch-average-size': 'Среден размер',
+
         'log-book-must-be-checked': 'Трябва да всички дневници да бъдат проверени',
         'permit-licenses-must-be-checked': 'Трябва всички удостоверения да бъдат проверени',
         'permits-must-be-checked': 'Трябва всички разрешителни да бъдат проверени',
@@ -2822,6 +2846,7 @@
         'inspected-fishing-gears': 'Инспектирани риболовни уреди',
         'permit': 'Удостоверение',
         'other-remark-reason': 'Друга причина за повторно маркиране',
+
         'market-catch-data': 'Улов',
         'market-catch-info': 'Основна информация',
         'market-catch-fish': 'Вид',
@@ -2857,7 +2882,10 @@
         'add-inspected-catch': 'Добави продукт',
         'market-single-product-title': 'Продукт',
         'market-log-book-num': 'Номер на дневник',
+
         'fishing-gear-net-eye-size': 'Размер на окото',
+        'fishing-gear-length': 'Дължина',
+        'fishing-gear-height': 'Височина',
         'fishing-gear-storage-location': 'Място за съхранение / дарение / унищожение',
         'has-importer': 'Има вносител',
         'auan-list-title': 'Списък от АУАН за доклада от инспекция',
@@ -2876,6 +2904,7 @@
         'user-has-unresolved-cross-checks-ok-btn': 'Резултати от кръстосани проверки',
         'catches-match': 'Има съвпадащи улови',
         'inspectors-match': 'Има съвпадащи инспектори',
+
         'permits': 'Разрешителни на кораб',
         'permit-type': 'Тип разрешително',
         'permit-valid-range': 'Валидност',
@@ -2916,11 +2945,19 @@
         'edit-catch-ship-dialog-title': 'Редактирай кораб',
         'view-catch-ship-dialog-title': 'Преглед на кораб',
 
+        'inspected-entity-email': 'Електронна поща',
+        'inspected-entity-send-email': 'Изпрати имейл',
+        'inspected-entity-select-all': 'Избери всички',
+        'inspected-entity-deselect-all': 'Махни всички',
+        'send-emails': 'Изпрати имейли',
+
         'sign-inspection-title': 'Подпиши инспекцията',
+        'send-inspection-emails-title': 'Изпращане на имейли до инспектираните лица',
         'add-dialog': 'Добавяне на инспекция',
         'sign-inspection': 'Подпиши',
         'delete': 'Премахни',
         'undo-delete': 'Връщане на изтрита инспекция',
+        'send-inspection-email': 'Изпращане на имейли до инспектираните лица',
         'view-inspection-dialog-title': 'Преглед на инспекция',
         'edit-inspection-dialog-title': 'Редактиране на инспекция',
         'cannot-edit-inspection-locked-error': 'Докладът от инспекция не може да бъде коригиран, тъй като са минали',

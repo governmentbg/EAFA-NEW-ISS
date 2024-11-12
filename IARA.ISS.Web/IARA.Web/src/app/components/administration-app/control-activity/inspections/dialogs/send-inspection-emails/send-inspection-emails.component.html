@@ -1,0 +1,30 @@
+﻿<div fxLayout="column"
+     fxLayoutGap="1em"
+     [formGroup]="form"
+     fxLayoutAlign="space-between stretch"
+     class="dialog-padding">
+    <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="space-between center">
+        <div fxFlex="76"></div>
+
+        <button fxFlex="12"
+                mat-raised-button
+                color="accent"
+                (click)="setSendEmailValues(true)">
+            {{ 'inspections.inspected-entity-select-all' | tlTranslate }}
+        </button>
+
+        <button fxFlex="12"
+                mat-raised-button
+                color="accent"
+                (click)="setSendEmailValues(false)">
+            {{ 'inspections.inspected-entity-deselect-all' | tlTranslate }}
+        </button>
+    </div>
+
+    <div *ngFor="let control of emailsFormArray.controls; index as i"
+         fxLayout="column"
+         fxLayoutGap="1em">
+        <inspected-entity-email [formControl]="control">
+        </inspected-entity-email>
+    </div>
+</div>

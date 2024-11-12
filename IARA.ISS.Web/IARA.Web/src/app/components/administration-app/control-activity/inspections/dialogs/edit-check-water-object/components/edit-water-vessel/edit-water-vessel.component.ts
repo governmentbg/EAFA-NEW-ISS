@@ -78,12 +78,12 @@ export class EditWaterVesselComponent implements OnInit, IDialogComponent {
 
     protected buildForm(): void {
         this.form = new FormGroup({
-            typeControl: new FormControl(null),
+            typeControl: new FormControl(null, Validators.required),
             numberControl: new FormControl(null, Validators.maxLength(50)),
             colorControl: new FormControl(null, Validators.maxLength(50)),
             lengthControl: new FormControl(null, TLValidators.number(0)),
             widthControl: new FormControl(null, TLValidators.number(0)),
-            totalControl: new FormControl(null, TLValidators.number(0, undefined, 0)),
+            totalControl: new FormControl(null, [Validators.required, TLValidators.number(0, undefined, 0)]),
             takenControl: new FormControl(null),
             storedControl: new FormControl(null),
             storageControl: new FormControl(null, Validators.maxLength(500)),

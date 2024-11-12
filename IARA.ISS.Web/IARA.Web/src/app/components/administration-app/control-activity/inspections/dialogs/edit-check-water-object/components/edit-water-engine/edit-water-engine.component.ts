@@ -1,5 +1,5 @@
 ﻿import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 
 import { DialogCloseCallback, IDialogComponent } from '@app/shared/components/dialog-wrapper/interfaces/dialog-content.interface';
 import { IActionInfo } from '@app/shared/components/dialog-wrapper/interfaces/action-info.interface';
@@ -65,14 +65,14 @@ export class EditWaterEngineComponent implements OnInit, IDialogComponent {
     protected buildForm(): void {
         this.form = new FormGroup({
             modelControl: new FormControl(null, Validators.maxLength(50)),
-            powerControl: new FormControl(null, TLValidators.number(0)),
+            powerControl: new FormControl(null, TLValidators.number(0, undefined, 2)),
             typeControl: new FormControl(null, Validators.maxLength(50)),
-            totalCountControl: new FormControl(null, TLValidators.number(0, undefined, 0)),
+            totalCountControl: new FormControl(null, [Validators.required, TLValidators.number(0, undefined, 0)]),
             colorControl: new FormControl(null, Validators.maxLength(50)),
             takenControl: new FormControl(null),
             storedControl: new FormControl(null),
             storageControl: new FormControl(null, Validators.maxLength(500))
-        });
+        }, this.atLeastOnePropertyValidator());
     }
 
     protected fillForm(): void {
@@ -99,5 +99,24 @@ export class EditWaterEngineComponent implements OnInit, IDialogComponent {
 
         const totalCount: number | undefined = Number(this.form.get('totalCountControl')!.value);
         this.model.totalCount = isNaN(totalCount) ? undefined : totalCount;
+    }
+
+    private atLeastOnePropertyValidator(): ValidatorFn {
+        return (control: AbstractControl): ValidationErrors | null => {
+            if (control === undefined || control === null) {
+                return null;
+            }
+
+            const model: string = control.get('modelControl')!.value;
+            const type: string = control.get('typeControl')!.value;
+            const power: string = control.get('powerControl')!.value;
+            const color: string = control.get('colorControl')!.value;
+
+            if (!model && !type && !power && !color) {
+                return { 'atLeastOneProperty': true };
+            }
+
+            return null;
+        }
     }
 }

@@ -147,6 +147,12 @@
     <EmbeddedResource Update="FlyoutPages\Inspections\Dialogs\PatrolVehicleDialog\PatrolVehicleDialog.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
+    <EmbeddedResource Update="FlyoutPages\Inspections\Dialogs\SendInspectionDialog\PersonEmailView\PersonEmailView.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="FlyoutPages\Inspections\Dialogs\SendInspectionDialog\SendInspectionDialog.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
     <EmbeddedResource Update="FlyoutPages\Inspections\Dialogs\UnloadingDeclarationDialog\UnloadingDeclarationDialog.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>

@@ -49,5 +49,11 @@ export class InspectionDTO {
     public isReportLocked?: boolean;
 
     @StrictlyTyped(Boolean)
+    public hasInspectedEntities?: boolean;
+
+    @StrictlyTyped(Boolean)
     public isActive?: boolean;
+
+    @StrictlyTyped(Number)
+    public inspectorsIds?: number[];
 }

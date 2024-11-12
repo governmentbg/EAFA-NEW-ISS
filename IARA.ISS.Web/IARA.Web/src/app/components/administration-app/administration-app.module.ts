@@ -191,6 +191,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { InspectedPersonsArrayComponent } from './control-activity/inspections/components/inspected-persons-array/inspected-persons-array.component';
 import { InspectedCatchComponent } from './control-activity/inspections/dialogs/edit-inspection-at-market/components/inspected-catch/inspected-catch.component';
 import { InspectedCatchesArrayComponent } from './control-activity/inspections/dialogs/edit-inspection-at-market/components/inspected-catches-array/inspected-catches-array.component';
+import { SendInspectionEmailsComponent } from './control-activity/inspections/dialogs/send-inspection-emails/send-inspection-emails.component';
+import { InspectedEntityEmailComponent } from './control-activity/inspections/dialogs/send-inspection-emails/inspected-entity-email/inspected-entity-email.component';
+import { FluxIsrQueryComponent } from './flux-vms-requests/flux-isr-query/flux-isr-query.component';
 
 @NgModule({
     declarations: [
@@ -371,7 +374,10 @@ import { InspectedCatchesArrayComponent } from './control-activity/inspections/d
         AuanDeliveryComponent,
         InspectedPersonsArrayComponent,
         InspectedCatchComponent,
-        InspectedCatchesArrayComponent
+        InspectedCatchesArrayComponent,
+        FluxIsrQueryComponent,
+        SendInspectionEmailsComponent,
+        InspectedEntityEmailComponent
     ],
     imports: [
         TLCommonModule,
@@ -558,7 +564,10 @@ import { InspectedCatchesArrayComponent } from './control-activity/inspections/d
         AuanDeliveryComponent,
         InspectedPersonsArrayComponent,
         InspectedCatchComponent,
-        InspectedCatchesArrayComponent
+        InspectedCatchesArrayComponent,
+        FluxIsrQueryComponent,
+        SendInspectionEmailsComponent,
+        InspectedEntityEmailComponent
     ],
     providers: [
         TLTranslatePipe

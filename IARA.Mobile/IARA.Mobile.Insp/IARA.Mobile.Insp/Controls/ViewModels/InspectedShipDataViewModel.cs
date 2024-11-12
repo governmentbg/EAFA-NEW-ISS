@@ -217,7 +217,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
                     Code = dto.CFR,
                     Uid = NomenclaturesTransaction.GetShip(dto.ShipId.Value).Uid,
                 };
-
+                ShipSelected.Execute(Ship.Value);
 
                 if (dto.ShipAssociationId.HasValue)
                 {

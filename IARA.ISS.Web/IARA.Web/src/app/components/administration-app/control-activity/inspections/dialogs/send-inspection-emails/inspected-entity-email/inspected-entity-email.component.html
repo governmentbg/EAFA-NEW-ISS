@@ -1,0 +1,22 @@
+﻿<div fxLayout="row"
+     fxLayoutGap="1em"
+     fxLayoutAlign="space-between center"
+     [formGroup]="form">
+    <tl-input fxFlex="44"
+              formControlName="nameControl"
+              [readonly]="true"
+              [label]="model.inspectedPersonType"
+              tooltipResourceName="inspections.inspected-person-name-helper">
+    </tl-input>
+
+    <tl-input fxFlex="44"
+              formControlName="emailControl"
+              label="{{ 'inspections.inspected-entity-email' | tlTranslate }}"
+              tooltipResourceName="inspections.inspected-entity-email-helper">
+    </tl-input>
+
+    <tl-checkbox fxFlex="12"
+                 formControlName="sendEmailControl"
+                 label="{{ 'inspections.inspected-entity-send-email' | tlTranslate }}">
+    </tl-checkbox>
+</div>

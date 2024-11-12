@@ -205,6 +205,7 @@
         'send-event-to-flux-success': 'The event was sent to FLUX',
         'succ-applied-deactivated-profile': 'Successufully applied to delete your profile. Your profile should be deactivated by an administrator.',
         'inspection-sent-to-flux-success': 'Report is sent to FLUX',
+        'inspection-sent-emails-success': 'Successfully sent emails',
         'succ-transfered-quota': 'Successfully transfered quota'
     },
     'navigation': {
@@ -524,6 +525,8 @@
         'basic-information': 'Basic information',
         'request-date': 'Date of request',
         'period-validity': 'Period of validity',
+        'period-valid-from': 'Valid from',
+        'period-valid-to': 'Validto',
         'research-information': 'Research information',
         'research-period': 'Research period',
         'water-areas': 'Aquatic sites',
@@ -2611,6 +2614,7 @@
         'permit-license-valid-range': 'Valid range',
         'toggle-unchosen': 'Unpicked',
         'toggle-unregistered': 'Unregistered',
+
         'log-books': 'Ship log books',
         'log-book-number': 'Number',
         'log-book-valid-from': 'Valid from',
@@ -2632,6 +2636,7 @@
         'catches-missing-catch-inspection-type-error': 'Catch type is missing',
         'catches-missing-unloaded-quantity-error': 'Unloaded quantity is missing',
         'catch-quantity-kg': 'kg',
+
         'inspector-comment': 'Inspector\'s comment',
         'actions-taken': 'Actions taken',
         'administrative-violation': 'An administrative violation has been established',
@@ -2647,6 +2652,7 @@
         'inspected-gear-delete-message': 'Are you sure you want to delete this fishing gear?',
         'inspected-gear-delete-btn-label': 'Delete',
         'inspected-fishing-gear': 'Inspected fishing gear',
+
         'catch-count': 'Count fishes, sacks or other',
         'fishing-gear': 'Fishing gear',
         'registered-fishing-gear': 'Registered fishing gear',
@@ -2665,6 +2671,7 @@
         'receiving-ship-data': 'Receiving ship',
         'receiving-ship-inspection': 'Receiving ship inspection',
         'receiving-ship-catch': 'Receiving ship catches',
+
         'on-board-observation-tools': 'Surveillance tools',
         'ship-communication-description': 'Ship communication description',
         'course': 'Course',
@@ -2678,6 +2685,7 @@
         'fishing-activities': 'Fishing',
         'other-on-board-activities': 'Other type of ship activity',
         'other-fishing-activities': 'Other type of fishing activity',
+
         'market-name': 'Market / storage name',
         'representative-comment': 'Representative comment',
         'market-data': 'Market / storage inspection data',
@@ -2692,6 +2700,7 @@
         'transport-vehicle-mark': 'Vehicle brand',
         'transport-vehicle-model': 'Vehicle model',
         'transport-vehicle-trailer-number': 'Vehicle\'s trailer number',
+
         'driver': 'Driver',
         'vehicle-data': 'Details of the inspected vehicle',
         'destination': 'Destination',
@@ -2718,6 +2727,7 @@
         'fishing-ticket-number': 'Ticket number',
         'fishing-gears-count': 'Fishing gears count',
         'hooks-count': 'Hooks count',
+
         'check-water-object-data': 'Findings from the inspection',
         'water-object-name': 'Object name',
         'water-object-type': 'Object type',
@@ -2733,19 +2743,31 @@
         'storage-location': 'Place of storage',
         'full-storage-location': 'Place of storage / donation / destruction',
         'check-water-object-fishing-gears': 'Fishing gears',
+
         'water-vessel-number': 'Number',
         'water-vessel-color': 'Color',
         'water-vessel-total-count': 'Total count',
+        'water-vessel-is-taken': 'Taken',
+        'water-vessel-is-stored': 'Stored',
         'check-water-object-vessels': 'Vessels or other means',
         'check-water-object-engines': 'Engines',
+        'at-least-one-water-vessel-property-error': 'At least one property should be filled',
+
         'water-engine-model': 'Model',
         'water-engine-power': 'Power (kw/h)',
+        'water-engine-description': 'Engine description',
         'water-engine-total-count': 'Total count',
         'water-engine-type': 'Type',
+        'water-engine-is-taken': 'Taken',
+        'water-engine-is-stored': 'Stored',
         'water-engine-color': 'Color and other distinctive features',
         'check-water-object-catches': 'Presence of fish and other aquatic organisms',
+        'at-least-one-water-engine-property-error': 'At least one property should be filled',
+
         'water-catch-type': 'Fish type',
         'water-catch-quantity': 'Quantity (kg.)',
+        'water-catch-storage-location': 'Place of storage / donation / destruction',
+        'water-catch-is-taken': 'Taken',
         'water-inspection-returned': 'Returned',
         'water-inspection-donated': 'Donated',
         'water-inspection-destroyed': 'Destroyed',
@@ -2762,6 +2784,7 @@
         'inspected-fishing-gears': 'Inspected fishing gears',
         'permit': 'Permit license',
         'other-remark-reason': 'Other recheck reason',
+
         'market-catch-data': 'Catch',
         'market-catch-info': 'General info',
         'market-catch-fish': 'Fish',
@@ -2797,7 +2820,10 @@
         'market-single-product-title': 'Single product',
         'market-log-book-num': 'Log book number',
         'add-inspected-catch': 'Add catch',
+
         'fishing-gear-net-eye-size': 'Net eye size',
+        'fishing-gear-length': 'Length',
+        'fishing-gear-height': 'Height',
         'fishing-gear-storage-location': 'Place for storage / donation / destruction',
         'has-importer': 'Has importer',
         'auan-list-title': 'List of AUAN for inspection',
@@ -2816,6 +2842,7 @@
         'user-has-unresolved-cross-checks-ok-btn': 'Cross check results',
         'catches-match': 'There are identical catches',
         'inspectors-match': 'There are identical inspectors',
+
         'permits': 'Permits on ship',
         'permit-type': 'Permit type',
         'permit-valid-range': 'Valid range',
@@ -2856,11 +2883,19 @@
         'edit-catch-ship-dialog-title': 'Edit ship',
         'view-catch-ship-dialog-title': 'Review ship',
 
+        'inspected-entity-email': 'Email',
+        'inspected-entity-send-email': 'Send email',
+        'inspected-entity-select-all': 'Select all',
+        'inspected-entity-deselect-all': 'Deselect all',
+        'send-emails': 'Send emails',
+
         'sign-inspection-title': 'Sign inspection',
+        'send-inspection-emails-title': 'Send emails to inspected entities',
         'add-dialog': 'Add inspection',
         'sign-inspection': 'Sign',
         'delete': 'Delete',
         'undo-delete': 'Return the deleted inspection',
+        'send-inspection-email': 'Send emails',
         'view-inspection-dialog-title': 'Review inspection',
         'edit-inspection-dialog-title': 'Edit inspection',
         'cannot-edit-inspection-locked-error': 'You cannot edit inspection',
@@ -6092,6 +6127,7 @@
         'fishes': 'Fishes',
         'association': 'Association',
         'cfr': 'CFR',
+        'external-mark': 'External mark',
         'external-marking': 'External marking',
         'gt': 'Gross tonnage',
         'kw': 'Power',
