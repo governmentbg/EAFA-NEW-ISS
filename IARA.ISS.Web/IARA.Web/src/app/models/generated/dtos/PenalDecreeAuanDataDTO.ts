@@ -36,6 +36,9 @@ export class PenalDecreeAuanDataDTO extends AuanInspectionDTO {
     @StrictlyTyped(String)
     public constatationComments?: string;
 
+    @StrictlyTyped(Boolean)
+    public isExternal?: boolean;
+
     @StrictlyTyped(AuanInspectedEntityDTO)
     public inspectedEntity?: AuanInspectedEntityDTO;
 

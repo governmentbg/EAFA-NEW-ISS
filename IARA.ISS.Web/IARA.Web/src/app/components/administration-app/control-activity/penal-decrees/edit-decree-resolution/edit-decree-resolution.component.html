@@ -60,7 +60,7 @@
     </tl-expansion-panel>
 
     <!-- Информация за АУАН -->
-    <tl-expansion-panel title="{{ 'penal-decrees.edit-decree-auan' | tlTranslate }}"
+    <tl-expansion-panel title="{{ (isThirdParty ? 'penal-decrees.edit-external-auan' : 'penal-decrees.edit-decree-auan') | tlTranslate }}"
                         tooltipResourceName="penal-decree.edit-decree-auan-helper"
                         [validityChecker]="form"
                         [validityCheckerExtraCondition]="form.controls.auanControl.errors?.auanNumExists !== true">
@@ -71,7 +71,8 @@
 
             <decree-auan-basic-info formControlName="auanControl"
                                     validityChecker
-                                    [isAdding]="isThirdParty">
+                                    [isAdding]="isAdding"
+                                    [isFromRegister]="!isThirdParty">
             </decree-auan-basic-info>
         </div>
     </tl-expansion-panel>
@@ -96,7 +97,7 @@
     </tl-expansion-panel>
 
     <!-- Законови разпоредби от АУАН -->
-    <tl-expansion-panel title="{{ 'penal-decrees.edit-auan-violated-regulations-panel' | tlTranslate }}"
+    <tl-expansion-panel title="{{ (isThirdParty ? 'penal-decrees.edit-external-auan-violated-regulations-panel' : 'penal-decrees.edit-auan-violated-regulations-panel') | tlTranslate }}"
                         tooltipResourceName="penal-decree.edit-auan-violated-regulations-helper"
                         [validityCheckerExtraCondition]="form.errors?.atLeastOneViolatedRegulationNeeded !== true"
                         [validityChecker]="form">

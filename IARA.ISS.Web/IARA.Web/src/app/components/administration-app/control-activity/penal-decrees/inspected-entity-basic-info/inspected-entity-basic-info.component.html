@@ -18,10 +18,11 @@
             <regix-data formControlName="personControl"
                         validityChecker
                         [isPerson]="true"
+                        [readonly]="isFromRegister"
                         [hideDocument]="true"
                         [isIdReadOnly]="isIdReadOnly"
+                        [includeForeigner]="true"
                         [middleNameRequired]="true"
-                        [readonly]="isFromRegister"
                         (downloadDataBtnClicked)="downloadedPersonData($event)"
                         checkboxLabel="{{ 'auan-register.has-bulgarian-address-registration' | tlTranslate }}">
             </regix-data>
@@ -54,11 +55,11 @@
         <!-- Юридическо лице -->
         <div *ngIf="inspectedEntity.isPerson === false">
             <regix-data formControlName="legalControl"
-                        [isPerson]="false"
                         validityChecker
-                        [showCustodianOfProperty]="false"
-                        [isIdReadOnly]="isIdReadOnly"
+                        [isPerson]="false"
                         [readonly]="isFromRegister"
+                        [isIdReadOnly]="isIdReadOnly"
+                        [showCustodianOfProperty]="false"
                         (downloadDataBtnClicked)="downloadedLegalData($event)"
                         checkboxLabel="{{ 'auan-regster.has-bulgarian-address-registration' | tlTranslate }}">
             </regix-data>

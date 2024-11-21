@@ -90,13 +90,6 @@
                                                     tooltipText="{{ 'recreational-fishing.renew-ticket' | tlTranslate }}"
                                                     (buttonClicked)="renewTicket(ticket)">
                                     </tl-icon-button>
-                                    <tl-icon-button *ngIf="ticket.ticketStatus === ticketStatuses.APPROVED
-                                                        || ticket.ticketStatus === ticketStatuses.ISSUED"
-                                                    icon="fa-download"
-                                                    iconClass="accent-color"
-                                                    tooltipText="{{ 'recreational-fishing.download-ticket' | tlTranslate }}"
-                                                    (buttonClicked)="downloadTicket(ticket)">
-                                    </tl-icon-button>
                                     <tl-icon-button *ngIf="ticket.applicationStatus === applicationStatuses.WAIT_PMT_FROM_USR && canProcessPaymentData"
                                                     icon="ic-fluent-person-money-24-filled"
                                                     iconClass="accent-color"

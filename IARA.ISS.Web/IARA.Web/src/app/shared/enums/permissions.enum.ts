@@ -321,6 +321,7 @@
     PermitLicenseSuspensionRestore = 'PermitLicenseSuspensionRestore',
 
     // Report Definition
+    ReportReadAll = 'ReportReadAll',
     ReportRead = 'ReportRead',
     ReportAddRecords = 'ReportAddRecords',
     ReportEditRecords = 'ReportEditRecords',

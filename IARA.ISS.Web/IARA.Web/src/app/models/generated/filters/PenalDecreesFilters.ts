@@ -18,6 +18,7 @@ export class PenalDecreesFilters extends BaseRequestModel {
     public drafterId: number | undefined;
     public drafterName: string | undefined;
     public territoryUnitId: number | undefined;
+    public departmentId: number | undefined;
     public issueDateFrom: Date | undefined;
     public issueDateTo: Date | undefined;
     public sanctionTypeIds: number[] | undefined;

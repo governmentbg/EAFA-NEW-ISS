@@ -446,10 +446,10 @@ export class EditAuanComponent implements OnInit, AfterViewInit, IDialogComponen
 
     private buildForm(): void {
         this.form = new FormGroup({
-            reportNumControl: new FormControl({ value: null, disabled: true }),
+            reportNumControl: new FormControl(),
             drafterControl: new FormControl(null, Validators.required),
             drafterNameControl: new FormControl({ value: null, disabled: true }),
-            inspectionTypeControl: new FormControl({ value: null, disabled: true }),
+            inspectionTypeControl: new FormControl(),
             territoryUnitControl: new FormControl(null),
 
             auanNumControl: new FormControl(null, [Validators.required, Validators.maxLength(20)]),

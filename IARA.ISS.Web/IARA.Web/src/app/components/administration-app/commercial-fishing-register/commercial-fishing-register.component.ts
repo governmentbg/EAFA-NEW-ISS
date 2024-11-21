@@ -56,6 +56,7 @@ import { CommercialFishingRegisterCacheService } from './services/commercial-fis
 import { SuspensionsComponent } from '@app/components/common-app/commercial-fishing/components/suspensions/suspensions.component';
 import { SuspensionsDialogParams } from '@app/components/common-app/commercial-fishing/components/suspensions/models/suspensions-dialog-params.model';
 import { SuspensionDataDTO } from '@app/models/generated/dtos/SuspensionDataDTO';
+import { ShipNomenclatureDTO } from '@app/models/generated/dtos/ShipNomenclatureDTO';
 
 type ThreeState = 'yes' | 'no' | 'both';
 
@@ -83,6 +84,7 @@ export class CommercialFishingRegisterComponent implements OnInit, AfterViewInit
     public permitIsExpiredOptions: NomenclatureDTO<ThreeState>[] = [];
     public permitLicenseIsSuspendedOptions: NomenclatureDTO<ThreeState>[] = [];
     public permitLicenseIsExpiredOptions: NomenclatureDTO<ThreeState>[] = [];
+    public ships: ShipNomenclatureDTO[] = [];
 
     public readonly disabledLogBookAddButtonsTooltipText: string;
     public readonly icIconSize: number = CommonUtils.IC_ICON_SIZE;
@@ -258,6 +260,14 @@ export class CommercialFishingRegisterComponent implements OnInit, AfterViewInit
             ).subscribe({
                 next: (results: NomenclatureDTO<number>[]) => {
                     this.territoryUnits = results;
+                }
+            });
+
+            NomenclatureStore.instance.getNomenclature(
+                NomenclatureTypes.Ships, this.nomenclatures.getShips.bind(this.nomenclatures), false
+            ).subscribe({
+                next: (ships: ShipNomenclatureDTO[]) => {
+                    this.ships = ships;
                 }
             });
 
@@ -858,9 +868,7 @@ export class CommercialFishingRegisterComponent implements OnInit, AfterViewInit
             permitLicenseNumberControl: new FormControl(),
             permitIssuedDateRangeControl: new FormControl(),
             permitLicenseIssuedDateRangeControl: new FormControl(),
-            shipNameControl: new FormControl(),
-            shipCfrControl: new FormControl(),
-            shipExternalMarkingControl: new FormControl(),
+            shipControl: new FormControl(),
             shipRegistrationCertificateNumberControl: new FormControl(),
             poundNetNameControl: new FormControl(),
             poundNetNumberControl: new FormControl(),
@@ -900,9 +908,7 @@ export class CommercialFishingRegisterComponent implements OnInit, AfterViewInit
             permitIssuedOnEndDate: filters.getValue<DateRangeData>('permitIssuedDateRangeControl')?.end,
             permitLicenseIssuedOnStartDate: filters.getValue<DateRangeData>('permitLicenseIssuedDateRangeControl')?.start,
             permitLicenseIssuedOnEndDate: filters.getValue<DateRangeData>('permitLicenseIssuedDateRangeControl')?.end,
-            shipName: filters.getValue('shipNameControl'),
-            shipCfr: filters.getValue('shipCfrControl'),
-            shipExternalMarking: filters.getValue('shipExternalMarkingControl'),
+            shipId: filters.getValue('shipControl'),
             shipRegistrationCertificateNumber: filters.getValue('shipRegistrationCertificateNumberControl'),
             poundNetName: filters.getValue('poundNetNameControl'),
             poundNetNumber: filters.getValue('poundNetNumberControl'),

@@ -6,14 +6,14 @@
         <tl-input fxFlex="20"
                   formControlName="auanNumControl"
                   [readonly]="!isAdding"
-                  label="{{ 'penal-decrees.edit-auan-num' | tlTranslate }}">
+                  label="{{ (isFromRegister ? 'penal-decrees.edit-auan-num' : 'penal-decrees.edit-external-auan-num') | tlTranslate }}">
         </tl-input>
 
         <tl-date fxFlex="20"
                  formControlName="auanDraftDateControl"
                  [max]="today"
                  [readonly]="!isAdding"
-                 label="{{ 'penal-decrees.edit-auan-draft-date' | tlTranslate }}">
+                 label="{{ (isFromRegister ? 'penal-decrees.edit-auan-draft-date' : 'penal-decrees.edit-external-auan-date') | tlTranslate }}">
         </tl-date>
 
         <tl-input *ngIf="isFromRegister"
@@ -23,20 +23,14 @@
                   label="{{ 'penal-decrees.edit-auan-drafter' | tlTranslate }}">
         </tl-input>
 
-        <tl-autocomplete *ngIf="!isFromRegister"
-                         fxFlex="20"
-                         formControlName="drafterUserControl"
-                         [options]="users"
-                         [autoMatchTextToOption]="true"
-                         label="{{ 'auan-register.picker-inspector' | tlTranslate }}"
-                         tooltipResourceName="auan-register.picker-inspector-helper">
-        </tl-autocomplete>
-
-        <tl-input fxFlex="40"
+        <tl-input *ngIf="isFromRegister"
+                  fxFlex="40"
                   [readonly]="!isAdding"
                   formControlName="auanLocationDescriptionControl"
                   label="{{ 'penal-decrees.edit-auan-location-description' | tlTranslate }}">
         </tl-input>
+
+        <div *ngIf="!isFromRegister" fxFlex="60"></div>
     </div>
 
     <tl-card [validityChecker]="form">
@@ -44,8 +38,8 @@
         <tl-card-content fxLayout="column" fxLayoutGap="1em">
             <inspected-entity-basic-info formControlName="auanInspectedEntityControl"
                                          validityChecker
-                                         [isFromRegister]="isFromRegister"
-                                         [isIdReadOnly]="isFromRegister">
+                                         [isFromRegister]="!isAdding"
+                                         [isIdReadOnly]="!isAdding">
             </inspected-entity-basic-info>
         </tl-card-content>
     </tl-card>

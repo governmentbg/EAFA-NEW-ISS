@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
+using TechnoLogica.Xamarin.Attributes;
 using TechnoLogica.Xamarin.Helpers;
 using TechnoLogica.Xamarin.ViewModels.Models;
 
@@ -20,7 +21,10 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.SendInspectionDialog.
         }
         public PersonEmailViewModel(InspectedEntityEmailDTO personData)
         {
-            this.AddValidation();
+            this.AddValidation(groups: new Dictionary<string, Func<bool>>
+            {
+                { "SendEmail", () => SendEmail },
+            });
             PersonData = personData;
 
             PersonType.Value = personData.Name;
@@ -33,6 +37,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.SendInspectionDialog.
         }
         public ValidState PersonType { get; set; }
         [EmailAddress]
+        [ValidGroup("SendEmail")]
         public ValidState Email { get; set; }
         public ValidStateBool SendEmail { get; set; }
 

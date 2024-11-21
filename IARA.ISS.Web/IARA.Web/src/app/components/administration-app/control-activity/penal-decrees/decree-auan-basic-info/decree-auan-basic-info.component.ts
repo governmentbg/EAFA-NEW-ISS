@@ -6,6 +6,7 @@ import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureD
 import { PenalDecreesService } from '@app/services/administration-app/penal-decrees.service';
 import { ValidityCheckerDirective } from '@app/shared/directives/validity-checker/validity-checker.directive';
 import { InspectorUserNomenclatureDTO } from '@app/models/generated/dtos/InspectorUserNomenclatureDTO';
+import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 
 @Component({
     selector: 'decree-auan-basic-info',
@@ -15,40 +16,38 @@ export class DecreeAuanBasicInfoComponent extends CustomFormControl<PenalDecreeA
     @Input()
     public isAdding: boolean = false;
 
-    public auan: PenalDecreeAuanDataDTO | undefined;
+    @Input()
     public isFromRegister: boolean = false;
 
-    public users: InspectorUserNomenclatureDTO[] = [];
+    public auan: PenalDecreeAuanDataDTO | undefined;
 
     public readonly today: Date = new Date();
 
     private readonly service: PenalDecreesService;
+    private readonly translate: FuseTranslationLoaderService;
 
     public constructor(
         @Self() ngControl: NgControl,
         @Self() @Optional() validityChecker: ValidityCheckerDirective,
-        service: PenalDecreesService
+        service: PenalDecreesService,
+        translate: FuseTranslationLoaderService
     ) {
         super(ngControl, true, validityChecker);
 
         this.service = service;
+        this.translate = translate;
     }
 
     public ngOnInit(): void {
         this.initCustomFormControl();
 
-        if (!this.isAdding) {
-            this.isFromRegister = true;
-        }
-        else {
-            this.service.getInspectorUsernames().subscribe({
-                next: (result: InspectorUserNomenclatureDTO[]) => {
-                    this.users = result;
+        if (this.isAdding) {
+            this.form.valueChanges.subscribe({
+                next: () => {
+                    const auan: PenalDecreeAuanDataDTO = this.getValue();
+                    this.onChanged(auan);
                 }
-            });
-
-            this.form.get('drafterUserControl')!.setValidators(Validators.required);
-            this.form.get('auanLocationDescriptionControl')!.setValidators([Validators.required, Validators.maxLength(400)]);
+            })
         }
     }
 

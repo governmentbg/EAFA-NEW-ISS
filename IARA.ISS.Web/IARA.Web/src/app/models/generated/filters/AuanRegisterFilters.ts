@@ -19,6 +19,7 @@ export class AuanRegisterFilters extends BaseRequestModel {
     public drafterId: number | undefined;
     public drafterName: string | undefined;
     public territoryUnitId: number | undefined;
+    public departmentId: number | undefined;
     public draftDateFrom: Date | undefined;
     public draftDateTo: Date | undefined;
     public inspectionTypeId: number | undefined;

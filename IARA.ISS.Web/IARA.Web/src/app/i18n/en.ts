@@ -1671,7 +1671,7 @@
         'email-already-exists-error': 'The entered email address already exists in the system',
         'user-legal-missing-properties-error': 'There are associations with invalid/empty fields, which need to be correctly filled',
         'egn-lnc-invalid-error': 'There is already a valid user with the specified EGN/PNF',
-        'delete-profile': 'delete-profile',
+        'delete-profile': 'Delete profile',
         'delete-my-profile-dialog-title': 'Delete profile',
         'delete-my-profile-dialog-message': 'Are you sure you want to delete your profile? Be aware that an application for deactivation of your profile will be sent to the administrators.',
         'delete-my-profile-dialog-ok-btn-label': 'Apply to delete your profile'
@@ -5412,6 +5412,8 @@
         'violated-regulation-type-law': 'Law',
         'violated-regulation-type-regulation': 'Regulation',
         'edit-auan-at-least-one-violated-regulation-needed': 'At least one violated regulation needed',
+        'invalid-violated-regulation-fields-error': 'Fields length must be valid',
+        'violated-regulation-has-errors': 'Fields length must be valid',
 
         'choose': 'Choose',
         'choose-law-section-dialog-title': 'Add law section',
@@ -5936,10 +5938,13 @@
         'view-resolution-dialog-title': 'View resolution',
 
         'edit-decree-auan': 'AUAN',
+        'edit-external-auan': 'External AUAN',
         'edit-auan-num': 'AUAN no.',
+        'edit-external-auan-num': 'Num',
         'edit-drafter': 'Drafter',
         'edit-drafter-position': 'Issuer position',
         'edit-auan-draft-date': 'Draft date',
+        'edit-external-auan-date': 'Date',
         'edit-auan-drafter': 'Drafter',
         'edit-auan-location-description': 'Location description',
         'edit-auan-constatation-comments': 'Constatation comments',
@@ -6008,6 +6013,7 @@
         'edit-decree-seized-description': 'Seizure',
         'edit-decree-sanction-description-panel': 'Sanction and violation description',
         'edit-auan-violated-regulations-panel': 'AUAN violated regulations',
+        'edit-external-auan-violated-regulations-panel': 'Violated regulations',
         'edit-violated-regulations-by-inspected-entity': 'by',
         'edit-appeal-drafter': 'Drafter',
         'edit-appeal-drafter-position': 'Drafter position',
@@ -6471,6 +6477,7 @@
 
         'edit-points-decree-auan-data': 'Penal decree and AUAN',
         'edit-auan-num': 'AUAN num',
+        'edit-external-auan-num': 'Num',
         'edit-auan-date': 'Date',
         'edit-decree-num': 'Penal decree num',
         'edit-decree-issue-date': 'Issue date',

@@ -645,7 +645,7 @@ export class Navigation {
                     type: 'item',
                     icon: 'fa-book',
                     url: '/reports',
-                    permissions: [PermissionsEnum.ReportRead],
+                    permissions: [PermissionsEnum.ReportRead, PermissionsEnum.ReportReadAll],
                     component: ReportViewComponent,
                     isPublic: false
                 },
@@ -682,7 +682,7 @@ export class Navigation {
             icon: 'fa-book',
             url: '/reports',
             component: ReportViewComponent,
-            permissions: [PermissionsEnum.ReportRead],
+            permissions: [PermissionsEnum.ReportRead, PermissionsEnum.ReportReadAll],
             exceptPermissions: [PermissionsEnum.ReportParameterRead],
             isPublic: false
         },

@@ -23,9 +23,6 @@ export class CommercialFishingRegisterFilters extends BaseRequestModel {
     public permitLicenseIssuedOnStartDate: Date | undefined;
     public permitLicenseIssuedOnEndDate: Date | undefined;
     public shipId: number | undefined;
-    public shipName: string | undefined;
-    public shipCfr: string | undefined;
-    public shipExternalMarking: string | undefined;
     public shipRegistrationCertificateNumber: string | undefined;
     public poundNetName: string | undefined;
     public poundNetNumber: string | undefined;

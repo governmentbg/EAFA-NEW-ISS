@@ -82,7 +82,6 @@ export class EditDecreeAgreementComponent implements OnInit, AfterViewInit, IDia
 
     public async ngOnInit(): Promise<void> {
         this.isAdding = this.penalDecreeId === undefined || this.penalDecreeId === null;
-        this.isThirdParty = this.auanId === undefined || this.auanId === null;
 
         const nomenclatures: (NomenclatureDTO<number> | InspectorUserNomenclatureDTO)[][] = await forkJoin(
             NomenclatureStore.instance.getNomenclature(NomenclatureTypes.TerritoryUnits, this.nomenclatures.getTerritoryUnits.bind(this.nomenclatures)),
@@ -96,6 +95,7 @@ export class EditDecreeAgreementComponent implements OnInit, AfterViewInit, IDia
             this.service.getPenalDecreeAuanData(this.auanId).subscribe({
                 next: (data: PenalDecreeAuanDataDTO) => {
                     this.fillAuanData(data);
+                    this.isThirdParty = data.isExternal ?? false;
 
                     if (this.penalDecreeId === undefined || this.penalDecreeId === null) {
                         this.model = new PenalDecreeEditDTO();
@@ -112,6 +112,7 @@ export class EditDecreeAgreementComponent implements OnInit, AfterViewInit, IDia
             });
         }
         else {
+            this.isThirdParty = true;
             this.model = new PenalDecreeEditDTO();
         }
     }
@@ -147,20 +148,18 @@ export class EditDecreeAgreementComponent implements OnInit, AfterViewInit, IDia
             }
         });
 
-        if (this.isThirdParty) {
-            this.form.get('auanControl')!.valueChanges.subscribe({
-                next: (auanData: PenalDecreeAuanDataDTO | undefined) => {
-                    if (auanData !== undefined && auanData !== null) {
-                        this.inspectedEnityName = PenalDecreeUtils.getInspectedEntityName(auanData.inspectedEntity);
-                    }
-                    else {
-                        this.inspectedEnityName = undefined;
-                    }
-
-                    this.violatedRegulationsTitle = PenalDecreeUtils.getViolatedRegulationsTitle(this.inspectedEnityName, this.translate);
+        this.form.get('auanControl')!.valueChanges.subscribe({
+            next: (auanData: PenalDecreeAuanDataDTO | undefined) => {
+                if (auanData !== undefined && auanData !== null) {
+                    this.inspectedEnityName = PenalDecreeUtils.getInspectedEntityName(auanData.inspectedEntity);
                 }
-            });
-        }
+                else {
+                    this.inspectedEnityName = undefined;
+                }
+
+                this.violatedRegulationsTitle = PenalDecreeUtils.getViolatedRegulationsTitle(this.inspectedEnityName, this.translate);
+            }
+        });
     }
 
     public setData(data: EditPenalDecreeDialogParams | undefined, wrapperData: DialogWrapperData): void {
@@ -359,8 +358,9 @@ export class EditDecreeAgreementComponent implements OnInit, AfterViewInit, IDia
         this.model.auanViolatedRegulations = this.form.get('auanViolatedRegulationsControl')!.value;
         this.model.decreeViolatedRegulations = this.form.get('violatedRegulationsControl')!.value;
 
-        if (this.isThirdParty) {
+        if (this.isThirdParty && this.isAdding) {
             this.model.auanData = this.form.get('auanControl')!.value;
+            this.model.auanData!.userId = this.form.get('drafterControl')!.value?.value;
             this.model.auanData!.territoryUnitId = this.form.get('territoryUnitControl')!.value?.value;
             this.model.auanData!.constatationComments = this.form.get('constatationCommentsControl')!.value;
             this.model.auanData!.violatedRegulations = this.form.get('auanViolatedRegulationsControl')!.value;
