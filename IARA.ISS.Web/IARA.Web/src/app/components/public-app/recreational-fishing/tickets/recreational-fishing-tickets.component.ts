@@ -257,10 +257,6 @@ export class RecreationalFishingTicketsComponent implements OnInit {
         });
     }
 
-    public downloadTicket(ticket: RecreationalFishingTicketCardDTO): void {
-        this.service.downloadFishingTicket(ticket.id!).subscribe();
-    }
-
     public switchPage(event: PageEvent): void {
         this.pageEvent = event;
 

@@ -5475,6 +5475,8 @@
         'violated-regulation-type-law': 'Закон',
         'violated-regulation-type-regulation': 'Наредба',
         'edit-auan-at-least-one-violated-regulation-needed': 'Необходима е поне една нарушена разпоредба',
+        'invalid-violated-regulation-fields-error': 'Дължината на стойността на някое от полетата е по-голяма от максималната разрешена',
+        'violated-regulation-has-errors': 'Дължината на стойността на някое от полетата от този ред, чиято дължина е по-голяма от максималната',
 
         'choose': 'Избери',
         'choose-law-section-dialog-title': 'Добавяне на секция на закон',
@@ -5984,7 +5986,7 @@
         'choose-auan-dialog-title': 'Добавяне',
         'picker-auan-num': '№ на АУАН',
         'picker-type': 'Тип',
-        'picker-is-third-party-auan': 'АУАН от външна организация',
+        'picker-is-third-party-auan': 'Акт от външна институция',
         'add-button': 'Добави',
 
         'add-penal-decree-dialog-title': 'Добавяне на наказателно постановление',
@@ -6022,8 +6024,11 @@
         'edit-sanction-description': 'Смекчаващи и отегчаващи отговорността обстоятелства',
 
         'edit-decree-auan': 'Информация за АУАН',
+        'edit-external-auan': 'Информация за акт от външна институция',
         'edit-auan-num': '№ на АУАН',
+        'edit-external-auan-num': '№ на акт',
         'edit-auan-draft-date': 'Дата на съставяне',
+        'edit-external-auan-date': 'Дата',
         'edit-auan-drafter': 'Актосъставител',
         'edit-auan-location-description': 'Място',
         'edit-auan-constatation-comments': 'Описание на нарушението',
@@ -6077,6 +6082,7 @@
         'edit-decree-seized-description': 'Отнемам',
         'edit-decree-sanction-description-panel': 'Смекчаващи и отегчаващи отговорността обстоятелства',
         'edit-auan-violated-regulations-panel': 'Законови разпоредби от АУАН',
+        'edit-external-auan-violated-regulations-panel': 'Законови разпоредби от акт',
         'edit-violated-regulations-by-inspected-entity': 'съгласно които се наказва',
         'edit-appeal-drafter': 'Чрез административнонаказващ орган',
         'edit-appeal-drafter-position': 'С длъжност',
@@ -6474,6 +6480,7 @@
 
         'edit-points-decree-auan-data': 'Данни за наказателно постановление и АУАН',
         'edit-auan-num': 'Номер н АУАН',
+        'edit-external-auan-num': 'Номер на акт',
         'edit-auan-date': 'Дата на издаване',
         'edit-decree-num': 'Номер на НП',
         'edit-decree-issue-date': 'Дата на издаване',

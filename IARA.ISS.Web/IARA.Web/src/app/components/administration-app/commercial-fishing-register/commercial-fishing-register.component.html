@@ -88,28 +88,17 @@
                 <div *ngIf="!hasPermitLicenseReadAllPermission" fxFlex="25"></div>
             </div>
             <div fxFlexFill fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="space-between center">
-                <tl-input fxFlex="25"
-                          formControlName="shipNameControl"
-                          label="{{ 'commercial-fishing.ship-name' | tlTranslate }}"
-                          tooltipResourceName="commercial-fishing.ship-name-helper">
-                </tl-input>
-                <tl-input fxFlex="25"
-                          formControlName="shipCfrControl"
-                          label="{{ 'commercial-fishing.ship-cfr' | tlTranslate }}"
-                          tooltipResourceName="commercial-fishing.ship-cfr-helper">
-                </tl-input>
-                <tl-input fxFlex="25"
-                          formControlName="shipExternalMarkingControl"
-                          label="{{ 'commercial-fishing.ship-external-marking' | tlTranslate }}"
-                          tooltipResourceName="commercial-fishing.ship-external-marking-helper">
-                </tl-input>
+                <tl-autocomplete fxFlex="25"
+                                 formControlName="shipControl"
+                                 label="{{ 'commercial-fishing.ship' | tlTranslate }}"
+                                 tooltipResourceName="commercial-fishing.ship-helper"
+                                 [options]="ships">
+                </tl-autocomplete>
                 <tl-input fxFlex="25"
                           formControlName="shipRegistrationCertificateNumberControl"
                           label="{{ 'commercial-fishing.ship-registration-certificate-number' | tlTranslate }}"
                           tooltipResourceName="commercial-fishing.ship-registration-certificate-number-helper">
                 </tl-input>
-            </div>
-            <div fxFlexFill fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="space-between center">
                 <tl-input fxFlex="25"
                           formControlName="poundNetNameControl"
                           label="{{ 'commercial-fishing.pound-net-name' | tlTranslate }}"
@@ -120,8 +109,6 @@
                           label="{{ 'commercial-fishing.pound-net-number' | tlTranslate }}"
                           tooltipResourceName="commercial-fishing.pound-net-number-helper">
                 </tl-input>
-                <div fxFlex="25"></div>
-                <div fxFlex="25"></div>
             </div>
             <div fxFlexFill fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="space-between center">
                 <tl-input fxFlex="25"

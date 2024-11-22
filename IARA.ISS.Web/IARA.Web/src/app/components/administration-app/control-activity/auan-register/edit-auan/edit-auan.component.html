@@ -12,6 +12,7 @@
             <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="space-between center">
                 <tl-input fxFlex="20"
                           formControlName="reportNumControl"
+                          [readonly]="true"
                           label="{{ 'auan-register.edit-report-num' | tlTranslate }}"
                           tooltipResourceName="auan-register.edit-report-num-helper">
                 </tl-input>
@@ -63,6 +64,7 @@
                 <tl-autocomplete fxFlex="60"
                                  formControlName="inspectionTypeControl"
                                  [options]="inspectionTypes"
+                                 [readonly]="true"
                                  label="{{ 'auan-register.edit-inspection-type' | tlTranslate }}"
                                  tooltipResourceName="auan-register.edit-inspection-type-helper">
                 </tl-autocomplete>

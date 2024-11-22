@@ -117,7 +117,7 @@ namespace IARA.Mobile.Insp
             builder.Call<ISettings>(SetLoginAsSuccessful);
 
             // Remind for unsigned inspections
-            builder.Call(ShowReminderForUnsignedInspections);
+            builder.Call<ICurrentUser, IAuthTokenProvider>(ShowReminderForUnsignedInspections);
         }
 
         private void SetupVariables(IStates states)
@@ -390,18 +390,21 @@ namespace IARA.Mobile.Insp
             );
         }
 
-        private async Task ShowReminderForUnsignedInspections()
+        private async Task ShowReminderForUnsignedInspections(ICurrentUser currentUser, IAuthTokenProvider authTokenProvider)
         {
             const string group = nameof(GroupResourceEnum.Common);
             int unsignedInspectionCount = DependencyService.Resolve<IInspectionsTransaction>().GetUnsignedInspectionCount();
 
-            if (unsignedInspectionCount > 0)
+            if (currentUser.Id != 0 && authTokenProvider.Token != "")
             {
-                await App.Current.MainPage.DisplayAlert(
-                    TranslateExtension.Translator[group + "/UnsignedInspectionsTitle"],
-                    string.Format(TranslateExtension.Translator[group + "/UnsignedInspectionsMessage"], unsignedInspectionCount),
-                    TranslateExtension.Translator[group + "/Okay"]
-                );
+                if (unsignedInspectionCount > 0)
+                {
+                    await App.Current.MainPage.DisplayAlert(
+                        TranslateExtension.Translator[group + "/UnsignedInspectionsTitle"],
+                        string.Format(TranslateExtension.Translator[group + "/UnsignedInspectionsMessage"], unsignedInspectionCount),
+                        TranslateExtension.Translator[group + "/Okay"]
+                    );
+                }
             }
         }
     }

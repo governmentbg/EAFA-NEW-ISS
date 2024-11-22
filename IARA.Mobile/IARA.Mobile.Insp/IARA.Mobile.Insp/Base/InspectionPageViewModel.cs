@@ -67,6 +67,12 @@ namespace IARA.Mobile.Insp.Base
             {
                 ProtectedEdit.InspectionState = InspectionState.Draft;
                 string json = GetInspectionJson();
+
+                if (ProtectedEdit.Id.Value <= 0 || string.IsNullOrEmpty(json))
+                {
+                    await TLSnackbar.Show(TranslateExtension.Translator[nameof(GroupResourceEnum.Common) + "/SavedFailed"], App.GetResource<Color>("ErrorColor"));
+                    return;
+                }
                 HttpResult result = await DependencyService.Resolve<IRestClient>().PostAsFormDataAsync("Inspections/SendForFurtherCorrections", new InspectionDraftDto()
                 {
                     Id = ProtectedEdit.Id.Value,
@@ -79,7 +85,7 @@ namespace IARA.Mobile.Insp.Base
                 }
                 else
                 {
-                    await TLSnackbar.Show(TranslateExtension.Translator[nameof(GroupResourceEnum.Common) + "/InspectionLocked"], App.GetResource<Color>("ErrorColor"));
+                    await TLSnackbar.Show(TranslateExtension.Translator[nameof(GroupResourceEnum.Common) + "/SavedFailed"], App.GetResource<Color>("ErrorColor"));
                 }
             }
             else

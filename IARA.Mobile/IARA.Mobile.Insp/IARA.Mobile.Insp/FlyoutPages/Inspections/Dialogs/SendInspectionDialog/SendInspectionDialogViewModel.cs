@@ -57,14 +57,22 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.SendInspectionDialog
             };
             foreach (var person in People.Items)
             {
-                if (person.IsValid())
+                if (person.SendEmail.Value)
                 {
-                    inspectionEmailToSend.InspectedEntityEmails.Add(person.GetPersonData());
+                    if (person.IsValid())
+                    {
+                        inspectionEmailToSend.InspectedEntityEmails.Add(person.GetPersonData());
+                    }
+                    else
+                    {
+                        return;
+                    }
                 }
-                else
-                {
-                    return;
-                }
+            }
+            if (inspectionEmailToSend.InspectedEntityEmails.Count == 0)
+            {
+                await HideDialog();
+                return;
             }
             HttpResult<Unit> result = await DependencyService.Resolve<IRestClient>()
                 .PostAsFormDataAsync<Unit>(url: "Inspections/SendInspectedEntityEmailNotification", urlExtension: "Administrative", content: inspectionEmailToSend, needsAuthentication: true);

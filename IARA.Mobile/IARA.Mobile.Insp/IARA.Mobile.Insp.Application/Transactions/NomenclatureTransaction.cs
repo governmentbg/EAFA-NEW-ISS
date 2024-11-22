@@ -438,6 +438,23 @@ namespace IARA.Mobile.Insp.Application.Transactions
         {
             using (IAppDbContext context = ContextBuilder.CreateContext())
             {
+                //var owners = (from owner in context.ShipOwners
+                //              where owner.ShipUid == shipUid
+                //              join legal in context.Legals on owner.LegalId equals legal.Id into legalOwners
+                //              from legal in legalOwners.DefaultIfEmpty()
+                //              join person in context.Persons on owner.PersonId equals person.Id into personOwners
+                //              from person in personOwners.DefaultIfEmpty()
+                //              select new
+                //              {
+                //                  Id = owner?.Id,
+                //                  PersonId = owner?.PersonId,
+                //                  LegalId = owner?.LegalId,
+                //                  EGN = person != null ? person.EgnLnc : legal?.Eik
+                //              })
+                //              .GroupBy(o => o.EGN)
+                //              .Select(g => g.OrderByDescending(o => o.Id).FirstOrDefault())
+                //              .ToList();
+
                 var owners = (from owner in context.ShipOwners
                               where owner.ShipUid == shipUid
                               select new
@@ -445,7 +462,7 @@ namespace IARA.Mobile.Insp.Application.Transactions
                                   owner.Id,
                                   PersonId = owner.PersonId,
                                   LegalId = owner.LegalId,
-                              });
+                              }).ToList();
 
                 var permits = (from plr in context.PermitLicenses
                                join ship in context.Ships on plr.ShipUid equals ship.Uid
@@ -456,7 +473,7 @@ namespace IARA.Mobile.Insp.Application.Transactions
                                    PersonId = plr.PersonId,
                                    LegalId = plr.LegalId,
                                    CaptainId = plr.CaptainId,
-                               });
+                               }).ToList();
 
                 var captains = (from plr in context.PermitLicenses
                                 join ship in context.Ships on plr.ShipUid equals ship.Uid
@@ -465,7 +482,7 @@ namespace IARA.Mobile.Insp.Application.Transactions
                                 {
                                     PersonId = plr.PersonCaptainId,
                                     CaptainId = plr.FishermanId,
-                                });
+                                }).ToList();
 
                 List<int> personIds = owners.Where(f => f.PersonId.HasValue).Select(f => f.PersonId.Value)
                 .Concat(permits.Where(f => f.PersonId.HasValue).Select(f => f.PersonId.Value))
@@ -562,7 +579,10 @@ namespace IARA.Mobile.Insp.Application.Transactions
                                         Type = InspectedPersonType.CaptFshmn,
                                     }).ToList());
 
-                return personnel;
+                return personnel
+                    .GroupBy(x => new { x.Code, x.Type })
+                    .Select(x => x.OrderByDescending(f => f.Id).First())
+                    .ToList();
 
                 //List<ShipPersonnelDto> personnel = (
                 //    from shipOwner in context.ShipOwners
