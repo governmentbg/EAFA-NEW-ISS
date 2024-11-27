@@ -39,6 +39,9 @@ export class PenalDecreeDTO {
     @StrictlyTyped(String)
     public status?: string;
 
+    @StrictlyTyped(String)
+    public issuer?: string;
+
     @StrictlyTyped(PenalDecreeStatusEditDTO)
     public statuses?: PenalDecreeStatusEditDTO[];
 

@@ -30,5 +30,8 @@
     DecreeEDelivery,
 
     //НП е връчено чрез отбелязване
-    DecreeTag
+    DecreeTag,
+
+    //Неуспешно връчване
+    DecreeUnsuccessful
 }

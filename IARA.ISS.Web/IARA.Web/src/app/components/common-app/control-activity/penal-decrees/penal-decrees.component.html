@@ -11,11 +11,11 @@
                 </tl-input>
 
                 <tl-autocomplete fxFlex="25"
-                                 formControlName="drafterControl"
-                                 [options]="drafters"
+                                 formControlName="issuerControl"
+                                 [options]="issuers"
                                  [hasSelectedValueFromDropdownValidator]="false"
-                                 label="{{ 'penal-decrees.filters-drafter' | tlTranslate }}"
-                                 tooltipResourceName="penal-decrees.filters-drafter-helper">
+                                 label="{{ 'penal-decrees.filters-issuer' | tlTranslate }}"
+                                 tooltipResourceName="penal-decrees.filters-issuer-helper">
                 </tl-autocomplete>
 
                 <tl-autocomplete fxFlex="25"
@@ -59,7 +59,7 @@
                 </tl-input>
             </div>
 
-            <!-- Конфискувани риба, уред и приспособление, начини за потвърждение за връчване -->
+            <!-- Конфискувани риба, уред и приспособление, дата на влизане в сила -->
             <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="1em">
                 <tl-autocomplete fxFlex="25"
                                  formControlName="fishControl"
@@ -82,13 +82,11 @@
                                  tooltipResourceName="penal-decrees.filters-appliance-helper">
                 </tl-autocomplete>
 
-                <tl-select fxFlex="25"
-                           formControlName="deliveryConfirmationTypeControl"
-                           [options]="deliveryConfirmationTypes"
-                           [isMultiple]="true"
-                           label="{{ 'penal-decrees.filters-delivery-type' | tlTranslate }}"
-                           tooltipResourceName="penal-decrees.filters-delivery-type-helper">
-                </tl-select>
+                <tl-date-range fxFlex="25"
+                               formControlName="effectiveDateRangeControl"
+                               label="{{ 'penal-decrees.filters-effective-date' | tlTranslate }}"
+                               tooltipResourceName="penal-decrees.filters-effective-date-helper">
+                </tl-date-range>
             </div>
 
             <!-- Вид санкция, размер на глобата, статус, описание на проверяван обект -->
@@ -121,6 +119,39 @@
                           tooltipResourceName="penal-decrees.filters-location-description-helper">
                 </tl-input>
             </div>
+
+            <!-- Номер на АУАН/акт, актосъставител, начин на връчване, начини за потвърждение за връчване -->
+            <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="1em">
+                <tl-input fxFlex="25"
+                          formControlName="auanNumControl"
+                          label="{{ 'penal-decrees.filters-auan-num' | tlTranslate }}"
+                          tooltipResourceName="penal-decrees.filters-auan-num-helper">
+                </tl-input>
+
+                <tl-autocomplete fxFlex="25"
+                                 formControlName="drafterControl"
+                                 [options]="drafters"
+                                 [hasSelectedValueFromDropdownValidator]="false"
+                                 label="{{ 'penal-decrees.filters-auan-drafter' | tlTranslate }}"
+                                 tooltipResourceName="penal-decrees.filters-auan-drafter-helper">
+                </tl-autocomplete>
+
+                <tl-select fxFlex="25"
+                           formControlName="deliveryTypeControl"
+                           [options]="deliveryTypes"
+                           [isMultiple]="true"
+                           label="{{ 'penal-decrees.filters-delivery' | tlTranslate }}"
+                           tooltipResourceName="penal-decrees.filters-delivery-helper">
+                </tl-select>
+
+                <tl-select fxFlex="25"
+                           formControlName="deliveryConfirmationTypeControl"
+                           [options]="deliveryConfirmationTypes"
+                           [isMultiple]="true"
+                           label="{{ 'penal-decrees.filters-delivery-type' | tlTranslate }}"
+                           tooltipResourceName="penal-decrees.filters-delivery-type-helper">
+                </tl-select>
+            </div>
         </div>
     </search-panel>
 
@@ -149,7 +180,8 @@
                                                    (onActiveRecordChanged)="addEditStatus($event, $event.viewMode, row.data)">
                             </decree-statuses-table>
 
-                            <penal-points fxFlexFill
+                            <penal-points *ngIf="row.data.decreeType === penalDecreeTypeEnum.PenalDecree"
+                                          fxFlexFill
                                           [penalDecreeId]="row.data.id"
                                           [recordsPerPage]="10">
                             </penal-points>
@@ -181,6 +213,11 @@
                              [flexRate]="0.3"
                              dataType="date"
                              columnName="{{ 'penal-decrees.table-issue-date' | tlTranslate }}">
+                </data-column>
+
+                <data-column propertyName="issuer"
+                             [flexRate]="0.3"
+                             columnName="{{ 'penal-decrees.table-issuer' | tlTranslate }}">
                 </data-column>
 
                 <data-template-column [flexRate]="0.4" [cellClass]="'justify-center'">

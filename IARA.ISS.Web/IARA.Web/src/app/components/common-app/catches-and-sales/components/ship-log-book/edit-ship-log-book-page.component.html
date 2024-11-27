@@ -136,7 +136,25 @@
                               [getControlErrorLabelText]="getControlErrorLabelTextMethod"
                               [showHint]="true">
                 </tl-date-time>
-                <tl-checkbox fxFlex="25"
+                <tl-date-time *ngIf="isOnline"
+                              fxFlex="25"
+                              formControlName="occuranceDateTimeControl"
+                              label="{{ 'catches-and-sales.ship-page-origin-declaration-occurance-date-time' | tlTranslate }}"
+                              tooltipResourceName="catches-and-sales.ship-page-origin-declaration-occurance-date-time-helper"
+                              hint="{{ 'common.date-time-control-format-hint' | tlTranslate }}"
+                              [readonly]="true"
+                              [showHint]="true">
+                </tl-date-time>
+                <tl-checkbox *ngIf="!isOnline"
+                             fxFlex="25"
+                             formControlName="allCatchIsTransboardedControl"
+                             tooltipResourceName="catches-and-sales.ship-page-all-catch-is-transboarded-helper"
+                             label="{{ 'catches-and-sales.ship-page-all-catch-is-transboarded' | tlTranslate }}">
+                </tl-checkbox>
+            </div>
+            <div>
+                <tl-checkbox *ngIf="isOnline"
+                             fxFlex="25"
                              formControlName="allCatchIsTransboardedControl"
                              tooltipResourceName="catches-and-sales.ship-page-all-catch-is-transboarded-helper"
                              label="{{ 'catches-and-sales.ship-page-all-catch-is-transboarded' | tlTranslate }}">

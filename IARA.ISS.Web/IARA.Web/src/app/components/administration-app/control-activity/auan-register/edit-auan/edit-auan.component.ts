@@ -33,6 +33,7 @@ import { TLConfirmDialog } from '@app/shared/components/confirmation-dialog/tl-c
 import { AuanStatusEnum } from '@app/enums/auan-status.enum';
 import { AuanWitnessDTO } from '@app/models/generated/dtos/AuanWitnessDTO';
 import { AuanDrafterNomenclatureDTO } from '@app/models/generated/dtos/AuanDrafterNomenclatureDTO';
+import { AddressRegistrationDTO } from '@app/models/generated/dtos/AddressRegistrationDTO';
 
 @Component({
     selector: 'edit-auan',
@@ -217,7 +218,7 @@ export class EditAuanComponent implements OnInit, AfterViewInit, IDialogComponen
                 this.form.get('isInspectedEntityFromInspectionControl')!.valueChanges.subscribe({
                     next: (value: boolean | undefined) => {
                         this.isFromInspection = false;
-
+                    
                         if (value === true) {
                             this.isFromInspection = true;
                             this.form.get('inspectedEntityControl')!.setValidators(Validators.required);
@@ -231,6 +232,9 @@ export class EditAuanComponent implements OnInit, AfterViewInit, IDialogComponen
 
                         this.form.get('inspectedEntityControl')!.updateValueAndValidity({ emitEvent: false });
                         this.form.get('inspectedEntityBasicInfoControl')!.updateValueAndValidity({ emitEvent: false });
+
+                        this.form.get('inspectedEntityControl')!.markAsPending({ emitEvent: false });
+                        this.form.get('inspectedEntityBasicInfoControl')!.markAsPending({ emitEvent: false });
                     }
                 });
             }
@@ -348,7 +352,6 @@ export class EditAuanComponent implements OnInit, AfterViewInit, IDialogComponen
             }
         }
 
-
         if (action.id === 'cancel-auan') {
             this.markDraftOrCancelAsTouched();
 
@@ -457,7 +460,7 @@ export class EditAuanComponent implements OnInit, AfterViewInit, IDialogComponen
             locationDescriptionControl: new FormControl(null, [Validators.required, Validators.maxLength(400)]),
 
             inspectedEntityControl: new FormControl(null),
-            inspectedEntityBasicInfoControl: new FormControl(null),
+            inspectedEntityBasicInfoControl: new FormControl(null, Validators.required),
             isInspectedEntityFromInspectionControl: new FormControl(true),
 
             witnessesControl: new FormControl(null, Validators.required),
@@ -479,7 +482,7 @@ export class EditAuanComponent implements OnInit, AfterViewInit, IDialogComponen
             violatedRegulationsControl: new FormControl(null),
 
             filesControl: new FormControl(null)
-        }, this.violatedRegulationsValidator());
+        }, [this.violatedRegulationsValidator(), this.violatedRegulationFeldsValidator()]);
     }
 
     private fillForm(): void {
@@ -550,12 +553,12 @@ export class EditAuanComponent implements OnInit, AfterViewInit, IDialogComponen
         const witnesses: AuanWitnessDTO[] = this.form.get('witnessesControl')!.value;
 
         this.model.auanWitnesses = witnesses.filter(x =>
-            x.witnessNames !== undefined && x.witnessNames !== null
-            && x.dateOfBirth !== undefined && x.dateOfBirth !== null
-            && x.address?.countryId !== undefined && x.address?.countryId !== null
-            && x.address?.street !== undefined && x.address?.street !== null);
+            !CommonUtils.isNullOrWhiteSpace(x.witnessNames)
+            && !CommonUtils.isNullOrEmpty(x.dateOfBirth)
+            && !CommonUtils.isNullOrEmpty(x.address?.countryId)
+            && !CommonUtils.isNullOrWhiteSpace(x.address?.street));
 
-        const isInspectedEntityValid: boolean = this.form.get('inspectedEntityBasicInfoControl')!.valid;
+        const isInspectedEntityValid: boolean = this.form.get('inspectedEntityBasicInfoControl')!.valid === true;
         if (isInspectedEntityValid) {
             this.model.inspectedEntity = this.form.get('inspectedEntityBasicInfoControl')!.value;
         }
@@ -649,19 +652,62 @@ export class EditAuanComponent implements OnInit, AfterViewInit, IDialogComponen
         }
     }
 
-    private violatedRegulationsValidator(): ValidatorFn {
-        return (control: AbstractControl): ValidationErrors | null => {
-            if (!this.violatedRegulations.some(x => x.isActive !== false)) {
-                return { 'atLeastOneViolatedRegulationNeeded': true };
-            }
-            return null;
+    private markAllAsTouched(): void {
+        this.form.markAllAsTouched();
+        this.violatedRegulationsTouched = true;
+    }
+
+    //В статуси "Чернова" и "Анулиран" са задължителни само полетата "Номер на АУАН", "Дата на съставяне" и "Актосъставител"
+    private markDraftOrCancelAsTouched(): void {
+        this.violatedRegulationsTouched = false;
+
+        this.form.get('auanNumControl')!.markAsTouched();
+        this.form.get('drafterControl')!.markAsTouched();
+        this.form.get('draftDateControl')!.markAsTouched();
+
+        if (this.violatedRegulations !== undefined && this.violatedRegulations !== null && this.violatedRegulations.some(x => x.hasErrors)) {
+            this.violatedRegulationsTouched = true;
+        }
+
+        if (!this.inspectedEntityAddressesValid()) {
+            this.form.get('inspectedEntityBasicInfoControl')!.markAsTouched();
         }
     }
 
-    private markAllAsTouched(): void {
-        this.form.markAllAsTouched();
+    private isDraftOrCancelValid(): boolean {
+        if (this.violatedRegulations !== undefined && this.violatedRegulations !== null && this.violatedRegulations.some(x => x.hasErrors)) {
+            return false;
+        }
 
-        this.violatedRegulationsTouched = true;
+        return (this.form.get('auanNumControl')!.valid
+            && this.form.get('drafterControl')!.valid
+            && this.form.get('draftDateControl')!.valid);
+    }
+
+    private inspectedEntityAddressesValid(): boolean {
+        const inspectedEntity: AuanInspectedEntityDTO | undefined = this.form.get('inspectedEntityBasicInfoControl')!.value;
+
+        if (inspectedEntity !== undefined && inspectedEntity !== null) {
+            if (inspectedEntity.addresses !== undefined && inspectedEntity.addresses !== null && inspectedEntity.addresses.length > 0) {
+                const invalidAddresses: AddressRegistrationDTO[] = inspectedEntity.addresses.filter(x => {
+                    if (CommonUtils.isNullOrEmpty(x.countryId)) {
+                        return true;
+                    }
+
+                    if (CommonUtils.isNullOrWhiteSpace(x.street)) {
+                        return true;
+                    }
+
+                    return false;
+                });
+
+                if (invalidAddresses.length > 0) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 
     private openConfirmDialog(): Observable<boolean> {
@@ -674,21 +720,6 @@ export class EditAuanComponent implements OnInit, AfterViewInit, IDialogComponen
             message: message,
             okBtnLabel: this.translate.getValue('auan-register.complete-auan-confirm-dialog-ok-btn-label')
         });
-    }
-
-    //В статуси "Чернова" и "Анулиран" са задължителни само полетата "Номер на АУАН", "Дата на съставяне" и "Актосъставител"
-    private markDraftOrCancelAsTouched(): void {
-        this.violatedRegulationsTouched = false;
-
-        this.form.get('auanNumControl')!.markAsTouched();
-        this.form.get('drafterControl')!.markAsTouched();
-        this.form.get('draftDateControl')!.markAsTouched();
-    }
-
-    private isDraftOrCancelValid(): boolean {
-        return (this.form.get('auanNumControl')!.valid
-            && this.form.get('drafterControl')!.valid
-            && this.form.get('draftDateControl')!.valid);
     }
 
     private updateAuanStatus(status: AuanStatusEnum, dialogClose: DialogCloseCallback): void {
@@ -720,6 +751,33 @@ export class EditAuanComponent implements OnInit, AfterViewInit, IDialogComponen
                     this.handleAddEditErrorResponse(response);
                 }
             });
+        }
+    }
+
+    private violatedRegulationsValidator(): ValidatorFn {
+        return (control: AbstractControl): ValidationErrors | null => {
+            if (!this.violatedRegulations.some(x => x.isActive !== false)) {
+                return { 'atLeastOneViolatedRegulationNeeded': true };
+            }
+            return null;
+        }
+    }
+
+    private violatedRegulationFeldsValidator(): ValidatorFn {
+        return (control: AbstractControl): ValidationErrors | null => {
+            if (control === null || control === undefined) {
+                return null;
+            }
+
+            if (this.violatedRegulations === undefined || this.violatedRegulations === null || this.violatedRegulations.length === 0) {
+                return null;
+            }
+
+            if (this.violatedRegulations.some(x => x.hasErrors)) {
+                return { 'invalidViolatedRegulation': true };
+            }
+
+            return null;
         }
     }
 

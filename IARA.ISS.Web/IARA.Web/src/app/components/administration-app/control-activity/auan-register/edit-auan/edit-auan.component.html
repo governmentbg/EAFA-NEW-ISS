@@ -128,15 +128,21 @@
     <!-- Нарушени разпоредби -->
     <tl-expansion-panel title="{{ 'auan-register.edit-auan-violated-regulations' | tlTranslate }}"
                         [validityChecker]="form"
-                        [validityCheckerExtraCondition]="form.errors?.atLeastOneViolatedRegulationNeeded !== true || !violatedRegulationsTouched"
+                        [validityCheckerExtraCondition]="(form.errors?.atLeastOneViolatedRegulationNeeded !== true && form.errors?.invalidViolatedRegulation !== true)
+                                                        || !violatedRegulationsTouched"
                         tooltipResourceName="auan-register.edit-auan-constatations-helper">
         <div fxLayout="column" fxLayoutGap="1em">
             <auan-violated-regulations formControlName="violatedRegulationsControl"
-                                       [viewMode]="viewMode">
+                                       [viewMode]="viewMode"
+                                       [isAuan]="true">
             </auan-violated-regulations>
 
             <mat-error *ngIf="violatedRegulationsTouched && form.errors?.atLeastOneViolatedRegulationNeeded === true">
                 * {{ 'auan-register.edit-auan-at-least-one-violated-regulation-needed' | tlTranslate }}
+            </mat-error>
+
+            <mat-error *ngIf="violatedRegulationsTouched && form.errors?.invalidViolatedRegulation">
+                * {{ 'auan-register.invalid-violated-regulation-fields-error' | tlTranslate }}
             </mat-error>
         </div>
     </tl-expansion-panel>

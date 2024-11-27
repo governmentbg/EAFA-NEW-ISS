@@ -1,7 +1,7 @@
 ﻿import { AfterViewInit, Component, Input, OnInit, Optional, Self } from '@angular/core';
 import { CustomFormControl } from '@app/shared/utils/custom-form-control';
 import { AuanInspectedEntityDTO } from '@app/models/generated/dtos/AuanInspectedEntityDTO';
-import { AbstractControl, FormControl, FormGroup, NgControl, Validators } from '@angular/forms';
+import { AbstractControl, FormControl, FormGroup, NgControl, ValidationErrors, Validators } from '@angular/forms';
 import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 import { AddressTypesEnum } from '@app/enums/address-types.enum';
@@ -9,6 +9,10 @@ import { RegixLegalDataDTO } from '@app/models/generated/dtos/RegixLegalDataDTO'
 import { PersonFullDataDTO } from '@app/models/generated/dtos/PersonFullDataDTO';
 import { LegalFullDataDTO } from '@app/models/generated/dtos/LegalFullDataDTO';
 import { ValidityCheckerDirective } from '@app/shared/directives/validity-checker/validity-checker.directive';
+import { RegixPersonDataDTO } from '@app/models/generated/dtos/RegixPersonDataDTO';
+import { AddressRegistrationDTO } from '@app/models/generated/dtos/AddressRegistrationDTO';
+import { CommonUtils } from '@app/shared/utils/common.utils';
+import { EgnUtils } from '@app/shared/utils/egn.utils';
 
 @Component({
     selector: 'inspected-entity-basic-info',
@@ -20,6 +24,9 @@ export class InspectedEntityBasicInfoComponent extends CustomFormControl<AuanIns
 
     @Input()
     public isIdReadOnly: boolean = false;
+
+    @Input()
+    public isAuan: boolean = false;
 
     public inspectedEntity: AuanInspectedEntityDTO | undefined;
     public inspectedEntityOptions: NomenclatureDTO<boolean>[] = [];
@@ -74,7 +81,7 @@ export class InspectedEntityBasicInfoComponent extends CustomFormControl<AuanIns
                         });
                     }
 
-                    if (isPerson) {
+                    if (isPerson.value === true) {
                         this.form.get('personControl')!.setValidators(Validators.required);
                         this.form.get('personAddressesControl')!.setValidators(Validators.required);
                     }
@@ -98,6 +105,10 @@ export class InspectedEntityBasicInfoComponent extends CustomFormControl<AuanIns
 
             if (value.isPerson !== undefined && value.isPerson !== null) {
                 this.inspectedEntity.isPerson = value.isPerson;
+
+                if (!this.isFromRegister) {
+                    this.form.get('isInspectedEntityPersonControl')!.setValue(this.inspectedEntityOptions.find(x => x.value === value.isPerson));
+                }
 
                 if (value.isPerson === true) {
                     if (this.inspectedEntity.person !== undefined && this.inspectedEntity.person !== null) {
@@ -126,10 +137,6 @@ export class InspectedEntityBasicInfoComponent extends CustomFormControl<AuanIns
 
                     this.form.get('legalAddressesControl')!.setValue(this.inspectedEntity.addresses);
                 }
-
-                if (!this.isFromRegister) {
-                    this.form.get('isInspectedEntityPersonControl')!.setValue(this.inspectedEntityOptions.find(x => x.value === value.isPerson));
-                }
             }
         }
         else {
@@ -149,6 +156,26 @@ export class InspectedEntityBasicInfoComponent extends CustomFormControl<AuanIns
                 this.form.get('legalAddressesControl')!.setValue(undefined);
             }
         }
+    }
+
+    public validate(control: AbstractControl): ValidationErrors | null {
+        const errors: ValidationErrors = this.control.errors ?? {};
+
+        if (!this.isFromRegister) {
+            if (this.hasPersonDataErrors()) {
+                errors['personFieldsError'] = true;
+            }
+
+            if (this.hasLegalDataErrors()) {
+                errors['legalFieldsError'] = true;
+            }
+        }
+
+        const result = Object.keys(errors).length > 0 ? errors : null;
+
+        this.control.setErrors(result);
+
+        return result;
     }
 
     public downloadedPersonData(person: PersonFullDataDTO): void {
@@ -195,5 +222,53 @@ export class InspectedEntityBasicInfoComponent extends CustomFormControl<AuanIns
             legalAddressesControl: new FormControl(null),
             isInspectedEntityPersonControl: new FormControl(null)
         });
+    }
+
+    private hasPersonDataErrors(): boolean {
+        const person: RegixPersonDataDTO | undefined = this.form.get('personControl')!.value;
+        const personAddresses: AddressRegistrationDTO[] | undefined = this.form.get('personAddressesControl')!.value;
+
+        if (person === undefined || person === null || this.inspectedEntity!.isPerson === false) {
+            return false;
+        }
+
+        if (CommonUtils.isNullOrWhiteSpace(person.firstName)
+            || CommonUtils.isNullOrWhiteSpace(person.middleName)
+            || CommonUtils.isNullOrWhiteSpace(person.lastName)
+            || CommonUtils.isNullOrWhiteSpace(person.egnLnc?.egnLnc)
+        ) {
+            return true;
+        }
+
+        if (personAddresses !== undefined && personAddresses !== null
+            && personAddresses.some(x => CommonUtils.isNullOrEmpty(x.countryId) || CommonUtils.isNullOrWhiteSpace(x.street))
+        ) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private hasLegalDataErrors(): boolean {
+        const legal: RegixLegalDataDTO | undefined = this.form.get('legalControl')!.value;
+        const legalAddresses: AddressRegistrationDTO[] | undefined = this.form.get('legalAddressesControl')!.value;
+
+        if (legal === undefined || legal === null || this.inspectedEntity!.isPerson === true) {
+            return false;
+        }
+
+        if (CommonUtils.isNullOrWhiteSpace(legal.name)
+            || CommonUtils.isNullOrWhiteSpace(legal.eik)
+        ) {
+            return true;
+        }
+
+        if (legalAddresses !== undefined && legalAddresses !== null
+            && legalAddresses.some(x => CommonUtils.isNullOrEmpty(x.countryId) || CommonUtils.isNullOrWhiteSpace(x.street))
+        ) {
+            return true;
+        }
+
+        return false;
     }
 }

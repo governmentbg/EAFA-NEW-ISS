@@ -25,6 +25,9 @@ export class AuanDeliveryDataDTO {
     public referenceNum?: string;
 
     @StrictlyTyped(String)
+    public deliveryReason?: string;
+
+    @StrictlyTyped(String)
     public stateService?: string;
 
     @StrictlyTyped(Number)

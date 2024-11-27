@@ -111,6 +111,12 @@ export class ShipLogBookPageEditDTO {
     @StrictlyTyped(Boolean)
     public needRelatedLogBookPage?: boolean;
 
+    @StrictlyTyped(Boolean)
+    public isOnline?: boolean;
+
+    @StrictlyTyped(Date)
+    public occuranceDateTime?: Date;
+
     @StrictlyTyped(FileInfoDTO)
     public files?: FileInfoDTO[];
 }

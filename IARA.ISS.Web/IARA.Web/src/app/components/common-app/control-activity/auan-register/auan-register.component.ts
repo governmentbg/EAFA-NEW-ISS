@@ -437,7 +437,7 @@ export class AuanRegisterComponent implements OnInit, AfterViewInit {
                 color: 'primary',
                 translateValue: this.translate.getValue('common.cancel'),
             },
-        }, '1400px');
+        }, '1200px');
 
         dialog.subscribe({
             next: (entry: AuanDeliveryDataDTO | undefined) => {

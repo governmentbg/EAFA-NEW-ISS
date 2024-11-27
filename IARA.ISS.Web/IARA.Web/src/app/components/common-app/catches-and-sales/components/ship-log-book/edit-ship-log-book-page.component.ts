@@ -113,6 +113,7 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
 
     public isEditing: boolean = false;
     public isAdd: boolean = false;
+    public isOnline: boolean = false;
 
     public allCatchIsTransboardedValue: boolean = false;
     public isLogBookPageDateLockedError: boolean = false;
@@ -231,6 +232,7 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
                 next: async (value: ShipLogBookPageEditDTO) => {
                     this.model = value;
                     this.model.status = this.service.getPageStatusTranslation(this.model.statusCode!);
+                    this.isOnline = value.isOnline ?? false;
 
                     this.fishingGearsRegister = await this.service.getFishingGearsRegister(this.model.permitLicenseId!).toPromise();
 
@@ -268,6 +270,7 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
         }
         else if (data.model !== undefined && data.model !== null) {
             this.model = data.model;
+            this.isOnline = data.model!.isOnline ?? false;
         }
 
         this.service = data.service as ICatchesAndSalesService;
@@ -791,6 +794,10 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
             this.form.get('unloadDateTimeControl')!.setValue(moment(this.model.unloadDateTime));
         }
 
+        if (this.model.occuranceDateTime !== undefined && this.model.occuranceDateTime !== null) {
+            this.form.get('occuranceDateTimeControl')!.setValue(moment(this.model.occuranceDateTime));
+        }
+
         this.form.get('filesControl')!.setValue(this.model.files);
 
         this.catchRecords.push(...this.model.catchRecords ?? []);
@@ -842,6 +849,7 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
             daysAtSeaCountControl: new FormControl(undefined, Validators.required),
             unloadDateTimeControl: new FormControl(), // the validators are set right after the form is instantiated
             unloadPortControl: new FormControl(undefined, Validators.required),
+            occuranceDateTimeControl: new FormControl(),
 
             allCatchIsTransboardedControl: new FormControl(false),
             noCatchUnloadedControl: new FormControl(false),
