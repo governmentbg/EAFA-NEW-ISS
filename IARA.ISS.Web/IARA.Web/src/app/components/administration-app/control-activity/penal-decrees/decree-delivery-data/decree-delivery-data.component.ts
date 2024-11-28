@@ -111,11 +111,16 @@ export class DecreeDeliveryDataComponent extends CustomFormControl<PenalDecreeDe
 
     protected getValue(): PenalDecreeDeliveryDataDTO {
         let sentDate: Date | undefined = undefined;
+        let deliveryReason: string | undefined = undefined;
         let refusalWitnesses: AuanWitnessDTO[] = [];
 
         if (this.deliveryType !== null && this.deliveryType !== undefined) {
             if (this.deliveryType === InspDeliveryTypesEnum.DecreeReturn || this.deliveryType === InspDeliveryTypesEnum.DecreeTag) {
                 sentDate = this.form.get('deliverySentDateControl')!.value;
+            }
+
+            if (this.deliveryType === InspDeliveryTypesEnum.DecreeUnsuccessful) {
+                deliveryReason = this.form.get('deliveryReasonControl')!.value;
             }
 
             if (this.confirmationType === InspDeliveryConfirmationTypesEnum.RefusalDecree) {
@@ -131,6 +136,7 @@ export class DecreeDeliveryDataComponent extends CustomFormControl<PenalDecreeDe
             deliveryDate: this.form.get('deliveryDateControl')!.value,
             referenceNum: this.form.get('deliverySentControl')!.value,
             sentDate: sentDate,
+            deliveryReason: deliveryReason,
             refusalWitnesses: refusalWitnesses
         });
     }
@@ -142,6 +148,7 @@ export class DecreeDeliveryDataComponent extends CustomFormControl<PenalDecreeDe
             witnessesControl: new FormControl(null),
             deliverySentDateControl: new FormControl(null),
             deliverySentControl: new FormControl(null, Validators.maxLength(200)),
+            deliveryReasonControl: new FormControl(null, Validators.maxLength(500)),
             confirmationTypeControl: new FormControl(null)
         });
     }
@@ -176,6 +183,10 @@ export class DecreeDeliveryDataComponent extends CustomFormControl<PenalDecreeDe
                 if (type === InspDeliveryTypesEnum.DecreeReturn || type === InspDeliveryTypesEnum.DecreeTag) {
                     this.form.get('deliverySentDateControl')!.setValue(delivery.sentDate);
                     this.form.get('deliverySentControl')!.setValue(delivery.referenceNum);
+                }
+
+                if (type === InspDeliveryTypesEnum.DecreeUnsuccessful) {
+                    this.form.get('deliveryReasonControl')!.setValue(delivery.deliveryReason);
                 }
 
                 if (this.confirmationType === InspDeliveryConfirmationTypesEnum.RefusalDecree) {

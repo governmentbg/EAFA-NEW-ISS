@@ -8,7 +8,7 @@
                                [options]="deliveryTypes">
         </tl-radio-button-group>
 
-        <div *ngIf="deliveryType !== undefined && deliveryType !== null" fxLayout="row">
+        <div *ngIf="deliveryType !== undefined && deliveryType !== null && deliveryType !== deliveryTypesEnum.DecreeUnsuccessful" fxLayout="row">
             <tl-date fxFlex="25"
                      formControlName="deliveryDateControl"
                      [max]="today"
@@ -42,6 +42,13 @@
                       tooltipResourceName="penal-decrees.edit-decree-delivery-sent-helper">
             </tl-input>
         </div>
+    </div>
+
+    <div fxLayout="column" fxLayoutGap="1em" *ngIf="deliveryType === deliveryTypesEnum.DecreeUnsuccessful">
+        <tl-textarea formControlName="deliveryReasonControl"
+                     tooltipResourceName="penal-decree.edit-decree-delivery-reason-helper"
+                     label="{{ 'penal-decrees.edit-decree-delivery-reason' | tlTranslate }}">
+        </tl-textarea>
     </div>
 
     <div fxLayout="column" fxLayoutGap="1em" *ngIf="confirmationType === confirmationTypesEnum.RefusalDecree">

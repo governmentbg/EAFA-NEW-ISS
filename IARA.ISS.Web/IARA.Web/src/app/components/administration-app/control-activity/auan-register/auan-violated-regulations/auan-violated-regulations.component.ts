@@ -1,5 +1,5 @@
 ﻿import { Component, Input, OnInit, Self, ViewChild } from '@angular/core';
-import { AbstractControl, FormControl, FormGroup, NgControl, Validators } from '@angular/forms';
+import { AbstractControl, FormControl, FormGroup, NgControl, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { CustomFormControl } from '@app/shared/utils/custom-form-control';
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 import { TLDataTableComponent } from '@app/shared/components/data-table/tl-data-table.component';
@@ -12,6 +12,7 @@ import { HeaderCloseFunction } from '@app/shared/components/dialog-wrapper/inter
 import { AuanLawSectionDTO } from '@app/models/generated/dtos/AuanLawSectionDTO';
 import { ChooseLawSectionsComponent } from '../choose-law-sections/choose-law-sections.component';
 import { ChooseLawSectionDialogParams } from '../models/choose-law-section-dialog-params.model';
+import { CommonUtils } from '@app/shared/utils/common.utils';
 
 @Component({
     selector: 'auan-violated-regulations',
@@ -24,11 +25,16 @@ export class AuanViolatedRegulationsComponent extends CustomFormControl<AuanViol
     @Input()
     public showInactiveRecords: boolean = true;
 
+    @Input()
+    public isAuan: boolean = false;
+
+    public isDisabled: boolean = false;
+    public icIconSize: number = CommonUtils.IC_ICON_SIZE;
+    public readonly faIconSize: number = CommonUtils.FA_ICON_SIZE;
+
     public violatedRegulationsForm!: FormGroup;
     public violatedRegulations: AuanViolatedRegulationDTO[] = [];
     public translate: FuseTranslationLoaderService;
-
-    public isDisabled: boolean = false;
 
     @ViewChild('violatedRegulationsTable')
     private violatedRegulationsTable!: TLDataTableComponent;
@@ -54,6 +60,13 @@ export class AuanViolatedRegulationsComponent extends CustomFormControl<AuanViol
         if (value !== null && value !== undefined) {
             setTimeout(() => {
                 this.violatedRegulations = value;
+
+                if (this.isAuan) {
+                    for (const reg of this.violatedRegulations) {
+                        reg.hasErrors = this.hasErrors(reg);
+                    }
+                }
+
                 this.onChanged(this.getValue());
             });
         }
@@ -89,7 +102,8 @@ export class AuanViolatedRegulationsComponent extends CustomFormControl<AuanViol
             lawSectionId: x.lawSectionId ?? undefined,
             lawText: x.lawText ?? undefined,
             comments: x.comments,
-            isActive: x.isActive ?? true
+            isActive: x.isActive ?? true,
+            hasErrors: this.hasErrors(x)
         }));
 
         this.onChanged(this.getValue());
@@ -158,7 +172,8 @@ export class AuanViolatedRegulationsComponent extends CustomFormControl<AuanViol
             lawSectionId: x.lawSectionId ?? undefined,
             lawText: x.lawText ?? undefined,
             comments: x.comments,
-            isActive: x.isActive ?? true
+            isActive: x.isActive ?? true,
+            hasErrors: this.hasErrors(x)
         }));
     }
 
@@ -173,6 +188,28 @@ export class AuanViolatedRegulationsComponent extends CustomFormControl<AuanViol
         });
 
         return new FormControl(null);
+    }
+
+    private hasErrors(row: AuanViolatedRegulationDTO): boolean {
+        if (this.isAuan) {
+            if (row!.article && row!.article!.length > 10) {
+                return true;
+            }
+
+            if (row!.paragraph && row!.paragraph!.length > 10) {
+                return true;
+            }
+
+            if (row!.section && row!.section!.length > 10) {
+                return true;
+            }
+
+            if (row!.letter && row!.letter!.length > 10) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private closeDialogBtnClicked(closeFn: HeaderCloseFunction): void {

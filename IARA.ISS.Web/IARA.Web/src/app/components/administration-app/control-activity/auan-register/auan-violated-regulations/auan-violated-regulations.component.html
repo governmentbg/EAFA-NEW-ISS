@@ -58,7 +58,7 @@
                     <tl-icon-button *ngIf="row.editMode === true && (row.data.lawSectionId === null || row.data.lawSectionId === undefined)"
                                     icon="fa-plus-circle"
                                     iconClass="accent-color"
-                                    size="1.5"
+                                    [size]="faIconSize"
                                     (buttonClicked)="openLawSectionsDialog(row)"
                                     tooltipText="{{ 'auan-register.add-law-section' | tlTranslate }}">
                     </tl-icon-button>
@@ -66,12 +66,24 @@
                     <tl-icon-button *ngIf="row.data.lawSectionId !== null && row.data.lawSectionId !== undefined"
                                     icon="fa-file-signature"
                                     iconClass="accent-color"
-                                    size="1.5"
+                                    [size]="faIconSize"
                                     (buttonClicked)="openLawSectionsDialog(row)"
                                     [disabled]="!row.editMode"
                                     tooltipText="{{ row.data.lawText }}">
                     </tl-icon-button>
                 </div>
+            </ng-template>
+        </data-template-column>
+
+        <data-template-column [flexRate]="0.02">
+            <ng-template let-row="row"
+                         ngx-datatable-cell-template>
+                <tl-icon *ngIf="isAuan && row.data.hasErrors === true"
+                         icon="ic-exclamation"
+                         iconClass="error-color"
+                         [size]="icIconSize"
+                         tooltipText="{{ 'auan-register.violated-regulation-has-errors' | tlTranslate }}">
+                </tl-icon>
             </ng-template>
         </data-template-column>
 

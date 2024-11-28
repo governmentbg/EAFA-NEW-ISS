@@ -45,6 +45,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { ErrorCode, ErrorModel } from '@app/models/common/exception.model';
 import { RequestProperties } from '@app/shared/services/request-properties';
 import { AuanDrafterNomenclatureDTO } from '@app/models/generated/dtos/AuanDrafterNomenclatureDTO';
+import { InspectorUserNomenclatureDTO } from '@app/models/generated/dtos/InspectorUserNomenclatureDTO';
 
 @Component({
     selector: 'penal-decrees',
@@ -63,10 +64,12 @@ export class PenalDecreesComponent implements OnInit, AfterViewInit {
     public territoryUnits: NomenclatureDTO<number>[] = [];
     public statuses: NomenclatureDTO<number>[] = [];
     public drafters: AuanDrafterNomenclatureDTO[] = [];
+    public issuers: InspectorUserNomenclatureDTO[] = [];
     public sanctions: NomenclatureDTO<number>[] = [];
     public fishes: NomenclatureDTO<number>[] = [];
     public fishingGears: NomenclatureDTO<number>[] = [];
     public appliances: NomenclatureDTO<number>[] = [];
+    public deliveryTypes: NomenclatureDTO<number>[] = [];
     public deliveryConfirmationTypes: NomenclatureDTO<number>[] = [];
 
     public readonly canAddRecords: boolean;
@@ -201,6 +204,14 @@ export class PenalDecreesComponent implements OnInit, AfterViewInit {
         });
 
         NomenclatureStore.instance.getNomenclature(
+            NomenclatureTypes.InspDeliveryTypes, this.service.getAuanDeliveryTypes.bind(this.service), false
+        ).subscribe({
+            next: (result: InspDeliveryTypesNomenclatureDTO[]) => {
+                this.deliveryTypes = result.filter(x => x.group === InspDeliveryTypeGroupsEnum.PD);
+            }
+        });
+
+        NomenclatureStore.instance.getNomenclature(
             NomenclatureTypes.InspDeliveryConfirmationTypes, this.service.getAuanDeliveryConfirmationTypes.bind(this.service), false
         ).subscribe({
             next: (result: InspDeliveryTypesNomenclatureDTO[]) => {
@@ -211,6 +222,12 @@ export class PenalDecreesComponent implements OnInit, AfterViewInit {
         this.auanService.getAllDrafters().subscribe({
             next: (drafters: AuanDrafterNomenclatureDTO[]) => {
                 this.drafters = drafters;
+            }
+        });
+
+        this.service.getInspectorUsernames().subscribe({
+            next: (issuers: InspectorUserNomenclatureDTO[]) => {
+                this.issuers = issuers;
             }
         });
     }
@@ -524,7 +541,7 @@ export class PenalDecreesComponent implements OnInit, AfterViewInit {
                 color: 'primary',
                 translateValue: this.translate.getValue('common.cancel'),
             },
-        }, '1400px');
+        }, '1200px');
 
         dialog.subscribe({
             next: (entry: AuanDeliveryDataDTO | undefined) => {
@@ -542,15 +559,19 @@ export class PenalDecreesComponent implements OnInit, AfterViewInit {
     private buildForm(): void {
         this.form = new FormGroup({
             penalDecreeNumControl: new FormControl(),
+            auanNumControl: new FormControl(),
             territoryUnitControl: new FormControl(),
             draftDateRangeControl: new FormControl(),
             issueDateRangeControl: new FormControl(),
+            effectiveDateRangeControl: new FormControl(),
             drafterControl: new FormControl(),
+            issuerControl: new FormControl(),
             sanctionTypeControl: new FormControl(),
             statusTypeControl: new FormControl(),
             locationDescriptionControl: new FormControl(),
             fineAmountControl: new FormControl(),
             deliveryConfirmationTypeControl: new FormControl(),
+            deliveryTypeControl: new FormControl(),
             applianceControl: new FormControl(),
             fishingGearControl: new FormControl(),
             fishControl: new FormControl(),
@@ -567,9 +588,12 @@ export class PenalDecreesComponent implements OnInit, AfterViewInit {
             showInactiveRecords: filters.showInactiveRecords,
 
             penalDecreeNum: filters.getValue('penalDecreeNumControl'),
+            auanNum: filters.getValue('auanNumControl'),
             territoryUnitId: filters.getValue('territoryUnitControl'),
             issueDateFrom: filters.getValue<DateRangeData>('issueDateRangeControl')?.start,
             issueDateTo: filters.getValue<DateRangeData>('issueDateRangeControl')?.end,
+            effectiveDateFrom: filters.getValue<DateRangeData>('effectiveDateRangeControl')?.start,
+            effectiveDateTo: filters.getValue<DateRangeData>('effectiveDateRangeControl')?.end,
             sanctionTypeIds: filters.getValue('sanctionTypeControl'),
             statusTypeIds: filters.getValue('statusTypeControl'),
             locationDescription: filters.getValue('locationDescriptionControl'),
@@ -578,6 +602,7 @@ export class PenalDecreesComponent implements OnInit, AfterViewInit {
             fishId: filters.getValue('fishControl'),
             identifier: filters.getValue('identifierControl'),
             deliveryConfirmationTypeIds: filters.getValue('deliveryConfirmationTypeControl'),
+            deliveryTypeIds: filters.getValue('deliveryTypeControl'),
             inspectedEntityFirstName: filters.getValue('inspEntityFirstNameControl'),
             inspectedEntityMiddleName: filters.getValue('inspEntityMiddleNameControl'),
             inspectedEntityLastName: filters.getValue('inspEntityLastNameControl')
@@ -596,6 +621,16 @@ export class PenalDecreesComponent implements OnInit, AfterViewInit {
             }
             else {
                 result.drafterName = drafter;
+            }
+        }
+
+        const issuer: number | string | undefined = filters.getValue('issuerControl');
+        if (issuer !== undefined) {
+            if (typeof issuer === 'number') {
+                result.issuerId = issuer;
+            }
+            else {
+                result.issuerName = issuer;
             }
         }
 

@@ -37,4 +37,7 @@ export class AuanViolatedRegulationDTO {
 
     @StrictlyTyped(Boolean)
     public isActive?: boolean;
+
+    @StrictlyTyped(Boolean)
+    public hasErrors?: boolean;
 }
