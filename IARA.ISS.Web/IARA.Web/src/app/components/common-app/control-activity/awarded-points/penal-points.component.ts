@@ -25,6 +25,7 @@ import { PointsTypeEnum } from '@app/enums/points-type.enum';
 import { EditPenalPointsComponent } from '@app/components/administration-app/control-activity/awarded-points/edit-penal-points/edit-penal-points.component';
 import { EditPenalPointsDecreePickerComponent } from '@app/components/administration-app/control-activity/awarded-points/edit-penal-points-decree-picker/edit-penal-points-decree-picker.component';
 import { EditPenalPointsDialogParams } from '@app/components/administration-app/control-activity/awarded-points/models/edit-penal-points-dialog-params.model';
+import { RangeInputData } from '@app/shared/components/input-controls/tl-range-input/range-input.component';
 
 @Component({
     selector: 'penal-points',
@@ -47,6 +48,7 @@ export class PenalPointsComponent implements OnInit, AfterViewInit, OnChanges {
     public form!: FormGroup;
 
     public ships: NomenclatureDTO<number>[] = [];
+    public statuses: NomenclatureDTO<number>[] = [];
     public orderTypes: NomenclatureDTO<boolean>[] = [];
     public pointsTypes: NomenclatureDTO<PointsTypeEnum>[] = [];
 
@@ -131,6 +133,14 @@ export class PenalPointsComponent implements OnInit, AfterViewInit, OnChanges {
         ).subscribe({
             next: (result: NomenclatureDTO<number>[]) => {
                 this.ships = result;
+            }
+        });
+
+        NomenclatureStore.instance.getNomenclature(
+            NomenclatureTypes.PenalPointsStatuses, this.service.getAllPenalPointsStatuses.bind(this.service), false
+        ).subscribe({
+            next: (result: NomenclatureDTO<number>[]) => {
+                this.statuses = result;
             }
         });
     }
@@ -280,11 +290,11 @@ export class PenalPointsComponent implements OnInit, AfterViewInit, OnChanges {
             orderDateRangeControl: new FormControl(),
             pointsOrderTypeControl: new FormControl(),
             pointsTypeControl: new FormControl(),
+            pointsAmountControl: new FormControl(),
+            statusTypeControl: new FormControl(),
             permitNumControl: new FormControl(),
             permitLicenseNumControl: new FormControl(),
-            shipNameControl: new FormControl(),
-            shipCfrControl: new FormControl(),
-            shipExternalMarkingControl: new FormControl(),
+            shipControl: new FormControl(),
             shipRegistrationCertificateNumControl: new FormControl(),
             permitOwnerNameControl: new FormControl(),
             permitOwnerIdentifierControl: new FormControl(),
@@ -306,17 +316,22 @@ export class PenalPointsComponent implements OnInit, AfterViewInit, OnChanges {
             decreeDateTo: filters.getValue<DateRangeData>('orderDateRangeControl')?.end,
             pointsType: filters.getValue<PointsTypeEnum>('pointsTypeControl'),
             isIncreasePoints: filters.getValue<boolean>('pointsOrderTypeControl'),
+            statusIds: filters.getValue('statusTypeControl'),
             permitNum: filters.getValue('permitNumControl'),
             permitLicenseNum: filters.getValue('permitLicenseNumControl'),
-            shipName: filters.getValue('shipNameControl'),
-            shipCfr: filters.getValue('shipCfrControl'),
-            shipExternalMarking: filters.getValue('shipExternalMarkingControl'),
+            shipId: filters.getValue('shipControl'),
             shipRegistrationCertificateNumber: filters.getValue('shipRegistrationCertificateNumControl'),
             permitOwnerName: filters.getValue('permitOwnerNameControl'),
             permitOwnerIdentifier: filters.getValue('permitOwnerIdentifierControl'),
             captainName: filters.getValue('captainNameControl'),
             captainIdentifier: filters.getValue('captainIdentifierControl')
         });
+
+        const pointsAmount: RangeInputData | undefined = filters.getValue('pointsAmountControl');
+        if (pointsAmount !== undefined && pointsAmount !== null) {
+            result.pointsAmountFrom = pointsAmount.start;
+            result.pointsAmountTo = pointsAmount.end;
+        }
 
         return result;
     }

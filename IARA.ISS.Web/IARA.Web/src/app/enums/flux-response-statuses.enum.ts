@@ -1,5 +1,6 @@
 ﻿export enum FluxResponseStatuses {
     OK,
     Warning,
-    Error
+    Error,
+    NoResponse
 }

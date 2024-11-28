@@ -48,7 +48,7 @@ export class EditPenalPointsComponent implements OnInit, AfterViewInit, IDialogC
     public captains: NomenclatureDTO<number>[] = [];
     public orderTypes: NomenclatureDTO<boolean>[] = [];
     public permits: PermitNomenclatureDTO[] = [];
-    public permitLicenses: NomenclatureDTO<number>[] = [];
+    public permitLicenses: PermitNomenclatureDTO[] = [];
 
     public isAdding: boolean = false;
     public viewMode: boolean = false;
@@ -155,7 +155,7 @@ export class EditPenalPointsComponent implements OnInit, AfterViewInit, IDialogC
         this.form.get('shipControl')!.valueChanges.subscribe({
             next: (ship: ShipNomenclatureDTO | undefined | string) => {
                 if (ship !== null && ship !== undefined) {
-                    const shipId: number | undefined = (ship as ShipNomenclatureDTO).value;
+                    const shipId: number | undefined = (ship as ShipNomenclatureDTO)?.value;
 
                     if (shipId !== undefined && shipId !== null) {
                         this.noShipSelected = false;
@@ -169,18 +169,20 @@ export class EditPenalPointsComponent implements OnInit, AfterViewInit, IDialogC
                     }
                 }
                 else {
+                    this.noShipSelected = true;
+
                     if (this.type === PointsTypeEnum.PermitOwner) {
                         this.permits = [];
                         this.form.get('permitControl')!.reset();
-                        this.form.get('permitControl')!.updateValueAndValidity();
                     }
                     else {
                         this.permitLicenses = [];
                         this.form.get('permitLicenseControl')!.reset();
-                        this.form.get('permitLicenseControl')!.updateValueAndValidity();
                     }
-                    this.noShipSelected = true;
                 }
+
+                this.form.get('permitControl')!.updateValueAndValidity({ emitEvent: false });
+                this.form.get('permitLicenseControl')!.updateValueAndValidity({ emitEvent: false });
             }
         });
     }
@@ -197,7 +199,7 @@ export class EditPenalPointsComponent implements OnInit, AfterViewInit, IDialogC
             this.form.get('permitLicenseControl')!.markAsPending();
         }
 
-        this.form.controls.permitControl.valueChanges.subscribe({
+        this.form.get('permitControl')!.valueChanges.subscribe({
             next: (permit: PermitNomenclatureDTO | undefined) => {
                 this.pointsOrders = [];
                 this.form.get('pointsTotalCountControl')!.reset();
@@ -219,7 +221,7 @@ export class EditPenalPointsComponent implements OnInit, AfterViewInit, IDialogC
             }
         });
 
-        this.form.controls.permitLicenseControl.valueChanges.subscribe({
+        this.form.get('permitLicenseControl')!.valueChanges.subscribe({
             next: (permit: PermitNomenclatureDTO | undefined) => {
                 this.pointsOrders = [];
                 this.form.get('pointsTotalCountControl')!.reset();
@@ -527,7 +529,7 @@ export class EditPenalPointsComponent implements OnInit, AfterViewInit, IDialogC
                 this.permits = values;
                 const permitId: number | undefined = this.model?.permitId;
                 if (permitId !== null && permitId !== undefined) {
-                    this.form.get('permitControl')!.setValue(this.permits.find(x => x.value === permitId));
+                    this.form.get('permitControl')!.setValue(values.find(x => x.value === permitId));
                 }
             }
         });
@@ -539,7 +541,7 @@ export class EditPenalPointsComponent implements OnInit, AfterViewInit, IDialogC
                 this.permitLicenses = values;
                 const permitLicenseId: number | undefined = this.model?.permitLicenseId;
                 if (permitLicenseId !== null && permitLicenseId !== undefined) {
-                    this.form.get('permitLicenseControl')!.setValue(this.permitLicenses.find(x => x.value === permitLicenseId));
+                    this.form.get('permitLicenseControl')!.setValue(values.find(x => x.value === permitLicenseId));
                 }
             }
         });
