@@ -82,7 +82,9 @@ export class FluxVmsRequestsComponent implements OnInit, AfterViewInit {
             if (isNaN(Number(level))) {
                 this.responseStatuses.push(new NomenclatureDTO<string>({
                     value: level,
-                    displayName: level,
+                    displayName: level !== FluxResponseStatuses[FluxResponseStatuses.NoResponse]
+                        ? level
+                        : this.translate.getValue('flux-vms-requests.no-response-status'),
                     isActive: true
                 }));
             }

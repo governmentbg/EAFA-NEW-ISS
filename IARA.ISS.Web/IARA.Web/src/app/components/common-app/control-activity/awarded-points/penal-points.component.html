@@ -29,20 +29,51 @@
                 </tl-date-range>
             </div>
 
+            <!-- Тип заповед, тип, -->
+            <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="1em">
+                <tl-select fxFlex="25"
+                           formControlName="pointsOrderTypeControl"
+                           [options]="orderTypes"
+                           label="{{ 'penal-points.filters-points-order-type' | tlTranslate }}"
+                           tooltipResourceName="penal-points.filters-points-order-type-helper">
+                </tl-select>
+
+                <tl-select fxFlex="25"
+                           formControlName="pointsTypeControl"
+                           [options]="pointsTypes"
+                           label="{{ 'penal-points.filters-points-type' | tlTranslate }}"
+                           tooltipResourceName="penal-points.filters-points-type-helper">
+                </tl-select>
+
+                <tl-range-input fxFlex="25"
+                                formControlName="pointsAmountControl"
+                                label="{{ 'penal-points.filters-points-amount' | tlTranslate }}"
+                                tooltipResourceName="penal-decrees.filters-points-amount-helper">
+                </tl-range-input>
+
+                <tl-select fxFlex="25"
+                           formControlName="statusTypeControl"
+                           [options]="statuses"
+                           [isMultiple]="true"
+                           label="{{ 'penal-points.filters-status-type' | tlTranslate }}"
+                           tooltipResourceName="penal-decrees.filters-status-type-helper">
+                </tl-select>
+            </div>
+
+            <!-- Риболовен кораб, свидетелство за регистрация, номер на РСР, номер на УСР -->
             <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="1em">
                 <tl-autocomplete fxFlex="25"
-                                 formControlName="pointsOrderTypeControl"
-                                 [options]="orderTypes"
-                                 label="{{ 'penal-points.filters-points-order-type' | tlTranslate }}"
-                                 tooltipResourceName="penal-points.filters-points-order-type-helper">
+                                 formControlName="shipControl"
+                                 [options]="ships"
+                                 label="{{ 'penal-points.filters-ship' | tlTranslate }}"
+                                 tooltipResourceName="penal-points.filters-ship-helper">
                 </tl-autocomplete>
 
-                <tl-autocomplete fxFlex="25"
-                                 formControlName="pointsTypeControl"
-                                 [options]="pointsTypes"
-                                 label="{{ 'penal-points.filters-points-type' | tlTranslate }}"
-                                 tooltipResourceName="penal-points.filters-points-type-helper">
-                </tl-autocomplete>
+                <tl-input fxFlex="25"
+                          formControlName="shipRegistrationCertificateNumControl"
+                          label="{{ 'penal-points.filters-ship-registration-certificate-num' | tlTranslate }}"
+                          tooltipResourceName="penal-points.filters-ship-registration-certificate-num-helper">
+                </tl-input>
 
                 <tl-input fxFlex="25"
                           formControlName="permitNumControl"
@@ -57,33 +88,7 @@
                 </tl-input>
             </div>
 
-
-            <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="1em">
-                <tl-input fxFlex="25"
-                          formControlName="shipNameControl"
-                          label="{{ 'penal-points.filters-ship-name' | tlTranslate }}"
-                          tooltipResourceName="penal-points.filters-ship-name-helper">
-                </tl-input>
-
-                <tl-input fxFlex="25"
-                          formControlName="shipCfrControl"
-                          label="{{ 'penal-points.filters-ship-cfr' | tlTranslate }}"
-                          tooltipResourceName="penal-points.filters-ship-cfr-helper">
-                </tl-input>
-
-                <tl-input fxFlex="25"
-                          formControlName="shipExternalMarkingControl"
-                          label="{{ 'penal-points.filters-ship-external-marking' | tlTranslate }}"
-                          tooltipResourceName="penal-points.filters-ship-external-marking-helper">
-                </tl-input>
-
-                <tl-input fxFlex="25"
-                          formControlName="shipRegistrationCertificateNumControl"
-                          label="{{ 'penal-points.filters-ship-registration-certificate-num' | tlTranslate }}"
-                          tooltipResourceName="penal-points.filters-ship-registration-certificate-num-helper">
-                </tl-input>
-            </div>
-
+            <!-- Име на титуляр на РСР, ЕГН/ЛНЧ/ЕИК на титуляр на РСР, име на капита, ЕГН/ЛНЧ на капитан -->
             <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="1em">
                 <tl-input fxFlex="25"
                           formControlName="permitOwnerNameControl"
