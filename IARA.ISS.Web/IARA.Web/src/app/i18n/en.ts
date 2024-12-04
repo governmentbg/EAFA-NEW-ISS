@@ -2835,6 +2835,7 @@
         'cannot-edit-inspection-of-this-inspection-type': 'You cannot edit inspection of this type',
         'inspection-send-to-flux-error': 'An error occured when sending report data to FLUX',
         'cannot-send-to-flux-not-signed-inspection-error': 'You cannot send an unsigned report to FLUX',
+        'cannot-edit-inspection-after-lock-hours-error': 'You cannot edit locked inspection',
         'user-not-inspector-title': 'You haven\'t been added as an inspector',
         'user-not-inspector-msg': 'You must be added to the list of inspectors (Administration -> Inspectors), in order to begin an inspection.',
         'okay': 'Okay',

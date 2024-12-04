@@ -17,5 +17,6 @@ namespace IARA.Mobile.Insp.Application.DTObjects.Inspections.API
         public DateTime LastUpdateDate { get; set; }
         public bool CreatedByCurrentUser { get; set; } = true;
         public bool IsActive { get; set; }
+        public DateTime CreatedOn { get; set; }
     }
 }

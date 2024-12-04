@@ -329,52 +329,52 @@ namespace IARA.Mobile.Insp.FlyoutPages.InspectionsPage
                 case InspectionType.OFS:
                     return HandleInspection(
                         InspectionsTransaction.GetOFS(dto.Id, dto.IsLocal),
-                        (ofs) => new BoatOnOpenWaterPage(dto.SubmitType, viewActivity, ofs, dto.IsLocal, dto.CreatedByCurrentUser)
+                        (ofs) => new BoatOnOpenWaterPage(dto.CreatedOn, dto.SubmitType, viewActivity, ofs, dto.IsLocal, dto.CreatedByCurrentUser)
                     );
                 case InspectionType.IBS:
                     return HandleInspection(
                         InspectionsTransaction.GetIBS(dto.Id, dto.IsLocal),
-                        (ibs) => new InWaterOnBoardInspectionPage(dto.SubmitType, viewActivity, ibs, dto.IsLocal, dto.CreatedByCurrentUser)
+                        (ibs) => new InWaterOnBoardInspectionPage(dto.CreatedOn, dto.SubmitType, viewActivity, ibs, dto.IsLocal, dto.CreatedByCurrentUser)
                     );
                 case InspectionType.IBP:
                     return HandleInspection(
                         InspectionsTransaction.GetIBP(dto.Id, dto.IsLocal),
-                        (ibp) => new HarbourInspectionPage(dto.SubmitType, viewActivity, ibp, dto.IsLocal, dto.CreatedByCurrentUser)
+                        (ibp) => new HarbourInspectionPage(dto.CreatedOn, dto.SubmitType, viewActivity, ibp, dto.IsLocal, dto.CreatedByCurrentUser)
                     );
                 case InspectionType.ITB:
                     return HandleInspection(
                         InspectionsTransaction.GetITB(dto.Id, dto.IsLocal),
-                        (itb) => new TranshipmentInspectionPage(dto.SubmitType, viewActivity, itb, dto.IsLocal, dto.CreatedByCurrentUser)
+                        (itb) => new TranshipmentInspectionPage(dto.CreatedOn, dto.SubmitType, viewActivity, itb, dto.IsLocal, dto.CreatedByCurrentUser)
                     );
                 case InspectionType.IVH:
                     return HandleInspection(
                         InspectionsTransaction.GetIVH(dto.Id, dto.IsLocal),
-                        (ivh) => new VehicleInspectionPage(dto.SubmitType, viewActivity, ivh, dto.IsLocal, dto.CreatedByCurrentUser)
+                        (ivh) => new VehicleInspectionPage(dto.CreatedOn, dto.SubmitType, viewActivity, ivh, dto.IsLocal, dto.CreatedByCurrentUser)
                     );
                 case InspectionType.IFS:
                     return HandleInspection(
                         InspectionsTransaction.GetIFS(dto.Id, dto.IsLocal),
-                        (ifs) => new FirstSaleInspectionPage(dto.SubmitType, viewActivity, ifs, dto.IsLocal, dto.CreatedByCurrentUser)
+                        (ifs) => new FirstSaleInspectionPage(dto.CreatedOn, dto.SubmitType, viewActivity, ifs, dto.IsLocal, dto.CreatedByCurrentUser)
                     );
                 case InspectionType.IAQ:
                     return HandleInspection(
                         InspectionsTransaction.GetIAQ(dto.Id, dto.IsLocal),
-                        (iaq) => new AquacultureFarmInspectionPage(dto.SubmitType, viewActivity, iaq, dto.IsLocal, dto.CreatedByCurrentUser)
+                        (iaq) => new AquacultureFarmInspectionPage(dto.CreatedOn, dto.SubmitType, viewActivity, iaq, dto.IsLocal, dto.CreatedByCurrentUser)
                     );
                 case InspectionType.IFP:
                     return HandleInspection(
                         InspectionsTransaction.GetIFP(dto.Id, dto.IsLocal),
-                        (ifp) => new FishermanInspectionPage(dto.SubmitType, viewActivity, ifp, dto.IsLocal, dto.CreatedByCurrentUser)
+                        (ifp) => new FishermanInspectionPage(dto.CreatedOn, dto.SubmitType, viewActivity, ifp, dto.IsLocal, dto.CreatedByCurrentUser)
                     );
                 case InspectionType.CWO:
                     return HandleInspection(
                         InspectionsTransaction.GetCWO(dto.Id, dto.IsLocal),
-                        (cwo) => new InspectionWaterPage(dto.SubmitType, viewActivity, cwo, dto.IsLocal, dto.CreatedByCurrentUser)
+                        (cwo) => new InspectionWaterPage(dto.CreatedOn, dto.SubmitType, viewActivity, cwo, dto.IsLocal, dto.CreatedByCurrentUser)
                     );
                 case InspectionType.IGM:
                     return HandleInspection(
                         InspectionsTransaction.GetIGM(dto.Id, dto.IsLocal),
-                        (cmu) => new FishingGearInspectionPage(dto.SubmitType, viewActivity, cmu, dto.IsLocal, dto.CreatedByCurrentUser)
+                        (cmu) => new FishingGearInspectionPage(dto.CreatedOn, dto.SubmitType, viewActivity, cmu, dto.IsLocal, dto.CreatedByCurrentUser)
                     );
                 default:
                     return Task.CompletedTask;

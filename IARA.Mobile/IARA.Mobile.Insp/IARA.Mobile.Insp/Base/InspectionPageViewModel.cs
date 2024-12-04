@@ -32,6 +32,7 @@ namespace IARA.Mobile.Insp.Base
         }
         protected InspectionEditDto ProtectedEdit { get; set; }
 
+        public DateTime CreatedOn { get; set; }
         public ViewActivityType ActivityType { get; set; }
         public SubmitType SubmitType { get; set; }
         public bool IsLocal { get; set; }
@@ -85,7 +86,7 @@ namespace IARA.Mobile.Insp.Base
                 }
                 else
                 {
-                    await TLSnackbar.Show(TranslateExtension.Translator[nameof(GroupResourceEnum.Common) + "/SavedFailed"], App.GetResource<Color>("ErrorColor"));
+                    await TLSnackbar.Show(TranslateExtension.Translator[nameof(GroupResourceEnum.Common) + "/InspectionLocked"], App.GetResource<Color>("ErrorColor"));
                 }
             }
             else

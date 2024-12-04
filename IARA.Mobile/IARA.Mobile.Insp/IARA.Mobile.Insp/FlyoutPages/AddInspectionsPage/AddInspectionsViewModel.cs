@@ -63,25 +63,25 @@ namespace IARA.Mobile.Insp.FlyoutPages.AddInspectionsPage
             switch (type)
             {
                 case BoatOnOpenWater:
-                    return new BoatOnOpenWaterPage();
+                    return new BoatOnOpenWaterPage(DateTime.Now);
                 case InWaterOnBoardInspection:
-                    return new InWaterOnBoardInspectionPage();
+                    return new InWaterOnBoardInspectionPage(DateTime.Now);
                 case HarbourInspection:
-                    return new HarbourInspectionPage();
+                    return new HarbourInspectionPage(DateTime.Now);
                 case TranshipmentInspection:
-                    return new TranshipmentInspectionPage();
+                    return new TranshipmentInspectionPage(DateTime.Now);
                 case VehicleInspection:
-                    return new VehicleInspectionPage();
+                    return new VehicleInspectionPage(DateTime.Now);
                 case FirstSaleInspection:
-                    return new FirstSaleInspectionPage();
+                    return new FirstSaleInspectionPage(DateTime.Now);
                 case AquacultureFarmInspection:
-                    return new AquacultureFarmInspectionPage();
+                    return new AquacultureFarmInspectionPage(DateTime.Now);
                 case FishermanInspection:
-                    return new FishermanInspectionPage();
+                    return new FishermanInspectionPage(DateTime.Now);
                 case InspectionWater:
-                    return new InspectionWaterPage();
+                    return new InspectionWaterPage(DateTime.Now);
                 case FishingGearInspection:
-                    return new FishingGearInspectionPage();
+                    return new FishingGearInspectionPage(DateTime.Now);
                 default:
                     throw new ArgumentException($"Provided type '{type}' to {nameof(OnGoToAdd)} was invalid.");
             }

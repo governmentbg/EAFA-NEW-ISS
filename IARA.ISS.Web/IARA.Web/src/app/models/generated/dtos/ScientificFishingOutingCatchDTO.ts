@@ -20,6 +20,9 @@ export class ScientificFishingOutingCatchDTO {
     @StrictlyTyped(NomenclatureDTO)
     public fishType?: NomenclatureDTO<number>;
 
+    @StrictlyTyped(String)
+    public fishTypeName?: string;
+
     @StrictlyTyped(Number)
     public catchUnder100?: number;
 

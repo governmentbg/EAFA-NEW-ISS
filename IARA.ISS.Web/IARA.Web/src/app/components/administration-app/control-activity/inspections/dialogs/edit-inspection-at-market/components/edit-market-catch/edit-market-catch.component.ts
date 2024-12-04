@@ -165,6 +165,10 @@ export class EditMarketCatchComponent implements OnInit, AfterViewInit, IDialogC
                     if (this.permitTypeSelected === DeclarationLogBookTypeEnum.AquacultureLogBook) {
                         this.form.get('aquacultureRegisteredControl')!.setValue(this.aquacultureRegistered);
                     }
+                    else {
+                        this.form.get('aquacultureControl')!.disable();
+                        this.form.get('aquacultureTextControl')!.disable();
+                    }
 
                     if (this.permitTypeSelected === DeclarationLogBookTypeEnum.AquacultureLogBook || this.permitTypeSelected === DeclarationLogBookTypeEnum.Invoice || this.permitTypeSelected === DeclarationLogBookTypeEnum.NNN) {
                         this.form.get('shipControl')!.disable();
@@ -219,6 +223,7 @@ export class EditMarketCatchComponent implements OnInit, AfterViewInit, IDialogC
 
                 if (!this.readOnly) {
                     if (value) {
+                        this.form.get('aquacultureControl')!.setValidators(Validators.required);
                         this.form.get('aquacultureControl')!.enable();
                         this.form.get('aquacultureTextControl')!.disable();
                         this.form.get('pageDateControl')!.disable();
@@ -226,6 +231,7 @@ export class EditMarketCatchComponent implements OnInit, AfterViewInit, IDialogC
                     }
                     else {
                         this.declarationPages = [];
+                        this.form.get('aquacultureTextControl')!.setValidators(Validators.required);
                         this.form.get('aquacultureControl')!.disable();
                         this.form.get('aquacultureTextControl')!.enable();
                         this.form.get('pageDateControl')!.enable();
@@ -291,8 +297,8 @@ export class EditMarketCatchComponent implements OnInit, AfterViewInit, IDialogC
             permitControl: new FormControl(undefined, [Validators.required]),
             shipControl: new FormControl(undefined),
             aquacultureRegisteredControl: new FormControl(true),
-            aquacultureControl: new FormControl(undefined, [Validators.required]),
-            aquacultureTextControl: new FormControl(undefined, [Validators.required, Validators.maxLength(4000)]),
+            aquacultureControl: new FormControl(undefined),
+            aquacultureTextControl: new FormControl(undefined, Validators.maxLength(4000)),
             invoiceDataControl: new FormControl(undefined, Validators.maxLength(4000)),
             pageNumberControl: new FormControl(undefined),
             logBookNumberControl: new FormControl(undefined),
@@ -393,6 +399,16 @@ export class EditMarketCatchComponent implements OnInit, AfterViewInit, IDialogC
 
             this.model.unregisteredPageDate = page?.logBookPageDate;
             this.model.unregisteredLogBookNum = page?.logBookNum;
+        }
+        else {
+            this.model.unregisteredLogBookNum = this.form.get('logBookNumberControl')!.value;
+            this.model.unregisteredPageDate = this.form.get('pageDateControl')!.value;
+            this.model.unregisteredPageNum = undefined;
+            this.model.shipLogBookPageId = undefined;
+            this.model.transportationLogBookPageId = undefined;
+            this.model.admissionLogBookPageId = undefined;
+            this.model.firstSaleLogBookPageId = undefined;
+            this.model.aquacultureLogBookPageId = undefined;
         }
     }
 
@@ -616,7 +632,7 @@ export class EditMarketCatchComponent implements OnInit, AfterViewInit, IDialogC
         return (form: AbstractControl): ValidationErrors | null => {
             const permit: NomenclatureDTO<number> | string | undefined = form.get('pageNumberControl')!.value;
 
-            if (typeof permit !== undefined && permit !== null && typeof permit !== 'string') {
+            if (permit !== undefined && permit !== null && typeof permit !== 'string') {
                 this.fishErrors = [];
                 const inspectedProducts: InspectedDeclarationCatchDTO[] = form.get('inspectedCatchesControl')!.value ?? [];
 
