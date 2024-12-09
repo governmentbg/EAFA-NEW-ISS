@@ -130,11 +130,15 @@ export class InspectedCatchComponent extends CustomFormControl<InspectedDeclarat
 
         this.model.fishTypeId = this.form.get('typeControl')!.value?.value;
         this.model.fishName = this.form.get('typeControl')!.value?.displayName;
-        this.model.catchCount = this.form.get('countControl')!.value;
-        this.model.catchQuantity = this.form.get('quantityControl')!.value;
         this.model.presentationId = this.form.get('presentationControl')!.value?.value;
         this.model.turbotSizeGroupId = this.form.get('turbotSizeGroupControl')!.value?.value;
         this.model.undersized = this.form.get('undersizedControl')!.value;
+
+        const catchCount: number = Number(this.form.get('countControl')!.value);
+        this.model.catchCount = isNaN(catchCount) ? undefined : catchCount;
+
+        const catchQuantity: number = Number(this.form.get('quantityControl')!.value);
+        this.model.catchQuantity = isNaN(catchQuantity) ? undefined : catchQuantity;
 
         if (this.hasUndersizedCheck) {
             this.model.catchTypeId = this.model.undersized === true

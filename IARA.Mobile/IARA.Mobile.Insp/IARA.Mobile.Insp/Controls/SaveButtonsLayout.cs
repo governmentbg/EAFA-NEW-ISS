@@ -38,6 +38,7 @@ namespace IARA.Mobile.Insp.Controls
             };
             multiBinding.Bindings.Add(new Binding(nameof(InspectionPageViewModel.InspectionState)));
             multiBinding.Bindings.Add(new Binding(nameof(InspectionPageViewModel.CreatedByCurrentUser)));
+            multiBinding.Bindings.Add(new Binding(nameof(InspectionPageViewModel.CreatedOn)));
             Children.Add(new Button
             {
                 BackgroundColor = App.GetResource<Color>("Secondary"),

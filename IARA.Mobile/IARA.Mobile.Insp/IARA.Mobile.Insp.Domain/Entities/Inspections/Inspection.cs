@@ -26,5 +26,6 @@ namespace IARA.Mobile.Insp.Domain.Entities.Inspections
         public bool IsStatusChanged { get; set; }
         public bool HasJsonContent { get; set; }
         public string JsonContent { get; set; }
+        public DateTime CreatedOn { get; set; }
     }
 }

@@ -65,6 +65,13 @@ namespace IARA.Mobile.Insp.Utilities
             set => Preferences.Set(nameof(IsInspectorAllowed), value, SharedName);
         }
 
+        public int LockInspectionAfterHours
+        {
+            get => Preferences.Get(nameof(LockInspectionAfterHours), 48, SharedName);
+            set => Preferences.Set(nameof(LockInspectionAfterHours), value, SharedName);
+        }
+
+
         public void Clear()
         {
             Preferences.Clear(SharedName);

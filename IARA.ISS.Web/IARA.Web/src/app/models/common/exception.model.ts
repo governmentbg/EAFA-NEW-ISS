@@ -88,5 +88,6 @@ export enum ErrorCode {
     SendFLUXISRFailed = 66,
     InspectionNotSigned = 67,
     PenalDecreeNumAlreadyExists = 68,
-    ReportGroupNameAlreadyExists = 69
+    ReportGroupNameAlreadyExists = 69,
+    CannotEditInspectionAfterLockHours = 70
 }

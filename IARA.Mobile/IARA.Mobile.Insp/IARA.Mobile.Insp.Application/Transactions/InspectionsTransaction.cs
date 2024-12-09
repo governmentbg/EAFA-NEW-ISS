@@ -368,6 +368,7 @@ namespace IARA.Mobile.Insp.Application.Transactions
                             InspectorsIds = inspectorsIds,
                             LastUpdatedDate = dto.LastUpdateDate,
                             CreatedByCurrentUser = dto.CreatedByCurrentUser,
+                            CreatedOn = dto.CreatedOn,
                         };
                     }
 
@@ -629,7 +630,6 @@ namespace IARA.Mobile.Insp.Application.Transactions
                             localInspection.IsLocal = false;
                             localInspection.LastUpdatedDate = DateTime.Now;
                             localInspection.CreatedByCurrentUser = true;
-
                             context.Inspections.Update(localInspection);
                         }
                         else
@@ -660,6 +660,7 @@ namespace IARA.Mobile.Insp.Application.Transactions
                                     : string.Empty,
                                 LastUpdatedDate = DateTime.Now,
                                 CreatedByCurrentUser = true,
+                                CreatedOn = DateTime.Now
                             });
                         }
                     }
@@ -771,6 +772,7 @@ namespace IARA.Mobile.Insp.Application.Transactions
                                 : string.Empty,
                             LastUpdatedDate = DateTime.MinValue,
                             CreatedByCurrentUser = true,
+                            CreatedOn = DateTime.Now
                         });
                     }
                 }
@@ -1322,6 +1324,7 @@ namespace IARA.Mobile.Insp.Application.Transactions
                         InspectionSubjects = insp.InspectionSubjects,
                         Inspectors = insp.Inspectors,
                         CreatedByCurrentUser = insp.CreatedByCurrentUser,
+                        CreatedOn = insp.CreatedOn,
                     }
                 ).Skip((page - 1) * pageSize).Take(pageSize).ToList();
             }

@@ -79,7 +79,6 @@ export class EditScientificPermitComponent implements OnInit, IDialogComponent {
     public permitStatus: ScientificPermitStatusEnum | undefined;
     public permitHolders: ScientificFishingPermitHolderDTO[] = [];
     public permitOutings: ScientificFishingOutingDTO[] = [];
-    public fishes: NomenclatureDTO<number>[] = [];
     public ships: ShipNomenclatureDTO[] = [];
     public permitReasons: NomenclatureDTO<number>[] = [];
     public permitLegalReasons: NomenclatureDTO<number>[] = [];
@@ -163,15 +162,13 @@ export class EditScientificPermitComponent implements OnInit, IDialogComponent {
             const nomenclatures: (ScientificFishingReasonNomenclatureDTO[] | NomenclatureDTO<number>[])[] = await forkJoin(
                 NomenclatureStore.instance.getNomenclature(NomenclatureTypes.SciPermitReasons, this.service.getPermitReasons.bind(this.service), false),
                 NomenclatureStore.instance.getNomenclature(NomenclatureTypes.SciPermitStatuses, this.service.getPermitStatuses.bind(this.service), false),
-                NomenclatureStore.instance.getNomenclature(NomenclatureTypes.Ships, this.nomenclatures.getShips.bind(this.nomenclatures), false),
-                NomenclatureStore.instance.getNomenclature(NomenclatureTypes.Fishes, this.nomenclatures.getFishTypes.bind(this.nomenclatures), false)
+                NomenclatureStore.instance.getNomenclature(NomenclatureTypes.Ships, this.nomenclatures.getShips.bind(this.nomenclatures), false)
             ).toPromise();
 
             this.permitReasons = (nomenclatures[0] as ScientificFishingReasonNomenclatureDTO[]).filter(x => !x.isLegalReason);
             this.permitLegalReasons = (nomenclatures[0] as ScientificFishingReasonNomenclatureDTO[]).filter(x => x.isLegalReason);
             this.allStatuses = this.statuses = nomenclatures[1];
             this.ships = nomenclatures[2];
-            this.fishes = nomenclatures[3];
 
             this.statuses = this.statuses.filter((stat: NomenclatureDTO<number>) => {
                 const notVisibleStatuses: ScientificPermitStatusEnum[] = [

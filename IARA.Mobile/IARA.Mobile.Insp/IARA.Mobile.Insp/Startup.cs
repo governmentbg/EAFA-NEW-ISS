@@ -2,6 +2,7 @@
 using IARA.Mobile.Application.DTObjects.Users;
 using IARA.Mobile.Application.Interfaces.Utilities;
 using IARA.Mobile.Domain.Enums;
+using IARA.Mobile.Domain.Models;
 using IARA.Mobile.Infrastructure;
 using IARA.Mobile.Insp.Application;
 using IARA.Mobile.Insp.Application.Interfaces.Transactions;
@@ -110,6 +111,9 @@ namespace IARA.Mobile.Insp
                 builder.Call<IStartupTransaction, IInspectionsTransaction>(PostOfflineData);
             }
 
+            // Get system parameter for inspecioton locking
+            builder.Call<ISettings, IRestClient, IProfileTransaction>(LoadInspectionLockHour);
+
             // Set main page
             builder.Call(NavigateToMainPage, onMainThread: true);
 
@@ -118,6 +122,27 @@ namespace IARA.Mobile.Insp
 
             // Remind for unsigned inspections
             builder.Call<ICurrentUser, IAuthTokenProvider>(ShowReminderForUnsignedInspections);
+        }
+
+        private async Task LoadInspectionLockHour(ISettings settings, IRestClient client, IProfileTransaction profileTransaction)
+        {
+            if (profileTransaction.HasPermission("InspectionEditNumber"))
+            {
+                settings.LockInspectionAfterHours = -1;
+            }
+            else
+            {
+                HttpResult<int> response = await client.GetAsync<int>("InspectionData/GetInspectionLockHours");
+
+                if (response.IsSuccessful)
+                {
+                    settings.LockInspectionAfterHours = response.Content;
+                }
+                else
+                {
+                    settings.LockInspectionAfterHours = 48;
+                }
+            }
         }
 
         private void SetupVariables(IStates states)
@@ -134,7 +159,7 @@ namespace IARA.Mobile.Insp
                 ? "MobileInspections"
                 : "Inspections";
 #if DEBUG
-            serverUrl.Environment = Environments.DEVELOPMENT_INTERNAL;
+            serverUrl.Environment = Environments.DEVELOPMENT_LOCAL;
 #elif PRODRELEASE
             serverUrl.Environment =  Environments.PRODUCTION;
 #else

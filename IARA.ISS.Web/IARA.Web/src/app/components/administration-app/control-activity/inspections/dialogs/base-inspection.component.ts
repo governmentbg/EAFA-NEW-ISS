@@ -243,6 +243,13 @@ export abstract class BaseInspectionsComponent implements IDialogComponent {
                 panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
             });
         }
+        else if (response.error?.code === ErrorCode.CannotEditInspectionAfterLockHours) {
+            const message = this.translate.getValue('inspections.cannot-edit-inspection-after-lock-hours-error');
+            this.snackbar.open(message, undefined, {
+                duration: RequestProperties.DEFAULT.showExceptionDurationErr,
+                panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
+            });
+        }
     }
 
     private handleErrorResponse(response: HttpErrorResponse): void {
@@ -260,6 +267,9 @@ export abstract class BaseInspectionsComponent implements IDialogComponent {
             }
             else if (response.error?.code === ErrorCode.InspectionNotSigned) {
                 message = this.translate.getValue('inspections.cannot-send-to-flux-not-signed-inspection-error')
+            }
+            else if (response.error?.code === ErrorCode.CannotEditInspectionAfterLockHours) {
+                message = this.translate.getValue('inspections.cannot-edit-inspection-after-lock-hours-error');
             }
 
             if (message !== undefined && message !== null && message !== '') {

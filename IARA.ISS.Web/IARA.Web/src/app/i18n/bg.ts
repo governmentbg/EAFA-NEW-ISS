@@ -2897,6 +2897,7 @@
         'cannot-edit-inspection-of-this-inspection-type': 'Не може да се редактира инспекция от този вид',
         'inspection-send-to-flux-error': 'Настъпи грешка при изпращането на данни за доклада към FLUX',
         'cannot-send-to-flux-not-signed-inspection-error': 'Не може да се изпрати към FLUX доклад, който не е подписан',
+        'cannot-edit-inspection-after-lock-hours-error': 'Докладът не може да бъде редактиран след позволените часове',
         'user-not-inspector-title': 'Не сте добавен като инспектор',
         'user-not-inspector-msg': 'Трябва да бъдете добавен в списъка с инспектори (Администрация -> Инспектори), за да можете да започнете инспекция.',
         'okay': 'Добре',
