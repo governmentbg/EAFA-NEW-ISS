@@ -2695,6 +2695,7 @@
         'catches-missing-catch-inspection-type-error': 'За всеки ред трябва да бъде избран вид на улова',
         'catches-missing-unloaded-quantity-error': 'За всеки улов трябва да бъде попълнено разтоварено количество',
         'catch-quantity-kg': 'кг',
+        'catches-quantities-required': 'За всеки продукт трябва да бъде попълнено количество',
 
         'inspector-comment': 'Коментар на инспектора',
         'actions-taken': 'Предприети действия',

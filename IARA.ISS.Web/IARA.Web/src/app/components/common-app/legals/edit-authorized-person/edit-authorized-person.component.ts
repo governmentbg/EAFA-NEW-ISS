@@ -114,7 +114,7 @@ export class EditAuthorizedPersonComponent implements OnInit, AfterViewInit, IDi
             this.rolesForm!.get('idControl')!.valueChanges.subscribe({
                 next: () => {
                     this.roles = [...this.allRoles];
-                    const currentRoleIds: number[] = this.rolesTable.rows.map(x => x.id);
+                    const currentRoleIds: number[] = this.rolesTable.rows.filter(x => x.isActive !== false).map(x => x.id);
 
                     this.roles = this.roles.filter(x => !currentRoleIds.includes(x.value!));
                     this.roles = this.roles.slice();

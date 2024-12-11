@@ -326,7 +326,7 @@ export class EditMarketCatchComponent implements OnInit, AfterViewInit, IDialogC
         if (this.model.aquacultureId) {
             this.form.get('aquacultureControl')!.setValue(this.aquacultures.find(f => f.value == this.model.aquacultureId));
         }
-        else if (this.model.unregisteredEntityData != undefined) {
+        else if (this.model.unregisteredEntityData != undefined && this.model.logBookType === DeclarationLogBookTypeEnum.AquacultureLogBook) {
             this.aquacultureRegistered = false;
             this.form.get('aquacultureRegisteredControl')!.setValue(false);
         }

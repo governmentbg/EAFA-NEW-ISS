@@ -719,8 +719,6 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
 
     private fillForm(): void {
         this.form.get('pageNumberControl')!.setValue(this.model.pageNumber);
-        this.form.get('fillDateControl')!.setValue(this.model.fillDate);
-        //this.form.get('iaraAcceptanceDateTimeControl')!.setValue(this.model.iaraAcceptanceDateTime);
 
         if (this.isEditing) {
             this.form.get('statusControl')!.setValue(this.model.status);
@@ -798,6 +796,7 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
             this.form.get('occuranceDateTimeControl')!.setValue(moment(this.model.occuranceDateTime));
         }
 
+        this.form.get('fillDateControl')!.setValue(this.model.fillDate);
         this.form.get('filesControl')!.setValue(this.model.files);
 
         this.catchRecords.push(...this.model.catchRecords ?? []);
@@ -1443,7 +1442,12 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
 
     private onFishTripEndDateTimeChanged(endDate: Moment | null | undefined): void {
         if (endDate !== null && endDate !== undefined && endDate.isValid()) {
+            if (!this.viewMode) {
+                this.form.get('unloadDateTimeControl')!.setValue(endDate);
+            }
+
             const startDate: Moment | null | undefined = this.form.get('fishTripStartDateTimeControl')!.value;
+
             if (startDate !== null && startDate !== undefined && startDate.isValid()) {
                 const difference: DateDifference | undefined = DateUtils.getDateDifference(startDate.toDate(), endDate.toDate());
                 const daysAtSeaValue: string = this.getDaysAtSeaValue(difference);

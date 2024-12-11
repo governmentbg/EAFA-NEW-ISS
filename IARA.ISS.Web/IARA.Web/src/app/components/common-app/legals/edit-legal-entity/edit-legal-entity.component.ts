@@ -416,9 +416,21 @@ export class EditLegalEntityComponent implements OnInit, IDialogComponent {
         this.confirmDialog.open().subscribe({
             next: (ok: boolean) => {
                 if (ok) {
+                    //TODO
                     this.authorizedPeopleTable.softUndoDelete(person);
                     this.authorizedPeopleTouched = true;
                     this.form.updateValueAndValidity({ onlySelf: true });
+
+                    const authorizedPerson: AuthorizedPersonDTO  = (this.authorizedPeople.find(x => x === person) as AuthorizedPersonDTO);
+
+                    if (authorizedPerson && authorizedPerson.roles) {
+                        for (const role of authorizedPerson.roles) {
+                            role.isActive = true;
+                        }
+
+                        authorizedPerson.roles = authorizedPerson.roles.slice();
+                    }
+
                     this.buildNoPermissionsUsers();
 
                     this.showEgnAndEmailDontMatchError = false;
@@ -723,7 +735,7 @@ export class EditLegalEntityComponent implements OnInit, IDialogComponent {
             const people: AuthorizedPersonDTO[] = this.authorizedPeople as AuthorizedPersonDTO[];
 
             for (const person of people) {
-                if (!person.roles || person.roles.length === 0 || !person.roles.some(x => x.isActive ?? true)) {
+                if (!person.roles || person.roles.length === 0 || (person.isActive !== false && !person.roles.some(x => x.isActive ?? true))) {
                     return { 'userWithoutPermissions': true };
                 }
             }
