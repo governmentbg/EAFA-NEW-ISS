@@ -73,7 +73,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.DeclarationCatchDialo
                 {
                     FishTypeId = FishType.Value,
                     CatchCount = ParseHelper.ParseInteger(CatchCount),
-                    CatchQuantity = ParseHelper.ParseInteger(CatchQuantity),
+                    CatchQuantity = ParseHelper.ParseDecimal(CatchQuantity),
                     PresentationId = Presentation.Value
                 });
             }

@@ -17,18 +17,6 @@ import { InspectionLogBookPageDTO } from '@app/models/generated/dtos/InspectionL
 import { DeclarationLogBookTypeEnum } from '@app/enums/declaration-log-book-type.enum';
 import { InspectedDeclarationCatchDTO } from '@app/models/generated/dtos/InspectedDeclarationCatchDTO';
 
-function groupBy(array: any[], f: any): any[][] {
-    const groups: any = {};
-    array.forEach(function (o) {
-        const group = JSON.stringify(f(o));
-        groups[group] = groups[group] || [];
-        groups[group].push(o);
-    });
-    return Object.keys(groups).map(function (group) {
-        return groups[group];
-    })
-}
-
 @Component({
     selector: 'market-catches-table',
     templateUrl: './market-catches-table.component.html'
@@ -87,6 +75,7 @@ export class MarketCatchesTableComponent extends CustomFormControl<InspectionLog
                 this.pages = value;
                 this.recalculateCatchQuantitySums();
                 this.onChanged(this.getValue());
+                this.form.updateValueAndValidity();
             });
         }
         else {
@@ -158,6 +147,7 @@ export class MarketCatchesTableComponent extends CustomFormControl<InspectionLog
                 this.pages = this.pages.slice();
                 this.recalculateCatchQuantitySums();
                 this.onChanged(this.getValue());
+                this.form.updateValueAndValidity();
             }
         });
     }
@@ -174,30 +164,18 @@ export class MarketCatchesTableComponent extends CustomFormControl<InspectionLog
                     this.pages.splice(this.pages.indexOf(inspectedCatch.data), 1);
                     this.onChanged(this.getValue());
                     this.recalculateCatchQuantitySums();
+                    this.form.updateValueAndValidity();
                 }
             }
         });
     }
 
     protected buildForm(): AbstractControl {
-        return new FormControl(undefined, [this.catchesValidator(), this.minLengthValidator()]);
+        return new FormControl(undefined, [this.minLengthValidator(), this.quantitiesValidator()]);
     }
 
     protected getValue(): InspectionLogBookPageDTO[] {
         return this.pages;
-    }
-
-    private catchesValidator(): ValidatorFn {
-        return (): ValidationErrors | null => {
-            if (this.pages !== undefined && this.pages !== null) {
-                const result = groupBy(this.pages, ((o: InspectedCatchTableModel) => ([o.fishId, o.catchInspectionTypeId, o.turbotSizeGroupId])));
-
-                if (result.find((f: any[]) => f.length > 1)) {
-                    return { 'catchesMatch': true };
-                }
-            }
-            return null;
-        };
     }
 
     private minLengthValidator(): ValidatorFn {
@@ -205,6 +183,20 @@ export class MarketCatchesTableComponent extends CustomFormControl<InspectionLog
             if (this.pages !== undefined && this.pages !== null) {
                 if (this.pages.length === 0) {
                     return { 'minLength': true };
+                }
+            }
+            return null;
+        };
+    }
+
+    private quantitiesValidator(): ValidatorFn {
+        return (): ValidationErrors | null => {
+            if (this.pages !== undefined && this.pages !== null && this.pages.length > 0) {
+                for (const page of this.pages) {
+                    if (page.inspectionCatchMeasures !== null && page.inspectionCatchMeasures !== undefined
+                        && page.inspectionCatchMeasures.some(x => x.catchQuantity === undefined || x.catchQuantity === null || Number(x.catchQuantity) === 0)) {
+                        return { 'catchMeasureQuantityError': true };
+                    }
                 }
             }
             return null;

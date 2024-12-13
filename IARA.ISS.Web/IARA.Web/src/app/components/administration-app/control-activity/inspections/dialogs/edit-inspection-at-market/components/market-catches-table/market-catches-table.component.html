@@ -73,8 +73,8 @@
         </mat-hint>
     </div>
 
-    <mat-error *ngIf="control.errors?.catchesMatch === true">
-        * {{ 'inspections.catches-match' | tlTranslate }}
+    <mat-error *ngIf="control.errors?.catchMeasureQuantityError === true">
+        * {{ 'inspections.catches-quantities-required' | tlTranslate }}
     </mat-error>
 
     <mat-error *ngIf="control.errors?.minLength === true">

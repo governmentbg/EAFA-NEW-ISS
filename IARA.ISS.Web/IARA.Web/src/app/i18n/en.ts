@@ -2637,6 +2637,7 @@
         'catches-missing-catch-inspection-type-error': 'Catch type is missing',
         'catches-missing-unloaded-quantity-error': 'Unloaded quantity is missing',
         'catch-quantity-kg': 'kg',
+        'catches-quantities-required': 'Unloaded quantity is missing',
 
         'inspector-comment': 'Inspector\'s comment',
         'actions-taken': 'Actions taken',
