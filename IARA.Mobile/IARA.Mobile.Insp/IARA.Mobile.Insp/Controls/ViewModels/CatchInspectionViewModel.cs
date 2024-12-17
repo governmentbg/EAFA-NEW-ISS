@@ -5,6 +5,7 @@ using IARA.Mobile.Insp.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Insp.Base;
 using IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.ShipPickerDialog;
 using IARA.Mobile.Insp.Helpers;
+using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -16,9 +17,10 @@ using TechnoLogica.Xamarin.ViewModels.Models;
 
 namespace IARA.Mobile.Insp.Controls.ViewModels
 {
-    public class CatchInspectionViewModel : ViewModel
+    public class CatchInspectionViewModel : ViewModel, IDisposable
     {
         private string _shipText;
+        private bool isDisposed = false;
         private bool _isUnloadedQuantityRequired;
         public int LogBookId { get; set; }
         public CatchInspectionViewModel(InspectionPageViewModel inspection, CatchInspectionsViewModel catchInspections, bool isUnloadedQuantityRequired = false)
@@ -54,7 +56,15 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
         }
         ~CatchInspectionViewModel()
         {
-            Unsubscribe();
+            Dispose();
+        }
+        public void Dispose()
+        {
+            if (!isDisposed)
+            {
+                isDisposed = true;
+                Unsubscribe();
+            }
         }
 
         private void OnValueChanged(object s, PropertyChangedEventArgs e)

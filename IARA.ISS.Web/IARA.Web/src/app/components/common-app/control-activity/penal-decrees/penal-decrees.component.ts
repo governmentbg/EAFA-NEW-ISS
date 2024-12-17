@@ -46,6 +46,7 @@ import { ErrorCode, ErrorModel } from '@app/models/common/exception.model';
 import { RequestProperties } from '@app/shared/services/request-properties';
 import { AuanDrafterNomenclatureDTO } from '@app/models/generated/dtos/AuanDrafterNomenclatureDTO';
 import { InspectorUserNomenclatureDTO } from '@app/models/generated/dtos/InspectorUserNomenclatureDTO';
+import { AuanStatusEnum } from '@app/enums/auan-status.enum';
 
 @Component({
     selector: 'penal-decrees',
@@ -61,8 +62,11 @@ export class PenalDecreesComponent implements OnInit, AfterViewInit {
     public translate: FuseTranslationLoaderService;
     public form!: FormGroup;
 
+    public statusesEnum: typeof AuanStatusEnum = AuanStatusEnum;
+
     public territoryUnits: NomenclatureDTO<number>[] = [];
     public statuses: NomenclatureDTO<number>[] = [];
+    public types: NomenclatureDTO<number>[] = [];
     public drafters: AuanDrafterNomenclatureDTO[] = [];
     public issuers: InspectorUserNomenclatureDTO[] = [];
     public sanctions: NomenclatureDTO<number>[] = [];
@@ -71,6 +75,7 @@ export class PenalDecreesComponent implements OnInit, AfterViewInit {
     public appliances: NomenclatureDTO<number>[] = [];
     public deliveryTypes: NomenclatureDTO<number>[] = [];
     public deliveryConfirmationTypes: NomenclatureDTO<number>[] = [];
+    public penalDecreeStatuses: NomenclatureDTO<AuanStatusEnum>[] = [];
 
     public readonly canAddRecords: boolean;
     public readonly canEditRecords: boolean;
@@ -83,6 +88,9 @@ export class PenalDecreesComponent implements OnInit, AfterViewInit {
     public readonly canDeleteStatusRecords: boolean;
     public readonly canRestoreStatusRecords: boolean;
     public readonly canReadPointsRecords: boolean;
+    public readonly canSubmitRecords: boolean;
+    public readonly canCancelRecords: boolean;
+    public readonly canReturnForFurtherCorrectionsRecords: boolean;
 
     public readonly penalDecreeTypeEnum: typeof PenalDecreeTypeEnum = PenalDecreeTypeEnum;
 
@@ -150,6 +158,27 @@ export class PenalDecreesComponent implements OnInit, AfterViewInit {
         this.canDeleteStatusRecords = permissions.has(PermissionsEnum.PenalDecreeStatusesDeleteRecords);
         this.canRestoreStatusRecords = permissions.has(PermissionsEnum.PenalDecreeStatusesRestoreRecords);
         this.canReadPointsRecords = permissions.hasAny(PermissionsEnum.AwardedPointsRead, PermissionsEnum.AwardedPointsReadAll);
+        this.canSubmitRecords = permissions.has(PermissionsEnum.PenalDecreesSubmitRecords);
+        this.canCancelRecords = permissions.has(PermissionsEnum.PenalDecreesCancelRecords);
+        this.canReturnForFurtherCorrectionsRecords = permissions.has(PermissionsEnum.PenalDecreescanReturnForFurtherCorrectionsRecords)
+
+        this.penalDecreeStatuses = [
+            new NomenclatureDTO<AuanStatusEnum>({
+                value: AuanStatusEnum.Draft,
+                displayName: this.translate.getValue('penal-decrees.penal-decree-status-draft'),
+                isActive: true
+            }),
+            new NomenclatureDTO<AuanStatusEnum>({
+                value: AuanStatusEnum.Submitted,
+                displayName: this.translate.getValue('penal-decrees.penal-decree-status-submitted'),
+                isActive: true
+            }),
+            new NomenclatureDTO<AuanStatusEnum>({
+                value: AuanStatusEnum.Canceled,
+                displayName: this.translate.getValue('penal-decrees.penal-decree-status-canceled'),
+                isActive: true
+            })
+        ];
 
         this.buildForm();
     }
@@ -230,6 +259,12 @@ export class PenalDecreesComponent implements OnInit, AfterViewInit {
                 this.issuers = issuers;
             }
         });
+
+        this.service.getPenalDecreeTypes().subscribe({
+            next: (types: NomenclatureDTO<number>[]) => {
+                this.types = types;
+            }
+        });
     }
 
     public ngAfterViewInit(): void {
@@ -257,6 +292,7 @@ export class PenalDecreesComponent implements OnInit, AfterViewInit {
                 id: decree.id,
                 auanId: decree.auanId,
                 typeId: decree.typeId,
+                status: decree.penalDecreeStatus,
                 isReadonly: viewMode
             });
 
@@ -270,14 +306,35 @@ export class PenalDecreesComponent implements OnInit, AfterViewInit {
                 ? this.translate.getValue('penal-decrees.print')
                 : this.translate.getValue('penal-decrees.save-print');
 
-            rightButtons.push({
-                id: 'print',
-                color: 'accent',
-                translateValue: printBtnTitle,
-                isVisibleInViewMode: true
-            });
+            if (decree.isActive) {
+                if (!viewMode && decree.penalDecreeStatus === AuanStatusEnum.Draft) {
+                    rightButtons.push({
+                        id: 'save-draft',
+                        color: 'primary',
+                        translateValue: this.translate.getValue('penal-decrees.save-draft'),
+                        isVisibleInViewMode: true
+                    });
+                }
+                else if (decree.penalDecreeStatus === AuanStatusEnum.Submitted && this.canReturnForFurtherCorrectionsRecords) {
+                    rightButtons.push({
+                        id: 'more-corrections-needed',
+                        color: 'accent',
+                        translateValue: this.translate.getValue('penal-decrees.more-corrections-needed'),
+                        isVisibleInViewMode: true
+                    });
+                }
 
-            this.openEditDialog(data, decree.decreeType!, viewMode, rightButtons, auditBtn);
+                if (this.canSubmitRecords) {
+                    rightButtons.push({
+                        id: 'print',
+                        color: 'accent',
+                        translateValue: printBtnTitle,
+                        isVisibleInViewMode: true
+                    });
+                }
+            }
+
+            this.openEditDialog(data, decree.decreeType!, viewMode, rightButtons, auditBtn, decree.isActive ?? true);
         }
         else {
             const title: string = this.translate.getValue('penal-decrees.choose-auan-dialog-title');
@@ -578,7 +635,9 @@ export class PenalDecreesComponent implements OnInit, AfterViewInit {
             identifierControl: new FormControl(),
             inspEntityFirstNameControl: new FormControl(),
             inspEntityMiddleNameControl: new FormControl(),
-            inspEntityLastNameControl: new FormControl()
+            inspEntityLastNameControl: new FormControl(),
+            penalDecreeStatusControl: new FormControl(),
+            penalDecreeTypesControl: new FormControl()
         });
     }
 
@@ -605,7 +664,8 @@ export class PenalDecreesComponent implements OnInit, AfterViewInit {
             deliveryTypeIds: filters.getValue('deliveryTypeControl'),
             inspectedEntityFirstName: filters.getValue('inspEntityFirstNameControl'),
             inspectedEntityMiddleName: filters.getValue('inspEntityMiddleNameControl'),
-            inspectedEntityLastName: filters.getValue('inspEntityLastNameControl')
+            inspectedEntityLastName: filters.getValue('inspEntityLastNameControl'),
+            penalDecreeTypeIds: filters.getValue('penalDecreeTypesControl')
         });
 
         const fineAmount: RangeInputData | undefined = filters.getValue('fineAmountControl');
@@ -634,6 +694,13 @@ export class PenalDecreesComponent implements OnInit, AfterViewInit {
             }
         }
 
+        const statuses: AuanStatusEnum[] | undefined = filters.getValue('penalDecreeStatusControl');
+        if (statuses !== undefined && statuses !== null) {
+            result.penalDecreeStatuses = statuses.map((status: AuanStatusEnum) => {
+                return AuanStatusEnum[status];
+            });
+        }
+
         return result;
     }
 
@@ -642,8 +709,35 @@ export class PenalDecreesComponent implements OnInit, AfterViewInit {
         type: PenalDecreeTypeEnum,
         viewMode: boolean,
         rightButtons: IActionInfo[],
-        auditBtn: IHeaderAuditButton | undefined
+        auditBtn: IHeaderAuditButton | undefined,
+        isActive: boolean = true
     ) {
+        const saveBtn: IActionInfo = {
+            id: 'save',
+            color: 'accent',
+            hidden: !this.canSubmitRecords,
+            translateValue: this.translate.getValue('common.save')
+        };
+
+        const leftButtons: IActionInfo[] = [];
+        if (this.canCancelRecords && isActive) {
+            if (data.status === AuanStatusEnum.Canceled) {
+                leftButtons.push({
+                    id: 'activate-decree',
+                    color: 'accent',
+                    translateValue: 'penal-decrees.activate',
+                    isVisibleInViewMode: true
+                });
+            }
+            else {
+                leftButtons.push({
+                    id: 'cancel-decree',
+                    color: 'warn',
+                    translateValue: 'penal-decrees.cancel',
+                    isVisibleInViewMode: data.status === AuanStatusEnum.Submitted
+                });
+            }
+        }
 
         if (type === PenalDecreeTypeEnum.PenalDecree) {
             let title: string;
@@ -668,7 +762,9 @@ export class PenalDecreesComponent implements OnInit, AfterViewInit {
                 translteService: this.translate,
                 disableDialogClose: true,
                 viewMode: viewMode,
-                rightSideActionsCollection: rightButtons
+                saveBtn: saveBtn,
+                rightSideActionsCollection: rightButtons,
+                leftSideActionsCollection: leftButtons
             }, '1400px');
 
             dialog.subscribe((entry?: PenalDecreeEditDTO) => {
@@ -700,7 +796,9 @@ export class PenalDecreesComponent implements OnInit, AfterViewInit {
                 translteService: this.translate,
                 disableDialogClose: true,
                 viewMode: viewMode,
-                rightSideActionsCollection: rightButtons
+                saveBtn: saveBtn,
+                rightSideActionsCollection: rightButtons,
+                leftSideActionsCollection: leftButtons
             }, '1400px');
 
             dialog.subscribe((entry?: PenalDecreeEditDTO) => {
@@ -732,7 +830,9 @@ export class PenalDecreesComponent implements OnInit, AfterViewInit {
                 translteService: this.translate,
                 disableDialogClose: true,
                 viewMode: viewMode,
-                rightSideActionsCollection: rightButtons
+                saveBtn: saveBtn,
+                rightSideActionsCollection: rightButtons,
+                leftSideActionsCollection: leftButtons
             }, '1400px');
 
             dialog.subscribe((entry?: PenalDecreeEditDTO) => {
@@ -764,7 +864,9 @@ export class PenalDecreesComponent implements OnInit, AfterViewInit {
                 translteService: this.translate,
                 disableDialogClose: true,
                 viewMode: viewMode,
-                rightSideActionsCollection: rightButtons
+                saveBtn: saveBtn,
+                rightSideActionsCollection: rightButtons,
+                leftSideActionsCollection: leftButtons
             }, '1400px');
 
             dialog.subscribe((entry?: PenalDecreeEditDTO) => {

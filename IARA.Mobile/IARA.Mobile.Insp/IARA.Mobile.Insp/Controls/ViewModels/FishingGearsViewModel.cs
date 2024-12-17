@@ -5,6 +5,7 @@ using IARA.Mobile.Insp.Base;
 using IARA.Mobile.Insp.Domain.Enums;
 using IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.FishingGearDialog;
 using IARA.Mobile.Insp.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -46,6 +47,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
         public ICommand Add { get; }
         public ICommand Edit { get; }
         public ICommand Remove { get; }
+        public ICommand GenerateFromPermitLicense { get; set; }
 
         public void OnEdit(List<InspectedFishingGearDto> fishingGears, List<int> permitIds)
         {

@@ -2840,6 +2840,9 @@
         'permit-licenses-must-be-checked': 'Трябва всички удостоверения да бъдат проверени',
         'permits-must-be-checked': 'Трябва всички разрешителни да бъдат проверени',
         'fishing-gear-must-be-checked': 'Трябва всички риболовни уреди да бъдат проверени',
+        'log-book-page-fishing-gear-not-added': 'Има инспектирани улови, а липсват инспектирани уреди',
+        'fishing-gear-without-check-will-not-be-saved': 'Уредите без налична проверка няма да бъдат запазени',
+        'generate-fishing-gears-from-ship-permit-licenses': 'Добавяне на всички уреди на кораба',
         'fishing-ship': 'Риболовен кораб',
         'dalyan': 'Далян',
         'mark-reason': 'Причина за маркирането',
@@ -3516,6 +3519,7 @@
         'has-pingers': 'Наличие на устройство за отблъскване на китоподобни (пингър)',
         'mark-number': 'Номер',
         'mark-status': 'Статус',
+        'mark-created-on': 'Създадена на',
         'pinger-number': 'Номер',
         'pinger-status': 'Статус',
         'pinger-model': 'Модел',
@@ -5919,6 +5923,8 @@
         'filters-is-delivered': 'Връчени',
         'filters-fine-amount': 'Размер на глобата',
         'filters-delivery-type': 'Начини за потвърждение за връчване',
+        'filters-penal-decree-types': 'Тип',
+        'filters-penal-decree-statuses': 'Статус на постановлението',
 
         'table-penal-decree-num': '№ на наказателно постановление',
         'table-penal-decree-name': 'Тип',
@@ -5927,6 +5933,7 @@
         'table-issue-date': 'Дата на съставяне',
         'table-issuer': 'Административнонаказващ орган',
         'table-status': 'Статус',
+        'table-penal-decree-status-name': 'Статус на постановлението',
         'statuses': 'Статуси',
 
         'delivered': 'Връчени',
@@ -6135,6 +6142,32 @@
         'status-details-partially-paid': 'Изплатена сума (лв.)',
         'status-details-withdraw-date': 'Дата на отмяна',
         'status-details-change-date': 'Дата на промяна',
+
+        'penal-decree-status-draft': 'Чернова',
+        'penal-decree-status-canceled': 'Анулиран',
+        'penal-decree-status-submitted': 'Подаден',
+
+        'cancel': 'Анулирай',
+        'activate': 'Възобнови',
+        'save-draft': 'Запази чернова',
+        'more-corrections-needed': 'Върни за корекции',
+
+        'cancel-penal-decree-confirm-dialog-title': 'Анулиране на наказателно постановление',
+        'cancel-penal-decree-confirm-dialog-message': 'Сигурни ли сте, че искате да анулирате това наказателно постановление?',
+        'cancel-penal-decree-confirm-dialog-ok-btn-label': 'Анулиране',
+
+        'cancel-resolution-confirm-dialog-title': 'Анулиране на резолюция',
+        'cancel-resolution-confirm-dialog-message': 'Сигурни ли сте, че искате да анулирате тази резолюция?',
+        'cancel-resolution-confirm-dialog-ok-btn-label': 'Анулиране',
+
+        'cancel-agreement-confirm-dialog-title': 'Анулиране на споразумение',
+        'cancel-agreement-confirm-dialog-message': 'Сигурни ли сте, че искате да анулирате това споразумение?',
+        'cancel-agreement-confirm-dialog-ok-btn-label': 'Анулиране',
+
+        'cancel-warning-confirm-dialog-title': 'Анулиране на предупреждение',
+        'cancel-warning-confirm-dialog-message': 'Сигурни ли сте, че искате да анулирате това предупреждение?',
+        'cancel-warning-confirm-dialog-ok-btn-label': 'Анулиране',
+        'cannot-cancel-decree-with-penal-points': 'Не можете да анулирате наказателно постановление със свързани към него активни присъдени точки',
 
         'edit-decree-payment-schedule': 'План за погасяване на задължението',
         'edit-payment-schedule-date': 'Дата',

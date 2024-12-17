@@ -9,6 +9,16 @@
                    [showAddButton]="!isDisabled"
                    (addButtonClicked)="addEditEntry()"
                    (activeRecordChanged)="addEditEntry($event)">
+        <div *ngIf="!viewMode && showGenerateBtn"
+             datatable-add-buttons
+             fxLayout="row"
+             fxLayoutGap="1em">
+            <button mat-raised-button color="accent"
+                    (click)="generateFishingGears()"
+                    style="margin-left:auto;">
+                {{ 'inspections.generate-fishing-gears-from-ship-permit-licenses' | tlTranslate }}
+            </button>
+        </div>
         <data-column [flexRate]="0.4"
                      propertyName="type"
                      columnName="{{ 'inspections.fishing-gear-type' | tlTranslate }}">

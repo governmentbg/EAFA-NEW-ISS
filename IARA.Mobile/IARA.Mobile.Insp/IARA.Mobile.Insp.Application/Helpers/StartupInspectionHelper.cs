@@ -216,6 +216,7 @@ namespace IARA.Mobile.Insp.Application.Helpers
                     Quantity = f.Quantity,
                     UnloadedQuantity = f.UnloadedQuantity,
                     TurbotSizeGroupId = f.TurbotSizeGroupId,
+                    FishingGearPermitId = f.FishingGearPermitId,
                     CatchZoneId = f.CatchZoneId,
                 },
                 f => f.Id

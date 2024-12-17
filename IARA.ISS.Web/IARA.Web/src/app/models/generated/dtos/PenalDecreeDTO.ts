@@ -3,6 +3,7 @@
 import { StrictlyTyped } from '@app/shared/decorators/strictly-typed.decorator';
 import { PenalDecreeStatusEditDTO } from './PenalDecreeStatusEditDTO';
 import { PenalDecreeTypeEnum } from '@app/enums/penal-decree-type.enum';
+import { AuanStatusEnum } from '@app/enums/auan-status.enum';
 
 export class PenalDecreeDTO { 
     public constructor(obj?: Partial<PenalDecreeDTO>) {
@@ -38,6 +39,12 @@ export class PenalDecreeDTO {
 
     @StrictlyTyped(String)
     public status?: string;
+
+    @StrictlyTyped(Number)
+    public penalDecreeStatus?: AuanStatusEnum;
+
+    @StrictlyTyped(String)
+    public penalDecreeStatusName?: string;
 
     @StrictlyTyped(String)
     public issuer?: string;

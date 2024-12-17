@@ -152,6 +152,28 @@
                            tooltipResourceName="penal-decrees.filters-delivery-type-helper">
                 </tl-select>
             </div>
+
+            <!-- Тип, статус/Чернова, Подадено, Анулирано/ -->
+            <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="1em">
+                <tl-select fxFlex="25"
+                           formControlName="penalDecreeTypesControl"
+                           [options]="types"
+                           [isMultiple]="true"
+                           label="{{ 'penal-decrees.filters-penal-decree-types' | tlTranslate }}"
+                           tooltipResourceName="penal-decrees.filters-penal-decree-types-helper">
+                </tl-select>
+
+                <tl-select fxFlex="25"
+                           formControlName="penalDecreeStatusControl"
+                           [options]="penalDecreeStatuses"
+                           [isMultiple]="true"
+                           label="{{ 'penal-decrees.filters-penal-decree-statuses' | tlTranslate }}"
+                           tooltipResourceName="penal-decrees.filters-penal-decree-statuses-helper">
+                </tl-select>
+
+                <div fxFlex="25"></div>
+                <div fxFlex="25"></div>
+            </div>
         </div>
     </search-panel>
 
@@ -220,6 +242,11 @@
                              columnName="{{ 'penal-decrees.table-issuer' | tlTranslate }}">
                 </data-column>
 
+                <data-column propertyName="penalDecreeStatusName"
+                             [flexRate]="0.3"
+                             columnName="{{ 'penal-decrees.table-penal-decree-status-name' | tlTranslate }}">
+                </data-column>
+
                 <data-template-column [flexRate]="0.4" [cellClass]="'justify-center'">
                     <ng-template let-row="row" ngx-datatable-cell-template>
                         <!--Наказателни постановления-->
@@ -238,7 +265,11 @@
                                             tooltipText="{{ 'penal-decrees.view-penal-decree' | tlTranslate }}">
                             </tl-icon-button>
 
-                            <tl-icon-button *ngIf="row.isActive && canEditRecords && (auanId === null || auanId === undefined)"
+                            <tl-icon-button *ngIf="row.isActive
+                                                    && canEditRecords
+                                                    && row.penalDecreeStatus !== statusesEnum.Canceled
+                                                    && row.penalDecreeStatus !== statusesEnum.Submitted
+                                                    && (auanId === null || auanId === undefined)"
                                             icon="edit"
                                             (buttonClicked)="addEditPenalDecree(row.data, false)"
                                             iconClass="accent-color"
@@ -276,7 +307,11 @@
                                             tooltipText="{{ 'penal-decrees.view-agreement' | tlTranslate }}">
                             </tl-icon-button>
 
-                            <tl-icon-button *ngIf="row.isActive && canEditRecords && (auanId === null || auanId === undefined)"
+                            <tl-icon-button *ngIf="row.isActive
+                                                    && canEditRecords
+                                                    && row.penalDecreeStatus !== statusesEnum.Canceled
+                                                    && row.penalDecreeStatus !== statusesEnum.Submitted
+                                                    && (auanId === null || auanId === undefined)"
                                             icon="edit"
                                             (buttonClicked)="addEditPenalDecree(row.data, false)"
                                             iconClass="accent-color"
@@ -314,7 +349,11 @@
                                             tooltipText="{{ 'penal-decrees.view-warning' | tlTranslate }}">
                             </tl-icon-button>
 
-                            <tl-icon-button *ngIf="row.isActive && canEditRecords && (auanId === null || auanId === undefined)"
+                            <tl-icon-button *ngIf="row.isActive
+                                                    && canEditRecords
+                                                    && row.penalDecreeStatus !== statusesEnum.Canceled
+                                                    && row.penalDecreeStatus !== statusesEnum.Submitted
+                                                    && (auanId === null || auanId === undefined)"
                                             icon="edit"
                                             (buttonClicked)="addEditPenalDecree(row.data, false)"
                                             iconClass="accent-color"
@@ -352,7 +391,11 @@
                                             tooltipText="{{ 'penal-decrees.view-resolution' | tlTranslate }}">
                             </tl-icon-button>
 
-                            <tl-icon-button *ngIf="row.isActive && canEditRecords && (auanId === null || auanId === undefined)"
+                            <tl-icon-button *ngIf="row.isActive
+                                                    && canEditRecords
+                                                    && row.penalDecreeStatus !== statusesEnum.Canceled
+                                                    && row.penalDecreeStatus !== statusesEnum.Submitted
+                                                    && (auanId === null || auanId === undefined)"
                                             icon="edit"
                                             (buttonClicked)="addEditPenalDecree(row.data, false)"
                                             iconClass="accent-color"

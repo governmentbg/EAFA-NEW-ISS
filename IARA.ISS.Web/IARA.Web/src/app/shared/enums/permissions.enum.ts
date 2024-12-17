@@ -564,6 +564,9 @@
     PenalDecreesEditRecords = 'PenalDecreesEditRecords',
     PenalDecreesDeleteRecords = 'PenalDecreesDeleteRecords',
     PenalDecreesRestoreRecords = 'PenalDecreesRestoreRecords',
+    PenalDecreesSubmitRecords = 'PenalDecreesSubmitRecords',
+    PenalDecreesCancelRecords = 'PenalDecreesCancelRecords',
+    PenalDecreescanReturnForFurtherCorrectionsRecords = 'PenalDecreescanReturnForFurtherCorrectionsRecords',
 
     PenalDecreeStatusesRead = 'PenalDecreeStatusesRead',
     PenalDecreeStatusesAddRecords = 'PenalDecreeStatusesAddRecords',

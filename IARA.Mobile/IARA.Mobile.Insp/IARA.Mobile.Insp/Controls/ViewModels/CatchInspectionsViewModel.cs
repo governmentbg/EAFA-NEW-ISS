@@ -25,9 +25,11 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
         private List<CatchZoneNomenclatureDto> _catchAreas;
         private List<SelectNomenclatureDto> _fishSexTypes;
         private List<SelectNomenclatureDto> _turbotSizeGroups;
+        private FishingGearsViewModel _fishingGears;
         private string _summary;
         public CatchInspectionsViewModel(
             InspectionPageViewModel inspection,
+            FishingGearsViewModel fishingGears,
             bool showCatchArea = true,
             bool showAllowedDeviation = true,
             bool showOriginShip = false,
@@ -177,6 +179,20 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
                 {
                     viewModel.Ship = f.OriginShip;
                     viewModel.ShipText = $"{f.OriginShip.Name} ({f.OriginShip.CFR})";
+                }
+
+                if (_fishingGears != null)
+                {
+                    var gears = _fishingGears.AllFishingGears
+                            .FindAll(fg => fg.Dto.PermittedFishingGear == null || fg.Dto.PermittedFishingGear.PermitId.Value == f.FishingGearPermitId);
+
+                    foreach (var gear in gears)
+                    {
+                        gear.LogBookId = f.LogBookId;
+                        gear.PermitId = f.FishingGearPermitId;
+                    }
+
+                    _fishingGears.FishingGears.Value.AddRange(gears);
                 }
 
                 return viewModel;

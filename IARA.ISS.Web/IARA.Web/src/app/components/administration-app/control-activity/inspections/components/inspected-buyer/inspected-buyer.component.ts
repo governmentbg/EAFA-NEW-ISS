@@ -269,7 +269,8 @@ export class InspectedBuyerComponent extends CustomFormControl<InspectionSubject
 
             this.form.get('addressControl')!.disable();
             this.form.get('countryControl')!.disable();
-        } else {
+        }
+        else {
             this.form.get('buyerControl')!.clearValidators();
             this.form.get('addressControl')!.setValidators([Validators.required, Validators.maxLength(4000)]);
             this.form.get('countryControl')!.setValidators([Validators.required]);

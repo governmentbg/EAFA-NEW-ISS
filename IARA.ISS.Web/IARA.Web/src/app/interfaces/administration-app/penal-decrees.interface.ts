@@ -13,6 +13,7 @@ import { AuanConfiscationActionsNomenclatureDTO } from '@app/models/generated/dt
 import { InspDeliveryTypesNomenclatureDTO } from '@app/models/generated/dtos/InspDeliveryTypesNomenclatureDTO';
 import { PenalDecreeStatusEditDTO } from '@app/models/generated/dtos/PenalDecreeStatusEditDTO';
 import { InspectorUserNomenclatureDTO } from '@app/models/generated/dtos/InspectorUserNomenclatureDTO';
+import { AuanStatusEnum } from '@app/enums/auan-status.enum';
 
 export interface IPenalDecreesService extends IBaseAuditService {
     getAllPenalDecrees(request: GridRequestModel<PenalDecreesFilters>): Observable<GridResultModel<PenalDecreeDTO>>;
@@ -46,4 +47,5 @@ export interface IPenalDecreesService extends IBaseAuditService {
     editPenalDecreeStatus(status: PenalDecreeStatusEditDTO): Observable<void>;
     deletePenalDecreeStatus(id: number): Observable<void>;
     undoDeletePenalDecreeStatus(id: number): Observable<void>;
+    updateDecreeStatus(decreeId: number, status: AuanStatusEnum): Observable<void>;
 }

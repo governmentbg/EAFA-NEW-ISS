@@ -123,6 +123,7 @@ export class FishingGearsComponent extends CustomFormControl<FishingGearDTO[]> i
                 readOnly: this.isReadonly || viewMode,
                 pageCode: this.pageCode,
                 isDunabe: this.isDunabe,
+                isApplication: this.isApplication,
                 appliedTariffCodes: this.appliedTariffs
             });
 
@@ -145,7 +146,8 @@ export class FishingGearsComponent extends CustomFormControl<FishingGearDTO[]> i
             data = new EditFishingGearDialogParamsModel({
                 pageCode: this.pageCode,
                 isDunabe: this.isDunabe,
-                appliedTariffCodes: this.appliedTariffs
+                appliedTariffCodes: this.appliedTariffs,
+                isApplication: this.isApplication
             });
 
             title = this.translate.getValue('fishing-gears.add-fishing-gear-dialog-title');

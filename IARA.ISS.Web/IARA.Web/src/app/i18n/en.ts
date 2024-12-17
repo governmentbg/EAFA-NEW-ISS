@@ -2778,6 +2778,9 @@
         'permit-licenses-must-be-checked': 'All permit licenses must be checked',
         'permits-must-be-checked': 'All permits must be checked',
         'fishing-gear-must-be-checked': 'All fishing gears must be checked',
+        'log-book-page-fishing-gear-not-added': 'There are inspected catches but there are no inspected gears',
+        'fishing-gear-without-check-will-not-be-saved': 'Gears without check will not be saved',
+        'generate-fishing-gears-from-ship-permit-licenses': 'Generate from ship permit licenses',
         'fishing-ship': 'Fishing ship',
         'dalyan': 'Pound net',
         'mark-reason': 'Check reason',
@@ -3458,6 +3461,7 @@
         'has-pingers': 'Existence of a device for repelling cetaceans (pinger)',
         'mark-number': 'Number',
         'mark-status': 'Status',
+        'mark-created-on': 'Created on',
         'pinger-number': 'Number',
         'pinger-status': 'Status',
         'pinger-model': 'Model',
@@ -5856,6 +5860,8 @@
         'filters-is-delivered': 'Delivered',
         'filters-fine-amount': 'Fine amount',
         'filters-delivery-type': 'Delivery type',
+        'filters-penal-decree-types': 'Type',
+        'filters-penal-decree-statuses': 'Penal decree status',
 
         'table-penal-decree-num': 'Penal decree no.',
         'table-penal-decree-name': 'Type',
@@ -5863,6 +5869,7 @@
         'table-inspected-entity': 'Inspected entity',
         'table-issue-date': 'Issue date',
         'table-issuer': 'Issuer',
+        'table-penal-decree-status-name': 'Penal decree status',
         'statuses': 'Statuses',
 
         'delivered': 'Delivered',
@@ -6066,6 +6073,32 @@
         'status-details-partially-paid': 'Amount',
         'status-details-withdraw-date': 'Withwrawal date',
         'status-details-change-date': 'Enactment date',
+
+        'penal-decree-status-draft': 'Draft',
+        'penal-decree-status-canceled': 'Canceled',
+        'penal-decree-status-submitted': 'Submitted',
+
+        'cancel': 'Cancel',
+        'activate': 'Activate',
+        'save-draft': 'Save draft',
+        'more-corrections-needed': 'More corrections needed',
+
+        'cancel-penal-decree-confirm-dialog-title': 'Penal decree cancellation',
+        'cancel-penal-decree-confirm-dialog-message': 'Are you sure you want to cancel this penal decree?',
+        'cancel-penal-decree-confirm-dialog-ok-btn-label': 'Cancel',
+
+        'cancel-resolution-confirm-dialog-title': 'Resolution cancellation',
+        'cancel-resolution-confirm-dialog-message': 'Are you sure you want to cancel this resolution?',
+        'cancel-resolution-confirm-dialog-ok-btn-label': 'Cancel',
+
+        'cancel-agreement-confirm-dialog-title': 'Agreement cancellation',
+        'cancel-agreement-confirm-dialog-message': 'Are you sure you want to cancel this agreement?',
+        'cancel-agreement-confirm-dialog-ok-btn-label': 'Cancel',
+
+        'cancel-warning-confirm-dialog-title': 'Warning cancellation',
+        'cancel-warning-confirm-dialog-message': 'Are you sure you want to cancel this warning?',
+        'cancel-warning-confirm-dialog-ok-btn-label': 'Cancel',
+        'cannot-cancel-decree-with-penal-points': 'You cannot cancel a penal decree with penal points',
 
         'edit-decree-payment-schedule': 'Payment schedule',
         'edit-payment-schedule-date': 'Date',

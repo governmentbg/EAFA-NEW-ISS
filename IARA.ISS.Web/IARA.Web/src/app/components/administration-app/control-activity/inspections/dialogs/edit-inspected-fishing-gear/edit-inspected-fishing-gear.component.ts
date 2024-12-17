@@ -20,6 +20,7 @@ import { FishingGearMarkDTO } from '@app/models/generated/dtos/FishingGearMarkDT
 import { FishingGearPingerDTO } from '@app/models/generated/dtos/FishingGearPingerDTO';
 import { FishingGearManipulationService } from '@app/components/common-app/commercial-fishing/components/fishing-gears/services/fishing-gear-manipulation.service';
 import { PrefixInputDTO } from '@app/models/generated/dtos/PrefixInputDTO';
+import { PageCodeEnum } from '@app/enums/page-code.enum';
 
 @Component({
     selector: 'edit-inspected-fishing-gear',
@@ -40,6 +41,8 @@ export class EditInspectedFishingGearComponent implements OnInit, IDialogCompone
     public canEditInspectedGear: boolean = true;
     public hasAttachedAppliances: boolean = false;
     public isAddInspectedGear: boolean = false;
+    public filterTypes: boolean = false;
+    public pageCode: PageCodeEnum = PageCodeEnum.CommFishLicense;
 
     private readOnly: boolean = false;
 
@@ -86,6 +89,11 @@ export class EditInspectedFishingGearComponent implements OnInit, IDialogCompone
         this.isRegistered = data.isRegistered;
         this.isAddInspectedGear = !data.isEdit;
         this.hasAttachedAppliances = data.hasAttachedAppliances;
+        this.filterTypes = data.filterTypes;
+
+        if (data.pageCode !== undefined && data.pageCode !== null) {
+            this.pageCode = data.pageCode;
+        }
 
         if (!data.isRegistered) {
             this.form.get('optionsControl')!.disable();

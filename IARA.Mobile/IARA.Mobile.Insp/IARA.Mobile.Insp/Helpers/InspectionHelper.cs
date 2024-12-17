@@ -154,7 +154,7 @@ namespace IARA.Mobile.Insp.Helpers
                             shipChecks.LogBooks.LogBooks.Value.AddRange(
                                 logBooks.ConvertAll(f =>
                                 {
-                                    LogBookModel logBook = new LogBookModel(shipCatches)
+                                    LogBookModel logBook = new LogBookModel(shipCatches, fishingGears)
                                     {
                                         Pages = pages?.FindAll(s => s.LogBookId == f.Id).OrderByDescending(x => x.IssuedOn).ToList() ?? new List<LogBookPageDto>(),
                                         Dto = new InspectionLogBookDto

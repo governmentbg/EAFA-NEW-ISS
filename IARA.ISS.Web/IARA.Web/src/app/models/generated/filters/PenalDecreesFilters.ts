@@ -38,6 +38,8 @@ export class PenalDecreesFilters extends BaseRequestModel {
     public inspectedEntityMiddleName: string | undefined;
     public inspectedEntityLastName: string | undefined;
     public identifier: string | undefined;
+    public penalDecreeStatuses: string[] | undefined;
+    public penalDecreeTypeIds: number[] | undefined;
     public fineAmountFrom: number | undefined;
     public fineAmountTo: number | undefined;
     public auanId: number | undefined;

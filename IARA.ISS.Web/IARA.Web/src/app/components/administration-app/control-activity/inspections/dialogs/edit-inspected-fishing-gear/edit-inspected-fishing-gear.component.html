@@ -38,6 +38,7 @@
                 </edit-fishing-gear>
             </tl-expansion-panel>
         </div>
+
         <inspection-toggle formControlName="optionsControl"
                            [options]="options"
                            [toggle]="toggle">
@@ -59,7 +60,8 @@
             <edit-fishing-gear formControlName="inspectedGearControl"
                                [isInspected]="true"
                                [isNewInspectedGear]="isAddInspectedGear"
-                               [filterTypes]="false"
+                               [filterTypes]="filterTypes"
+                               [pageCode]="pageCode"
                                [listenToService]="true"
                                (selectedMark)="onMarkSelected($event)">
             </edit-fishing-gear>

@@ -14,6 +14,7 @@ namespace IARA.Mobile.Insp.Application.DTObjects.Inspections
         public decimal? UnloadedQuantity { get; set; }
         public int? TurbotSizeGroupId { get; set; }
         public int? CatchZoneId { get; set; }
+        public int FishingGearPermitId { get; set; }
         public bool IsActive { get; set; }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using IARA.Mobile.Insp.Application.DTObjects.Inspections;
 using IARA.Mobile.Insp.Base;
 using IARA.Mobile.Insp.Helpers;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -9,8 +10,9 @@ using TechnoLogica.Xamarin.ViewModels.Models;
 
 namespace IARA.Mobile.Insp.Models
 {
-    public class PermitModel : ViewModel
+    public class PermitModel : ViewModel, IDisposable
     {
+        private bool isDisposed = false;
         public static List<PermitModel> Instances { get; set; } = new List<PermitModel>();
         public PermitModel()
         {
@@ -23,8 +25,16 @@ namespace IARA.Mobile.Insp.Models
         }
         ~PermitModel()
         {
-            Instances.Remove(this);
-            Corresponds.PropertyChanged -= UpdateShowError;
+            Dispose();
+        }
+        public void Dispose()
+        {
+            if (!isDisposed)
+            {
+                isDisposed = true;
+                Instances.Remove(this);
+                Corresponds.PropertyChanged -= UpdateShowError;
+            }
         }
 
         private void UpdateShowError(object sender, PropertyChangedEventArgs e)

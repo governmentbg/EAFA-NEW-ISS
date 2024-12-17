@@ -22,6 +22,9 @@ export class InspectedFishingGearDTO {
     public hasAttachedAppliances?: boolean;
 
     @StrictlyTyped(Number)
+    public logBookPageId?: number;
+
+    @StrictlyTyped(Number)
     public checkInspectedMatchingRegisteredGear?: InspectedFishingGearEnum;
 
     @StrictlyTyped(Boolean)

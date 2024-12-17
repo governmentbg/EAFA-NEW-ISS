@@ -10,6 +10,7 @@ import { PenalDecreeAuanDataDTO } from './PenalDecreeAuanDataDTO';
 import { PenalDecreeResolutionDTO } from './PenalDecreeResolutionDTO';
 import { PenalDecreeStatusEditDTO } from './PenalDecreeStatusEditDTO';
 import { FileInfoDTO } from './FileInfoDTO';
+import { AuanStatusEnum } from '@app/enums/auan-status.enum';
 
 export class PenalDecreeEditDTO { 
     public constructor(obj?: Partial<PenalDecreeEditDTO>) {
@@ -42,6 +43,9 @@ export class PenalDecreeEditDTO {
 
     @StrictlyTyped(Number)
     public fineAmount?: number;
+
+    @StrictlyTyped(Number)
+    public penalDecreeStatus?: AuanStatusEnum;
 
     @StrictlyTyped(PenalDecreeSeizedFishDTO)
     public seizedFish?: PenalDecreeSeizedFishDTO[];

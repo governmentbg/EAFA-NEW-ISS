@@ -58,6 +58,7 @@ namespace IARA.Mobile.Insp.Application.Transactions
                             TurbotSizeGroupId = c.TurbotSizeGroupId,
                             CatchZoneId = c.CatchZoneId,
                             LogBookId = logBookId,
+                            FishingGearPermitId = c.FishingGearPermitId
                         }).ToList();
                 }
             }

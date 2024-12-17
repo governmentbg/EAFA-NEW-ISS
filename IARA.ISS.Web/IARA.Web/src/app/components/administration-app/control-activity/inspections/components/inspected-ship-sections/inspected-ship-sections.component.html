@@ -129,7 +129,10 @@
              fxLayoutAlign="start stretch">
             <inspected-fishing-gears-table formControlName="fishingGearsControl"
                                            [permitIds]="permitIds"
-                                           [hasAttachedAppliances]="true">
+                                           [viewMode]="viewMode"
+                                           [showGenerateBtn]="true"
+                                           [hasAttachedAppliances]="true"
+                                           (generateFishingGearsFromShipClicked)="generateFishingGearsFromShip()">
             </inspected-fishing-gears-table>
 
             <inspection-toggle-list formControlName="fishingGearTogglesControl"

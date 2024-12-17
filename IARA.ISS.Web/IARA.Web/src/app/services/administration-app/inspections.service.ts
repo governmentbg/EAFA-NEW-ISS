@@ -36,6 +36,7 @@ import { DatePipe } from '@angular/common';
 import { InspectedLogBookPageDataDTO } from '@app/models/generated/dtos/InspectedLogBookPageDataDTO';
 import { InspectedEntityEmailDTO } from '@app/models/generated/dtos/InspectedEntityEmailDTO';
 import { InspectionEmailDTO } from '@app/models/generated/dtos/InspectionEmailDTO';
+import { InspectionShipLogBookPageDataDTO } from '@app/models/generated/dtos/InspectionShipLogBookPageDataDTO';
 
 
 @Injectable({
@@ -209,12 +210,12 @@ export class InspectionsService extends BaseAuditService {
         });
     }
 
-    public getCatchRecordsByShipLogBookPageId(shipLogBookPageId: number): Observable<InspectionCatchMeasureDTO[]> {
+    public getShipLogBookPageDataByShipLogBookPageId(shipLogBookPageId: number): Observable<InspectionShipLogBookPageDataDTO> {
         const params = new HttpParams().append('shipLogBookPageId', shipLogBookPageId.toString());
 
-        return this.requestService.get(this.area, this.controller, 'GetCatchRecordsByShipLogBookPageId', {
+        return this.requestService.get(this.area, this.controller, 'GetShipLogBookPageDataByShipLogBookPageId', {
             httpParams: params,
-            responseTypeCtr: InspectionCatchMeasureDTO
+            responseTypeCtr: InspectionShipLogBookPageDataDTO
         });
     }
 
