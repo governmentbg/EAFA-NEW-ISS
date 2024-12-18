@@ -37,7 +37,8 @@ export class InspectionAdditionalInfoComponent extends CustomFormControl<Inspect
             setTimeout(() => {
                 this.form.get('violatedRegulationsControl')!.setValue(value.violatedRegulations);
             });
-        } else {
+        }
+        else {
             this.form.get('violationControl')!.setValue(null);
             this.form.get('inspectorCommentControl')!.setValue(null);
             this.form.get('actionsTakenControl')!.setValue(null);

@@ -42,7 +42,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.AquacultureFarmInspection
                 IsEnabled = true,
             };
             Representative = new PersonViewModel(this, InspectedPersonType.ReprsPers, false);
-            Catches = new CatchInspectionsViewModel(this,
+            Catches = new CatchInspectionsViewModel(this, null,
                 showCatchArea: false,
                 showAllowedDeviation: false,
                 showAverageSize: true,

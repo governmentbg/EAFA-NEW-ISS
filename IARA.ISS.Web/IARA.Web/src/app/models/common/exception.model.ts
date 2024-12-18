@@ -89,5 +89,6 @@ export enum ErrorCode {
     InspectionNotSigned = 67,
     PenalDecreeNumAlreadyExists = 68,
     ReportGroupNameAlreadyExists = 69,
-    CannotEditInspectionAfterLockHours = 70
+    CannotEditInspectionAfterLockHours = 70,
+    CannotCancelDecreeWithPenalPoints = 71
 }

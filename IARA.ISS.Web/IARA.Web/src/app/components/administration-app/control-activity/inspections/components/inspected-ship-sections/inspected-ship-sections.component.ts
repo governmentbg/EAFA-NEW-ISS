@@ -28,6 +28,7 @@ import { ShipNomenclatureDTO } from '@app/models/generated/dtos/ShipNomenclature
 import { InspectionCatchMeasureDTO } from '@app/models/generated/dtos/InspectionCatchMeasureDTO';
 import { ShipsUtils } from '@app/shared/utils/ships.utils';
 import { PortNomenclatureDTO } from '@app/models/generated/dtos/PortNomenclatureDTO';
+import { InspectionShipLogBookPageDataDTO } from '@app/models/generated/dtos/InspectionShipLogBookPageDataDTO';
 
 @Component({
     selector: 'inspected-ship-sections',
@@ -48,6 +49,9 @@ export class InspectedShipSectionsComponent extends CustomFormControl<InspectedS
 
     @Input()
     public hasUnloadedQuantity: boolean = false;
+
+    @Input()
+    public viewMode: boolean = false;
 
     @Input()
     public shipObservationCategory: InspectionObservationCategoryEnum = InspectionObservationCategoryEnum.ShipData;
@@ -252,6 +256,25 @@ export class InspectedShipSectionsComponent extends CustomFormControl<InspectedS
         }
     }
 
+    public generateFishingGearsFromShip(): void {
+        if (this.shipId !== undefined && this.shipId !== null) {
+            this.service.getShipFishingGears(this.shipId).subscribe({
+                next: (fishingGears: FishingGearDTO[]) => {
+                    if (fishingGears.length > 0) {
+                        const permitFishingGears: InspectedFishingGearDTO[] = fishingGears.map(x => new InspectedFishingGearDTO({
+                            permittedFishingGear: x
+                        }));
+
+                        this.form.get('fishingGearsControl')!.setValue(permitFishingGears);
+                    }
+                    else {
+                        this.form.get('fishingGearsControl')!.setValue(undefined);
+                    }
+                }
+            });
+        }
+    }
+
     public async onShipSelected(ship: VesselDuringInspectionDTO | undefined): Promise<void> {
         this.shipSelected.emit(ship);
 
@@ -259,7 +282,6 @@ export class InspectedShipSectionsComponent extends CustomFormControl<InspectedS
             this.form.get('permitsControl')!.setValue(undefined);
             this.form.get('permitLicensesControl')!.setValue(undefined);
             this.form.get('logBooksControl')!.setValue(undefined);
-            this.form.get('fishingGearsControl')!.setValue(undefined);
         }
         else {
             if (ship.shipId !== undefined && ship.shipId !== null) {
@@ -320,14 +342,6 @@ export class InspectedShipSectionsComponent extends CustomFormControl<InspectedS
 
                         this.form.get('logBooksControl')!.setValue(shipLogBooks);
                     }
-
-                    if (fishingGears.length > 0) {
-                        const permitFishingGears: InspectedFishingGearDTO[] = fishingGears.map(x => new InspectedFishingGearDTO({
-                            permittedFishingGear: x
-                        }));
-
-                        this.form.get('fishingGearsControl')!.setValue(permitFishingGears);
-                    }
                 }
             }
         }
@@ -344,31 +358,50 @@ export class InspectedShipSectionsComponent extends CustomFormControl<InspectedS
         const logBooks: InspectionShipLogBookDTO[] = this.form.get('logBooksControl')!.value ?? [];
         const currentLogBookPageIds: number[] = this.getCurrentLogBookPageIds(logBooks);
 
-        const result: InspectionCatchMeasureDTO[] = [];
+        const catches: InspectionCatchMeasureDTO[] = [];
 
         if (currentCatches.length > 0) {
             for (const record of currentCatches) {
                 if (record.shipLogBookPageId === undefined || record.shipLogBookPageId === null || currentLogBookPageIds.includes(record.shipLogBookPageId)) {
-                    result.push(record);
+                    catches.push(record);
                 }
             }
         }
 
-        this.form.get('catchesControl')!.setValue(result);
+        this.form.get('catchesControl')!.setValue(catches);
 
         if (logBookPageId !== undefined && logBookPageId !== null) {
             if (!this.currentLogBookPageIds.includes(logBookPageId)) {
                 this.currentLogBookPageIds = currentLogBookPageIds;
 
-                this.service.getCatchRecordsByShipLogBookPageId(logBookPageId).subscribe({
-                    next: (catches: InspectionCatchMeasureDTO[]) => {
-                        if (catches.length > 0) {
-                            for (const record of catches) {
-                                result.push(record);
+                this.service.getShipLogBookPageDataByShipLogBookPageId(logBookPageId).subscribe({
+                    next: (page: InspectionShipLogBookPageDataDTO | undefined) => {
+                        if (page !== undefined && page !== null) {
+                            if (page.catchRecords !== undefined && page.catchRecords !== null) {
+                                if (page.catchRecords!.length > 0) {
+                                    for (const record of page.catchRecords) {
+                                        catches.push(record);
+                                    }
+                                }
+                            }
+                         
+                            if (page.fishingGear !== undefined && page.fishingGear !== null) {
+                                const currentFishingGears: InspectedFishingGearDTO[] = this.form.get('fishingGearsControl')!.value ?? [];
+                                const logBookPageFishingGears: InspectedFishingGearDTO[] = currentFishingGears.filter(x => x.logBookPageId !== undefined && x.logBookPageId !== null && x.logBookPageId !== logBookPageId);
+                                let fishingGears: InspectedFishingGearDTO[] = [];
+                          
+                                if (logBookPageFishingGears.length > 0) {
+                                    fishingGears = logBookPageFishingGears;
+                                }
+
+                                fishingGears.push(page.fishingGear);
+                                fishingGears = fishingGears.slice();
+                                this.form.get('fishingGearsControl')!.setValue(fishingGears);
+                                this.form.get('fishingGearsControl')!.updateValueAndValidity();
                             }
                         }
 
-                        this.form.get('catchesControl')!.setValue(result);
+                        this.form.get('catchesControl')!.setValue(catches);
                     }
                 });
             }

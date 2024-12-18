@@ -28,6 +28,7 @@ import { InspectorUserNomenclatureDTO } from '@app/models/generated/dtos/Inspect
 import { GetControlErrorLabelTextCallback } from '@app/shared/components/input-controls/base-tl-control';
 import { TLError } from '@app/shared/components/input-controls/models/tl-error.model';
 import { PenalDecreeUtils } from '../utils/penal-decree.utils';
+import { AuanStatusEnum } from '@app/enums/auan-status.enum';
 
 @Component({
     selector: 'edit-decree-resolution',
@@ -109,6 +110,7 @@ export class EditDecreeResolutionComponent implements OnInit, AfterViewInit, IDi
 
                     if (this.penalDecreeId === undefined || this.penalDecreeId === null) {
                         this.model = new PenalDecreeEditDTO();
+                        this.model.penalDecreeStatus = AuanStatusEnum.Draft;
                     }
                     else {
                         this.service.getPenalDecree(this.penalDecreeId).subscribe({
@@ -184,32 +186,13 @@ export class EditDecreeResolutionComponent implements OnInit, AfterViewInit, IDi
 
         if (this.form.valid) {
             this.fillModel();
+            this.model.penalDecreeStatus = AuanStatusEnum.Submitted;
             CommonUtils.sanitizeModelStrings(this.model);
 
             this.openConfirmDialog().subscribe({
                 next: (ok: boolean) => {
                     if (ok) {
-                        if (this.penalDecreeId !== undefined && this.penalDecreeId !== null) {
-                            this.service.editPenalDecree(this.model).subscribe({
-                                next: () => {
-                                    dialogClose(this.model);
-                                },
-                                error: (response: HttpErrorResponse) => {
-                                    this.handleAddEditErrorResponse(response);
-                                }
-                            });
-                        }
-                        else {
-                            this.service.addPenalDecree(this.model).subscribe({
-                                next: (id: number) => {
-                                    this.model.id = id;
-                                    dialogClose(this.model);
-                                },
-                                error: (response: HttpErrorResponse) => {
-                                    this.handleAddEditErrorResponse(response);
-                                }
-                            });
-                        }
+                        this.saveDecree(dialogClose);
                     }
                 }
             });
@@ -235,6 +218,7 @@ export class EditDecreeResolutionComponent implements OnInit, AfterViewInit, IDi
 
                 if (this.form.valid) {
                     this.fillModel();
+                    this.model.penalDecreeStatus = AuanStatusEnum.Submitted;
                     CommonUtils.sanitizeModelStrings(this.model);
 
                     this.openConfirmDialog().subscribe({
@@ -275,6 +259,50 @@ export class EditDecreeResolutionComponent implements OnInit, AfterViewInit, IDi
                     });
                 }
             }
+        }
+        else if (action.id === 'save-draft') {
+            this.markAllAsTouched();
+            this.validityCheckerGroup.validate();
+
+            if (this.form.valid) {
+                this.fillModel();
+                CommonUtils.sanitizeModelStrings(this.model);
+
+                this.model.penalDecreeStatus = AuanStatusEnum.Draft;
+                this.saveDecree(dialogClose);
+            }
+        }
+        else if (action.id === 'cancel-decree') {
+            this.markAllAsTouched();
+            this.validityCheckerGroup.validate();
+
+            if (this.form.valid
+                || (this.model.penalDecreeStatus === AuanStatusEnum.Submitted && this.viewMode)
+            ) {
+                this.fillModel();
+                CommonUtils.sanitizeModelStrings(this.model);
+
+                this.confirmDialog.open({
+                    title: this.translate.getValue('penal-decrees.cancel-agreement-confirm-dialog-title'),
+                    message: this.translate.getValue('penal-decrees.cancel-agreement-confirm-dialog-message'),
+                    okBtnLabel: this.translate.getValue('penal-decrees.cancel-agreement-confirm-dialog-ok-btn-label')
+                }).subscribe({
+                    next: (ok: boolean) => {
+                        if (ok) {
+                            if (this.model.penalDecreeStatus === AuanStatusEnum.Draft) {
+                                this.model.penalDecreeStatus = AuanStatusEnum.Canceled;
+                                this.saveDecree(dialogClose);
+                            }
+                            else {
+                                this.updateDecreeStatus(AuanStatusEnum.Canceled, dialogClose);
+                            }
+                        }
+                    }
+                });
+            }
+        }
+        else if (action.id === 'more-corrections-needed' || action.id === 'activate-decree') {
+            this.updateDecreeStatus(AuanStatusEnum.Draft, dialogClose);
         }
     }
 
@@ -456,6 +484,38 @@ export class EditDecreeResolutionComponent implements OnInit, AfterViewInit, IDi
             title: this.translate.getValue('penal-decrees.complete-resolution-confirm-dialog-title'),
             message: message,
             okBtnLabel: this.translate.getValue('penal-decrees.complete-resolution-confirm-dialog-ok-btn-label')
+        });
+    }
+
+    private saveDecree(dialogClose: DialogCloseCallback): void {
+        if (this.penalDecreeId !== undefined && this.penalDecreeId !== null) {
+            this.service.editPenalDecree(this.model).subscribe({
+                next: () => {
+                    dialogClose(this.model);
+                },
+                error: (response: HttpErrorResponse) => {
+                    this.handleAddEditErrorResponse(response);
+                }
+            });
+        }
+        else {
+            this.service.addPenalDecree(this.model).subscribe({
+                next: (id: number) => {
+                    this.model.id = id;
+                    dialogClose(this.model);
+                },
+                error: (response: HttpErrorResponse) => {
+                    this.handleAddEditErrorResponse(response);
+                }
+            });
+        }
+    }
+
+    private updateDecreeStatus(status: AuanStatusEnum, dialogClose: DialogCloseCallback): void {
+        this.service.updateDecreeStatus(this.penalDecreeId!, status).subscribe({
+            next: () => {
+                dialogClose(this.model);
+            }
         });
     }
 

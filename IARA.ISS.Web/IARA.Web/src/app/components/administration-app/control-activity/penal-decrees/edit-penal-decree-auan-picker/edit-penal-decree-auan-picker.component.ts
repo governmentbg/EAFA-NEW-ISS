@@ -18,6 +18,8 @@ import { PenalDecreeTypeEnum } from '@app/enums/penal-decree-type.enum';
 import { EditDecreeAgreementComponent } from '../edit-decree-agreement/edit-decree-agreement.component';
 import { EditDecreeWarningComponent } from '../edit-decree-warning/edit-decree-warning.component';
 import { EditDecreeResolutionComponent } from '../edit-decree-resolution/edit-decree-resolution.component';
+import { PermissionsEnum } from '@app/shared/enums/permissions.enum';
+import { PermissionsService } from '@app/shared/services/permissions.service';
 
 @Component({
     selector: 'edit-penal-decree-auan-picker',
@@ -35,6 +37,9 @@ export class EditPenalDecreeAuanPickerComponent implements OnInit, AfterViewInit
     private auanId: number | undefined;
     private typeId!: number;
 
+    public readonly canSubmitRecords: boolean;
+    public readonly canCancelRecords: boolean;
+
     private service: IPenalDecreesService;
     private translate: FuseTranslationLoaderService;
     private penalDecreeDialog: TLMatDialog<EditPenalDecreeComponent>;
@@ -48,7 +53,8 @@ export class EditPenalDecreeAuanPickerComponent implements OnInit, AfterViewInit
         penalDecreeDialog: TLMatDialog<EditPenalDecreeComponent>,
         agreementDialog: TLMatDialog<EditDecreeAgreementComponent>,
         warningDialog: TLMatDialog<EditDecreeWarningComponent>,
-        resolutionDialog: TLMatDialog<EditDecreeResolutionComponent>
+        resolutionDialog: TLMatDialog<EditDecreeResolutionComponent>,
+        permissions: PermissionsService
     ) {
         this.service = service;
         this.translate = translate;
@@ -56,6 +62,9 @@ export class EditPenalDecreeAuanPickerComponent implements OnInit, AfterViewInit
         this.agreementDialog = agreementDialog;
         this.warningDialog = warningDialog;
         this.resolutionDialog = resolutionDialog;
+
+        this.canSubmitRecords = permissions.has(PermissionsEnum.PenalDecreesSubmitRecords);
+        this.canCancelRecords = permissions.has(PermissionsEnum.PenalDecreesCancelRecords);
 
         this.form = this.buildForm();
     }
@@ -79,7 +88,7 @@ export class EditPenalDecreeAuanPickerComponent implements OnInit, AfterViewInit
             next: (value: boolean) => {
                 this.isThirdParty = value;
                 this.form.get('auanControl')!.clearValidators();
-                
+
                 if (value === false) {
                     this.form.get('auanControl')!.setValidators(Validators.required);
                 }
@@ -147,6 +156,15 @@ export class EditPenalDecreeAuanPickerComponent implements OnInit, AfterViewInit
     }
 
     private openEditPenalDecreeDialog(): Observable<PenalDecreeEditDTO | undefined> {
+        let leftSideActions: IActionInfo[] = [];
+        if (this.canCancelRecords) {
+            leftSideActions = [{
+                id: 'cancel-decree',
+                color: 'warn',
+                translateValue: 'penal-decrees.cancel'
+            }];
+        }
+
         const dialog = this.penalDecreeDialog.openWithTwoButtons({
             title: this.translate.getValue('penal-decrees.add-penal-decree-dialog-title'),
             TCtor: EditPenalDecreeComponent,
@@ -159,11 +177,23 @@ export class EditPenalDecreeAuanPickerComponent implements OnInit, AfterViewInit
                 typeId: this.typeId,
                 isReadonly: false
             }),
+            saveBtn: {
+                id: 'save',
+                color: 'accent',
+                hidden: !this.canSubmitRecords,
+                translateValue: this.translate.getValue('common.save')
+            },
             rightSideActionsCollection: [{
+                id: 'save-draft',
+                color: 'primary',
+                translateValue: 'penal-decrees.save-draft',
+            },
+            {
                 id: 'print',
                 color: 'accent',
                 translateValue: 'penal-decrees.save-print'
             }],
+            leftSideActionsCollection: leftSideActions,
             translteService: this.translate,
             disableDialogClose: true
         }, '1400px');
@@ -172,6 +202,15 @@ export class EditPenalDecreeAuanPickerComponent implements OnInit, AfterViewInit
     }
 
     private openEditAgreementDialog(): Observable<PenalDecreeEditDTO | undefined> {
+        let leftSideActions: IActionInfo[] = [];
+        if (this.canCancelRecords) {
+            leftSideActions = [{
+                id: 'cancel-decree',
+                color: 'warn',
+                translateValue: 'penal-decrees.cancel'
+            }];
+        }
+
         const dialog = this.agreementDialog.openWithTwoButtons({
             title: this.translate.getValue('penal-decrees.add-agreement-dialog-title'),
             TCtor: EditDecreeAgreementComponent,
@@ -184,11 +223,23 @@ export class EditPenalDecreeAuanPickerComponent implements OnInit, AfterViewInit
                 typeId: this.form.get('typeControl')!.value!.value,
                 isReadonly: false
             }),
+            saveBtn: {
+                id: 'save',
+                color: 'accent',
+                hidden: !this.canSubmitRecords,
+                translateValue: this.translate.getValue('common.save')
+            },
             rightSideActionsCollection: [{
+                id: 'save-draft',
+                color: 'primary',
+                translateValue: 'penal-decrees.save-draft',
+            },
+            {
                 id: 'print',
                 color: 'accent',
                 translateValue: 'penal-decrees.save-print'
             }],
+            leftSideActionsCollection: leftSideActions,
             translteService: this.translate,
             disableDialogClose: true
         }, '1400px');
@@ -197,6 +248,15 @@ export class EditPenalDecreeAuanPickerComponent implements OnInit, AfterViewInit
     }
 
     private openEditWarningDialog(): Observable<PenalDecreeEditDTO | undefined> {
+        let leftSideActions: IActionInfo[] = [];
+        if (this.canCancelRecords) {
+            leftSideActions = [{
+                id: 'cancel-decree',
+                color: 'warn',
+                translateValue: 'penal-decrees.cancel'
+            }];
+        }
+
         const dialog = this.warningDialog.openWithTwoButtons({
             title: this.translate.getValue('penal-decrees.add-warning-dialog-title'),
             TCtor: EditDecreeWarningComponent,
@@ -209,11 +269,23 @@ export class EditPenalDecreeAuanPickerComponent implements OnInit, AfterViewInit
                 typeId: this.form.get('typeControl')!.value!.value,
                 isReadonly: false
             }),
+            saveBtn: {
+                id: 'save',
+                color: 'accent',
+                hidden: !this.canSubmitRecords,
+                translateValue: this.translate.getValue('common.save')
+            },
             rightSideActionsCollection: [{
+                id: 'save-draft',
+                color: 'primary',
+                translateValue: 'penal-decrees.save-draft',
+            },
+            {
                 id: 'print',
                 color: 'accent',
                 translateValue: 'penal-decrees.save-print'
             }],
+            leftSideActionsCollection: leftSideActions,
             translteService: this.translate,
             disableDialogClose: true
         }, '1400px');
@@ -222,6 +294,15 @@ export class EditPenalDecreeAuanPickerComponent implements OnInit, AfterViewInit
     }
 
     private openEditResolutionDialog(): Observable<PenalDecreeEditDTO | undefined> {
+        let leftSideActions: IActionInfo[] = [];
+        if (this.canCancelRecords) {
+            leftSideActions = [{
+                id: 'cancel-decree',
+                color: 'warn',
+                translateValue: 'penal-decrees.cancel'
+            }];
+        }
+
         const dialog = this.resolutionDialog.openWithTwoButtons({
             title: this.translate.getValue('penal-decrees.add-resolution-dialog-title'),
             TCtor: EditDecreeResolutionComponent,
@@ -234,11 +315,23 @@ export class EditPenalDecreeAuanPickerComponent implements OnInit, AfterViewInit
                 typeId: this.form.get('typeControl')!.value!.value,
                 isReadonly: false
             }),
+            saveBtn: {
+                id: 'save',
+                color: 'accent',
+                hidden: !this.canSubmitRecords,
+                translateValue: this.translate.getValue('common.save')
+            },
             rightSideActionsCollection: [{
+                id: 'save-draft',
+                color: 'primary',
+                translateValue: 'penal-decrees.save-draft',
+            },
+            {
                 id: 'print',
                 color: 'accent',
                 translateValue: 'penal-decrees.save-print'
             }],
+            leftSideActionsCollection: leftSideActions,
             translteService: this.translate,
             disableDialogClose: true
         }, '1400px');

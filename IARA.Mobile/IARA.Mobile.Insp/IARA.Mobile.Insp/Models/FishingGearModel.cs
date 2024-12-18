@@ -16,5 +16,8 @@ namespace IARA.Mobile.Insp.Models
         public InspectedFishingGearEnum? CheckedValue { get; set; }
 
         public InspectedFishingGearDto Dto { get; set; }
+
+        public int? LogBookId { get; set; } = null;
+        public int? PermitId { get; set; } = null;
     }
 }

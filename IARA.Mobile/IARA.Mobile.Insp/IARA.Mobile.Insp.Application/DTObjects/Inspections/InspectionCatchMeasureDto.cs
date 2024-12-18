@@ -21,5 +21,6 @@ namespace IARA.Mobile.Insp.Application.DTObjects.Inspections
         public int? CatchCount { get; set; }
         public VesselDuringInspectionDto OriginShip { get; set; }
         public int LogBookId { get; set; }
+        public int FishingGearPermitId { get; set; }
     }
 }

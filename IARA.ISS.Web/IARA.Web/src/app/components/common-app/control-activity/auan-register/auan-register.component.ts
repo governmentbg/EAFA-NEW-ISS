@@ -251,50 +251,53 @@ export class AuanRegisterComponent implements OnInit, AfterViewInit {
                 : this.translate.getValue('auan-register.save-print');
 
             const rightButtons: IActionInfo[] = [];
-            if (auan.status === AuanStatusEnum.Draft) {
-                rightButtons.push({
-                    id: 'save-draft',
-                    color: 'primary',
-                    translateValue: 'auan-register.save-draft'
-                });
-            }
-
-            //ако няма правото за връщане за корекции, може да връща в статус "Чернова" само своите АУАНи, ако не са минали 48 часа от добавянето им
-            if (auan.status === AuanStatusEnum.Submitted
-                && (this.canReturnAuanForCorrections || (!auan.lockedForCorrections && auan.createdByUser === this.currentUser))
-            ) {
-                rightButtons.push({
-                    id: 'more-corrections-needed',
-                    color: 'accent',
-                    translateValue: 'auan-register.more-corrections-needed',
-                    isVisibleInViewMode: true
-                });
-            }
-
-            rightButtons.push({
-                id: 'print',
-                color: 'accent',
-                translateValue: printBtnTitle,
-                isVisibleInViewMode: true
-            });
-
             const leftButtons: IActionInfo[] = [];
-            if (this.canCancelAuanRecords) {
-                if (auan.status === AuanStatusEnum.Canceled) {
-                    leftButtons.push({
-                        id: 'activate-auan',
+
+            if (auan.isActive) {
+                if (auan.status === AuanStatusEnum.Draft) {
+                    rightButtons.push({
+                        id: 'save-draft',
+                        color: 'primary',
+                        translateValue: 'auan-register.save-draft'
+                    });
+                }
+
+                //ако няма правото за връщане за корекции, може да връща в статус "Чернова" само своите АУАНи, ако не са минали 48 часа от добавянето им
+                if (auan.status === AuanStatusEnum.Submitted
+                    && (this.canReturnAuanForCorrections || (!auan.lockedForCorrections && auan.createdByUser === this.currentUser))
+                ) {
+                    rightButtons.push({
+                        id: 'more-corrections-needed',
                         color: 'accent',
-                        translateValue: 'auan-register.activate',
+                        translateValue: 'auan-register.more-corrections-needed',
                         isVisibleInViewMode: true
                     });
                 }
-                else {
-                    leftButtons.push({
-                        id: 'cancel-auan',
-                        color: 'warn',
-                        translateValue: 'auan-register.cancel',
-                        isVisibleInViewMode: auan.status === AuanStatusEnum.Submitted
-                    });
+
+                rightButtons.push({
+                    id: 'print',
+                    color: 'accent',
+                    translateValue: printBtnTitle,
+                    isVisibleInViewMode: true
+                });
+
+                if (this.canCancelAuanRecords) {
+                    if (auan.status === AuanStatusEnum.Canceled) {
+                        leftButtons.push({
+                            id: 'activate-auan',
+                            color: 'accent',
+                            translateValue: 'auan-register.activate',
+                            isVisibleInViewMode: true
+                        });
+                    }
+                    else {
+                        leftButtons.push({
+                            id: 'cancel-auan',
+                            color: 'warn',
+                            translateValue: 'auan-register.cancel',
+                            isVisibleInViewMode: auan.status === AuanStatusEnum.Submitted
+                        });
+                    }
                 }
             }
 

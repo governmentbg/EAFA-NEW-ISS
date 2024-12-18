@@ -176,6 +176,13 @@
                              [formGroup]="marksForm"
                              [options]="markStatuses">
                 </data-column>
+                <data-column *ngIf="!isApplication"
+                             columnName="{{ 'fishing-gears.mark-created-on' | tlTranslate }}"
+                             propertyName="createdOn"
+                             dataType="datetime"
+                             [readonly]="true"
+                             [formGroup]="marksForm">
+                </data-column>
                 <data-template-column [flexRate]="0.3"
                                       *ngIf="canSelectMarks">
                     <ng-template ngx-datatable-cell-template

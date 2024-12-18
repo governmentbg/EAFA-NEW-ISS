@@ -71,6 +71,9 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
     @Input()
     public isNewInspectedGear: boolean = false;
 
+    @Input()
+    private pageCode: PageCodeEnum | undefined;
+
     @Output()
     public selectedMark = new EventEmitter<FishingGearMarkDTO>();
 
@@ -90,6 +93,7 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
 
     public permitLicenseFishingGears: FishingGearNomenclatureDTO[] = [];
     public selectedGearNotPaidInPermitLicense: boolean = false;
+    public isApplication: boolean = false;
 
     @ViewChild('marksTable')
     private marksTable!: TLDataTableComponent;
@@ -99,7 +103,6 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
 
     private markedStatus!: NomenclatureDTO<number>;
     private nomenclatures: CommonNomenclatures;
-    private pageCode: PageCodeEnum | undefined;
     private model!: FishingGearDTO;
     private appliedTariffCodes: string[] = [];
     private isDunabe: boolean = false;
@@ -186,6 +189,7 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
         this.pageCode = data.pageCode;
         this.appliedTariffCodes = data.appliedTariffCodes;
         this.isDunabe = data.isDunabe;
+        this.isApplication = data.isApplication;
 
         if (data.model === null || data.model === undefined) {
             this.model = new FishingGearDTO({ isActive: true });
@@ -360,7 +364,8 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
 
         this.marksForm = new FormGroup({
             fullNumberControl: new FormControl(undefined, [Validators.required, TLValidators.number(0, undefined, 0)]),
-            statusIdControl: new FormControl(undefined, Validators.required)
+            statusIdControl: new FormControl(undefined, Validators.required),
+            createdOnControl: new FormControl({ value: null, disabled: true })
         });
 
         if (!this.isInspected) {

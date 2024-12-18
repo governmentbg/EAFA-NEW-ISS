@@ -1,4 +1,4 @@
-﻿import { Component, Input, OnChanges, OnInit, Self, SimpleChanges, ViewChild } from '@angular/core';
+﻿import { Component, EventEmitter, Input, OnChanges, OnInit, Output, Self, SimpleChanges, ViewChild } from '@angular/core';
 import { AbstractControl, FormControl, NgControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 
 import { CustomFormControl } from '@app/shared/utils/custom-form-control';
@@ -16,6 +16,7 @@ import { FishingGearDTO } from '@app/models/generated/dtos/FishingGearDTO';
 import { InspectedFishingGearEnum } from '@app/enums/inspected-fishing-gear.enum';
 import { IHeaderAuditButton } from '@app/shared/components/dialog-wrapper/interfaces/header-audit-button.interface';
 import { InspectionsService } from '@app/services/administration-app/inspections.service';
+import { PageCodeEnum } from '@app/enums/page-code.enum';
 
 @Component({
     selector: 'inspected-fishing-gears-table',
@@ -28,10 +29,25 @@ export class InspectedFishingGearsTableComponent extends CustomFormControl<Inspe
     @Input()
     public hasAttachedAppliances: boolean = false;
 
+    @Input()
+    public viewMode: boolean = false;
+
+    @Input()
+    public showGenerateBtn: boolean = false;
+
+    @Input()
+    public filterTypes: boolean = false;
+
+    @Input()
+    public isPoundNet: boolean = false;
+
+    @Output()
+    public generateFishingGearsFromShipClicked: EventEmitter<void> = new EventEmitter<void>();
+
     public readonly inspectedFishingGearEnum: typeof InspectedFishingGearEnum = InspectedFishingGearEnum;
+    public pageCode: PageCodeEnum = PageCodeEnum.CommFishLicense;
 
     public fishingGears: InspectedFishingGearTableModel[] = [];
-
     private allFishingGears: InspectedFishingGearTableModel[] = [];
 
     @ViewChild(TLDataTableComponent)
@@ -65,6 +81,7 @@ export class InspectedFishingGearsTableComponent extends CustomFormControl<Inspe
 
     public ngOnChanges(changes: SimpleChanges): void {
         const permitIds = changes['permitIds'];
+        const isPoundNet = changes['isPoundNet'];
 
         if (permitIds !== null && permitIds !== undefined) {
             if (this.allFishingGears.length > 0) {
@@ -74,6 +91,12 @@ export class InspectedFishingGearsTableComponent extends CustomFormControl<Inspe
                     || this.permitIds.includes(x.gear.permittedFishingGear.permitId!)
                     || this.permitIds.length === 0
                 );
+            }
+        }
+
+        if (isPoundNet !== null && isPoundNet !== undefined) {
+            if (this.isPoundNet) {
+                this.pageCode = PageCodeEnum.PoundnetCommFishLic;
             }
         }
     }
@@ -160,6 +183,8 @@ export class InspectedFishingGearsTableComponent extends CustomFormControl<Inspe
                 readOnly: readOnly,
                 isRegistered: fishingGear.gear.permittedFishingGear !== null && fishingGear.gear.permittedFishingGear !== undefined,
                 isEdit: true,
+                pageCode: this.pageCode,
+                filterTypes: this.isPoundNet,
                 hasAttachedAppliances: this.hasAttachedAppliances
             });
 
@@ -184,6 +209,8 @@ export class InspectedFishingGearsTableComponent extends CustomFormControl<Inspe
                 }),
                 isEdit: false,
                 isRegistered: false,
+                pageCode: this.pageCode,
+                filterTypes: this.isPoundNet,
                 hasAttachedAppliances: this.hasAttachedAppliances
             });
 
@@ -230,11 +257,16 @@ export class InspectedFishingGearsTableComponent extends CustomFormControl<Inspe
                 if (ok) {
                     this.datatable.softDelete(fishingGear);
                     this.fishingGears.splice(this.fishingGears.indexOf(fishingGear.data), 1);
+                    this.allFishingGears.splice(this.allFishingGears.indexOf(fishingGear.data), 1);
                     this.onChanged(this.getValue());
                     this.control.updateValueAndValidity();
                 }
             }
         });
+    }
+
+    public generateFishingGears(): void {
+        this.generateFishingGearsFromShipClicked.emit();
     }
 
     protected buildForm(): AbstractControl {
@@ -250,7 +282,7 @@ export class InspectedFishingGearsTableComponent extends CustomFormControl<Inspe
             hasAttachedAppliances: x.gear.hasAttachedAppliances,
             isActive: x.gear.isActive
         }));
-        
+
         return result;
     }
 

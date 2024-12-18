@@ -94,7 +94,7 @@ export class InspectedShipSubjectComponent extends CustomFormControl<InspectionS
             if (!subjects.firstChange) {
                 if ((subjects.currentValue as InspectionShipSubjectNomenclatureDTO[]).length === 0) {
                     this.hasSubjects = false;
-                    this.form.get('personRegisteredControl')!.setValue(false); 
+                    this.form.get('personRegisteredControl')!.setValue(false);
                     this.form.get('subjectControl')!.setValue(null);
                 }
                 else {
@@ -129,7 +129,7 @@ export class InspectedShipSubjectComponent extends CustomFormControl<InspectionS
     public writeValue(value: InspectionSubjectPersonnelDTO | undefined): void {
         this.form.get('personTypeControl')!.setValue(this.personTypes[PERSON_IDX]);
         this.model = value;
-       
+
         if (value !== undefined && value !== null) {
             this.isFromRegister = value.isRegistered === true;
             this.form.get('personRegisteredControl')!.setValue(this.isFromRegister);
@@ -324,7 +324,8 @@ export class InspectedShipSubjectComponent extends CustomFormControl<InspectionS
 
             this.form.get('addressControl')!.disable();
             this.form.get('countryControl')!.disable();
-        } else {
+        }
+        else {
             this.form.get('subjectControl')!.clearValidators();
             this.form.get('addressControl')!.setValidators([Validators.required, Validators.maxLength(4000)]);
             this.form.get('countryControl')!.setValidators([Validators.required]);

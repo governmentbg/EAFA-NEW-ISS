@@ -35,12 +35,12 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.TranshipmentInspection
             InspectionGeneralInfo = new InspectionGeneralInfoViewModel(this);
             PatrolVehicles = new PatrolVehiclesViewModel(this, true);
             InspectedShip = new FishingShipViewModel(this, hasLastPort: false);
-            InspectedShipCatches = new ShipCatchesViewModel(this);
-            InspectedShipChecks = new ShipChecksViewModel(this, InspectedShipCatches);
+            InspectedShipCatches = new ShipCatchesViewModel(this, null);
+            InspectedShipChecks = new ShipChecksViewModel(this, InspectedShipCatches, null);
             AcceptingShip = new FishingShipViewModel(this, hasLastPort: false);
-            AcceptingShipCatches = new ShipCatchesViewModel(this);
-            AcceptingShipChecks = new ShipChecksViewModel(this, AcceptingShipCatches);
-            TranshippedCatches = new CatchInspectionsViewModel(this);
+            AcceptingShipCatches = new ShipCatchesViewModel(this, null);
+            AcceptingShipChecks = new ShipChecksViewModel(this, AcceptingShipCatches, null);
+            TranshippedCatches = new CatchInspectionsViewModel(this, null);
             InspectionFiles = new InspectionFilesViewModel(this);
             AdditionalInfo = new AdditionalInfoViewModel(this);
             Signatures = new SignaturesViewModel(this);

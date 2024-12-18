@@ -45,7 +45,7 @@
                                 [hasMap]="false"
                                 [vesselTypes]="vesselTypes"
                                 [countries]="countries"
-                                (shipSelected)="onShipChanged($event)">
+                                (shipSelected)="getPermitLicensesByInspectedShip($event)">
                 </inspected-ship>
 
                 <inspected-ship-subject formControlName="shipOwnerControl"
@@ -68,7 +68,7 @@
                  fxLayoutGap="1em"
                  fxLayoutAlign="start stretch">
                 <tl-autocomplete formControlName="dalyanControl"
-                                 [options]="dalyans"
+                                 [options]="poundNets"
                                  label="{{ 'inspections.dalyan' | tlTranslate }}"
                                  tooltipResourceName="inspections.dalyan-helper">
                 </tl-autocomplete>
@@ -137,7 +137,9 @@
             </div>
 
             <inspected-fishing-gears-table formControlName="fishingGearsControl"
-                                           [permitIds]="selectedPermitIds">
+                                           [permitIds]="selectedPermitIds"
+                                           [filterTypes]="!isShip"
+                                           [isPoundNet]="!isShip">
             </inspected-fishing-gears-table>
 
             <inspection-toggle-list formControlName="togglesControl"

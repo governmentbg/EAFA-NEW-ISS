@@ -27,6 +27,7 @@ import { PermissionsEnum } from '@app/shared/enums/permissions.enum';
 import { IInspDeliveryService } from '@app/interfaces/administration-app/insp-delivery.interface';
 import { AuanDeliveryDataDTO } from '@app/models/generated/dtos/AuanDeliveryDataDTO';
 import { InspectorUserNomenclatureDTO } from '@app/models/generated/dtos/InspectorUserNomenclatureDTO';
+import { AuanStatusEnum } from '@app/enums/auan-status.enum';
 
 @Injectable({
     providedIn: 'root'
@@ -56,6 +57,12 @@ export class PenalDecreesService extends BaseAuditService implements IPenalDecre
             properties: RequestProperties.NO_SPINNER,
             responseTypeCtr: GridResultModel
         }).pipe(switchMap((entries: Result) => {
+            for (const entry of entries.records) {
+                if (entry.penalDecreeStatus !== undefined && entry.penalDecreeStatus !== null) {
+                    entry.penalDecreeStatusName = this.getPenalDecreeStatusName(entry.penalDecreeStatus);
+                }
+            }
+
             const decreeIds: number[] = entries.records.map((decree: PenalDecreeDTO) => {
                 return decree.id!;
             });
@@ -277,6 +284,16 @@ export class PenalDecreesService extends BaseAuditService implements IPenalDecre
         });
     }
 
+    public updateDecreeStatus(id: number, status: AuanStatusEnum): Observable<void> {
+        const params = new HttpParams()
+            .append('decreeId', id.toString())
+            .append('status', status.toString());
+
+        return this.requestService.put(this.area, this.controller, 'UpdatePenalDecreeStatus', null, {
+            httpParams: params
+        });
+    }
+
     //Helpers
     private getPenalDecreeStatusesForTableHelper(controller: string, decreeIds: number[]): Observable<PenalDecreeStatusEditDTO[]> {
         return this.requestService.post(this.area, controller, 'GetPenalDecreeStatuses', decreeIds, {
@@ -322,6 +339,17 @@ export class PenalDecreesService extends BaseAuditService implements IPenalDecre
                 break;
             default:
                 status.details = undefined;
+        }
+    }
+
+    private getPenalDecreeStatusName(penalDecreeStatus: AuanStatusEnum): string {
+        switch (penalDecreeStatus) {
+            case AuanStatusEnum.Draft:
+                return this.translate.getValue('penal-decrees.penal-decree-status-draft');
+            case AuanStatusEnum.Canceled:
+                return this.translate.getValue('penal-decrees.penal-decree-status-canceled');
+            case AuanStatusEnum.Submitted:
+                return this.translate.getValue('penal-decrees.penal-decree-status-submitted');
         }
     }
 }

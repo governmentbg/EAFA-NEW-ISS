@@ -6,6 +6,7 @@ export class EditFishingGearDialogParamsModel {
     public readOnly: boolean = false;
     public pageCode!: PageCodeEnum;
     public isDunabe: boolean = false;
+    public isApplication: boolean = false;
     public appliedTariffCodes: string[] = [];
 
     public constructor(obj?: Partial<EditFishingGearDialogParamsModel>) {

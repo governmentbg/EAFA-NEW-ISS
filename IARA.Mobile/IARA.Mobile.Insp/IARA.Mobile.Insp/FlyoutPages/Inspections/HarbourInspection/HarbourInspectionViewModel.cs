@@ -39,15 +39,15 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.HarbourInspection
             InspectionGeneralInfo = new InspectionGeneralInfoViewModel(this);
             InspectionHarbour = new InspectionHarbourViewModel(this, hasDate: false);
             InspectedShip = new FishingShipViewModel(this, canPickLocation: false);
-            ShipChecks = new ShipChecksViewModel(this, ShipCatches);
-            ShipCatches = new ShipCatchesViewModel(this, isUnloadedQuantityRequired: true);
             ShipFishingGears = new ShipFishingGearsViewModel(this, true);
+            ShipChecks = new ShipChecksViewModel(this, ShipCatches, ShipFishingGears.FishingGears);
+            ShipCatches = new ShipCatchesViewModel(this, ShipFishingGears.FishingGears, isUnloadedQuantityRequired: true);
             TransshippedShip = new InspectedShipDataViewModel(this, canPickLocation: false)
             {
                 ShipSelected = CommandBuilder.CreateFrom<ShipSelectNomenclatureDto>(OnShipSelected),
             };
             InspectionFiles = new InspectionFilesViewModel(this);
-            TransshippedCatches = new CatchInspectionsViewModel(this);
+            TransshippedCatches = new CatchInspectionsViewModel(this, ShipFishingGears.FishingGears);
             AdditionalInfo = new AdditionalInfoViewModel(this);
             Signatures = new SignaturesViewModel(this);
 

@@ -14,11 +14,11 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
 {
     public class ShipCatchesViewModel : ViewModel
     {
-        public ShipCatchesViewModel(InspectionPageViewModel inspection, bool isUnloadedQuantityRequired = false)
+        public ShipCatchesViewModel(InspectionPageViewModel inspection, FishingGearsViewModel fishingGears, bool isUnloadedQuantityRequired = false)
         {
             Inspection = inspection;
 
-            Catches = new CatchInspectionsViewModel(inspection, isUnloadedQuantityRequired: isUnloadedQuantityRequired);
+            Catches = new CatchInspectionsViewModel(inspection, fishingGears, isUnloadedQuantityRequired: isUnloadedQuantityRequired);
 
             this.AddValidation(others: new[] { Catches });
 

@@ -75,6 +75,7 @@
                                 <tl:TLPicker IsTitleVisible="False"
                                         ValidState="{Binding PageSelect}"
                                         ItemsSource="{Binding Pages}"
+                                        Command="{Binding PageSelected}"
                                         AllowEmptyDialog="True"
                                         DisplayValue="PageNum"
                                         DialogAddButtonText="{rt:Translate Add, Group=Common}"
