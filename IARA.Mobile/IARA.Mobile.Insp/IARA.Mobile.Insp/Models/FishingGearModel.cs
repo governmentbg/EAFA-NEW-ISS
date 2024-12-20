@@ -19,5 +19,13 @@ namespace IARA.Mobile.Insp.Models
 
         public int? LogBookId { get; set; } = null;
         public int? PermitId { get; set; } = null;
+
+
+        private bool showErrorMessage = false;
+        public bool ShowErrorMessage
+        {
+            get => showErrorMessage;
+            set => SetProperty(ref showErrorMessage, value);
+        }
     }
 }

@@ -19,12 +19,10 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
     public class LogBooksViewModel : ViewModel
     {
         private ShipCatchesViewModel _shipCatches;
-        private FishingGearsViewModel _fishingGears;
-        public LogBooksViewModel(InspectionPageViewModel inspection, ShipCatchesViewModel shipCatches, FishingGearsViewModel fishingGears)
+        public LogBooksViewModel(InspectionPageViewModel inspection, ShipCatchesViewModel shipCatches)
         {
             Inspection = inspection;
             _shipCatches = shipCatches;
-            _fishingGears = fishingGears;
             Add = CommandBuilder.CreateFrom(OnAdd);
             Remove = CommandBuilder.CreateFrom<LogBookModel>(OnRemove);
 
@@ -49,7 +47,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
 
             LogBooks.Value.AddRange(logBooks.ConvertAll(f =>
             {
-                LogBookModel model = new LogBookModel(_shipCatches, _fishingGears)
+                LogBookModel model = new LogBookModel(_shipCatches)
                 {
                     Dto = f
                 };
@@ -78,7 +76,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
 
         private void OnAdd()
         {
-            LogBookModel model = new LogBookModel(_shipCatches, _fishingGears)
+            LogBookModel model = new LogBookModel(_shipCatches)
             {
                 AddedByInspector = true,
                 Dto = new InspectionLogBookDto(),

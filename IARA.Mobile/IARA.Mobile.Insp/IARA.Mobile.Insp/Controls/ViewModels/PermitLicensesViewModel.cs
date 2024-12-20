@@ -33,7 +33,6 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
 
         public ICommand Add { get; }
         public ICommand Remove { get; }
-        public ICommand ActionSelected { get; set; }
 
         public void OnEdit(List<InspectionPermitDto> permitLicenses)
         {

@@ -76,7 +76,6 @@
                             <Setter Property="Content">
                                 <tl:TLMultiToggleView Buttons="{Static lh:InspectionTogglesHelper.CoincidesMultiToggles}"
                                         ValidState="{Binding Corresponds}"
-                                        Command="{Binding BindingContext.ActionSelected, Source={Reference view}}"
                                         IsEnabled="{Binding BindingContext.Inspection.ActivityType, Converter={StaticResource IsNotReview}, Source={Reference view}}" />
                             </Setter>
                         </DataTrigger>
@@ -170,7 +169,6 @@
                                     <tl:TLMultiToggleView Text="{rt:Translate Inspected, Group=ShipChecks}"
                                             Buttons="{Static lh:InspectionTogglesHelper.CoincidesMultiToggles}"
                                             ValidState="{Binding Corresponds}"
-                                            Command="{Binding BindingContext.ActionSelected, Source={Reference view}}"
                                             IsEnabled="{Binding BindingContext.Inspection.ActivityType, Converter={StaticResource IsNotReview}, Source={Reference view}}" />
                                     <tl:TLRichLabel LineBreakMode="WordWrap"
                                             VerticalOptions="Center"

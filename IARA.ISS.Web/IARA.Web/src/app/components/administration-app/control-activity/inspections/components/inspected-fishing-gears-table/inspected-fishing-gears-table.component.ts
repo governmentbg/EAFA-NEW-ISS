@@ -280,6 +280,7 @@ export class InspectedFishingGearsTableComponent extends CustomFormControl<Inspe
             permittedFishingGear: x.gear.permittedFishingGear,
             checkInspectedMatchingRegisteredGear: x.gear.checkInspectedMatchingRegisteredGear,
             hasAttachedAppliances: x.gear.hasAttachedAppliances,
+            logBookPageId: x.gear.logBookPageId,
             isActive: x.gear.isActive
         }));
 

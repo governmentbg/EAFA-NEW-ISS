@@ -140,7 +140,7 @@ export class SystemLogComponent implements AfterViewInit, OnInit {
 
         if (this.gridManager.advancedFilters === undefined || this.gridManager.advancedFilters === null) {
             const today: Date = new Date();
-            const startDate: Date = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 7);
+            const startDate: Date = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 3);
 
             this.gridManager.advancedFilters = new SystemLogFilters({ registeredDateFrom: startDate, registeredDateTo: today });
         }
@@ -184,7 +184,7 @@ export class SystemLogComponent implements AfterViewInit, OnInit {
 
         if ((result.registeredDateFrom === undefined || result.registeredDateFrom === null) && (result.registeredDateTo === undefined || result.registeredDateTo === null)) {
             const today: Date = new Date();
-            const startDate: Date = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 7);
+            const startDate: Date = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 3);
             const dateRange = new DateRangeData({ start: startDate, end: today });
 
             this.formGroup?.get('dateRangeControl')?.setValue(dateRange);
@@ -217,7 +217,7 @@ export class SystemLogComponent implements AfterViewInit, OnInit {
 
     private setDateRangeControlValue(): void {
         const today: Date = new Date();
-        const startDate: Date = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 7);
+        const startDate: Date = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 3);
         const dateRange = new DateRangeData({ start: startDate, end: today });
 
         this.formGroup?.get('dateRangeControl')?.setValue(dateRange);

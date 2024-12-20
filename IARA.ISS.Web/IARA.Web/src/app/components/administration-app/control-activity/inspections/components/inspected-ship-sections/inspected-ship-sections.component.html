@@ -123,7 +123,9 @@
     <!-- Инспекция на уредите -->
     <tl-expansion-panel *ngIf="hasFishingGears"
                         [title]="fishingGearLabel"
-                        [validityChecker]="form">
+                        [validityChecker]="form"
+                        [validityCheckerExtraCondition]="form.errors?.chatchesWithoutGearError !== true
+                                                         && form.errors?.gearExitNotInspectedError !== true">
         <div fxLayout="column"
              fxLayoutGap="1em"
              fxLayoutAlign="start stretch">
@@ -134,6 +136,14 @@
                                            [hasAttachedAppliances]="true"
                                            (generateFishingGearsFromShipClicked)="generateFishingGearsFromShip()">
             </inspected-fishing-gears-table>
+
+            <mat-error *ngIf="form.controls.fishingGearsControl?.touched && form.errors?.chatchesWithoutGearError === true">
+                * {{ 'inspections.catches-without-inspected-gears-error' | tlTranslate }}
+            </mat-error>
+
+            <mat-error *ngIf="form.controls.fishingGearsControl?.touched && form.errors?.gearExitNotInspectedError === true">
+                * {{ 'inspections.gear-exit-without-inspected-gear-error' | tlTranslate }}
+            </mat-error>
 
             <inspection-toggle-list formControlName="fishingGearTogglesControl"
                                     [toggles]="fishingGearToggles">

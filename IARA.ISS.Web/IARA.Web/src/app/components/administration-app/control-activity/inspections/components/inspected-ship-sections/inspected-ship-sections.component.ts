@@ -1,5 +1,5 @@
 ﻿import { Component, EventEmitter, Input, OnChanges, OnInit, Output, Self, SimpleChanges } from '@angular/core';
-import { AbstractControl, FormControl, FormGroup, NgControl, Validators } from '@angular/forms';
+import { AbstractControl, FormControl, FormGroup, NgControl, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { forkJoin } from 'rxjs';
 
 import { CustomFormControl } from '@app/shared/utils/custom-form-control';
@@ -29,6 +29,7 @@ import { InspectionCatchMeasureDTO } from '@app/models/generated/dtos/Inspection
 import { ShipsUtils } from '@app/shared/utils/ships.utils';
 import { PortNomenclatureDTO } from '@app/models/generated/dtos/PortNomenclatureDTO';
 import { InspectionShipLogBookPageDataDTO } from '@app/models/generated/dtos/InspectionShipLogBookPageDataDTO';
+import { InspectedFishingGearEnum } from '@app/enums/inspected-fishing-gear.enum';
 
 @Component({
     selector: 'inspected-ship-sections',
@@ -127,6 +128,7 @@ export class InspectedShipSectionsComponent extends CustomFormControl<InspectedS
 
     private shipId: number | undefined;
     private currentLogBookPageIds: number[] = [];
+    private pageFishingGearTypes: Map<number, number> = new Map<number, number>();
 
     private readonly service: InspectionsService;
 
@@ -160,25 +162,18 @@ export class InspectedShipSectionsComponent extends CustomFormControl<InspectedS
         const hasFishingGears = changes['hasFishingGears'];
 
         if (toggles !== null && toggles !== undefined) {
-            this.shipToggles = this.toggles
-                .filter(f => f.code!.startsWith('Ship-'));
+            this.shipToggles = this.toggles.filter(x => x.code!.startsWith('Ship-'));
 
-            this.checkToggles = this.toggles
-                .filter(f => !f.code!.startsWith('Catch-')
-                    && !f.code!.startsWith('Ship-')
-                    && !f.code!.startsWith('CheckObject-'));
+            this.checkToggles = this.toggles.filter(x =>
+                !x.code!.startsWith('Catch-')
+                && !x.code!.startsWith('Ship-')
+                && !x.code!.startsWith('CheckObject-')
+            );
 
-            this.catchToggles = this.toggles
-                .filter(f => f.code!.startsWith('Catch-'));
-
-            this.fishingGearToggles = this.toggles
-                .filter(f => f.code!.startsWith('FishingGear-'));
-
-            this.opMembership = this.toggles
-                .find(f => f.code === 'CheckObject-OPMembership');
-
-            this.preliminaryNotice = this.toggles
-                .find(f => f.code === 'CheckObject-PreliminaryNotice');
+            this.catchToggles = this.toggles.filter(x => x.code!.startsWith('Catch-'));
+            this.fishingGearToggles = this.toggles.filter(x => x.code!.startsWith('FishingGear-'));
+            this.opMembership = this.toggles.find(x => x.code === 'CheckObject-OPMembership');
+            this.preliminaryNotice = this.toggles.find(x => x.code === 'CheckObject-PreliminaryNotice');
         }
 
         if (hasFishingGears !== null && hasFishingGears !== undefined) {
@@ -198,10 +193,9 @@ export class InspectedShipSectionsComponent extends CustomFormControl<InspectedS
     public writeValue(value: InspectedShipSectionsModel | undefined): void {
         if (value !== null && value !== undefined) {
             this.shipId = value.ship?.shipId;
-
             const ship: ShipWithPersonnelModel = this.mapModelToShipWithPersonnel(value);
-            this.form.get('shipControl')!.setValue(ship);
 
+            this.form.get('shipControl')!.setValue(ship);
             this.form.get('permitLicensesControl')!.setValue(value.permitLicenses);
             this.form.get('permitsControl')!.setValue(value.permits);
             this.form.get('togglesControl')!.setValue(value.checks);
@@ -211,39 +205,34 @@ export class InspectedShipSectionsComponent extends CustomFormControl<InspectedS
             this.form.get('logBooksControl')!.setValue(value.logBooks);
             this.form.get('fishingGearsControl')!.setValue(value.fishingGears);
 
-            this.permitIds = value.permitLicenses
-                ?.filter(f => f.checkValue === InspectionToggleTypesEnum.Y || f.checkValue === InspectionToggleTypesEnum.N)
-                .map(f => f.permitLicenseId!) ?? [];
-
+            this.permitIds = value.permitLicenses?.filter(x => x.checkValue === InspectionToggleTypesEnum.Y || x.checkValue === InspectionToggleTypesEnum.N).map(x => x.permitLicenseId!) ?? [];
             this.currentLogBookPageIds = this.getCurrentLogBookPageIds(value.logBooks ?? []);
 
             const checks = value.checks ?? [];
-            const membership = checks.find(f => f.checkTypeId === this.opMembership!.value);
-            const notice = checks.find(f => f.checkTypeId === this.preliminaryNotice!.value);
-
+            const membership = checks.find(x => x.checkTypeId === this.opMembership!.value);
             if (membership !== null && membership !== undefined) {
                 this.form.get('opMembershipControl')!.setValue(membership);
-                this.form.get('opMembershipAssociationControl')!.setValue(this.associations.find(f => f.value === Number(membership.number)));
+                this.form.get('opMembershipAssociationControl')!.setValue(this.associations.find(x => x.value === Number(membership.number)));
             }
 
+            const notice = checks.find(x => x.checkTypeId === this.preliminaryNotice!.value);
             if (notice !== null && notice !== undefined) {
                 this.form.get('preliminaryNoticeControl')!.setValue(notice);
                 this.form.get('preliminaryNoticeNumberControl')!.setValue(notice.number);
                 this.form.get('preliminaryNoticePurposeControl')!.setValue(notice.description);
             }
 
-            const checkObservation = value.observationTexts?.find(f => f.category === this.checksObservationCategory);
-            const catchObservation = value.observationTexts?.find(f => f.category === this.catchObservationCategory);
-            const fishingGearObservation = value.observationTexts?.find(f => f.category === this.fishingGearObservationCategory);
-
+            const checkObservation = value.observationTexts?.find(x => x.category === this.checksObservationCategory);
             if (checkObservation !== null && checkObservation !== undefined) {
                 this.form.get('checkObservationControl')!.setValue(checkObservation.text);
             }
 
+            const catchObservation = value.observationTexts?.find(x => x.category === this.catchObservationCategory);
             if (catchObservation !== null && catchObservation !== undefined) {
                 this.form.get('catchObservationControl')!.setValue(catchObservation.text);
             }
 
+            const fishingGearObservation = value.observationTexts?.find(x => x.category === this.fishingGearObservationCategory);
             if (fishingGearObservation !== null && fishingGearObservation !== undefined) {
                 this.form.get('fishingGearObservationControl')!.setValue(fishingGearObservation.text);
             }
@@ -384,12 +373,12 @@ export class InspectedShipSectionsComponent extends CustomFormControl<InspectedS
                                     }
                                 }
                             }
-                         
+
                             if (page.fishingGear !== undefined && page.fishingGear !== null) {
                                 const currentFishingGears: InspectedFishingGearDTO[] = this.form.get('fishingGearsControl')!.value ?? [];
                                 const logBookPageFishingGears: InspectedFishingGearDTO[] = currentFishingGears.filter(x => x.logBookPageId !== undefined && x.logBookPageId !== null && x.logBookPageId !== logBookPageId);
                                 let fishingGears: InspectedFishingGearDTO[] = [];
-                          
+
                                 if (logBookPageFishingGears.length > 0) {
                                     fishingGears = logBookPageFishingGears;
                                 }
@@ -398,10 +387,15 @@ export class InspectedShipSectionsComponent extends CustomFormControl<InspectedS
                                 fishingGears = fishingGears.slice();
                                 this.form.get('fishingGearsControl')!.setValue(fishingGears);
                                 this.form.get('fishingGearsControl')!.updateValueAndValidity();
+
+                                if (page.fishingGear.permittedFishingGear !== undefined && page.fishingGear.permittedFishingGear !== null) {
+                                    this.pageFishingGearTypes.set(logBookPageId, page.fishingGear.permittedFishingGear.typeId!);
+                                }
                             }
                         }
 
                         this.form.get('catchesControl')!.setValue(catches);
+                        this.form.updateValueAndValidity();
                     }
                 });
             }
@@ -427,7 +421,10 @@ export class InspectedShipSectionsComponent extends CustomFormControl<InspectedS
             checkObservationControl: new FormControl(undefined, Validators.maxLength(4000)),
             catchObservationControl: new FormControl(undefined, Validators.maxLength(4000)),
             fishingGearObservationControl: new FormControl(undefined, Validators.maxLength(4000))
-        }, InspectionUtils.atLeastOneCatchValidator());
+        }, [
+            InspectionUtils.atLeastOneCatchValidator(),
+            this.fishingGearsNotCheckedValidator()
+        ]);
 
         form.get('opMembershipControl')!.valueChanges.subscribe({
             next: this.onOPMembershipChanged.bind(this)
@@ -470,7 +467,7 @@ export class InspectedShipSectionsComponent extends CustomFormControl<InspectedS
             ...fishingGearToggles,
             opMembership,
             notice
-        ].filter(f => f !== null && f !== undefined);
+        ].filter(x => x !== null && x !== undefined);
 
         return new InspectedShipSectionsModel({
             ship: ship.ship,
@@ -496,7 +493,7 @@ export class InspectedShipSectionsComponent extends CustomFormControl<InspectedS
                     text: this.form.get('fishingGearObservationControl')!.value
                 }),
                 ...(ship.observationTexts ?? [])
-            ].filter(f => f !== null && f !== undefined && !CommonUtils.isNullOrWhiteSpace(f.text))
+            ].filter(x => x !== null && x !== undefined && !CommonUtils.isNullOrWhiteSpace(x.text))
         });
     }
 
@@ -562,5 +559,44 @@ export class InspectedShipSectionsComponent extends CustomFormControl<InspectedS
 
         const catchRecords: InspectionCatchMeasureDTO[] = currentCatches.filter(x => x.shipLogBookPageId === undefined || x.shipLogBookPageId === null || this.currentLogBookPageIds.includes(x.shipLogBookPageId));
         this.form.get('catchesControl')!.setValue(catchRecords);
+    }
+
+    private fishingGearsNotCheckedValidator(): ValidatorFn {
+        return (form: AbstractControl): ValidationErrors | null => {
+            if (form === undefined || form === null) {
+                return null;
+            }
+
+            if (this.control === undefined || this.control === null) {
+                return null;
+            }
+
+            const catches: InspectionCatchMeasureDTO[] | undefined = form.get('catchesControl')!.value;
+            const fishingGears: InspectedFishingGearDTO[] | undefined = form.get('fishingGearsControl')!.value;
+
+            if (catches !== undefined && catches !== null && catches.length > 0) {
+                if (catches.some(x => x.hasGearExit === true && x.fishingGearTypeId !== undefined && x.fishingGearTypeId !== null)) {
+                    if (fishingGears === undefined || fishingGears === null || fishingGears.length === 0) {
+                        return { 'chatchesWithoutGearError': true };
+                    }
+
+                    const gearCatches: InspectionCatchMeasureDTO[] = catches.filter(x => x.hasGearExit === true);
+                    for (const catchMeasure of gearCatches) {
+                        if (catchMeasure.fishingGearTypeId !== undefined && catchMeasure.fishingGearTypeId !== null) {
+                            const inspectedFishingGears: InspectedFishingGearDTO[] = fishingGears.filter(x =>
+                                x.inspectedFishingGear?.typeId === catchMeasure.fishingGearTypeId
+                                || (x.permittedFishingGear?.typeId === catchMeasure.fishingGearTypeId
+                                    && x.checkInspectedMatchingRegisteredGear !== InspectedFishingGearEnum.R));
+
+                            if (inspectedFishingGears.length === 0) {
+                                return { 'gearExitNotInspectedError': true };
+                            }
+                        }
+                    }
+                }
+            }
+
+            return null;
+        }
     }
 }

@@ -39,8 +39,8 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.HarbourInspection
             InspectionGeneralInfo = new InspectionGeneralInfoViewModel(this);
             InspectionHarbour = new InspectionHarbourViewModel(this, hasDate: false);
             InspectedShip = new FishingShipViewModel(this, canPickLocation: false);
-            ShipFishingGears = new ShipFishingGearsViewModel(this, true);
-            ShipChecks = new ShipChecksViewModel(this, ShipCatches, ShipFishingGears.FishingGears);
+            ShipChecks = new ShipChecksViewModel(this, ShipCatches);
+            ShipFishingGears = new ShipFishingGearsViewModel(this, ShipChecks.PermitLicenses, true);
             ShipCatches = new ShipCatchesViewModel(this, ShipFishingGears.FishingGears, isUnloadedQuantityRequired: true);
             TransshippedShip = new InspectedShipDataViewModel(this, canPickLocation: false)
             {

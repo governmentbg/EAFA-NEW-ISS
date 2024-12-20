@@ -39,7 +39,7 @@ namespace IARA.Mobile.Insp.Application.Transactions
             _messagingCenter = messagingCenter;
         }
 
-        public async Task<List<InspectionCatchMeasureDto>> GetCatchesFromLogBookPaheNumber(int logBookId, string pageNum)
+        public async Task<List<InspectionCatchMeasureDto>> GetCatchesFromLogBookPageNumber(int logBookId, string pageNum)
         {
             if (CommonGlobalVariables.InternetStatus == InternetStatus.Disconnected)
             {
@@ -76,6 +76,7 @@ namespace IARA.Mobile.Insp.Application.Transactions
                 TurbotSizeGroupId = c.TurbotSizeGroupId,
                 CatchZoneId = c.CatchZoneId,
                 LogBookId = logBookId,
+                FishingGearPermitId = c.FishingGearPermitId
             }
             ).ToList();
         }

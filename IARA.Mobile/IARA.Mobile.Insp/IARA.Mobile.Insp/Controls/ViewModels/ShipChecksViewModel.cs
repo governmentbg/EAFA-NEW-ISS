@@ -26,13 +26,13 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
         private List<ToggleOption> _opMembershipButtons;
         private List<SelectNomenclatureDto> _shipAssociations;
 
-        public ShipChecksViewModel(InspectionPageViewModel inspection, ShipCatchesViewModel shipCatches, FishingGearsViewModel fishingGears)
+        public ShipChecksViewModel(InspectionPageViewModel inspection, ShipCatchesViewModel shipCatches)
         {
             Inspection = inspection;
 
             Permits = new PermitsViewModel(inspection);
             PermitLicenses = new PermitLicensesViewModel(inspection);
-            LogBooks = new LogBooksViewModel(inspection, shipCatches, fishingGears);
+            LogBooks = new LogBooksViewModel(inspection, shipCatches);
 
             this.AddValidation(others: new IValidatableViewModel[]
             {

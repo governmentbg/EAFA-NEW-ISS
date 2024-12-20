@@ -172,7 +172,14 @@ export abstract class BaseInspectionsComponent implements IDialogComponent {
             }
         }
         else if (actionInfo.id === 'print') {
-            this.service.downloadReport(this.id!, this.model.reportNum!).subscribe();
+            this.service.downloadReport(this.id!, this.model.reportNum!).subscribe({
+                next: () => {
+                    //nothing to do
+                },
+                error: (errorResponse: HttpErrorResponse) => {
+                    this.handleErrorResponse(errorResponse);
+                }
+            });
         }
         else if (actionInfo.id === 'send-to-flux') {
             this.service.sendInspectionToFlux(this.id!).subscribe({

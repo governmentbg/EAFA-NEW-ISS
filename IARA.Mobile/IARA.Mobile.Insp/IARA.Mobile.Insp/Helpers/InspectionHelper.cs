@@ -78,22 +78,6 @@ namespace IARA.Mobile.Insp.Helpers
 
                         if (permitLicenses.Count > 0)
                         {
-                            shipChecks.PermitLicenses.ActionSelected = CommandBuilder.CreateFrom(() =>
-                            {
-                                if (fishingGears != null)
-                                {
-                                    List<int> permitIds = shipChecks.PermitLicenses.PermitLicenses
-                                        .Where(f => (f.Corresponds.Value == nameof(CheckTypeEnum.Y) || f.Corresponds.Value == nameof(CheckTypeEnum.N)) && f.Dto?.PermitLicenseId != null)
-                                        .Select(f => f.Dto.PermitLicenseId.Value)
-                                        .ToList();
-
-                                    fishingGears.FishingGears.Value.ReplaceRange(
-                                        fishingGears.AllFishingGears
-                                            .FindAll(f => f.Dto.PermittedFishingGear == null || permitIds.Contains(f.Dto.PermittedFishingGear.PermitId.Value))
-                                    );
-                                }
-                            });
-
                             shipChecks.PermitLicenses.PermitLicenses.Value.AddRange(
                                 permitLicenses.ConvertAll(f =>
                                 {
@@ -154,7 +138,7 @@ namespace IARA.Mobile.Insp.Helpers
                             shipChecks.LogBooks.LogBooks.Value.AddRange(
                                 logBooks.ConvertAll(f =>
                                 {
-                                    LogBookModel logBook = new LogBookModel(shipCatches, fishingGears)
+                                    LogBookModel logBook = new LogBookModel(shipCatches)
                                     {
                                         Pages = pages?.FindAll(s => s.LogBookId == f.Id).OrderByDescending(x => x.IssuedOn).ToList() ?? new List<LogBookPageDto>(),
                                         Dto = new InspectionLogBookDto
