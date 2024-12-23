@@ -178,6 +178,8 @@ export class InspectedCatchesTableComponent extends CustomFormControl<Inspection
                 catchZone: this.catchZones.find(s => s.value === x.catchZoneId),
                 turbotSizeGroup: this.turbotSizeGroups.find(s => s.value === x.turbotSizeGroupId),
                 turbotSizeGroupId: x.turbotSizeGroupId,
+                hasGearExit: x.hasGearExit,
+                fishingGearTypeId: x.fishingGearTypeId,
                 hasMissingProperties: this.checkIfCatchHasMissingProperties(x)
             }));
 
@@ -353,6 +355,8 @@ export class InspectedCatchesTableComponent extends CustomFormControl<Inspection
             unloadedQuantity: this.hasUnloadedQuantity ? x.unloadedQuantity : undefined,
             shipLogBookPageId: x.shipLogBookPageId ?? undefined,
             turbotSizeGroupId: x.turbotSizeGroupId ?? undefined,
+            hasGearExit: x.hasGearExit,
+            fishingGearTypeId: x.fishingGearTypeId,
             hasMissingProperties: this.checkIfCatchHasMissingProperties(x)
         }));
     }

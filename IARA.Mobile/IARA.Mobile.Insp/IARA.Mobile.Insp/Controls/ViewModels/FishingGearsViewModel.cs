@@ -19,16 +19,22 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
 {
     public class FishingGearsViewModel : ViewModel
     {
-        public FishingGearsViewModel(InspectionPageViewModel inspection, bool hasPingers = true, bool hasAttachmentForFishingGear = false)
+        private PermitLicensesViewModel _permitLicenses;
+        private ShipFishingGearsViewModel _shipFishingGears;
+        public FishingGearsViewModel(InspectionPageViewModel inspection, PermitLicensesViewModel permitLicenses, ShipFishingGearsViewModel shipFishingGears, bool hasPingers = true, bool hasAttachmentForFishingGear = false)
         {
             Inspection = inspection;
             HasPingers = hasPingers;
             HasAttachmentForFishingGear = hasAttachmentForFishingGear;
+            _permitLicenses = permitLicenses;
+            _shipFishingGears = shipFishingGears;
 
             Review = CommandBuilder.CreateFrom<FishingGearModel>(OnReview);
             Add = CommandBuilder.CreateFrom(OnAdd);
             Edit = CommandBuilder.CreateFrom<FishingGearModel>(OnEdit);
             Remove = CommandBuilder.CreateFrom<FishingGearModel>(OnRemove);
+            GenerateFromPermitLicense = CommandBuilder.CreateFrom(OnGenerateFromPermitLicense);
+            ShowRequiredDialog = CommandBuilder.CreateFrom<FishingGearModel>(OnShowRequiredDialog);
 
             AllFishingGears = new List<FishingGearModel>();
 
@@ -47,7 +53,8 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
         public ICommand Add { get; }
         public ICommand Edit { get; }
         public ICommand Remove { get; }
-        public ICommand GenerateFromPermitLicense { get; set; }
+        public ICommand ShowRequiredDialog { get; }
+        public ICommand GenerateFromPermitLicense { get; }
 
         public void OnEdit(List<InspectedFishingGearDto> fishingGears, List<int> permitIds)
         {
@@ -145,6 +152,47 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
                 AllFishingGears.Remove(fishingGear);
                 FishingGears.Value.Remove(fishingGear);
             }
+        }
+        private Task OnShowRequiredDialog(FishingGearModel fishingGear)
+        {
+            return App.Current.MainPage.DisplayAlert(
+                TranslateExtension.Translator[nameof(GroupResourceEnum.FishingGear) + "/RequiredGearInspectionTitle"],
+                string.Format(TranslateExtension.Translator[nameof(GroupResourceEnum.FishingGear) + "/RequiredGearInspection"], fishingGear.LogBookId),
+                TranslateExtension.Translator[nameof(GroupResourceEnum.Common) + "/Ok"]
+            );
+        }
+
+        private void OnGenerateFromPermitLicense()
+        {
+            List<int> permitIds = _permitLicenses.PermitLicenses
+                                        .Where(f => f.Dto?.PermitLicenseId != null)
+                                        .Select(f => f.Dto.PermitLicenseId.Value)
+                                        .ToList();
+
+            FishingGears.Value.Clear();
+            FishingGears.Value.AddRange(
+                AllFishingGears
+                    .FindAll(f => f.Dto.PermittedFishingGear == null || permitIds.Contains(f.Dto.PermittedFishingGear.PermitId.Value))
+            );
+        }
+
+        public bool IsValid()
+        {
+            bool isValid = true;
+            foreach (FishingGearModel model in FishingGears.Value)
+            {
+                if (model.LogBookId != null && model.CheckedValue == null && model.CheckedValue != InspectedFishingGearEnum.R)
+                {
+                    isValid = false;
+                    _shipFishingGears.HasErrors = false;
+                }
+            }
+
+            if (_shipFishingGears != null)
+            {
+                _shipFishingGears.HasErrors = !isValid;
+            }
+            return isValid;
         }
 
         public static implicit operator List<InspectedFishingGearDto>(FishingGearsViewModel viewModel)

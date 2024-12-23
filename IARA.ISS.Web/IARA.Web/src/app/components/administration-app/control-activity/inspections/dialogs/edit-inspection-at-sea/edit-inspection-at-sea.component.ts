@@ -60,39 +60,17 @@ export class EditInspectionAtSeaComponent extends BaseInspectionsComponent imple
         }
 
         const nomenclatureTables = await forkJoin([
-            NomenclatureStore.instance.getNomenclature(
-                NomenclatureTypes.Institutions, this.nomenclatures.getInstitutions.bind(this.nomenclatures), false
-            ),
-            NomenclatureStore.instance.getNomenclature(
-                NomenclatureTypes.Ships, this.nomenclatures.getShips.bind(this.nomenclatures), false
-            ),
-            NomenclatureStore.instance.getNomenclature(
-                NomenclatureTypes.Fishes, this.nomenclatures.getFishTypes.bind(this.nomenclatures), false
-            ),
-            NomenclatureStore.instance.getNomenclature(
-                NomenclatureTypes.CatchTypes, this.nomenclatures.getCatchInspectionTypes.bind(this.nomenclatures), false
-            ),
-            NomenclatureStore.instance.getNomenclature(
-                NomenclatureTypes.CatchZones, this.nomenclatures.getCatchZones.bind(this.nomenclatures), false
-            ),
-            NomenclatureStore.instance.getNomenclature(
-                NomenclatureTypes.FishSex, this.nomenclatures.getFishSex.bind(this.nomenclatures), false
-            ),
-            NomenclatureStore.instance.getNomenclature(
-                NomenclatureTypes.Countries, this.nomenclatures.getCountries.bind(this.nomenclatures), false
-            ),
-            NomenclatureStore.instance.getNomenclature(
-                NomenclatureTypes.Ports, this.nomenclatures.getPorts.bind(this.nomenclatures), false
-            ),
-            NomenclatureStore.instance.getNomenclature(
-                NomenclatureTypes.VesselTypes, this.nomenclatures.getVesselTypes.bind(this.nomenclatures), false
-            ),
-            NomenclatureStore.instance.getNomenclature(
-                NomenclatureTypes.ShipAssociations, this.nomenclatures.getShipAssociations.bind(this.nomenclatures), false
-            ),
-            NomenclatureStore.instance.getNomenclature(
-                NomenclatureTypes.TurbotSizeGroups, this.nomenclatures.getTurbotSizeGroups.bind(this.nomenclatures), false
-            ),
+            NomenclatureStore.instance.getNomenclature(NomenclatureTypes.Institutions, this.nomenclatures.getInstitutions.bind(this.nomenclatures), false),
+            NomenclatureStore.instance.getNomenclature(NomenclatureTypes.Ships, this.nomenclatures.getShips.bind(this.nomenclatures), false),
+            NomenclatureStore.instance.getNomenclature(NomenclatureTypes.Fishes, this.nomenclatures.getFishTypes.bind(this.nomenclatures), false),
+            NomenclatureStore.instance.getNomenclature(NomenclatureTypes.CatchTypes, this.nomenclatures.getCatchInspectionTypes.bind(this.nomenclatures), false),
+            NomenclatureStore.instance.getNomenclature(NomenclatureTypes.CatchZones, this.nomenclatures.getCatchZones.bind(this.nomenclatures), false),
+            NomenclatureStore.instance.getNomenclature(NomenclatureTypes.FishSex, this.nomenclatures.getFishSex.bind(this.nomenclatures), false),
+            NomenclatureStore.instance.getNomenclature(NomenclatureTypes.Countries, this.nomenclatures.getCountries.bind(this.nomenclatures), false),
+            NomenclatureStore.instance.getNomenclature(NomenclatureTypes.Ports, this.nomenclatures.getPorts.bind(this.nomenclatures), false),
+            NomenclatureStore.instance.getNomenclature(NomenclatureTypes.VesselTypes, this.nomenclatures.getVesselTypes.bind(this.nomenclatures), false),
+            NomenclatureStore.instance.getNomenclature(NomenclatureTypes.ShipAssociations, this.nomenclatures.getShipAssociations.bind(this.nomenclatures), false),
+            NomenclatureStore.instance.getNomenclature(NomenclatureTypes.TurbotSizeGroups, this.nomenclatures.getTurbotSizeGroups.bind(this.nomenclatures), false),
             this.service.getCheckTypesForInspection(InspectionTypesEnum.IBS),
         ]).toPromise();
 
@@ -108,13 +86,12 @@ export class EditInspectionAtSeaComponent extends BaseInspectionsComponent imple
         this.associations = nomenclatureTables[9];
         this.turbotSizeGroups = nomenclatureTables[10];
 
-        this.toggles = nomenclatureTables[11].map(f => new InspectionCheckModel(f));
+        this.toggles = nomenclatureTables[11].map(x => new InspectionCheckModel(x));
 
         if (this.id !== null && this.id !== undefined) {
             this.service.get(this.id, this.inspectionCode).subscribe({
-                next: (dto: InspectionAtSeaDTO) => {
-                    this.model = dto;
-
+                next: (inspection: InspectionAtSeaDTO) => {
+                    this.model = inspection;
                     this.fillForm();
                 }
             });
@@ -148,10 +125,6 @@ export class EditInspectionAtSeaComponent extends BaseInspectionsComponent imple
                 byEmergencySignal: this.model.byEmergencySignal,
             }));
 
-            this.form.get('patrolVehiclesControl')!.setValue(this.model.patrolVehicles);
-
-            this.form.get('filesControl')!.setValue(this.model.files);
-
             this.form.get('additionalInfoControl')!.setValue(new InspectionAdditionalInfoModel({
                 actionsTaken: this.model.actionsTaken,
                 administrativeViolation: this.model.administrativeViolation,
@@ -162,8 +135,9 @@ export class EditInspectionAtSeaComponent extends BaseInspectionsComponent imple
 
             const ship: InspectedShipSectionsModel = this.mapModelToShipData();
             this.form.get('shipSectionsControl')!.setValue(ship);
-
             this.form.get('captainCommentControl')!.setValue(this.model.captainComment);
+            this.form.get('patrolVehiclesControl')!.setValue(this.model.patrolVehicles);
+            this.form.get('filesControl')!.setValue(this.model.files);
         }
     }
 
@@ -172,36 +146,36 @@ export class EditInspectionAtSeaComponent extends BaseInspectionsComponent imple
         const additionalInfo: InspectionAdditionalInfoModel = this.form.get('additionalInfoControl')!.value;
         const shipSections: InspectedShipSectionsModel = this.form.get('shipSectionsControl')!.value;
 
-        this.model = new InspectionAtSeaDTO({
-            id: this.model.id,
-            startDate: generalInfo.startDate,
-            endDate: generalInfo.endDate,
-            inspectors: generalInfo.inspectors,
-            reportNum: generalInfo.reportNum,
-            patrolVehicles: this.form.get('patrolVehiclesControl')!.value,
-            files: this.form.get('filesControl')!.value,
-            actionsTaken: additionalInfo?.actionsTaken,
-            administrativeViolation: additionalInfo?.administrativeViolation === true,
-            byEmergencySignal: generalInfo.byEmergencySignal,
-            inspectionType: InspectionTypesEnum.IBS,
-            inspectorComment: additionalInfo?.inspectorComment,
-            violatedRegulations: additionalInfo?.violatedRegulations,
-            isActive: true,
-            captainComment: this.form.get('captainCommentControl')!.value,
-            catchMeasures: shipSections?.catches,
-            checks: shipSections?.checks,
-            fishingGears: shipSections?.fishingGears,
-            inspectedShip: shipSections?.ship,
-            lastPortVisit: shipSections?.port,
-            logBooks: shipSections?.logBooks,
-            permitLicenses: shipSections?.permitLicenses,
-            permits: shipSections?.permits,
-            personnel: shipSections?.personnel,
-            observationTexts: [
-                ...(shipSections?.observationTexts ?? []),
-                additionalInfo?.violation,
-            ].filter(f => f !== null && f !== undefined) as InspectionObservationTextDTO[],
-        });
+        this.model.inspectionType = InspectionTypesEnum.IBS;
+        this.model.startDate = generalInfo.startDate;
+        this.model.endDate = generalInfo.endDate;
+        this.model.inspectors = generalInfo.inspectors;
+        this.model.reportNum = generalInfo.reportNum;
+        this.model.byEmergencySignal = generalInfo.byEmergencySignal;
+        this.model.byEmergencySignal = generalInfo.byEmergencySignal;
+        this.model.actionsTaken = additionalInfo?.actionsTaken;
+        this.model.administrativeViolation = additionalInfo?.administrativeViolation === true;
+        this.model.inspectorComment = additionalInfo?.inspectorComment;
+        this.model.violatedRegulations = additionalInfo?.violatedRegulations;
+
+        this.model.patrolVehicles = this.form.get('patrolVehiclesControl')!.value;
+        this.model.files = this.form.get('filesControl')!.value;
+        this.model.captainComment = this.form.get('captainCommentControl')!.value;
+
+        this.model.catchMeasures = shipSections?.catches;
+        this.model.checks = shipSections?.checks;
+        this.model.fishingGears = shipSections?.fishingGears;
+        this.model.inspectedShip = shipSections?.ship;
+        this.model.lastPortVisit = shipSections?.port;
+        this.model.logBooks = shipSections?.logBooks;
+        this.model.permitLicenses = shipSections?.permitLicenses;
+        this.model.permits = shipSections?.permits;
+
+        this.model.personnel = shipSections?.personnel;
+            this.model.observationTexts = [
+            ...(shipSections?.observationTexts ?? []),
+            additionalInfo?.violation,
+        ].filter(x => x !== null && x !== undefined) as InspectionObservationTextDTO[];
     }
 
     private mapModelToShipData(): InspectedShipSectionsModel {

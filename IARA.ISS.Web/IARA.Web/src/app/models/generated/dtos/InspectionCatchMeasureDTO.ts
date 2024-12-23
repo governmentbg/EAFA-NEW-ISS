@@ -62,4 +62,10 @@ export class InspectionCatchMeasureDTO {
 
     @StrictlyTyped(Boolean)
     public hasMissingProperties?: boolean;
+
+    @StrictlyTyped(Boolean)
+    public hasGearExit?: boolean;
+
+    @StrictlyTyped(Number)
+    public fishingGearTypeId?: number;
 }

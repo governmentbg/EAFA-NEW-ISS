@@ -44,7 +44,7 @@
                     <tl-date [formControlName]="_formControlName" [min]="minValue" [max]="maxValue" [getControlErrorLabelText]="_getControlErrorLabelTextMethod"></tl-date>
                 </ng-container>
                 <ng-container *ngIf="_dataType=='datetime'">
-                    <tl-date-time [formControlName]="_formControlName" [min]="minValue" [max]="maxValue" [getControlErrorLabelText]="_getControlErrorLabelTextMethod"></tl-date-time>
+                    <tl-date-time [formControlName]="_formControlName" [min]="minValue" [max]="maxValue" [disabled]="disabled" [getControlErrorLabelText]="_getControlErrorLabelTextMethod"></tl-date-time>
                 </ng-container>
                 <ng-container *ngIf="_dataType=='boolean'">
                     <tl-checkbox [formControlName]="_formControlName" [getControlErrorLabelText]="_getControlErrorLabelTextMethod"></tl-checkbox>

@@ -15,6 +15,7 @@
     <sv:SectionView.InnerContent>
         <StackLayout Padding="10">
             <lc:FishingGearsView IsTitleVisible="False" BindingContext="{Binding FishingGears}" />
+            <Label TextColor="{StaticResource ErrorColor}" Text="{rt:Translate UninspectedGishingGears, Group=FishingGear}" IsVisible="{Binding HasErrors}"/>
             <tl:TLEditor Title="{rt:Translate ObservationsOrViolations, Group=GeneralInfo}"
                     ValidState="{Binding ObservationsOrViolations}"
                     IsEnabled="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}" />

@@ -53,6 +53,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
             ShowTurbotSizeGroups = showTurbotSizeGroups;
             IsUnloadedQuantityRequired = isUnloadedQuantityRequired;
             ShowUnloadedQuantity = showUnloadedQuantity;
+            _fishingGears = fishingGears;
 
             AddCatch = CommandBuilder.CreateFrom(OnAddCatch);
             RemoveCatch = CommandBuilder.CreateFrom<CatchInspectionViewModel>(OnRemoveCatch);
@@ -181,22 +182,23 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
                     viewModel.ShipText = $"{f.OriginShip.Name} ({f.OriginShip.CFR})";
                 }
 
-                if (_fishingGears != null)
-                {
-                    var gears = _fishingGears.AllFishingGears
-                            .FindAll(fg => fg.Dto.PermittedFishingGear == null || fg.Dto.PermittedFishingGear.PermitId.Value == f.FishingGearPermitId);
-
-                    foreach (var gear in gears)
-                    {
-                        gear.LogBookId = f.LogBookId;
-                        gear.PermitId = f.FishingGearPermitId;
-                    }
-
-                    _fishingGears.FishingGears.Value.AddRange(gears);
-                }
-
                 return viewModel;
             }));
+
+            InspectionCatchMeasureDto catchMeasure = catchMeasures.FirstOrDefault();
+            if (_fishingGears != null && catchMeasure != null)
+            {
+                var gears = _fishingGears.AllFishingGears
+                        .FindAll(fg => fg.Dto.PermittedFishingGear == null || fg.Dto.PermittedFishingGear.PermitId.Value == catchMeasure.FishingGearPermitId);
+
+                foreach (var gear in gears)
+                {
+                    gear.LogBookId = catchMeasure.LogBookId;
+                    gear.PermitId = catchMeasure.FishingGearPermitId;
+                }
+
+                _fishingGears.FishingGears.Value.AddRange(gears);
+            }
             Catches.First().CatchInspections.SetSummary();
 
             Catches.Validation.Force();
@@ -204,8 +206,13 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
 
         public async Task AddCatches(LogBookPageDto selectedPage)
         {
+            if (_fishingGears != null)
+            {
+                _fishingGears.FishingGears.Value.RemoveRange(_fishingGears.FishingGears.Value.Where(x => x.LogBookId == null).ToList());
+                _fishingGears.FishingGears.Value.RemoveRange(_fishingGears.FishingGears.Value.Where(x => x.LogBookId == selectedPage.LogBookId).ToList());
+            }
             await TLLoadingHelper.ShowFullLoadingScreen();
-            OnEdit(await InspectionsTransaction.GetCatchesFromLogBookPaheNumber(selectedPage.LogBookId, selectedPage.PageNum));
+            OnEdit(await InspectionsTransaction.GetCatchesFromLogBookPageNumber(selectedPage.LogBookId, selectedPage.PageNum));
             await TLLoadingHelper.HideFullLoadingScreen();
         }
 

@@ -120,6 +120,7 @@ export class TLDataColumnComponent extends BaseDataColumn implements OnInit, Aft
 
     @Input() public minValue: unknown;
     @Input() public maxValue: unknown;
+    @Input() public disabled: boolean = false;
 
     @Input() public prefixControlValidators: ValidatorFn[] | undefined;
 

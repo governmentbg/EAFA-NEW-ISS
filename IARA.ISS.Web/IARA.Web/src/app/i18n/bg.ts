@@ -2934,6 +2934,8 @@
         'permit-year': 'Година на УСР',
         'confirm-need-for-corrections': 'Върни за корекции',
         'market-catch-at-least-one-catch-error': 'Трябва да бъдат въведени данни за поне един улов',
+        'catches-without-inspected-gears-error': 'Има добавени улови, за които в страницата от риболовен дневник е отбелязано изтегляне на уреда, а няма въведени съответстващи уреди с налична проверка',
+        'gear-exit-without-inspected-gear-error': 'Има добавени улови, за които в страницата от риболовен дневник е отбелязано изтегляне на уреда, за които няма въведени уреди с налична проверка',
         'permit-license-nomenclature-captain': 'Капитан',
         'log-book-page-status-in-progress': 'В процес на попълване',
         'log-book-page-status-submitted': 'Попълнена',

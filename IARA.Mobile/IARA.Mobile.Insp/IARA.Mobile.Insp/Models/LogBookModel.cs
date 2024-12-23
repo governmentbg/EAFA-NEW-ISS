@@ -22,13 +22,11 @@ namespace IARA.Mobile.Insp.Models
     {
         private bool _addedByInspector;
         ShipCatchesViewModel _shipCatches;
-        FishingGearsViewModel _fishingGears;
-        public LogBookModel(ShipCatchesViewModel shipCatches, FishingGearsViewModel fishingGears)
+        public LogBookModel(ShipCatchesViewModel shipCatches)
         {
             AddPage = CommandBuilder.CreateFrom<string>(OnAddPage);
             PageSelected = CommandBuilder.CreateFrom<LogBookPageDto>(OnPageSelected);
             _shipCatches = shipCatches;
-            _fishingGears = fishingGears;
 
             Pages = new List<LogBookPageDto>();
 
@@ -96,10 +94,6 @@ namespace IARA.Mobile.Insp.Models
         }
         private async Task OnPageSelected(LogBookPageDto dto)
         {
-            if (_fishingGears != null)
-            {
-                _fishingGears.FishingGears.Value.RemoveRange(_fishingGears.FishingGears.Value.Where(x => x.LogBookId == dto.LogBookId).ToList());
-            }
             if (_shipCatches != null)
             {
                 _shipCatches.Catches.Catches.Value.RemoveRange(_shipCatches.Catches.Catches.Value.Where(x => x.LogBookId == dto.LogBookId).ToList());

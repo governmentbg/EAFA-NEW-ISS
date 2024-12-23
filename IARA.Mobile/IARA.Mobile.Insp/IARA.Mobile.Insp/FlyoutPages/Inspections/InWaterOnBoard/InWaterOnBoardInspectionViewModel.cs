@@ -34,9 +34,9 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.InWaterOnBoard
             InspectionGeneralInfo = new InspectionGeneralInfoViewModel(this);
             PatrolVehicles = new PatrolVehiclesViewModel(this, null);
             InspectedShip = new FishingShipViewModel(this);
-            ShipFishingGears = new ShipFishingGearsViewModel(this, true);
+            ShipChecks = new ShipChecksViewModel(this, ShipCatches);
+            ShipFishingGears = new ShipFishingGearsViewModel(this, ShipChecks.PermitLicenses, true);
             ShipCatches = new ShipCatchesViewModel(this, ShipFishingGears.FishingGears);
-            ShipChecks = new ShipChecksViewModel(this, ShipCatches, ShipFishingGears.FishingGears);
             InspectionFiles = new InspectionFilesViewModel(this);
             AdditionalInfo = new AdditionalInfoViewModel(this);
             Signatures = new SignaturesViewModel(this);

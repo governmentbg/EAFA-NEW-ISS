@@ -2872,6 +2872,8 @@
         'permit-year': 'Permit license year',
         'confirm-need-for-corrections': 'Return for corrections',
         'market-catch-at-least-one-catch-error': 'At least one catch measure needed',
+        'catches-without-inspected-gears-error': 'There are catches with gear exit but there are no gears',
+        'gear-exit-without-inspected-gear-error': 'There are catches with gear exit but the fishing gears are not inspected',
         'permit-license-nomenclature-captain': 'Captain',
         'log-book-page-status-in-progress': 'In progress',
         'log-book-page-status-submitted': 'Submitted',
