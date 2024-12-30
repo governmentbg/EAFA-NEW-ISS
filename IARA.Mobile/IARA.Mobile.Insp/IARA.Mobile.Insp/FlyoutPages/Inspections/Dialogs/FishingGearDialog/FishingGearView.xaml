@@ -12,7 +12,8 @@
         xmlns:lc="clr-namespace:IARA.Mobile.Insp.Controls"
         x:Class="IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.FishingGearDialog.FishingGearView"
         x:DataType="local:FishingGearViewModel"
-        x:Name="view">
+        x:Name="view"
+        IsExpanded="False">
     <ContentView.Resources>
         <conv:MarkColumnWidthConverter x:Key="MarkColumnWidth" HasMoveMark="{Binding MoveMark, Converter={StaticResource IsNotNull}}" />
     </ContentView.Resources>
@@ -20,7 +21,7 @@
 
         <lc:FishingGearGeneralInfo BindingContext="{Binding FishingGearGeneralInfo}" />
 
-        <tl:TLTable Title="{rt:Translate Marks, Group=FishingGear}" ValidState="{Binding Marks}">
+        <!--<tl:TLTable Title="{rt:Translate Marks, Group=FishingGear}" ValidState="{Binding Marks}">
             <tl:TLTable.TableColumns>
                 <tl:TLTableColumn Text="{rt:Translate Number, Group=FishingGear}" Width="*" />
                 <tl:TLTableColumn Text="{rt:Translate Status, Group=FishingGear}" Width="*" />
@@ -123,7 +124,138 @@
             <tl:TLTable.EmptyView>
                 <Label Text="{rt:Translate NoInformation, Group=Common}" Margin="20,10" />
             </tl:TLTable.EmptyView>
-        </tl:TLTable>
+        </tl:TLTable>-->
+
+        <Label Text="{rt:Translate Marks, Group=FishingGear}"
+                FontSize="21"
+                Margin="0,10,0,0" />
+
+        <Frame BackgroundColor="Transparent"
+                CornerRadius="6"
+                BorderColor="{StaticResource GrayColor}">
+            <StackLayout>
+                <CollectionView ItemsSource="{Binding Marks.Value}"
+                        HeightRequest="300"
+                        HorizontalOptions="Fill">
+                    <CollectionView.Header>
+                        <Grid Margin="0,0,0,10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="{Binding BindingContext.DialogType, Converter={StaticResource MarkColumnWidth}, Source={Reference view}}" />
+                            </Grid.ColumnDefinitions>
+                            <Label Text="{rt:Translate Number, Group=FishingGear}" FontSize="16" />
+                            <Label Grid.Column="1"
+                                    Text="{rt:Translate Status, Group=FishingGear}"
+                                    FontSize="16" />
+                        </Grid>
+                    </CollectionView.Header>
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="local:MarkViewModel">
+                            <StackLayout>
+                                <BoxView HeightRequest="1" BackgroundColor="{StaticResource GrayColor}" />
+                                <Grid Margin="5,0,0,5">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="{Binding BindingContext.DialogType, Converter={StaticResource MarkColumnWidth}, Source={Reference view}}" />
+                                    </Grid.ColumnDefinitions>
+                                    <tl:TLEntry IsTitleVisible="False"
+                                            ValidState="{Binding Number}"
+                                            Keyboard="Numeric">
+                                        <StackLayout Orientation="Horizontal" Spacing="0">
+                                            <Label Text="{Binding BindingContext.Prefix, Source={Reference view}}"
+                                                    VerticalOptions="Center"
+                                                    IsVisible="{Binding BindingContext.Prefix, Converter={StaticResource IsNotNull}, Source={Reference view}}" />
+                                            <tl:TLInnerInput />
+                                        </StackLayout>
+                                        <tl:TLEntry.IsEnabled>
+                                            <MultiBinding Converter="{StaticResource All}">
+                                                <Binding Path="BindingContext.DialogType"
+                                                        Converter="{StaticResource IsNotReview}"
+                                                        Source="{Reference view}" />
+                                                <Binding Path="BindingContext.IsEditable" Source="{Reference view}" />
+                                            </MultiBinding>
+                                        </tl:TLEntry.IsEnabled>
+                                    </tl:TLEntry>
+                                    <tl:TLNativePicker IsTitleVisible="False"
+                                            Grid.Column="1"
+                                            Title="{rt:Translate Status, Group=FishingGear}"
+                                            ValidState="{Binding Status}"
+                                            ItemsSource="{Binding BindingContext.MarkStatuses, Source={Reference view}}">
+                                        <tl:TLNativePicker.IsEnabled>
+                                            <MultiBinding Converter="{StaticResource All}">
+                                                <Binding Path="BindingContext.DialogType"
+                                                        Converter="{StaticResource IsNotReview}"
+                                                        Source="{Reference view}" />
+                                                <Binding Path="BindingContext.IsEditable" Source="{Reference view}" />
+                                                <Binding Path="AddedByInspector" Converter="{StaticResource OppositeBool}" />
+                                            </MultiBinding>
+                                        </tl:TLNativePicker.IsEnabled>
+                                    </tl:TLNativePicker>
+                                    <Grid Margin="5,0,0,5" Grid.Column="2">
+                                        <ImageButton Source="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Trash}, Size=20, Color=White}"
+                                                Padding="10"
+                                                Command="{Binding BindingContext.RemoveMark, Source={Reference view}}"
+                                                CommandParameter="{Binding}">
+                                            <ImageButton.IsVisible>
+                                                <MultiBinding Converter="{StaticResource All}">
+                                                    <Binding Path="BindingContext.DialogType"
+                                                            Converter="{StaticResource IsNotReview}"
+                                                            Source="{Reference view}" />
+                                                    <Binding Path="BindingContext.IsEditable" Source="{Reference view}" />
+                                                </MultiBinding>
+                                            </ImageButton.IsVisible>
+                                        </ImageButton>
+                                        <ImageButton Source="{FontImage FontFamily=FA, Glyph={Static h:IconFont.ArrowRight}, Size=20, Color=White}"
+                                                Padding="10"
+                                                Command="{Binding BindingContext.MoveMark, Source={Reference view}}"
+                                                CommandParameter="{Binding}"
+                                                IsVisible="{Binding BindingContext.MoveMark, Converter={StaticResource IsNotNull}, Source={Reference view}}" />
+                                    </Grid>
+                                </Grid>
+                            </StackLayout>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                    <CollectionView.EmptyView>
+                        <Label Text="{rt:Translate NoInformation, Group=Common}"
+                                VerticalOptions="Center"
+                                HorizontalOptions="Center" />
+                    </CollectionView.EmptyView>
+                </CollectionView>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <Button Grid.Row="0"
+                            Text="{rt:Translate AddMark, Group=FishingGear}"
+                            Command="{Binding AddMark}"
+                            ImageSource="{FontImage FontFamily=FA, Glyph={Static h:IconFont.CirclePlus}, Size=25, Color=White}">
+                        <Button.IsVisible>
+                            <MultiBinding Converter="{StaticResource All}">
+                                <Binding Path="DialogType" Converter="{StaticResource IsNotReview}" />
+                                <Binding Path="IsEditable" />
+                            </MultiBinding>
+                        </Button.IsVisible>
+                    </Button>
+
+                    <Button Grid.Row="1"
+                            Text="{rt:Translate GenerateMarks, Group=FishingGear}"
+                            Command="{Binding GenerateMarks}"
+                            ImageSource="{FontImage FontFamily=FA, Glyph={Static h:IconFont.CirclePlus}, Size=25, Color=White}">
+                        <Button.IsVisible>
+                            <MultiBinding Converter="{StaticResource All}">
+                                <Binding Path="DialogType" Converter="{StaticResource IsNotReview}" />
+                                <Binding Path="IsEditable" />
+                            </MultiBinding>
+                        </Button.IsVisible>
+                    </Button>
+                </Grid>
+            </StackLayout>
+        </Frame>
+
         <tl:TLCheckView Text="{rt:Translate HasPingers, Group=FishingGear}"
                 IsChecked="{Binding HasPingers}"
                 Margin="0,10,0,0">

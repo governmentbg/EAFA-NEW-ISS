@@ -159,7 +159,7 @@ namespace IARA.Mobile.Insp
                 ? "MobileInspections"
                 : "Inspections";
 #if DEBUG
-            serverUrl.Environment = Environments.DEVELOPMENT_INTERNAL;
+            serverUrl.Environment = Environments.PRODUCTION;
 #elif PRODRELEASE
             serverUrl.Environment =  Environments.PRODUCTION;
 #else

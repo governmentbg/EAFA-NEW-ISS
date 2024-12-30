@@ -218,6 +218,7 @@ namespace IARA.Mobile.Insp.Application.Helpers
                     TurbotSizeGroupId = f.TurbotSizeGroupId,
                     FishingGearPermitId = f.FishingGearPermitId,
                     CatchZoneId = f.CatchZoneId,
+                    FishingGearId = f.FishingGearId,
                 },
                 f => f.Id
             );

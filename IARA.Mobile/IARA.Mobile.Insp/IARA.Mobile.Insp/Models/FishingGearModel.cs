@@ -1,6 +1,7 @@
 ﻿using IARA.Mobile.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Insp.Application.DTObjects.Inspections;
 using IARA.Mobile.Insp.Domain.Enums;
+using System;
 using TechnoLogica.Xamarin.ViewModels.Base.Models;
 
 namespace IARA.Mobile.Insp.Models
@@ -20,12 +21,6 @@ namespace IARA.Mobile.Insp.Models
         public int? LogBookId { get; set; } = null;
         public int? PermitId { get; set; } = null;
 
-
-        private bool showErrorMessage = false;
-        public bool ShowErrorMessage
-        {
-            get => showErrorMessage;
-            set => SetProperty(ref showErrorMessage, value);
-        }
+        public bool Inspected => CheckedValue == null ? false : CheckedValue != InspectedFishingGearEnum.R;
     }
 }

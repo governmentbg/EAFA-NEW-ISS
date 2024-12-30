@@ -184,12 +184,17 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
 
                 return viewModel;
             }));
+            Catches.FirstOrDefault()?.CatchInspections.SetSummary();
+            Catches.Validation.Force();
 
             InspectionCatchMeasureDto catchMeasure = catchMeasures.FirstOrDefault();
             if (_fishingGears != null && catchMeasure != null)
             {
+                //var gears = _fishingGears.AllFishingGears
+                //        .FindAll(fg => fg.Dto.PermittedFishingGear?.Id != null && fg.Dto.PermittedFishingGear.Id.Value == catchMeasure.FishingGearId);
+
                 var gears = _fishingGears.AllFishingGears
-                        .FindAll(fg => fg.Dto.PermittedFishingGear == null || fg.Dto.PermittedFishingGear.PermitId.Value == catchMeasure.FishingGearPermitId);
+                        .FindAll(fg => fg.Dto.PermittedFishingGear?.PermitId != null && fg.Dto.PermittedFishingGear.PermitId.Value == catchMeasure.FishingGearPermitId);
 
                 foreach (var gear in gears)
                 {
@@ -199,9 +204,6 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
 
                 _fishingGears.FishingGears.Value.AddRange(gears);
             }
-            Catches.First().CatchInspections.SetSummary();
-
-            Catches.Validation.Force();
         }
 
         public async Task AddCatches(LogBookPageDto selectedPage)

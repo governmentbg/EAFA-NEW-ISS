@@ -66,7 +66,6 @@ namespace IARA.Mobile.Insp.Models
         public ValidState Number { get; set; }
 
         [RequiredPageSelect(true, ErrorMessageResourceName = "Required")]
-        [TLRange(1, long.MaxValue)]
         public ValidState PageText { get; set; }
 
         [RequiredPageSelect(false, ErrorMessageResourceName = "Required")]

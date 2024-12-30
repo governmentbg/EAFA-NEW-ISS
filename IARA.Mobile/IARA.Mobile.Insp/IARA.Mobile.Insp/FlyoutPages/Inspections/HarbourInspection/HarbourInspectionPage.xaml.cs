@@ -17,6 +17,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.HarbourInspection
             ViewModel.IsLocal = isLocal;
             ViewModel.CreatedByCurrentUser = createdByCurrentUser;
             ViewModel.CreatedOn = CreatedOn;
+            ViewModel.InspectionType = InspectionType.IBP;
             InitializeComponent();
             ViewModel.Sections = forwardSections;
         }

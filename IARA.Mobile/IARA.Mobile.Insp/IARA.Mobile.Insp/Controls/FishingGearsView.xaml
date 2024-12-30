@@ -15,7 +15,9 @@
     <tl:TLResponsiveTable.Resources>
         <ResourceDictionary>
             <lc:FishingGearCheckTypeToViewConverter x:Key="FishingGearCheckTypeToView" />
-            <lc:ErrorColorConverter x:Key="ErrorColorConverter" />
+            <lc:IsInspectionIGMConverter x:Key="IsInspectionIGM" />
+            <lc:IsNotInspectionIGMConverter x:Key="IsNotInspectionIGM" />
+            <lc:LogBookIdToNameConverter x:Key="LogBookIdToName" />
         </ResourceDictionary>
     </tl:TLResponsiveTable.Resources>
     <tl:TLResponsiveTable.TableColumns>
@@ -24,7 +26,6 @@
         <tl:TLTableColumn Text="{rt:Translate Count, Group=FishingGear}" Width="*" />
         <tl:TLTableColumn Text="{rt:Translate NetEyeSize, Group=FishingGear}" Width="*" />
         <tl:TLTableColumn Text="{rt:Translate Inspected, Group=FishingGear}" Width="*" />
-        <tl:TLTableColumn Text="{rt:Translate Required, Group=Common}" Width="0.5*" />
         <tl:TLTableColumn Width="{Binding BindingContext.Inspection.ActivityType, Converter={StaticResource ReviewDialogToWidth}, ConverterParameter=140, Source={Reference view}}" />
     </tl:TLResponsiveTable.TableColumns>
     <tl:TLResponsiveTable.DefaultItemTemplate>
@@ -47,21 +48,6 @@
                         VerticalOptions="Center"
                         IsEnabled="{Binding BindingContext.Inspection.ActivityType, Converter={StaticResource IsNotReview}, Source={Reference view}}" />
                 <ContentView VerticalOptions="Center" Content="{Binding CheckedValue, Converter={StaticResource FishingGearCheckTypeToView}}" />
-                <ImageButton Padding="10"
-                        WidthRequest="50"
-                        HeightRequest="50"
-                        VerticalOptions="Start"
-                        BackgroundColor="Transparent"
-                        IsVisible="{Binding LogBookId, Converter={StaticResource IsNotNull}}"
-                        Command="{Binding BindingContext.ShowRequiredDialog, Source={Reference view}}"
-                        CommandParameter="{Binding}">
-                    <ImageButton.Source>
-                        <FontImageSource FontFamily="FA"
-                                Glyph="{Static h:IconFont.CircleExclamation}"
-                                Size="20"
-                                Color="{Binding ShowErrorMessage, Converter={StaticResource ErrorColorConverter}}" />
-                    </ImageButton.Source>
-                </ImageButton>
                 <StackLayout Orientation="Horizontal" VerticalOptions="Start">
                     <ImageButton Source="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Eye}, Size=20, Color=White}"
                             Padding="10"
@@ -93,26 +79,34 @@
     <tl:TLResponsivleTableChild TableLayout="Sections" QueryWidth="800" />
     <tl:TLResponsiveTable.FooterView>
         <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="6*" />
-            </Grid.ColumnDefinitions>
-            <Grid Grid.Column="1">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="*" />
-                </Grid.RowDefinitions>
-                <Button Grid.Row="0"
-                        Text="{rt:Translate GenerateFromPermitLicense, Group=FishingGear}"
-                        Command="{Binding GenerateFromPermitLicense}"
-                        ImageSource="{FontImage FontFamily=FA, Glyph={Static h:IconFont.CirclePlus}, Size=25, Color=White}"
-                        IsVisible="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}" />
-                <Button Grid.Row="1"
-                        Text="{rt:Translate AddFishingGear, Group=FishingGear}"
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="6*" />
+                </Grid.ColumnDefinitions>
+                <Grid Grid.Column="1" IsVisible="{Binding Inspection.InspectionType, Converter={StaticResource IsNotInspectionIGM}}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <Button Grid.Row="0"
+                            Text="{rt:Translate GenerateFromPermitLicense, Group=FishingGear}"
+                            Command="{Binding GenerateFromPermitLicense}"
+                            ImageSource="{FontImage FontFamily=FA, Glyph={Static h:IconFont.CirclePlus}, Size=25, Color=White}"
+                            IsVisible="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}" />
+                    <Button Grid.Row="1"
+                            Text="{rt:Translate AddFishingGear, Group=FishingGear}"
+                            Command="{Binding Add}"
+                            ImageSource="{FontImage FontFamily=FA, Glyph={Static h:IconFont.CirclePlus}, Size=25, Color=White}"
+                            IsVisible="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}" />
+                </Grid>
+            </Grid>
+            <StackLayout IsVisible="{Binding Inspection.InspectionType, Converter={StaticResource IsInspectionIGM}}" HorizontalOptions="End">
+                <Button Text="{rt:Translate AddFishingGear, Group=FishingGear}"
                         Command="{Binding Add}"
                         ImageSource="{FontImage FontFamily=FA, Glyph={Static h:IconFont.CirclePlus}, Size=25, Color=White}"
                         IsVisible="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}" />
-            </Grid>
+            </StackLayout>
         </Grid>
     </tl:TLResponsiveTable.FooterView>
     <tl:TLResponsiveTable.EmptyView>

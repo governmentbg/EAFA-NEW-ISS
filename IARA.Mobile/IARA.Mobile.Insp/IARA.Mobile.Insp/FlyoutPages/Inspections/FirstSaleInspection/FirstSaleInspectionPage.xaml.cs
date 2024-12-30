@@ -17,6 +17,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FirstSaleInspection
             ViewModel.IsLocal = isLocal;
             ViewModel.CreatedByCurrentUser = createdByCurrentUser;
             ViewModel.CreatedOn = CreatedOn;
+            ViewModel.InspectionType = InspectionType.IFS;
             InitializeComponent();
             ViewModel.Sections = forwardSections;
         }
