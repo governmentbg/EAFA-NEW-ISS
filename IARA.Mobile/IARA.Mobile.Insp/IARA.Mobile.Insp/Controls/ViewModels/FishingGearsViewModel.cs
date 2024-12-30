@@ -1,6 +1,7 @@
 ﻿using IARA.Mobile.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Domain.Enums;
 using IARA.Mobile.Insp.Application.DTObjects.Inspections;
+using IARA.Mobile.Insp.Attributes;
 using IARA.Mobile.Insp.Base;
 using IARA.Mobile.Insp.Domain.Enums;
 using IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.FishingGearDialog;
@@ -45,6 +46,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
         public bool HasPingers { get; }
         public bool HasAttachmentForFishingGear { get; }
 
+        [FishingGearValidation(ErrorMessageResourceName = "FishingGearValidation")]
         public ValidStateTable<FishingGearModel> FishingGears { get; set; }
 
         public List<FishingGearModel> AllFishingGears { get; set; }
@@ -120,6 +122,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
                 AllFishingGears.Add(result);
                 FishingGears.Value.Add(result);
             }
+            this.Validation.Force();
         }
 
         private async Task OnEdit(FishingGearModel fishingGear)
@@ -128,6 +131,9 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
 
             if (result != null)
             {
+                result.LogBookId = fishingGear.LogBookId;
+                result.PermitId = fishingGear.PermitId;
+
                 fishingGear.Marks = result.Marks;
                 fishingGear.CheckedValue = result.CheckedValue;
                 fishingGear.Type = result.Type;
@@ -137,6 +143,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
 
                 FishingGears.Value.Replace(fishingGear, result);
             }
+            this.Validation.Force();
         }
 
         private async Task OnRemove(FishingGearModel fishingGear)
@@ -152,6 +159,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
                 AllFishingGears.Remove(fishingGear);
                 FishingGears.Value.Remove(fishingGear);
             }
+            this.Validation.Force();
         }
         private Task OnShowRequiredDialog(FishingGearModel fishingGear)
         {
@@ -164,35 +172,20 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
 
         private void OnGenerateFromPermitLicense()
         {
-            List<int> permitIds = _permitLicenses.PermitLicenses
+            if (_permitLicenses != null)
+            {
+                List<int> permitIds = _permitLicenses.PermitLicenses
                                         .Where(f => f.Dto?.PermitLicenseId != null)
                                         .Select(f => f.Dto.PermitLicenseId.Value)
                                         .ToList();
 
-            FishingGears.Value.Clear();
-            FishingGears.Value.AddRange(
-                AllFishingGears
-                    .FindAll(f => f.Dto.PermittedFishingGear == null || permitIds.Contains(f.Dto.PermittedFishingGear.PermitId.Value))
-            );
-        }
-
-        public bool IsValid()
-        {
-            bool isValid = true;
-            foreach (FishingGearModel model in FishingGears.Value)
-            {
-                if (model.LogBookId != null && model.CheckedValue == null && model.CheckedValue != InspectedFishingGearEnum.R)
-                {
-                    isValid = false;
-                    _shipFishingGears.HasErrors = false;
-                }
+                FishingGears.Value.Clear();
+                FishingGears.Value.AddRange(
+                    AllFishingGears
+                        .FindAll(f => f.Dto.PermittedFishingGear == null || permitIds.Contains(f.Dto.PermittedFishingGear.PermitId.Value))
+                );
+                this.Validation.Force();
             }
-
-            if (_shipFishingGears != null)
-            {
-                _shipFishingGears.HasErrors = !isValid;
-            }
-            return isValid;
         }
 
         public static implicit operator List<InspectedFishingGearDto>(FishingGearsViewModel viewModel)

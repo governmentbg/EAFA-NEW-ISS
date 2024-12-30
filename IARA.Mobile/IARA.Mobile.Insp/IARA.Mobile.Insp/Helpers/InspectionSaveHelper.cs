@@ -107,7 +107,6 @@ namespace IARA.Mobile.Insp.Helpers
         {
             // Show all the ValidStates or the validation won't work
             List<SectionView> sectionList = sections.Children.OfType<SectionView>().ToList();
-
             foreach (SectionView section in sectionList)
             {
                 section.IsExpanded = true;

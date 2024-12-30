@@ -35,6 +35,7 @@ namespace IARA.Mobile.Insp.Base
         public DateTime CreatedOn { get; set; }
         public ViewActivityType ActivityType { get; set; }
         public SubmitType SubmitType { get; set; }
+        public InspectionType InspectionType { get; set; }
         public bool IsLocal { get; set; }
         public bool CreatedByCurrentUser { get; set; }
         public string LocalIdentifier { get; set; }

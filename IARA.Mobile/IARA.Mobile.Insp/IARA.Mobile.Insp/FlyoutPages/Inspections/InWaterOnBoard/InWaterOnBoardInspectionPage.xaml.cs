@@ -17,6 +17,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.InWaterOnBoard
             ViewModel.IsLocal = isLocal;
             ViewModel.CreatedByCurrentUser = createdByCurrentUser;
             ViewModel.CreatedOn = CreatedOn;
+            ViewModel.InspectionType = InspectionType.IBS;
             InitializeComponent();
             ViewModel.Sections = forwardSections;
         }

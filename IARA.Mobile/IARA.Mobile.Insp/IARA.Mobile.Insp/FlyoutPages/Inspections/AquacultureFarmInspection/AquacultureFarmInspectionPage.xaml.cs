@@ -17,6 +17,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.AquacultureFarmInspection
             ViewModel.IsLocal = isLocal;
             ViewModel.CreatedByCurrentUser = createdByCurrentUser;
             ViewModel.CreatedOn = CreatedOn;
+            ViewModel.InspectionType = InspectionType.IAQ;
             InitializeComponent();
             ViewModel.Sections = forwardSections;
         }

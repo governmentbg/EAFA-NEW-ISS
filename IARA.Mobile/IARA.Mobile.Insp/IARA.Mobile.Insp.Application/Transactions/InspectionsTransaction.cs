@@ -58,7 +58,8 @@ namespace IARA.Mobile.Insp.Application.Transactions
                             TurbotSizeGroupId = c.TurbotSizeGroupId,
                             CatchZoneId = c.CatchZoneId,
                             LogBookId = logBookId,
-                            FishingGearPermitId = c.FishingGearPermitId
+                            FishingGearPermitId = c.FishingGearPermitId,
+                            FishingGearId = c.FishingGearId
                         }).ToList();
                 }
             }
@@ -76,7 +77,8 @@ namespace IARA.Mobile.Insp.Application.Transactions
                 TurbotSizeGroupId = c.TurbotSizeGroupId,
                 CatchZoneId = c.CatchZoneId,
                 LogBookId = logBookId,
-                FishingGearPermitId = c.FishingGearPermitId
+                FishingGearPermitId = c.FishingGearPermitId,
+                FishingGearId = c.FishingGearId
             }
             ).ToList();
         }
@@ -1494,6 +1496,23 @@ namespace IARA.Mobile.Insp.Application.Transactions
                 return (from insp in context.Inspections
                         where insp.CreatedByCurrentUser && insp.InspectionStateId == unsignedInspectionStateId
                         select insp.Id).Count();
+            }
+        }
+
+        public string GetLogBookName(int? logBookId)
+        {
+            if (logBookId == null)
+            {
+                return string.Empty;
+            }
+
+            using (IAppDbContext context = ContextBuilder.CreateContext())
+            {
+                return (
+                    from logBook in context.LogBooks
+                    where logBook.Id == logBookId
+                    select logBook.Number
+                ).First();
             }
         }
     }

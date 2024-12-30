@@ -18,6 +18,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.BoatOnOpenWater
             ViewModel.CreatedByCurrentUser = createdByCurrentUser;
             ViewModel.CreatedOn = CreatedOn;
             ViewModel.CreatedOn = CreatedOn;
+            ViewModel.InspectionType = InspectionType.OFS;
             InitializeComponent();
             ViewModel.Sections = forwardSections;
         }

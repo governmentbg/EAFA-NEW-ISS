@@ -80,5 +80,6 @@ namespace IARA.Mobile.Insp.Application.Interfaces.Transactions
         int GetInspectionStateId(InspectionState inspectionState);
         int GetUnsignedInspectionCount();
         Task<InspectedLogBookPageDataDto> GetInspectedLogBookPageData(DeclarationLogBookType type, int logBookPageId);
+        string GetLogBookName(int? logBookId);
     }
 }

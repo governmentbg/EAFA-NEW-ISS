@@ -18,5 +18,10 @@ namespace IARA.Mobile.Insp.Attributes
             }
             return new ValidationResult(ErrorMessage);
         }
+
+        protected virtual string FormatErrorMessage(string name, string otherName)
+        {
+            return string.Format(ErrorMessage, name, otherName);
+        }
     }
 }
