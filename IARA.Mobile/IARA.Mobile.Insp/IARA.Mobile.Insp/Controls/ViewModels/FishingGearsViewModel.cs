@@ -192,7 +192,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
         {
             return viewModel == null
                 ? new List<InspectedFishingGearDto>()
-                : viewModel.AllFishingGears.ConvertAll(f => f.Dto);
+                : viewModel.FishingGears.Select(f => f.Dto).ToList();
         }
     }
 }

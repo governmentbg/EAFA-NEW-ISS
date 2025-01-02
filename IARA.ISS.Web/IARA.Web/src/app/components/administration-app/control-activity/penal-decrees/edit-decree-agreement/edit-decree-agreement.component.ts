@@ -309,7 +309,7 @@ export class EditDecreeAgreementComponent implements OnInit, AfterViewInit, IDia
 
     private buildForm(): void {
         this.form = new FormGroup({
-            decreeNumControl: new FormControl(null, [Validators.required, Validators.maxLength(20)]),
+            decreeNumControl: new FormControl(null, Validators.maxLength(20)),
             drafterControl: new FormControl(null, Validators.required),
             issueDateControl: new FormControl(null, Validators.required),
             issuerPositionControl: new FormControl(null, Validators.maxLength(100)),

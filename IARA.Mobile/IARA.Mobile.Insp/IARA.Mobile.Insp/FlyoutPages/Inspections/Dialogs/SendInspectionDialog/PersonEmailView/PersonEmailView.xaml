@@ -4,13 +4,16 @@
         xmlns:rt="clr-namespace:TechnoLogica.Xamarin.ResourceTranslator;assembly=TechnoLogica.Xamarin"
         xmlns:tl="clr-namespace:TechnoLogica.Xamarin.Controls;assembly=TechnoLogica.Xamarin"
         x:Class="IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.SendInspectionDialog.PersonEmailView.PersonEmailView"
+        HeightRequest="90"
         ColumnDefinitions="1.7*,2*,0.8*">
     <tl:TLEntry Title="{Binding PersonData.InspectedPersonType}"
             IsEnabled="False"
-            ValidState="{Binding PersonType}" VerticalOptions="End" />
+            ValidState="{Binding PersonType}"
+            VerticalOptions="End" />
     <tl:TLEntry Title="{rt:Translate Email, Group=Inspections}"
             ValidState="{Binding Email}"
-            Grid.Column="1" VerticalOptions="End" />
+            Grid.Column="1"
+            VerticalOptions="End" />
 
     <tl:TLCheckView Text="{rt:Translate SendEmail, Group=Inspections}"
             ValidState="{Binding SendEmail}"

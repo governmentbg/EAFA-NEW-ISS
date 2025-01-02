@@ -190,11 +190,11 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
             InspectionCatchMeasureDto catchMeasure = catchMeasures.FirstOrDefault();
             if (_fishingGears != null && catchMeasure != null)
             {
-                //var gears = _fishingGears.AllFishingGears
-                //        .FindAll(fg => fg.Dto.PermittedFishingGear?.Id != null && fg.Dto.PermittedFishingGear.Id.Value == catchMeasure.FishingGearId);
-
                 var gears = _fishingGears.AllFishingGears
-                        .FindAll(fg => fg.Dto.PermittedFishingGear?.PermitId != null && fg.Dto.PermittedFishingGear.PermitId.Value == catchMeasure.FishingGearPermitId);
+                        .FindAll(fg => fg.Dto.PermittedFishingGear?.Id != null && fg.Dto.PermittedFishingGear.Id.Value == catchMeasure.FishingGearId);
+
+                //var gears = _fishingGears.AllFishingGears
+                //        .FindAll(fg => fg.Dto.PermittedFishingGear?.PermitId != null && fg.Dto.PermittedFishingGear.PermitId.Value == catchMeasure.FishingGearPermitId);
 
                 foreach (var gear in gears)
                 {
