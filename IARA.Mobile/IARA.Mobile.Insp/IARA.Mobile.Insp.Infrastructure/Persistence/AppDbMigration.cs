@@ -64,18 +64,19 @@ namespace IARA.Mobile.Insp.Infrastructure.Persistence
                     }
                     else if (lastVersion != CURRENT_VERSION)
                     {
+                        ICommonLogout commonLogout = serviceProvider.GetService<ICommonLogout>();
                         IVersion[] versions = new IVersion[]
                         {
                             new Version2(),
                             new Version3(nomenclatureDatesClear),
-                            new Version4(authenticationProvider, serviceProvider.GetService<ICommonLogout>()),
-                            new Version5(authenticationProvider, serviceProvider.GetService<ICommonLogout>()),
+                            new Version4(authenticationProvider, commonLogout),
+                            new Version5(authenticationProvider, commonLogout),
                             new Version6(),
-                            new Version7(authenticationProvider, serviceProvider.GetService<ICommonLogout>()),
-                            new Version8(authenticationProvider, serviceProvider.GetService<ICommonLogout>()),
-                            new Version9(authenticationProvider, serviceProvider.GetService<ICommonLogout>()),
-                            new Version10(authenticationProvider, serviceProvider.GetService<ICommonLogout>()),
-                            new Version11(authenticationProvider, serviceProvider.GetService<ICommonLogout>()),
+                            new Version7(authenticationProvider, commonLogout),
+                            new Version8(authenticationProvider, commonLogout),
+                            new Version9(authenticationProvider, commonLogout),
+                            new Version10(authenticationProvider, commonLogout),
+                            new Version11(authenticationProvider, commonLogout),
                         };
 
                         for (int i = lastVersion; i < CURRENT_VERSION; i++)

@@ -13,7 +13,7 @@
             <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="space-between center">
                 <tl-input fxFlex="25"
                           formControlName="decreeNumControl"
-                          [readonly]="!isAdding"
+                          [readonly]="true"
                           [getControlErrorLabelText]="decreeNumErrorLabelTextMethod"
                           label="{{ 'penal-decrees.edit-decree-num' | tlTranslate }}"
                           tooltipResourceName="penal-decree.edit-decree-num-helper">
