@@ -3345,6 +3345,9 @@
         'holder-is-ship-user': 'Титулярът е ползвател на риболовния кораб',
         'ship-grounds-for-use-data-card': 'Данни за основание за ползване на кобара от титуляра',
         'invalid-permit-registration-number': 'Невалиден номер на разрешително',
+        'selected-permit-invalid-or-suspended':'Избраното разрешително е изтекло или прекратено',
+        'selected-permit-water-type-mismatch': 'Избраното разрешително не е за риболов във водите на ',
+        'selected-permit-has-no-pound-net': 'Избраното разрешително трябва да бъде за извършване на стопански риболов със специализиран уред - далян',
         'pound-net-panel': 'Информация за далян',
         'pound-net': 'Далян',
         'pound-net-grounds-for-use-data-card': 'Данни за основание за ползване на даляна от титуляра',
@@ -4789,6 +4792,7 @@
         'choose-log-book-for-renewal-last-permit-license': 'Номер на последно УСР',
         'choose-log-book-for-renewal-is-online': 'Онлайн',
         'choose-log-book-for-renewal-no-log-books-selected-error': 'Трябва да изберете поне един дневник, който да презаверите',
+        'choose-log-book-for-renewal-log-book-with-more-pages-than-allowed-error': 'Не можете да презаверите дневник с диапазон на страниците по-голям от 50',
         'choose-log-book-for-renewal-selected-log-books-count': 'Брой избрани дневници',
 
         'log-book-number': 'Номер на дневник',

@@ -87,6 +87,11 @@
                 * {{ 'catches-and-sales.choose-log-book-for-renewal-no-log-books-selected-error' | tlTranslate }}
             </mat-error>
         </div>
+        <div *ngIf="touched && logBookWithMorePagesThanAllowedValidation" fxLayout="row" fxFlex="100">
+            <mat-error fxFlex="100">
+                * {{ 'catches-and-sales.choose-log-book-for-renewal-log-book-with-more-pages-than-allowed-error' | tlTranslate }}
+            </mat-error>
+        </div>
         <ng-template #numberOfSelectedItemsTemplate>
             <div fxLayout="row" fxFlex="100" fxLayoutAlign="end center">
                 <mat-hint fxFlex="100">

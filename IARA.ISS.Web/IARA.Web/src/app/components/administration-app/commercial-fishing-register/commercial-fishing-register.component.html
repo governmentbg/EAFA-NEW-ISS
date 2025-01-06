@@ -231,6 +231,7 @@
                                                                [showInactivePagesAndDocuments]="true"
                                                                [postOnSave]="true"
                                                                [disableAddButtons]="row.data.isSuspended"
+                                                               [hasRenewMoreThanMaxPagesPermission]="canRenewLogBooksWithMoreThanMaxPages"
                                                                [disabledAddBtnTooltipText]="disabledLogBookAddButtonsTooltipText"
                                                                (onActionEnded)="onLogBookActionEnded($event)">
                                                     </log-books>

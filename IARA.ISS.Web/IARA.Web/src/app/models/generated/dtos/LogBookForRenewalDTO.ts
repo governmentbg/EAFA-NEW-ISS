@@ -41,5 +41,8 @@ export class LogBookForRenewalDTO {
     public issueDate?: Date;
 
     @StrictlyTyped(Boolean)
+    public morePagesThanAllowed?: boolean;
+
+    @StrictlyTyped(Boolean)
     public isChecked?: boolean;
 }

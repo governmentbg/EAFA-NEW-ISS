@@ -307,6 +307,7 @@
     PermitLicenseLogBookEdit = 'PermitLicenseLogBookEdit',
     PermitLicenseLogBookDelete = 'PermitLicenseLogBookDelete',
     PermitLicenseLogBookRestore = 'PermitLicenseLogBookRestore',
+    PermitLicenseLogBookRenewMoreThanMaxPages = 'PermitLicenseLogBookRenewMoreThanMaxPages',
 
     PermitSuspensionRead = 'PermitSuspensionRead',
     PermitSuspensionAdd = 'PermitSuspensionAdd',

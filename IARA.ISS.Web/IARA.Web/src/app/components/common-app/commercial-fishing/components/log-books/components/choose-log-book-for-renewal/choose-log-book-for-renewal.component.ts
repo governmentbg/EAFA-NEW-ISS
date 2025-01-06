@@ -22,6 +22,7 @@ export class ChooseLogBookForRenewalComponent implements IDialogComponent, OnIni
     public logBooksPerPage: number = 8;
 
     public noLogBooksChosenValidation: boolean = true;
+    public logBookWithMorePagesThanAllowedValidation: boolean = false;
     public touched: boolean = false;
     public numberOfSelectedLogBooks: number = 0;
 
@@ -34,6 +35,7 @@ export class ChooseLogBookForRenewalComponent implements IDialogComponent, OnIni
     private permitLicenseId: number | undefined;
     private service!: ILogBookService;
     private saveToDB: boolean = false;
+    private hasRenewMoreThanMaxPagesPermission: boolean = false;
 
     public constructor() {
         this.filterControl = new FormControl();
@@ -71,7 +73,8 @@ export class ChooseLogBookForRenewalComponent implements IDialogComponent, OnIni
         this.permitLicenseId = data.permitLicenseId;
         this.service = data.service!;
         this.saveToDB = data.saveToDB;
-
+        this.hasRenewMoreThanMaxPagesPermission = data.hasRenewMoreThanMaxPagesPermission;
+      
         if (data.permitLicenseId === undefined || data.permitLicenseId === null) {
             this.allLogBooks = data.logBooks.map(x => new LogBookForRenewalDTO({
                 logBookPermitLicenseId: x.lastLogBookLicenseId,
@@ -83,6 +86,7 @@ export class ChooseLogBookForRenewalComponent implements IDialogComponent, OnIni
                 lastUsedPageNumber: x.lastPageNumber,
                 statusName: x.statusName,
                 logBookTypeName: x.logBookTypeName,
+                morePagesThanAllowed: x.morePagesThanAllowed,
                 isChecked: false
             }));
 
@@ -97,7 +101,7 @@ export class ChooseLogBookForRenewalComponent implements IDialogComponent, OnIni
     public saveBtnClicked(actionInfo: IActionInfo, dialogClose: DialogCloseCallback): void {
         this.touched = true;
 
-        if (!this.noLogBooksChosenValidation) {
+        if (!this.noLogBooksChosenValidation && !this.logBookWithMorePagesThanAllowedValidation) {
             if (this.saveToDB) {
                 // TODO
                 const chosenLogBookPermitLicenseIds: number[] = this.selectedLogBooks.map(x => x.logBookPermitLicenseId!);
@@ -137,6 +141,7 @@ export class ChooseLogBookForRenewalComponent implements IDialogComponent, OnIni
 
             this.numberOfSelectedLogBooks = this.selectedLogBooks.length;
             this.logBooks = this.logBooks!.slice();
+            this.logBookWithMorePagesThanAllowedValidation = this.hasLogBooksWithMorePagesThanAllowed();
         }
     }
 
@@ -208,5 +213,19 @@ export class ChooseLogBookForRenewalComponent implements IDialogComponent, OnIni
                 }
             });
         }
+    }
+
+    private hasLogBooksWithMorePagesThanAllowed(): boolean {
+        if (!this.hasRenewMoreThanMaxPagesPermission) {
+            if (this.selectedLogBooks !== undefined && this.selectedLogBooks !== null && this.selectedLogBooks.length > 0) {
+                const invalidLogBooks: LogBookForRenewalDTO[] = this.selectedLogBooks.filter(x => x.morePagesThanAllowed === true);
+
+                if (invalidLogBooks.length > 0) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 }
