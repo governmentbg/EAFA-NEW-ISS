@@ -140,12 +140,16 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
     public hideBasicPaymentInfo: boolean = false;
     public hideSubmittedByDocument: boolean = false;
     public isQualifiedFisherPhotoRequired: boolean = false;
+    public canRenewLogBooksWithMoreThanMaxPages: boolean = false;
 
     public hasAnyAquaticOrganismTypesSelected: boolean = false;
     public hasCaptainNotQualifiedFisherError: boolean = false;
     public hasSubmittedForNotShipOwnerError: boolean = false;
     public hasNoEDeliveryRegistrationError: boolean = false;
     public hasInvalidPermitRegistrationNumber: boolean = false;
+    public selectedPermitIsInvalidOrSuspended: boolean = false;
+    public selectedPermitWaterTypeMismatch: boolean = false;
+    public selectedPermitHasNoPoundNet: boolean = false;
     public selectedShipAlreadyHasValidBlackSeaPermitError: boolean = false;
     public selectedShipAlreadyHasValidDanubePermitError: boolean = false;
     public selectedShipHasNoBlackSeaPermitError: boolean = false;
@@ -206,6 +210,7 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
 
     public submittedForLabel: string = '';
     public qualifiedFisherSameAsSubmittedForLabel: string = '';
+    public waterTypeName: string | undefined;
 
     public maxNumberOfFishingGears: number = 0;
     public readonly aquaticOrganismsPerPage: number;
@@ -380,6 +385,7 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
         else {
             this.isPermitLicense = true;
             this.canReadSuspensions = this.permissionsService.has(PermissionsEnum.PermitLicenseSuspensionRead);
+            this.canRenewLogBooksWithMoreThanMaxPages = this.permissionsService.has(PermissionsEnum.PermitLicenseLogBookRenewMoreThanMaxPages);
         }
 
         this.hideSubmittedByDocument = this.pageCode === PageCodeEnum.CatchQuataSpecies;
@@ -940,6 +946,19 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
                         this.form.get('permitLicensePermitNumberControl')!.valueChanges.subscribe({
                             next: () => {
                                 this.hasInvalidPermitRegistrationNumber = false;
+                                this.selectedPermitIsInvalidOrSuspended = false;
+                                this.selectedPermitWaterTypeMismatch = false;
+                                this.selectedPermitHasNoPoundNet = false;
+                            }
+                        });
+
+                        this.form.get('waterTypeControl')!.valueChanges.subscribe({
+                            next: (waterType: NomenclatureDTO<number> | undefined) => {
+                                this.selectedPermitWaterTypeMismatch = false;
+
+                                if (waterType !== null && waterType !== undefined) {
+                                    this.waterTypeName = waterType.displayName;
+                                }
                             }
                         });
                     }
@@ -1667,6 +1686,9 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
                 this.hasSubmittedForNotShipOwnerError = false;
                 this.hasNoEDeliveryRegistrationError = false;
                 this.hasInvalidPermitRegistrationNumber = false;
+                this.selectedPermitIsInvalidOrSuspended = false;
+                this.selectedPermitWaterTypeMismatch = false;
+                this.selectedPermitHasNoPoundNet = false;
                 if (typeof id === 'number' && id !== undefined) {
                     this.model.id = id;
                     dialogClose(this.model);
@@ -1774,6 +1796,21 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
                         case CommercialFishingValidationErrorsEnum.InvalidPermitRegistrationNumber: {
                             if (this.isPublicApp) {
                                 this.hasInvalidPermitRegistrationNumber = true;
+                            }
+                        } break;
+                        case CommercialFishingValidationErrorsEnum.PermitIsInvalidOrSuspended: {
+                            if (this.isPublicApp) {
+                                this.selectedPermitIsInvalidOrSuspended = true;
+                            }
+                        } break;
+                        case CommercialFishingValidationErrorsEnum.PermitWaterTypeMismatch: {
+                            if (this.isPublicApp) {
+                                this.selectedPermitWaterTypeMismatch = true;
+                            }
+                        } break;
+                        case CommercialFishingValidationErrorsEnum.PermitWithoutPoundNet: {
+                            if (this.isPublicApp) {
+                                this.selectedPermitHasNoPoundNet = true;
                             }
                         } break;
                         case CommercialFishingValidationErrorsEnum.ShipAlreadyHasValidBlackSeaPermit: {
@@ -2530,8 +2567,16 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
                     this.form.get('permitLicensePermitControl')!.setValue(this.permits.find(x => x.value === permitId));
                 }
                 else {
-                    if (this.permits.filter(x => x.isActive).length === 1) { // Ако има само едно разрешително възможно за избор, направо го избираме
-                        this.form.get('permitLicensePermitControl')!.setValue(this.permits.filter(x => x.isActive)[0]);
+                    if (this.isApplicationHistoryMode === false) {
+                        if (this.permits.filter(x => x.isActive).length === 1) { // Ако има само едно разрешително възможно за избор, направо го избираме
+                            this.form.get('permitLicensePermitControl')!.setValue(this.permits.filter(x => x.isActive)[0]);
+                        }
+                    }
+                    else {
+                        //only for application history mode of online applications
+                        if (this.model.isOnlineApplication && this.model.permitLicensePermitNumber !== undefined && this.model.permitLicensePermitNumber !== null) {
+                            this.form.get('permitLicensePermitControl')!.setValue(this.model.permitLicensePermitNumber);
+                        }
                     }
                 }
             }

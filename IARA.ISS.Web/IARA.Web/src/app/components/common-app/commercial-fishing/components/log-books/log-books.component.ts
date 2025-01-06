@@ -118,6 +118,9 @@ export class LogBooksComponent extends CustomFormControl<LogBookEditDTO[] | Comm
     @Input()
     public isRegister: boolean | undefined;
 
+    @Input()
+    public hasRenewMoreThanMaxPagesPermission: boolean | undefined;
+
     @Output()
     public onActionEnded: EventEmitter<OnActionEndedType> = new EventEmitter<OnActionEndedType>();
 
@@ -320,7 +323,8 @@ export class LogBooksComponent extends CustomFormControl<LogBookEditDTO[] | Comm
             componentData: new ChooseLogBookForRenewalDialogParams({
                 permitLicenseId: this.permitLicenseId!,
                 service: this.service,
-                logBooks: this.renewalLogBooks
+                logBooks: this.renewalLogBooks,
+                hasRenewMoreThanMaxPagesPermission: this.hasRenewMoreThanMaxPagesPermission ?? false
             }),
             headerCancelButton: {
                 cancelBtnClicked: (closeFn: HeaderCloseFunction) => { closeFn(); }

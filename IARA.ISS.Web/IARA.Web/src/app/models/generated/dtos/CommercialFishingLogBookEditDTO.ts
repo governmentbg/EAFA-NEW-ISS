@@ -51,6 +51,9 @@ export class CommercialFishingLogBookEditDTO extends LogBookEditDTO {
     @StrictlyTyped(Boolean)
     public hasRelatedPages?: boolean;
 
+    @StrictlyTyped(Boolean)
+    public morePagesThanAllowed?: boolean;
+
     @StrictlyTyped(String)
     public statusName?: string;
 

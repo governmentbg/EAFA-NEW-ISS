@@ -133,7 +133,10 @@
                             title="{{ 'commercial-fishing.ship-data-panel' | tlTranslate }}"
                             tooltipResourceName="commercial-fishing.ship-data-panel-helper"
                             [validityChecker]="form"
-                            [validityCheckerExtraCondition]="hasSubmittedForNotShipOwnerError !== true">
+                            [validityCheckerExtraCondition]="hasSubmittedForNotShipOwnerError !== true
+                                                             && selectedPermitIsInvalidOrSuspended !== true
+                                                             && selectedPermitWaterTypeMismatch !== true
+                                                             && selectedPermitHasNoPoundNet !== true">
             <div fxLayout="column" fxFlex="100" fxLayoutGap="1em">
                 <div fxLayout="row" fxFlex="100">
                     <tl-autocomplete fxFlex="70"
@@ -197,6 +200,9 @@
                             </tl-input>
                         </div>
                         <mat-error *ngIf="hasInvalidPermitRegistrationNumber">{{ 'commercial-fishing.invalid-permit-registration-number' | tlTranslate }} *</mat-error>
+                        <mat-error *ngIf="selectedPermitIsInvalidOrSuspended">{{ 'commercial-fishing.selected-permit-invalid-or-suspended' | tlTranslate }} *</mat-error>
+                        <mat-error *ngIf="selectedPermitWaterTypeMismatch">{{ 'commercial-fishing.selected-permit-water-type-mismatch' | tlTranslate }} {{ waterTypeName }}*</mat-error>
+                        <mat-error *ngIf="selectedPermitHasNoPoundNet">{{ 'commercial-fishing.selected-permit-has-no-pound-net' | tlTranslate }} *</mat-error>
                     </div>
                 </div>
             </div>
@@ -579,6 +585,7 @@
                        [service]="administrationService"
                        [showInactivePagesAndDocuments]="!isPublicApp"
                        [disableAddButtons]="isSuspended"
+                       [hasRenewMoreThanMaxPagesPermission]="canRenewLogBooksWithMoreThanMaxPages"
                        [disabledAddBtnTooltipText]="disabledAddBtnTooltipText">
             </log-books>
         </div>

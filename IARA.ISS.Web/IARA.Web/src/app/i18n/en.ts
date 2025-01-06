@@ -3289,6 +3289,9 @@
         'holder-is-ship-user': 'Holder is vessel user',
         'ship-grounds-for-use-data-card': 'Holders grounds for use data for the ship',
         'invalid-permit-registration-number': 'Invalid permit registration number',
+        'selected-permit-invalid-or-suspended': 'Permit is invalid or suspended',
+        'selected-permit-water-type-mismatch': 'Permitted water type is different than ',
+        'selected-permit-has-no-pound-net': 'Chosen permit should be a commercial fishing pound net permit',
         'pound-net-panel': 'Pound net information',
         'pound-net': 'Pound net',
         'pound-net-grounds-for-use-data-card': 'Holders grounds for use data for the pound net',
@@ -4728,6 +4731,7 @@
         'choose-log-book-for-renewal-last-permit-license': 'Last used permit license number',
         'choose-log-book-for-renewal-is-online': 'Is online',
         'choose-log-book-for-renewal-no-log-books-selected-error': 'You must choose at least one log book in order to renew',
+        'choose-log-book-for-renewal-log-book-with-more-pages-than-allowed-error': 'You cannot choose a log book with more than 50 pages',
         'choose-log-book-for-renewal-selected-log-books-count': 'Number of selected log books',
 
         'log-book-number': 'Logbook Number',

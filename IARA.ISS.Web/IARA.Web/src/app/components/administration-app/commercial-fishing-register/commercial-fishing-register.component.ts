@@ -112,6 +112,7 @@ export class CommercialFishingRegisterComponent implements OnInit, AfterViewInit
     public readonly canEditLogBooks: boolean;
     public readonly canDeleteLogBooks: boolean;
     public readonly canRestoreLogBooks: boolean;
+    public readonly canRenewLogBooksWithMoreThanMaxPages: boolean;
 
     public readonly canReadPermitSuspensionsRecords: boolean;
     private readonly canAddPermitSuspensionsRecords: boolean;
@@ -209,6 +210,7 @@ export class CommercialFishingRegisterComponent implements OnInit, AfterViewInit
         this.canEditLogBooks = permissions.has(PermissionsEnum.PermitLicenseLogBookEdit);
         this.canDeleteLogBooks = permissions.has(PermissionsEnum.PermitLicenseLogBookDelete);
         this.canRestoreLogBooks = permissions.has(PermissionsEnum.PermitLicenseLogBookRestore);
+        this.canRenewLogBooksWithMoreThanMaxPages = permissions.has(PermissionsEnum.PermitLicenseLogBookRenewMoreThanMaxPages);
 
         this.canReadPermitSuspensionsRecords = permissions.has(PermissionsEnum.PermitSuspensionRead);
         this.canAddPermitSuspensionsRecords = permissions.has(PermissionsEnum.PermitSuspensionAdd);

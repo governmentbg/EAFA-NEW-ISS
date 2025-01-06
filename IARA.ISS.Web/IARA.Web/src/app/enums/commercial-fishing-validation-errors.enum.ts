@@ -15,5 +15,9 @@
 
     ShipHasNoPoundNetPermit,
 
-    InvalidPermitLisenseRegistrationNumber
+    InvalidPermitLisenseRegistrationNumber,
+
+    PermitIsInvalidOrSuspended,
+    PermitWaterTypeMismatch,
+    PermitWithoutPoundNet
 }
