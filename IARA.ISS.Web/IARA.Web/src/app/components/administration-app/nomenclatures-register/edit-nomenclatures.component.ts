@@ -148,9 +148,11 @@ export class EditNomenclatureComponent implements IDialogComponent, OnInit {
 
             if (this.isValidFromColumn(column.propertyName)) {
                 this.form.addControl(column.propertyName, new FormControl(new Date(), validators));
+                this.form.controls[column.propertyName].disable();
             }
             else if (this.isValidToColumn(column.propertyName)) {
                 this.form.addControl(column.propertyName, new FormControl(DateUtils.MAX_DATE, validators));
+                this.form.controls[column.propertyName].disable();
             }
             else {
                 this.form.addControl(column.propertyName, new FormControl(undefined, validators));

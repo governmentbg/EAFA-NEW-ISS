@@ -57,6 +57,12 @@ export class LogBookEditDTO {
     @StrictlyTyped(String)
     public comment?: string;
 
+    @StrictlyTyped(Number)
+    public firstFilledPageNumber?: number;
+
+    @StrictlyTyped(Number)
+    public lastFilledPageNumber?: number;
+
     @StrictlyTyped(Boolean)
     public hasError?: boolean;
 

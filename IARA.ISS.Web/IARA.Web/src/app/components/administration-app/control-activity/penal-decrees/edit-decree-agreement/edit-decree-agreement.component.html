@@ -13,7 +13,6 @@
             <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="space-between center">
                 <tl-input fxFlex="25"
                           formControlName="decreeNumControl"
-                          [readonly]="true"
                           [getControlErrorLabelText]="decreeNumErrorLabelTextMethod"
                           label="{{ 'penal-decrees.edit-agreement-num' | tlTranslate }}"
                           tooltipResourceName="penal-decree.edit-decree-num-helper">
@@ -21,7 +20,8 @@
 
                 <tl-date fxFlex="25"
                          formControlName="issueDateControl"
-                         [max]="today"
+                         [max]="maxIssueDate"
+                         [min]="minIssueDate"
                          label="{{ 'penal-decrees.edit-decree-issue-date' | tlTranslate }}"
                          tooltipResourceName="penal-decree.edit-decree-issue-date-helper">
                 </tl-date>

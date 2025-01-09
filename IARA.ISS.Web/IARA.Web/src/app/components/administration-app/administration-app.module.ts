@@ -194,6 +194,7 @@ import { InspectedCatchesArrayComponent } from './control-activity/inspections/d
 import { SendInspectionEmailsComponent } from './control-activity/inspections/dialogs/send-inspection-emails/send-inspection-emails.component';
 import { InspectedEntityEmailComponent } from './control-activity/inspections/dialogs/send-inspection-emails/inspected-entity-email/inspected-entity-email.component';
 import { FluxIsrQueryComponent } from './flux-vms-requests/flux-isr-query/flux-isr-query.component';
+import { FishingActivityUploadReportComponent } from './fishing-activity-reports/fishing-activity-upload-report/fishing-activity-upload-report.component';
 
 @NgModule({
     declarations: [
@@ -377,7 +378,8 @@ import { FluxIsrQueryComponent } from './flux-vms-requests/flux-isr-query/flux-i
         InspectedCatchesArrayComponent,
         FluxIsrQueryComponent,
         SendInspectionEmailsComponent,
-        InspectedEntityEmailComponent
+        InspectedEntityEmailComponent,
+        FishingActivityUploadReportComponent
     ],
     imports: [
         TLCommonModule,
@@ -567,7 +569,8 @@ import { FluxIsrQueryComponent } from './flux-vms-requests/flux-isr-query/flux-i
         InspectedCatchesArrayComponent,
         FluxIsrQueryComponent,
         SendInspectionEmailsComponent,
-        InspectedEntityEmailComponent
+        InspectedEntityEmailComponent,
+        FishingActivityUploadReportComponent
     ],
     providers: [
         TLTranslatePipe

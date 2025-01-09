@@ -649,7 +649,8 @@ export class EditLogBookComponent implements OnInit, IDialogComponent {
             notesControl: new FormControl(undefined, Validators.maxLength(4000))
         }, [
             EditLogBookComponent.endPageGreaterThanStartPageValidator,
-            this.pageRangeNumberValidator()
+            this.pageRangeNumberValidator(),
+            this.startPageGreaterThanFirstUsedPageValidator()
         ]);
 
         if (this.logBookGroup === LogBookGroupsEnum.Ship) {
@@ -672,7 +673,8 @@ export class EditLogBookComponent implements OnInit, IDialogComponent {
             this.form.setValidators([
                 EditLogBookComponent.endPageGreaterThanStartPageValidator,
                 this.permitLicensePageRangeValidator(),
-                this.pageRangeNumberValidator()
+                this.pageRangeNumberValidator(),
+                this.startPageGreaterThanFirstUsedPageValidator()
             ]);
         }
     }
@@ -918,14 +920,16 @@ export class EditLogBookComponent implements OnInit, IDialogComponent {
 
         this.form.setValidators([
             EditLogBookComponent.endPageGreaterThanStartPageValidator,
-            this.pageRangeNumberValidator()
+            this.pageRangeNumberValidator(),
+            this.startPageGreaterThanFirstUsedPageValidator()
         ]);
 
         if (this.logBookGroup === LogBookGroupsEnum.Ship) {
             this.form.setValidators([
                 EditLogBookComponent.endPageGreaterThanStartPageValidator,
                 this.pageRangeNumberValidator(),
-                this.permitLicensePageRangeValidator()
+                this.permitLicensePageRangeValidator(),
+                this.startPageGreaterThanFirstUsedPageValidator()
             ]);
         }
 
@@ -1109,6 +1113,64 @@ export class EditLogBookComponent implements OnInit, IDialogComponent {
 
             if (hasMissingOrInProgressPages) {
                 return { 'hasMissingOrInProgressPages': true };
+            }
+
+            return null;
+        }
+    }
+
+    private startPageGreaterThanFirstUsedPageValidator(): ValidatorFn {
+        return (form: AbstractControl): ValidationErrors | null => {
+            if (!form) {
+                return null;
+            }
+
+            if (this.model === null || this.model === undefined) {
+                return null;
+            }
+
+            const logBookStatusControl = form.get('statusControl');
+            const logBookStatus: NomenclatureDTO<number> | undefined = logBookStatusControl?.value;
+            if (logBookStatus !== null
+                && logBookStatus !== undefined
+                && LogBookStatusesEnum[logBookStatus.code as keyof typeof LogBookStatusesEnum] === LogBookStatusesEnum.Finished
+            ) {
+                return null;
+            }
+
+            const startPageNumberControl = form.get('startPageNumberControl');
+            const endPageNumberControl = form.get('endPageNumberControl');
+
+            if (!startPageNumberControl || !endPageNumberControl) {
+                return null;
+            }
+
+            if (startPageNumberControl.value === null
+                || startPageNumberControl.value === undefined
+                || endPageNumberControl.value === null
+                || endPageNumberControl.value === undefined
+            ) {
+                return null;
+            }
+
+            const startPageNumber = Number(startPageNumberControl.value);
+            const endPageNumber = Number(endPageNumberControl.value);
+
+            if (this.model.isOnline
+                || this.model.firstFilledPageNumber === undefined
+                || this.model.firstFilledPageNumber === null
+                || this.model.lastFilledPageNumber === undefined
+                || this.model.lastFilledPageNumber === null
+            ) {
+                return null;
+            }
+
+            if (this.model.firstFilledPageNumber < startPageNumber) {
+                return { 'firstPageSmallerThanStartPage': true };
+            }
+
+            if (this.model.lastFilledPageNumber > endPageNumber) {
+                return { 'lastPageGreaterThanEndPage': true };
             }
 
             return null;

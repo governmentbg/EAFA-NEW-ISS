@@ -10,6 +10,7 @@ import { AreaTypes } from '@app/shared/enums/area-type.enum';
 import { RequestProperties } from '@app/shared/services/request-properties';
 import { RequestService } from '@app/shared/services/request.service';
 import { BaseAuditService } from '../common-app/base-audit.service';
+import { FileInfoDTO } from '../../models/generated/dtos/FileInfoDTO';
 
 @Injectable({
     providedIn: 'root'
@@ -54,5 +55,21 @@ export class FishingActivityReportsService extends BaseAuditService {
             .append('onlyLast', onlyLast.toString());
 
         return this.requestService.post(this.area, this.controller, 'SendFishingActivityReportToFlux', null, { httpParams: params });
+    }
+
+    public downloadFishingActivityReport(id: number): Observable<boolean> {
+        const params = new HttpParams().append('id', id.toString());
+        return this.requestService.downloadPost(this.area, this.controller, 'DownloadFishingActivityReport', '', undefined, {
+            httpParams: params
+        });
+    }
+
+    public uploadFishingActivityReport(id: number, file: FileInfoDTO): Observable<void> {
+        const params = new HttpParams().append('id', id.toString());
+
+        return this.requestService.post(this.area, this.controller, 'UploadFishingActivityReport', file, {
+            httpParams: params,
+            properties: new RequestProperties({ asFormData: true })
+        });
     }
 }
