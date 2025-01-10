@@ -26,6 +26,8 @@ import { EditShipLogBookPageDialogParams } from '../../common-app/catches-and-sa
 import { ViewFluxVmsRequestsDialogParams } from '../flux-vms-requests/models/view-flux-vms-requests-dialog-params.model';
 import { ViewFluxVmsRequestsComponent } from '../flux-vms-requests/view-flux-vms-requests.component';
 import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
+import { DialogParamsModel } from '@app/models/common/dialog-params.model';
+import { FishingActivityUploadReportComponent } from './fishing-activity-upload-report/fishing-activity-upload-report.component';
 
 type ThreeState = 'yes' | 'no' | 'both';
 
@@ -45,6 +47,7 @@ export class FishingActivityReportsComponent implements OnInit, AfterViewInit {
     public readonly hasGenerateLandingPermission: boolean;
     public readonly hasReplayMessagesPermission: boolean;
     public readonly hasSendToFluxPermission: boolean;
+    public readonly hasUploadPermission: boolean;
 
     @ViewChild(TLDataTableComponent)
     private datatable!: TLDataTableComponent;
@@ -59,6 +62,7 @@ export class FishingActivityReportsComponent implements OnInit, AfterViewInit {
     private readonly nomenclatures: CommonNomenclatures;
     private readonly viewDialog: TLMatDialog<ViewFluxVmsRequestsComponent>;
     private readonly pageDialog: TLMatDialog<EditShipLogBookPageComponent>;
+    private readonly uploadDialog: TLMatDialog<FishingActivityUploadReportComponent>;
     private readonly confirmDialog: TLConfirmDialog;
 
     public constructor(
@@ -69,6 +73,7 @@ export class FishingActivityReportsComponent implements OnInit, AfterViewInit {
         permissions: PermissionsService,
         viewDialog: TLMatDialog<ViewFluxVmsRequestsComponent>,
         pageDialog: TLMatDialog<EditShipLogBookPageComponent>,
+        uploadDialog: TLMatDialog<FishingActivityUploadReportComponent>,
         confirmDialog: TLConfirmDialog
     ) {
         this.translate = translate;
@@ -77,12 +82,14 @@ export class FishingActivityReportsComponent implements OnInit, AfterViewInit {
         this.nomenclatures = nomenclatures;
         this.viewDialog = viewDialog;
         this.pageDialog = pageDialog;
+        this.uploadDialog = uploadDialog;
         this.confirmDialog = confirmDialog;
 
         this.hasFishLogBookPageReadPermission = permissions.hasAny(PermissionsEnum.FishLogBookPageReadAll, PermissionsEnum.FishLogBookRead);
         this.hasGenerateLandingPermission = permissions.has(PermissionsEnum.FishingActivityReportsGenerateLanding);
         this.hasReplayMessagesPermission = permissions.has(PermissionsEnum.FishingActivityReportsReplay);
         this.hasSendToFluxPermission = permissions.has(PermissionsEnum.FishingActivityReportsSendToFlux);
+        this.hasUploadPermission = permissions.has(PermissionsEnum.FishingActivityReportsUpload);
 
         this.form = this.buildForm();
     }
@@ -271,6 +278,35 @@ export class FishingActivityReportsComponent implements OnInit, AfterViewInit {
                             // nothing
                         }
                     });
+                }
+            }
+        });
+    }
+
+    public downloadJson(report: FishingActivityReportItemDTO): void {
+        this.service.downloadFishingActivityReport(report.id!).subscribe({
+            next: (result: boolean) => {
+                // nothing to do
+            }
+        });
+    }
+
+    public uploadJson(report: FishingActivityReportItemDTO): void {
+        this.uploadDialog.openWithTwoButtons({
+            title: this.translate.getValue('fishing-activities.upload-json-file-title'),
+            TCtor: FishingActivityUploadReportComponent,
+            headerCancelButton: {
+                cancelBtnClicked: (closeFn: HeaderCloseFunction): void => {
+                    closeFn();
+                }
+            },
+            componentData: new DialogParamsModel({ id: report.id }),
+            translteService: this.translate,
+            viewMode: false
+        }, '600px').subscribe({
+            next: (result: boolean | undefined) => {
+                if (result) {
+                    this.grid.refreshData();
                 }
             }
         });

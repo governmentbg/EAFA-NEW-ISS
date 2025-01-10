@@ -278,6 +278,9 @@ export abstract class BaseInspectionsComponent implements IDialogComponent {
             else if (response.error?.code === ErrorCode.CannotEditInspectionAfterLockHours) {
                 message = this.translate.getValue('inspections.cannot-edit-inspection-after-lock-hours-error');
             }
+            else if (response.error?.code === ErrorCode.NoInspectedVesselForShipInspection) {
+                message = this.translate.getValue('inspections.no-inspected-vessel-for-ship-inspection-error');
+            }
 
             if (message !== undefined && message !== null && message !== '') {
                 this.snackbar.open(message, undefined, {

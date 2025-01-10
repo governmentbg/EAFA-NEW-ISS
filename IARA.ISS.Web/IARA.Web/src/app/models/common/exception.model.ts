@@ -90,5 +90,6 @@ export enum ErrorCode {
     PenalDecreeNumAlreadyExists = 68,
     ReportGroupNameAlreadyExists = 69,
     CannotEditInspectionAfterLockHours = 70,
-    CannotCancelDecreeWithPenalPoints = 71
+    CannotCancelDecreeWithPenalPoints = 71,
+    NoInspectedVesselForShipInspection = 72
 }

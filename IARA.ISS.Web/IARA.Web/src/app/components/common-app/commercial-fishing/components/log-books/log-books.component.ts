@@ -384,7 +384,7 @@ export class LogBooksComponent extends CustomFormControl<LogBookEditDTO[] | Comm
                                                 || error?.code === ErrorCode.InvalidLogBookPagesRange
                                             ) {
                                                 const logBookNumber: string = error!.messages[0];
-                                                
+
                                                 const logBook: CommercialFishingLogBookEditDTO = results.find(x => x.logbookNumber === logBookNumber)!;
                                                 this.handleInvalidLogBookLicensePagesRangeError(logBook, false, logBook, error.messages[0], results);
                                             }
@@ -631,6 +631,8 @@ export class LogBooksComponent extends CustomFormControl<LogBookEditDTO[] | Comm
         let title: string;
 
         if (logBook !== null && logBook !== undefined) { // edit
+            this.setFirstLastFilledPageNumbers(logBook);
+
             data = new EditLogBookDialogParamsModel({
                 model: logBook,
                 readOnly: this.isReadonly || viewMode,
@@ -1030,6 +1032,50 @@ export class LogBooksComponent extends CustomFormControl<LogBookEditDTO[] | Comm
                     }
                 }
             });
+        }
+    }
+
+    private setFirstLastFilledPageNumbers(logBook: LogBookEditDTO | CommercialFishingLogBookEditDTO | undefined): void {
+        if (logBook !== undefined && logBook !== null) {
+            if (logBook instanceof CommercialFishingLogBookEditDTO) {
+                if (logBook.shipPagesAndDeclarations !== null && logBook.shipPagesAndDeclarations !== undefined && logBook.shipPagesAndDeclarations.length > 0) {
+                    const pagesSorted: ShipLogBookPageRegisterDTO[] | undefined = logBook.shipPagesAndDeclarations.sort((lhs, rhs) => Number(lhs.pageNumber!) - Number(rhs.pageNumber!));
+                    logBook.firstFilledPageNumber = Number(pagesSorted[0].pageNumber);
+                    logBook.lastFilledPageNumber = Number(pagesSorted[pagesSorted.length - 1].pageNumber);
+                }
+                else if (logBook.admissionPagesAndDeclarations !== null && logBook.admissionPagesAndDeclarations !== undefined && logBook.admissionPagesAndDeclarations.length > 0) {
+                    const pagesSorted: AdmissionLogBookPageRegisterDTO[] | undefined = logBook.admissionPagesAndDeclarations.sort((lhs, rhs) => lhs.pageNumber! - rhs.pageNumber!);
+                    logBook.firstFilledPageNumber = pagesSorted[0].pageNumber;
+                    logBook.lastFilledPageNumber = pagesSorted[pagesSorted.length - 1].pageNumber;
+                }
+                else if (logBook.transportationPagesAndDeclarations !== null && logBook.transportationPagesAndDeclarations !== undefined && logBook.transportationPagesAndDeclarations.length > 0) {
+                    const pagesSorted: TransportationLogBookPageRegisterDTO[] | undefined = logBook.transportationPagesAndDeclarations.sort((lhs, rhs) => lhs.pageNumber! - rhs.pageNumber!);
+                    logBook.firstFilledPageNumber = pagesSorted[0].pageNumber;
+                    logBook.lastFilledPageNumber = pagesSorted[pagesSorted.length - 1].pageNumber;
+                }
+            }
+            else if (logBook instanceof LogBookEditDTO) {
+                if (logBook.admissionPagesAndDeclarations !== null && logBook.admissionPagesAndDeclarations !== undefined && logBook.admissionPagesAndDeclarations.length > 0) {
+                    const pagesSorted: AdmissionLogBookPageRegisterDTO[] | undefined = logBook.admissionPagesAndDeclarations.sort((lhs, rhs) => lhs.pageNumber! - rhs.pageNumber!);
+                    logBook.firstFilledPageNumber = pagesSorted[0].pageNumber;
+                    logBook.lastFilledPageNumber = pagesSorted[pagesSorted.length - 1].pageNumber;
+                }
+                else if (logBook.transportationPagesAndDeclarations !== null && logBook.transportationPagesAndDeclarations !== undefined && logBook.transportationPagesAndDeclarations.length > 0) {
+                    const pagesSorted: TransportationLogBookPageRegisterDTO[] | undefined = logBook.transportationPagesAndDeclarations.sort((lhs, rhs) => lhs.pageNumber! - rhs.pageNumber!);
+                    logBook.firstFilledPageNumber = pagesSorted[0].pageNumber;
+                    logBook.lastFilledPageNumber = pagesSorted[pagesSorted.length - 1].pageNumber;
+                }
+                else if (logBook.firstSalePages !== null && logBook.firstSalePages !== undefined && logBook.firstSalePages.length > 0) {
+                    const pagesSorted: FirstSaleLogBookPageRegisterDTO[] | undefined = logBook.firstSalePages.sort((lhs, rhs) => lhs.pageNumber! - rhs.pageNumber!);
+                    logBook.firstFilledPageNumber = pagesSorted[0].pageNumber;
+                    logBook.lastFilledPageNumber = pagesSorted[pagesSorted.length - 1].pageNumber;
+                }
+                else if (logBook.aquaculturePages !== null && logBook.aquaculturePages !== undefined && logBook.aquaculturePages.length > 0) {
+                    const pagesSorted: AquacultureLogBookPageRegisterDTO[] | undefined = logBook.aquaculturePages.sort((lhs, rhs) => lhs.pageNumber! - rhs.pageNumber!);
+                    logBook.firstFilledPageNumber = pagesSorted[0].pageNumber;
+                    logBook.lastFilledPageNumber = pagesSorted[pagesSorted.length - 1].pageNumber;
+                }
+            }
         }
     }
 

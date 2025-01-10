@@ -164,6 +164,27 @@
                                                             (buttonClicked)="openViewDialog(row.data)"
                                                             tooltipText="{{ 'fishing-activities.view-report' | tlTranslate }}">
                                             </tl-icon-button>
+
+                                            <button *ngIf="hasUploadPermission"
+                                                    mat-icon-button
+                                                    fxLayoutAlign="center center"
+                                                    color="accent"
+                                                    matTooltip="{{ 'fishing-activities.download-upload-json' | tlTranslate }}"
+                                                    [matMenuTriggerFor]="uploadMenuButtons">
+                                                <tl-icon icon="attach_file" [size]="1.66"></tl-icon>
+                                            </button>
+
+                                            <mat-menu #uploadMenuButtons="matMenu">
+                                                <button mat-menu-item
+                                                        (click)="downloadJson(row.data)">
+                                                    {{ 'fishing-activities.download-json' | tlTranslate }}
+                                                </button>
+
+                                                <button mat-menu-item
+                                                        (click)="uploadJson(row.data)">
+                                                    {{ 'fishing-activities.upload-json' | tlTranslate }}
+                                                </button>
+                                            </mat-menu>
                                         </div>
                                     </ng-template>
                                 </data-template-column>

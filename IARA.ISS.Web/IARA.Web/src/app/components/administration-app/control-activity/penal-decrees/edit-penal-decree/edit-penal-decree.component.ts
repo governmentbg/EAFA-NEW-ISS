@@ -53,6 +53,8 @@ export class EditPenalDecreeComponent implements OnInit, AfterViewInit, IDialogC
     public readonly decreeStatusTypesEnum: typeof PenalDecreeStatusTypesEnum = PenalDecreeStatusTypesEnum;
     public readonly today: Date = new Date();
 
+    public maxIssueDate: Date = new Date();
+    public minIssueDate: Date | undefined;
     public isAdding: boolean = false;
     public viewMode: boolean = false;
     public isThirdParty: boolean = false;
@@ -86,6 +88,7 @@ export class EditPenalDecreeComponent implements OnInit, AfterViewInit, IDialogC
     private auanId: number | undefined;
     private penalDecreeId!: number | undefined;
     private model!: PenalDecreeEditDTO;
+    private decreeNum: string | undefined;
     private readonly nomenclatures: CommonNomenclatures;
     private readonly translate: FuseTranslationLoaderService;
     private readonly confirmDialog: TLConfirmDialog;
@@ -137,11 +140,27 @@ export class EditPenalDecreeComponent implements OnInit, AfterViewInit, IDialogC
                     if (this.penalDecreeId === undefined || this.penalDecreeId === null) {
                         this.model = new PenalDecreeEditDTO();
                         this.model.penalDecreeStatus = AuanStatusEnum.Draft;
+                        this.form.get('decreeNumControl')!.disable();
                     }
                     else {
                         this.service.getPenalDecree(this.penalDecreeId).subscribe({
                             next: (decree: PenalDecreeEditDTO) => {
                                 this.model = decree;
+                                this.decreeNum = decree.decreeNum;
+
+                                if (decree.issueDate !== undefined && decree.issueDate !== null) {
+
+                                // Не може да се избере дата след 31.12.2024 г. за постановленията, чиито номера не са генерирани
+                                    if (decree.issueDate <= PenalDecreeUtils.AUTO_GENERATE_NUMBER_AFTER_DATE) {
+                                        this.maxIssueDate = PenalDecreeUtils.AUTO_GENERATE_NUMBER_AFTER_DATE;
+                                    }
+                                    else {
+                                        // Не може да се избере дата от предишната година за постановленията, чиито номера са генерирани
+                                        // с цел да не може и да се промени номерът им
+                                        this.minIssueDate = new Date(decree.issueDate.getFullYear(), 0, 1);
+                                    }
+                                }
+
                                 this.fillForm();
                             }
                         });
@@ -156,57 +175,83 @@ export class EditPenalDecreeComponent implements OnInit, AfterViewInit, IDialogC
     }
 
     public ngAfterViewInit(): void {
-        this.form.get('drafterControl')!.valueChanges.subscribe({
-            next: (drafter: InspectorUserNomenclatureDTO | undefined) => {
-                this.drafter = drafter;
+        if (!this.viewMode) {
+            this.form.get('drafterControl')!.valueChanges.subscribe({
+                next: (drafter: InspectorUserNomenclatureDTO | undefined) => {
+                    this.drafter = drafter;
 
-                if (drafter !== undefined && drafter !== null) {
-                    this.form.get('issuerPositionControl')!.setValue(drafter.issuerPosition);
+                    if (drafter !== undefined && drafter !== null) {
+                        this.form.get('issuerPositionControl')!.setValue(drafter.issuerPosition);
+                    }
+                    else {
+                        this.form.get('issuerPositionControl')!.setValue(undefined);
+                    }
                 }
-                else {
-                    this.form.get('issuerPositionControl')!.setValue(undefined);
+            });
+
+            this.form.get('auanViolatedRegulationsControl')!.valueChanges.subscribe({
+                next: (result: AuanViolatedRegulationDTO[] | undefined) => {
+                    if (result !== undefined && result !== null) {
+                        this.violatedRegulations = result;
+                        this.violatedRegulationsTouched = true;
+                        this.form.updateValueAndValidity({ onlySelf: true });
+                    }
                 }
-            }
-        });
+            });
 
-        this.form.get('auanViolatedRegulationsControl')!.valueChanges.subscribe({
-            next: (result: AuanViolatedRegulationDTO[] | undefined) => {
-                if (result !== undefined && result !== null) {
-                    this.violatedRegulations = result;
-                    this.violatedRegulationsTouched = true;
-                    this.form.updateValueAndValidity({ onlySelf: true });
+            this.fishCompensationForm.get('countControl')!.valueChanges.subscribe({
+                next: (event: RecordChangedEventArgs<PenalDecreeFishCompensationDTO>) => {
+                    this.fishCompensationFormTouched = true;
+
+                    this.fishCompensationForm.updateValueAndValidity({ onlySelf: true });
                 }
-            }
-        });
+            });
 
-        this.fishCompensationForm.get('countControl')!.valueChanges.subscribe({
-            next: (event: RecordChangedEventArgs<PenalDecreeFishCompensationDTO>) => {
-                this.fishCompensationFormTouched = true;
+            this.fishCompensationForm.get('weightControl')!.valueChanges.subscribe({
+                next: (event: RecordChangedEventArgs<PenalDecreeFishCompensationDTO>) => {
+                    this.fishCompensationFormTouched = true;
 
-                this.fishCompensationForm.updateValueAndValidity({ onlySelf: true });
-            }
-        });
-
-        this.fishCompensationForm.get('weightControl')!.valueChanges.subscribe({
-            next: (event: RecordChangedEventArgs<PenalDecreeFishCompensationDTO>) => {
-                this.fishCompensationFormTouched = true;
-
-                this.fishCompensationForm.updateValueAndValidity({ onlySelf: true });
-            }
-        });
-
-        this.form.get('auanControl')!.valueChanges.subscribe({
-            next: (auanData: PenalDecreeAuanDataDTO | undefined) => {
-                if (auanData !== undefined && auanData !== null) {
-                    this.inspectedEnityName = PenalDecreeUtils.getInspectedEntityName(auanData.inspectedEntity);
+                    this.fishCompensationForm.updateValueAndValidity({ onlySelf: true });
                 }
-                else {
-                    this.inspectedEnityName = undefined;
-                }
+            });
 
-                this.violatedRegulationsTitle = PenalDecreeUtils.getViolatedRegulationsTitle(this.inspectedEnityName, this.translate);
-            }
-        });
+            this.form.get('auanControl')!.valueChanges.subscribe({
+                next: (auanData: PenalDecreeAuanDataDTO | undefined) => {
+                    if (auanData !== undefined && auanData !== null) {
+                        this.inspectedEnityName = PenalDecreeUtils.getInspectedEntityName(auanData.inspectedEntity);
+                    }
+                    else {
+                        this.inspectedEnityName = undefined;
+                    }
+
+                    this.violatedRegulationsTitle = PenalDecreeUtils.getViolatedRegulationsTitle(this.inspectedEnityName, this.translate);
+                }
+            });
+
+            // Номерата на постановленията се генерират автоматично от 01.01.2025 г., тези на създадените преди това може да се редактират
+            this.form.get('issueDateControl')!.valueChanges.subscribe({
+                next: (value: Date | undefined) => {
+                    if (value !== undefined && value !== null) {
+                        if (value > PenalDecreeUtils.AUTO_GENERATE_NUMBER_AFTER_DATE) {
+                            if (this.isAdding) {
+                                this.form.get('decreeNumControl')!.setValue(undefined);
+                            }
+                            else {
+                                this.form.get('decreeNumControl')!.setValue(this.decreeNum);
+                            }
+
+                            this.form.get('decreeNumControl')!.disable();
+                        }
+                        else {
+                            this.form.get('decreeNumControl')!.enable();
+                            this.form.get('decreeNumControl')!.setValidators(Validators.required);
+                            this.form.get('decreeNumControl')!.markAsPending();
+                            this.form.get('decreeNumControl')!.updateValueAndValidity({ emitEvent: false });
+                        }
+                    }
+                }
+            });
+        }
     }
 
     public setData(data: EditPenalDecreeDialogParams | undefined, wrapperData: DialogWrapperData): void {

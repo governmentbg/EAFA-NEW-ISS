@@ -1,7 +1,10 @@
 ﻿<div fxFlexFill fxLayout="column" fxLayoutGap="1em" [formGroup]="form" validityCheckerGroup>
     <tl-card fxFlex="100"
              [validityChecker]="form"
-             [validityCheckerExtraCondition]="pagesRangeError !== true && form.errors?.endPageGreaterThanStartPage !== true">
+             [validityCheckerExtraCondition]="pagesRangeError !== true 
+                                              && form.errors?.endPageGreaterThanStartPage !== true
+                                              && form.errors?.firstPageSmallerThanStartPage !== true
+                                              && form.errors?.lastPageGreaterThanEndPage !== true">
         <tl-card-title>{{ 'catches-and-sales.log-book-basic-information-panel' | tlTranslate }}</tl-card-title>
         <tl-card-content fxFlexFill fxLayout="column" fxLayoutGap="1em">
             <div fxLayout="row" fxFlex="100" fxLayoutAlign="space-between center" fxLayoutGap="1em">
@@ -84,6 +87,12 @@
             </mat-error>
             <mat-error *ngIf="form.errors?.pageRangeNumberGreaterThanAllowed">
                 * {{ 'catches-and-sales.log-book-page-range-number-greater-than-allowed' | tlTranslate }} {{ maxNumberOfLogBookPages }} {{ 'catches-and-sales.log-book-page-range-pages' | tlTranslate }}
+            </mat-error>
+            <mat-error *ngIf="form.errors?.firstPageSmallerThanStartPage">
+                * {{ 'catches-and-sales.log-book-first-page-smaller-than-start-page' | tlTranslate }}
+            </mat-error>
+            <mat-error *ngIf="form.errors?.lastPageGreaterThanEndPage">
+                * {{ 'catches-and-sales.log-book-last-page-greater-than-end-page' | tlTranslate }}
             </mat-error>
             <div fxLayout="row" fxFlex="100">
                 <tl-textarea fxFlex="100"

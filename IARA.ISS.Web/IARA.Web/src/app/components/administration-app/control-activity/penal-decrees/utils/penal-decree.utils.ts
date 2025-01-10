@@ -2,6 +2,8 @@
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 
 export class PenalDecreeUtils {
+    static readonly AUTO_GENERATE_NUMBER_AFTER_DATE: Date = new Date(2024, 11, 31);
+
     public static getInspectedEntityName(data: AuanInspectedEntityDTO | undefined): string | undefined {
         let inspectedEntityName: string = '';
 
