@@ -27,8 +27,10 @@ export class RecreationalFishingTicketApplicationFilters extends BaseRequestMode
     public ticketIssuerName: string | undefined;
     public isDuplicate: boolean | undefined;
     public statusIds: number[] | undefined;
+    public paymentStatusIds: number[] | undefined;
     public showOnlyNotFinished: boolean | undefined;
     public personId: number | undefined;
     public territoryUnitId: number | undefined;
     public showExpired: boolean | undefined;
+    public showOnlinePaidTickes: boolean | undefined;
 }

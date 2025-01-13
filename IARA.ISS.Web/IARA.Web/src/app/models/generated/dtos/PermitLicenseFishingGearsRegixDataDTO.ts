@@ -21,7 +21,4 @@ export class PermitLicenseFishingGearsRegixDataDTO extends BaseRegixChecksDTO {
 
     @StrictlyTyped(ApplicationSubmittedForRegixDataDTO)
     public submittedFor?: ApplicationSubmittedForRegixDataDTO;
-
-    @StrictlyTyped(Number)
-    public permitLicenseId?: number;
 }

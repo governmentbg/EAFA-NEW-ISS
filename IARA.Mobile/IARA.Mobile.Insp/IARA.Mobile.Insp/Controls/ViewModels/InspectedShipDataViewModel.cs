@@ -13,6 +13,7 @@ using System.Linq;
 using System.Reflection;
 using System.Windows.Input;
 using TechnoLogica.Xamarin.Attributes;
+using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Helpers;
 using TechnoLogica.Xamarin.ViewModels.Interfaces;
 using TechnoLogica.Xamarin.ViewModels.Models;
@@ -27,25 +28,19 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
         private List<SelectNomenclatureDto> _flags;
         private List<SelectNomenclatureDto> _shipTypes;
 
-        public InspectedShipDataViewModel(InspectionPageViewModel inspection, bool canPickLocation = true)
+        private List<InspectedPersonViewModel> _inspectedPeople;
+
+        public InspectedShipDataViewModel(InspectionPageViewModel inspection, List<InspectedPersonViewModel> inspectedPeople = null, bool canPickLocation = true)
         {
             Inspection = inspection;
             CanPickLocation = canPickLocation;
-
+            InRegisterChecked = CommandBuilder.CreateFrom(OnInRegisterChecked);
+            _inspectedPeople = inspectedPeople;
             this.AddValidation(
                 groups: new Dictionary<string, Func<bool>>
                 {
-                    { Group.REGISTERED, () => ShipInRegister.Value },
-                    { Group.NOT_REGISTERED, () => !ShipInRegister.Value },
-                    { Group.IS_TRANSHIPMENT, () =>
-                    {
-                        if(HarbourInspectionViewModel.Static == null)
-                        {
-                            return false;
-                        }
-
-                        return HarbourInspectionViewModel.Static.HasTranshipment.Value;
-                    } },
+                    { Group.REGISTERED, () => ShipInRegister },
+                    { Group.NOT_REGISTERED, () => !ShipInRegister },
                     { Group.CAN_PICK_LOCATION, () => canPickLocation }
                 }
             );
@@ -80,30 +75,25 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
         public ValidStateBool ShipInRegister { get; set; }
 
         [Required]
-        [ValidGroup(Group.IS_TRANSHIPMENT)]
         [ValidGroup(Group.CAN_PICK_LOCATION)]
         public ValidStateLocation Location { get; set; }
 
         [Required]
         [ValidGroup(Group.REGISTERED)]
-        [ValidGroup(Group.IS_TRANSHIPMENT)]
         public ValidStateInfiniteSelect<ShipSelectNomenclatureDto> Ship { get; set; }
 
         [Required]
         [MaxLength(500)]
         [ValidGroup(Group.NOT_REGISTERED)]
-        [ValidGroup(Group.IS_TRANSHIPMENT)]
         public ValidState Name { get; set; }
 
         [Required]
         [MaxLength(50)]
         [ValidGroup(Group.NOT_REGISTERED)]
-        [ValidGroup(Group.IS_TRANSHIPMENT)]
         public ValidState ExternalMarkings { get; set; }
 
         [Required]
         [ValidGroup(Group.NOT_REGISTERED)]
-        [ValidGroup(Group.IS_TRANSHIPMENT)]
         public ValidStateSelect<SelectNomenclatureDto> Flag { get; set; }
 
         [MaxLength(20)]
@@ -117,7 +107,6 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
 
         [Required]
         [ValidGroup(Group.NOT_REGISTERED)]
-        [ValidGroup(Group.IS_TRANSHIPMENT)]
         public ValidStateSelect<SelectNomenclatureDto> ShipType { get; set; }
 
         [MaxLength(20)]
@@ -143,6 +132,27 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
         {
             get => _inRegisterChecked;
             set => SetProperty(ref _inRegisterChecked, value);
+        }
+
+        private void OnInRegisterChecked()
+        {
+            Ship.Value = null;
+            Name.Value = "";
+            ExternalMarkings.Value = "";
+            Flag.Value = null;
+            CFR.Value = "";
+            UVI.Value = "";
+            CallSign.Value = "";
+            ShipType.Value = null;
+            MMSI.Value = "";
+
+            if (_inspectedPeople != null)
+            {
+                foreach (var person in _inspectedPeople)
+                {
+                    person.Reset(!ShipInRegister);
+                }
+            }
         }
 
         public void Init(List<SelectNomenclatureDto> flags, List<SelectNomenclatureDto> shipTypes, List<CatchZoneNomenclatureDto> quadrants)

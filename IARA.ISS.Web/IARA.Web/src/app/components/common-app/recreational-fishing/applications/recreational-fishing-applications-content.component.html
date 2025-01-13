@@ -313,7 +313,7 @@
                     </tl-input>
                 </div>
 
-                <!-- Дубликат, статус -->
+                <!-- Дубликат, статус, дата на издаване -->
                 <div fxLayout="row" fxFlexFill fxLayoutAlign="start center" fxLayoutGap="1em">
                     <tl-select fxFlex="25"
                                formControlName="isDuplicateControl"
@@ -334,12 +334,27 @@
                                    tooltipResourceName="recreational-fishing.application-issue-date-helper"
                                    label="{{ 'recreational-fishing.application-issue-date' | tlTranslate }}">
                     </tl-date-range>
-                    <tl-slide-toggle fxFlex="25"
+                    <tl-select fxFlex="25"
+                               formControlName="paymentStatusesControl"
+                               tooltipResourceName="recreational-fishing.application-ticket--payment-status-helper"
+                               label="{{ 'recreational-fishing.application-ticket-payment-status' | tlTranslate }}"
+                               [options]="paymentStatuses"
+                               [isMultiple]="true">
+                    </tl-select>
+                    <div *ngIf="isAssociation" fxFlex="25"></div>
+                </div>
+
+                <div fxLayout="row" fxFlexFill fxLayoutAlign="start center" fxLayoutGap="1em">
+                    <tl-slide-toggle fxFlex="50"
+                                     formControlName="showOnlinePaidTicketsControl"
+                                     label="{{ 'recreational-fishing.application-show-only-online-paid-tickets' | tlTranslate }}"
+                                     tooltipResourceName="recreational-fishing.application-show-only-online-paid-tickets-helper">
+                    </tl-slide-toggle>
+                    <tl-slide-toggle fxFlex="50"
                                      formControlName="showExpiredControl"
                                      label="{{ 'recreational-fishing.application-show-expired' | tlTranslate }}"
                                      tooltipResourceName="recreational-fishing.application-show-expired-helper">
                     </tl-slide-toggle>
-                    <div *ngIf="isAssociation" fxFlex="25"></div>
                 </div>
             </div>
         </search-panel>

@@ -43,6 +43,9 @@ export class AquaculturePagesTableComponent {
     public canEditNumberAquacultureLogBookRecords: boolean = false;
 
     @Input()
+    public canAddEditFilesAquacultureLogBookRecords: boolean = false;
+
+    @Input()
     public recordsPerPage: number = 10;
 
     @Input()
@@ -65,6 +68,9 @@ export class AquaculturePagesTableComponent {
 
     @Output()
     public onEditAquacultureLogBookPageNumber: EventEmitter<AquacultureLogBookPageRegisterDTO> = new EventEmitter<AquacultureLogBookPageRegisterDTO>();
+
+    @Output()
+    public onAddEditAquacultureLogBookPageFiles: EventEmitter<AquacultureLogBookPageRegisterDTO> = new EventEmitter<AquacultureLogBookPageRegisterDTO>();
 
     public readonly logBookPageStatusesEnum: typeof LogBookPageStatusesEnum = LogBookPageStatusesEnum;
     public readonly logBookTypesEnum: typeof LogBookTypesEnum = LogBookTypesEnum;
@@ -98,5 +104,9 @@ export class AquaculturePagesTableComponent {
 
     public onEditAquacultureLogBookPageNumberBtnClicked(document: AquacultureLogBookPageRegisterDTO): void {
         this.onEditAquacultureLogBookPageNumber.emit(document);
+    }
+
+    public onAddEditAquacultureLogBookPageFilesBtnClicked(document: AquacultureLogBookPageRegisterDTO): void {
+        this.onAddEditAquacultureLogBookPageFiles.emit(document);
     }
 }

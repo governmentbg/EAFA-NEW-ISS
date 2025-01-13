@@ -46,6 +46,7 @@ import { EditOriginDeclarationComponent } from './catches-and-sales/components/e
 import { EditTransportationLogBookPageComponent } from './catches-and-sales/components/edit-transporation-log-book/edit-transportation-log-book-page.component';
 import { FirstSalePagesTableComponent } from './catches-and-sales/components/first-sale-pages-table/first-sale-pages-table.component';
 import { JustifiedCancellationComponent } from './catches-and-sales/components/justified-cancellation/justified-cancellation.component';
+import { LogBookPageFilesComponent } from './catches-and-sales/components/log-book-page-files/log-book-page-files.component';
 import { LogBookPagePersonComponent } from './catches-and-sales/components/log-book-page-person/log-book-page-person.component';
 import { EditLogBookPageProductComponent } from './catches-and-sales/components/log-book-page-products/components/edit-log-book-page-product/edit-log-book-page-product.component';
 import { LogBookPageProductsComponent } from './catches-and-sales/components/log-book-page-products/log-book-page-products.component';
@@ -231,7 +232,8 @@ import { UserRegistrationModule } from './user-registration/user-registration.mo
         InspectionsComponent,
         PenalPointsComponent,
         AuanRegisterComponent,
-        EditLogBookPageNumberComponent
+        EditLogBookPageNumberComponent,
+        LogBookPageFilesComponent
     ],
     imports: [
         TLCommonModule,
@@ -349,7 +351,8 @@ import { UserRegistrationModule } from './user-registration/user-registration.mo
         PenalDecreesComponent,
         InspectionsComponent,
         PenalPointsComponent,
-        AuanRegisterComponent
+        AuanRegisterComponent,
+        LogBookPageFilesComponent
     ],
     providers: [CurrencyPipe, TLDateDifferencePipe, DatePipe]
 })

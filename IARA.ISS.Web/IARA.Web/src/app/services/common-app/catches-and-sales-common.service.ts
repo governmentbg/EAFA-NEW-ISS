@@ -47,6 +47,8 @@ import { LogBookOwnerNomenclatureDTO } from '@app/models/generated/dtos/LogBookO
 import { LogBookPageNomenclatureDTO } from '@app/models/generated/dtos/LogBookPageNomenclatureDTO';
 import { DatePipe } from '@angular/common';
 import { LogBookStatusesEnum } from '@app/enums/log-book-statuses.enum';
+import { FileInfoDTO } from '@app/models/generated/dtos/FileInfoDTO';
+import { LogBookPageFilesDTO } from '@app/models/generated/dtos/LogBookPageFilesDTO';
 
 type FiltersUnion = CatchesAndSalesAdministrationFilters | CatchesAndSalesPublicFilters;
 
@@ -671,6 +673,21 @@ export class CatchesAndSalesCommonService {
             .append('relatedLogBookPageId', relatedLogBookPageId.toString());
 
         return this.http.put(area, controller, 'AddRelatedDeclaration', null, { httpParams: params });
+    }
+
+    public getLogBookPageFiles(area: AreaTypes, controller: string, id: number, logBookType: LogBookTypesEnum): Observable<FileInfoDTO[]> {
+        const params = new HttpParams()
+            .append('logBookPageId', id.toString())
+            .append('logBookType', logBookType.toString());
+
+        return this.http.get(area, controller, 'GetLogBookPageFiles', { httpParams: params });
+    }
+
+    public editLogBookPageFiles(area: AreaTypes, controller: string, page: LogBookPageFilesDTO): Observable<void> {
+        return this.http.post(area, controller, 'EditLogBookPageFiles', page, {
+            properties: new RequestProperties({ asFormData: true }),
+            successMessage: 'succ-edit-log-book-page-files'
+        });
     }
 
     public downloadFile(area: AreaTypes, controller: string, fileId: number, fileName: string): Observable<boolean> {

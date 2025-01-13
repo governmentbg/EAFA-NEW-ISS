@@ -82,7 +82,7 @@ export class EditAquacultureLogBookPageComponent implements OnInit, IDialogCompo
 
     public async ngOnInit(): Promise<void> {
         const systemParameters: SystemPropertiesDTO = await this.systemParametersService.systemParameters();
-        this.lockAquacultureLogBookPeriod = systemParameters.lockAquacultureLogBookAfterDays!;
+        this.lockAquacultureLogBookPeriod = systemParameters.addAquaculturePagesDaysTolerance!;
 
         if (!this.viewMode) {
             this.logBookPageEditExceptions = await this.service.getLogBookPageEditExceptions().toPromise();

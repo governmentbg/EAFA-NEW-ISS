@@ -93,6 +93,9 @@ export class ShipPagesAndDeclarationsTableComponent {
     public onEditShipLogBookPageNumber: EventEmitter<ShipLogBookPageRegisterDTO> = new EventEmitter<ShipLogBookPageRegisterDTO>();
 
     @Output()
+    public onAddEditShipLogBookPageFiles: EventEmitter<ShipLogBookPageRegisterDTO> = new EventEmitter<ShipLogBookPageRegisterDTO>();
+
+    @Output()
     public onAddAdmissionDeclaration: EventEmitter<ShipLogBookPageRegisterDTO> = new EventEmitter<ShipLogBookPageRegisterDTO>();
 
     @Output()
@@ -174,6 +177,10 @@ export class ShipPagesAndDeclarationsTableComponent {
 
     public onEditShipLogBookPageNumberBtnClicked(shipPage: ShipLogBookPageRegisterDTO): void {
         this.onEditShipLogBookPageNumber.emit(shipPage);
+    }
+
+    public onAddEditShipLogBookPageFilesBtnClicked(shipPage: ShipLogBookPageRegisterDTO): void {
+        this.onAddEditShipLogBookPageFiles.emit(shipPage);
     }
 
     public onAddAdmissionDeclarationBtnClicked(shipPage: ShipLogBookPageRegisterDTO): void {
