@@ -113,6 +113,16 @@
                                 tooltipText="{{ 'catches-and-sales.edit-first-sale-log-book-page' | tlTranslate }}">
                 </tl-icon-button>
 
+                <tl-icon-button *ngIf="(!row.data.isLogBookFinishedOrSuspended || allowEditAfterFinished)
+                                        && canAddEditFilesFirstSaleLogBookRecords
+                                        && row.data.status === logBookPageStatusesEnum.Submitted"
+                                typeof="MAT_ICON"
+                                iconClass="accent-color"
+                                icon="attach_file"
+                                tooltipText="{{ 'catches-and-sales.edit-first-sale-log-book-page-files' | tlTranslate }}"
+                                (buttonClicked)="onAddEditFirstSaleLogBookPageFilesBtnClicked(row.data)">
+                </tl-icon-button>
+
                 <tl-icon-button *ngIf="(!row.data.isLogBookFinished || allowEditAfterFinished)
                                     && canEditNumberFirstSaleLogBookRecords
                                     && row.data.status !== logBookPageStatusesEnum.Canceled"

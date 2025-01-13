@@ -207,7 +207,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.DeclarationCatchDialo
 
         public void OnInit()
         {
-            InspectedShip = new InspectedShipDataViewModel(new EmptyCopy(DialogType), false)
+            InspectedShip = new InspectedShipDataViewModel(new EmptyCopy(DialogType), null, false)
             {
                 ShipSelected = CommandBuilder.CreateFrom<ShipSelectNomenclatureDto>(OnShipSelected)
             };

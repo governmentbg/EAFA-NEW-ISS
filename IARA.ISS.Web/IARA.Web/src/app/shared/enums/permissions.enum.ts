@@ -444,6 +444,7 @@
     FishLogBookPageEdit = 'FishLogBookPageEdit',
     FishLogBookPageCancel = 'FishLogBookPageCancel',
     FishLogBookPageEditNumber = 'FishLogBookPageEditNumber',
+    FishLogBookPageEditFiles = 'FishLogBookPageEditFiles',
 
     FirstSaleLogBookPageReadAll = 'FirstSaleLogBookPageReadAll',
     FirstSaleLogBookPageRead = 'FirstSaleLogBookPageRead',
@@ -452,6 +453,7 @@
     FirstSaleLogBookPageCancel = 'FirstSaleLogBookPageCancel',
     FirstSaleLogBookPageEditNumber = 'FirstSaleLogBookPageEditNumber',
     FirstSaleLogBookPageEditCommonData = 'FirstSaleLogBookPageEditCommonData',
+    FirstSaleLogBookPageEditFiles = 'FirstSaleLogBookPageEditFiles',
 
     AdmissionLogBookPageReadAll = 'AdmissionLogBookPageReadAll',
     AdmissionLogBookPageRead = 'AdmissionLogBookPageRead',
@@ -460,6 +462,7 @@
     AdmissionLogBookPageCancel = 'AdmissionLogBookPageCancel',
     AdmissionLogBookPageEditNumber = 'AdmissionLogBookPageEditNumber',
     AdmissionLogBookPageEditCommonData = 'AdmissionLogBookPageEditCommonData',
+    AdmissionLogBookPageEditFiles = 'AdmissionLogBookPageEditFiles',
 
     TransportationLogBookPageReadAll = 'TransportationLogBookPageReadAll',
     TransportationLogBookPageRead = 'TransportationLogBookPageRead',
@@ -468,6 +471,7 @@
     TransportationLogBookPageCancel = 'TransportationLogBookPageCancel',
     TransportationLogBookPageEditNumber = 'TransportationLogBookPageEditNumber',
     TransportationLogBookPageEditCommonData = 'TransportationLogBookPageEditCommonData',
+    TransportationLogBookPageEditFiles = 'TransportationLogBookPageEditFiles',
 
     AquacultureLogBookPageReadAll = 'AquacultureLogBookPageReadAll',
     AquacultureLogBookPageRead = 'AquacultureLogBookPageRead',
@@ -475,6 +479,7 @@
     AquacultureLogBookPageEdit = 'AquacultureLogBookPageEdit',
     AquacultureLogBookPageCancel = 'AquacultureLogBookPageCancel',
     AquacultureLogBookPageEditNumber = 'AquacultureLogBookPageEditNumber',
+    AquacultureLogBookPageEditFiles = 'AquacultureLogBookPageEditFiles',
 
     // Log book page edit exceptions
 

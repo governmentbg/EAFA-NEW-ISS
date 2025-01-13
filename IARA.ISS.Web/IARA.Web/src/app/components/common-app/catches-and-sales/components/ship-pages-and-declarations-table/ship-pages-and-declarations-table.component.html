@@ -401,6 +401,16 @@
                 </tl-icon-button>
 
                 <tl-icon-button *ngIf="(!row.data.isLogBookFinishedOrSuspended || allowEditAfterFinished)
+                                       && _pagesPermissions.canAddEditFilesShipLogBookRecords
+                                       && row.data.status === logBookPageStatusesEnum.Submitted"
+                                typeof="MAT_ICON"
+                                iconClass="accent-color"
+                                icon="attach_file"
+                                tooltipText="{{ 'catches-and-sales.edit-ship-log-book-page-files' | tlTranslate }}"
+                                (buttonClicked)="onAddEditShipLogBookPageFilesBtnClicked(row.data)">
+                </tl-icon-button>
+
+                <tl-icon-button *ngIf="(!row.data.isLogBookFinishedOrSuspended || allowEditAfterFinished)
                                        && _pagesPermissions.canEditNumberShipLogBookRecords
                                        && row.data.status !== logBookPageStatusesEnum.Canceled"
                                 icon="ic-fluent-doc-arrow-right-24-regular"

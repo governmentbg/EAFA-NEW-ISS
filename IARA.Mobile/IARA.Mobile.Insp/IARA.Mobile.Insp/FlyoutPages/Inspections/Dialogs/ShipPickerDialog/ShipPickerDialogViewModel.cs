@@ -44,7 +44,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.ShipPickerDialog
 
             Translator.Current.Add(resources);
 
-            Ship = new InspectedShipDataViewModel(inspection, false);
+            Ship = new InspectedShipDataViewModel(inspection, null, false);
 
             this.AddValidation(others: new[] { Ship });
 

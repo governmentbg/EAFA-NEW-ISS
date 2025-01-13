@@ -6,6 +6,7 @@
         xmlns:tl="clr-namespace:TechnoLogica.Xamarin.Controls;assembly=TechnoLogica.Xamarin"
         xmlns:rt="clr-namespace:TechnoLogica.Xamarin.ResourceTranslator;assembly=TechnoLogica.Xamarin"
         xmlns:vm="clr-namespace:IARA.Mobile.Insp.Controls.ViewModels"
+        xmlns:h="clr-namespace:TechnoLogica.Xamarin.Helpers;assembly=TechnoLogica.Xamarin"
         x:Class="IARA.Mobile.Insp.Controls.InspectedPersonView"
         x:DataType="vm:InspectedPersonViewModel"
         x:Name="view">
@@ -64,28 +65,42 @@
                 </MultiBinding>
             </tl:TLEntry.IsVisible>
         </tl:TLEntry>
-        <sv:TLEntryWithType ValidState="{Binding Egn}" IsEnabled="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}">
-            <sv:TLEntryWithType.IsVisible>
+        <Grid ColumnDefinitions="*,Auto">
+            <Grid.IsVisible>
                 <MultiBinding Converter="{StaticResource All}">
                     <Binding Path="Action.Code"
                             Converter="{StaticResource Equal}"
                             ConverterParameter="Person" />
                     <Binding Path="InRegister.Value" Converter="{StaticResource OppositeBool}" />
                 </MultiBinding>
-            </sv:TLEntryWithType.IsVisible>
-        </sv:TLEntryWithType>
-        <tl:TLEntry Title="{rt:Translate EIK, Group=Common}"
-                ValidState="{Binding EIK}"
-                IsEnabled="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}">
-            <tl:TLEntry.IsVisible>
+            </Grid.IsVisible>
+            <sv:TLEntryWithType ValidState="{Binding Egn}" IsEnabled="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}" />
+            <ImageButton Grid.Column="1"
+                    Source="{FontImageSource Color=White, FontFamily=FA, Glyph={Static h:IconFont.MagnifyingGlass}, Size=25}"
+                    Padding="10"
+                    IsEnabled="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}"
+                    VerticalOptions="End"
+                    Command="{Binding SearchPerson}" />
+        </Grid>
+        <Grid ColumnDefinitions="*,Auto">
+            <Grid.IsVisible>
                 <MultiBinding Converter="{StaticResource All}">
                     <Binding Path="Action.Code"
                             Converter="{StaticResource Equal}"
                             ConverterParameter="Legal" />
                     <Binding Path="InRegister.Value" Converter="{StaticResource OppositeBool}" />
                 </MultiBinding>
-            </tl:TLEntry.IsVisible>
-        </tl:TLEntry>
+            </Grid.IsVisible>
+            <tl:TLEntry Title="{rt:Translate EIK, Group=Common}"
+                    ValidState="{Binding EIK}"
+                    IsEnabled="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}" />
+            <ImageButton Grid.Column="1"
+                    Source="{FontImageSource Color=White, FontFamily=FA, Glyph={Static h:IconFont.MagnifyingGlass}, Size=25}"
+                    Padding="10"
+                    VerticalOptions="End"
+                    IsEnabled="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}"
+                    Command="{Binding SearchLegal}" />
+        </Grid>
         <tl:TLEntry Title="{rt:Translate Address, Group=Common}" ValidState="{Binding Address}">
             <tl:TLEntry.IsEnabled>
                 <MultiBinding Converter="{StaticResource All}">

@@ -68,6 +68,10 @@ import { AddRelatedDeclarationComponent } from './components/add-related-declara
 import { AddRelatedDeclarationDialogParams } from './models/add-related-declaration-dialog-params.model';
 import { EditLogBookPageNumberComponent } from './components/edit-log-book-page-number/edit-log-book-page-number.component';
 import { EditPageNumberDilogParamsModel } from './models/edit-page-number-dialog-params.model';
+import { LogBookPageFilesDialogParamsModel } from './models/log-book-page-files-dialog-params.model';
+import { PageCodeEnum } from '@app/enums/page-code.enum';
+import { LogBookPageFilesComponent } from './components/log-book-page-files/log-book-page-files.component';
+import { LogBookPageFilesDTO } from '@app/models/generated/dtos/LogBookPageFilesDTO';
 
 const PAGE_NUMBER_CONTROL_NAME: string = 'pageNumberControl';
 type ThreeState = 'yes' | 'no' | 'both';
@@ -96,6 +100,7 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
     public readonly canEditShipLogBookRecords: boolean;
     public readonly canCancelShipLogBookRecords: boolean;
     public readonly canEditNumberShipLogBookRecords: boolean;
+    public readonly canAddEditFilesShipLogBookRecords: boolean;
 
     public readonly canReadFirstSaleLogBookRecords: boolean;
     public readonly canAddFirstSaleLogBookRecords: boolean;
@@ -103,6 +108,7 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
     public readonly canCancelFirstSaleLogBookRecords: boolean;
     public readonly canEditNumberFirstSaleLogBookRecords: boolean;
     public readonly canEditCommonDataFirstSaleLogBookRecords: boolean;
+    public readonly canAddEditFilesFirstSaleLogBookRecords: boolean;
 
     public readonly canReadAdmissionLogBookRecords: boolean;
     public readonly canAddAdmissionLogBookRecords: boolean;
@@ -110,6 +116,7 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
     public readonly canCancelAdmissionLogBookRecords: boolean;
     public readonly canEditNumberAdmissionLogBookRecords: boolean;
     public readonly canEditCommonDataAdmissionLogBookRecords: boolean;
+    public readonly canAddEditFilesAdmissionLogBookRecords: boolean;
 
     public readonly canReadTransportationLogBookRecords: boolean;
     public readonly canAddTransportationLogBookRecords: boolean;
@@ -117,12 +124,14 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
     public readonly canCancelTransportationLogBookRecords: boolean;
     public readonly canEditNumberTransportationLogBookRecords: boolean;
     public readonly canEditCommonDataTransportationLogBookRecords: boolean;
+    public readonly canAddEditFilesTransportationLogBookRecords: boolean;
 
     public readonly canReadAquacultureLogBookRecords: boolean;
     public readonly canAddAquacultureLogBookRecords: boolean;
     public readonly canEditAquacultureLogBookRecords: boolean;
     public readonly canCancelAquacultureLogBookRecords: boolean;
     public readonly canEditNumberAquacultureLogBookRecords: boolean;
+    public readonly canAddEditFilesAquacultureLogBookRecords: boolean;
 
     public readonly canReadInspections: boolean;
 
@@ -164,6 +173,7 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
     private readonly viewLogBookDialog: TLMatDialog<EditLogBookComponent>;
     private readonly addShipPageDocumentWizardDialog: TLMatDialog<AddShipPageDocumentWizardComponent>;
     private readonly editPageNumberDialog: TLMatDialog<EditLogBookPageNumberComponent>;
+    private readonly editPageFilesDialog: TLMatDialog<LogBookPageFilesComponent>;
     private readonly confirmationDialog: TLConfirmDialog;
     private readonly systemPropertiesService: SystemPropertiesService;
 
@@ -183,6 +193,7 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
         viewLogBookDialog: TLMatDialog<EditLogBookComponent>,
         addShipPageDocumentWizardDialog: TLMatDialog<AddShipPageDocumentWizardComponent>,
         editPageNumberDialog: TLMatDialog<EditLogBookPageNumberComponent>,
+        editPageFilesDialog: TLMatDialog<LogBookPageFilesComponent>,
         confirmationDialog: TLConfirmDialog,
         systemPropertiesService: SystemPropertiesService
     ) {
@@ -201,6 +212,7 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
         this.viewLogBookDialog = viewLogBookDialog;
         this.addShipPageDocumentWizardDialog = addShipPageDocumentWizardDialog;
         this.editPageNumberDialog = editPageNumberDialog;
+        this.editPageFilesDialog = editPageFilesDialog;
         this.confirmationDialog = confirmationDialog;
         this.systemPropertiesService = systemPropertiesService;
 
@@ -209,6 +221,7 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
         this.canEditShipLogBookRecords = permissions.has(PermissionsEnum.FishLogBookPageEdit);
         this.canCancelShipLogBookRecords = permissions.has(PermissionsEnum.FishLogBookPageCancel);
         this.canEditNumberShipLogBookRecords = permissions.has(PermissionsEnum.FishLogBookPageEditNumber);
+        this.canAddEditFilesShipLogBookRecords = permissions.has(PermissionsEnum.FishLogBookPageEditFiles);
 
         this.canReadFirstSaleLogBookRecords = permissions.has(PermissionsEnum.FirstSaleLogBookRead) || permissions.has(PermissionsEnum.FirstSaleLogBookPageReadAll);
         this.canAddFirstSaleLogBookRecords = permissions.has(PermissionsEnum.FirstSaleLogBookPageAdd);
@@ -216,6 +229,7 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
         this.canCancelFirstSaleLogBookRecords = permissions.has(PermissionsEnum.FirstSaleLogBookPageCancel);
         this.canEditNumberFirstSaleLogBookRecords = permissions.has(PermissionsEnum.FirstSaleLogBookPageEditNumber);
         this.canEditCommonDataFirstSaleLogBookRecords = permissions.has(PermissionsEnum.FirstSaleLogBookPageEditCommonData);
+        this.canAddEditFilesFirstSaleLogBookRecords = permissions.has(PermissionsEnum.FirstSaleLogBookPageEditFiles);
 
         this.canReadAdmissionLogBookRecords = permissions.has(PermissionsEnum.AdmissionLogBookRead) || permissions.has(PermissionsEnum.AdmissionLogBookPageReadAll);
         this.canAddAdmissionLogBookRecords = permissions.has(PermissionsEnum.AdmissionLogBookPageAdd);
@@ -223,6 +237,7 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
         this.canCancelAdmissionLogBookRecords = permissions.has(PermissionsEnum.AdmissionLogBookPageCancel);
         this.canEditNumberAdmissionLogBookRecords = permissions.has(PermissionsEnum.AdmissionLogBookPageEditNumber);
         this.canEditCommonDataAdmissionLogBookRecords = permissions.has(PermissionsEnum.AdmissionLogBookPageEditCommonData);
+        this.canAddEditFilesAdmissionLogBookRecords = permissions.has(PermissionsEnum.AdmissionLogBookPageEditFiles);
 
         this.canReadTransportationLogBookRecords = permissions.has(PermissionsEnum.TransportationLogBookRead) || permissions.has(PermissionsEnum.TransportationLogBookPageReadAll);
         this.canAddTransportationLogBookRecords = permissions.has(PermissionsEnum.TransportationLogBookPageAdd);
@@ -230,12 +245,14 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
         this.canCancelTransportationLogBookRecords = permissions.has(PermissionsEnum.TransportationLogBookPageCancel);
         this.canEditNumberTransportationLogBookRecords = permissions.has(PermissionsEnum.TransportationLogBookPageEditNumber);
         this.canEditCommonDataTransportationLogBookRecords = permissions.has(PermissionsEnum.TransportationLogBookPageEditCommonData);
+        this.canAddEditFilesTransportationLogBookRecords = permissions.has(PermissionsEnum.TransportationLogBookPageEditFiles);
 
         this.canReadAquacultureLogBookRecords = permissions.has(PermissionsEnum.AquacultureLogBookRead) || permissions.has(PermissionsEnum.AquacultureLogBookPageReadAll);
         this.canAddAquacultureLogBookRecords = permissions.has(PermissionsEnum.AquacultureLogBookPageAdd);
         this.canEditAquacultureLogBookRecords = permissions.has(PermissionsEnum.AquacultureLogBookPageEdit);
         this.canCancelAquacultureLogBookRecords = permissions.has(PermissionsEnum.AquacultureLogBookPageCancel);
         this.canEditNumberAquacultureLogBookRecords = permissions.has(PermissionsEnum.AquacultureLogBookPageEditNumber);
+        this.canAddEditFilesAquacultureLogBookRecords = permissions.has(PermissionsEnum.AquacultureLogBookPageEditFiles);
 
         this.canReadInspections = permissions.has(PermissionsEnum.InspectionsRead) || permissions.has(PermissionsEnum.InspectionsReadAll);
 
@@ -248,7 +265,8 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
             canEditFirstSaleLogBookRecords: this.canEditFirstSaleLogBookRecords,
             canEditShipLogBookRecords: this.canEditShipLogBookRecords,
             canEditTransportationLogBookRecords: this.canEditTransportationLogBookRecords,
-            canEditNumberShipLogBookRecords: this.canEditNumberShipLogBookRecords
+            canEditNumberShipLogBookRecords: this.canEditNumberShipLogBookRecords,
+            canAddEditFilesShipLogBookRecords: this.canAddEditFilesShipLogBookRecords
         });
 
         this.shipForbiddenForPagesTooltip = this.translationService.getValue('catches-and-sales.ship-is-forbidden-for-page-add');
@@ -925,7 +943,6 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
         });
 
         this.openEditPageNumberDialog(title, componentData);
-
     }
 
     public onEditFirstSaleLogBookPageNumber(firstSaleLogBookPage: FirstSaleLogBookPageRegisterDTO): void {
@@ -960,7 +977,7 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
 
     public onEditAquacultureLogBookPageNumber(aquacultureLogBookPage: AquacultureLogBookPageRegisterDTO): void {
         const title: string = this.translationService.getValue('catches-and-sales.edit-aquaculture-log-book-page-number-title');
-        
+
         const componentData: EditPageNumberDilogParamsModel = new EditPageNumberDilogParamsModel({
             pageId: aquacultureLogBookPage.id,
             pageNumber: aquacultureLogBookPage.pageNumber,
@@ -970,6 +987,71 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
         });
 
         this.openEditPageNumberDialog(title, componentData);
+    }
+
+    public onAddEditShipLogBookPageFiles(shipLogBookPage: ShipLogBookPageRegisterDTO): void {
+        const title: string = this.translationService.getValue('catches-and-sales.edit-ship-log-book-page-files-title');
+
+        const componentData: LogBookPageFilesDialogParamsModel = new LogBookPageFilesDialogParamsModel({
+            logBookPageId: shipLogBookPage.id,
+            pageCode: PageCodeEnum.ShipLogBookPage,
+            logBookType: LogBookTypesEnum.Ship,
+            service: this.service
+        });
+
+        this.openEditPageFlesDialog(title, componentData);
+    }
+
+    public onAddEditAdmissionLogBookPageFiles(admissionLogBookPage: AdmissionLogBookPageRegisterDTO): void {
+        const title: string = this.translationService.getValue('catches-and-sales.edit-admission-log-book-page-files-title');
+
+        const componentData: LogBookPageFilesDialogParamsModel = new LogBookPageFilesDialogParamsModel({
+            logBookPageId: admissionLogBookPage.id,
+            pageCode: PageCodeEnum.AdmissionLogBookPage,
+            logBookType: LogBookTypesEnum.Admission,
+            service: this.service
+        });
+
+        this.openEditPageFlesDialog(title, componentData);
+    }
+
+    public onAddEditFirstSaleLogBookPageFiles(firstSaleLogBookPage: FirstSaleLogBookPageRegisterDTO): void {
+        const title: string = this.translationService.getValue('catches-and-sales.edit-first-sale-log-book-page-files-title');
+
+        const componentData: LogBookPageFilesDialogParamsModel = new LogBookPageFilesDialogParamsModel({
+            logBookPageId: firstSaleLogBookPage.id,
+            pageCode: PageCodeEnum.FirstSaleLogBookPage,
+            logBookType: LogBookTypesEnum.FirstSale,
+            service: this.service
+        });
+
+        this.openEditPageFlesDialog(title, componentData);
+    }
+
+    public onAddEditTransportationLogBookPageFiles(transportationLogBookPage: TransportationLogBookPageRegisterDTO): void {
+        const title: string = this.translationService.getValue('catches-and-sales.edit-transportation-log-book-page-files-title');
+
+        const componentData: LogBookPageFilesDialogParamsModel = new LogBookPageFilesDialogParamsModel({
+            logBookPageId: transportationLogBookPage.id,
+            pageCode: PageCodeEnum.TransportationLogBookPage,
+            logBookType: LogBookTypesEnum.Transportation,
+            service: this.service
+        });
+
+        this.openEditPageFlesDialog(title, componentData);
+    }
+
+    public onAddEditAquacultureLogBookPageFiles(aquacultureLogBookPage: AquacultureLogBookPageRegisterDTO): void {
+        const title: string = this.translationService.getValue('catches-and-sales.edit-aquaculture-log-book-page-files-title');
+
+        const componentData: LogBookPageFilesDialogParamsModel = new LogBookPageFilesDialogParamsModel({
+            logBookPageId: aquacultureLogBookPage.id,
+            pageCode: PageCodeEnum.AquacultureLogBookPage,
+            logBookType: LogBookTypesEnum.Aquaculture,
+            service: this.service
+        });
+
+        this.openEditPageFlesDialog(title, componentData);
     }
 
     private openAddShipPageDocumentWizardDialog(logBookPageId: number, title: string, selectedDocumentType: LogBookPageDocumentTypesEnum, logBookType: LogBookTypesEnum, logBookPageNum: number | undefined): void {
@@ -1340,7 +1422,32 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
             disableDialogClose: true
         }, '1500px').subscribe({
             next: (pageNumber: number) => {
-                if (pageNumber !== undefined && pageNumber !== null) { 
+                if (pageNumber !== undefined && pageNumber !== null) {
+                    this.gridManager.refreshData();
+                }
+            }
+        });
+    }
+
+    private openEditPageFlesDialog(title: string, data: LogBookPageFilesDialogParamsModel): void {
+        this.editPageFilesDialog.openWithTwoButtons({
+            title: title,
+            TCtor: LogBookPageFilesComponent,
+            translteService: this.translationService,
+            viewMode: false,
+            headerCancelButton: {
+                cancelBtnClicked: this.closeEditLogPageNumberBookDialogBtnClicked.bind(this)
+            },
+            cancelBtn: {
+                id: 'cancel',
+                color: 'primary',
+                translateValue: this.translationService.getValue('common.cancel')
+            },
+            componentData: data,
+            disableDialogClose: true
+        }, '1200px').subscribe({
+            next: (result: LogBookPageFilesDTO | undefined) => {
+                if (result !== undefined && result !== null) {
                     this.gridManager.refreshData();
                 }
             }

@@ -23,7 +23,6 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
             Inspection = inspection;
             HasLastPort = hasLastPort;
 
-            ShipData = new InspectedShipDataViewModel(inspection, canPickLocation);
             ShipOwner = new InspectedPersonViewModel(inspection, InspectedPersonType.OwnerPers, InspectedPersonType.OwnerLegal);
             ShipUser = new InspectedPersonViewModel(inspection, InspectedPersonType.LicUsrPers, InspectedPersonType.LicUsrLgl);
             ShipRepresentative = new InspectedPersonViewModel(inspection, InspectedPersonType.ReprsPers)
@@ -31,6 +30,14 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
                 IsRepresenter = true
             };
             ShipCaptain = new InspectedPersonViewModel(inspection, InspectedPersonType.CaptFshmn);
+            ShipData = new InspectedShipDataViewModel(inspection, new List<InspectedPersonViewModel>()
+                {
+                    ShipOwner,
+                    ShipUser,
+                    ShipRepresentative,
+                    ShipCaptain
+                }, canPickLocation
+            );
 
             IValidatableViewModel[] viewModels;
 

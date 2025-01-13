@@ -35,6 +35,8 @@ import { LogBookTypesEnum } from '@app/enums/log-book-types.enum';
 import { LogBookPageEditExceptionDTO } from '@app/models/generated/dtos/LogBookPageEditExceptionDTO';
 import { LogBookOwnerNomenclatureDTO } from '@app/models/generated/dtos/LogBookOwnerNomenclatureDTO';
 import { LogBookPageNomenclatureDTO } from '@app/models/generated/dtos/LogBookPageNomenclatureDTO';
+import { FileInfoDTO } from '@app/models/generated/dtos/FileInfoDTO';
+import { LogBookPageFilesDTO } from '@app/models/generated/dtos/LogBookPageFilesDTO';
 
 
 @Injectable({
@@ -237,6 +239,14 @@ export class CatchesAndSalesPublicService extends BaseAuditService implements IC
 
     public addRelatedDeclaration(logBookPageId: number, relatedLogBookPageId: number): Observable<void> {
         return this.commonService.addRelatedDeclaration(this.area, this.controller, logBookPageId, relatedLogBookPageId);
+    }
+
+    public getLogBookPageFiles(id: number, logBookType: LogBookTypesEnum): Observable<FileInfoDTO[]> {
+        return this.commonService.getLogBookPageFiles(this.area, this.controller, id, logBookType);
+    }
+
+    public editLogBookPageFiles(page: LogBookPageFilesDTO): Observable<void> {
+        return this.commonService.editLogBookPageFiles(this.area, this.controller, page);
     }
 
     public downloadFile(fileId: number, fileName: string): Observable<boolean> {

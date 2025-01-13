@@ -80,7 +80,7 @@
                  columnName="{{ 'catches-and-sales.transportation-products-information' | tlTranslate }}">
     </data-column>
 
-    <data-template-column *ngIf="showActionButtons" [flexRate]="0.2" [cellClass]="'justify-center'">
+    <data-template-column *ngIf="showActionButtons" [flexRate]="0.3" [cellClass]="'justify-center'">
         <ng-template let-row="row" ngx-datatable-cell-template>
             <div fxLayout="row wrap" fxLayoutAlign="end center">
                 <tl-icon-button *ngIf="(!row.data.isLogBookFinishedOrSuspended || allowEditAfterFinished)
@@ -117,6 +117,16 @@
                                 (buttonClicked)="editTransportationLogBookPage(row.data, false)"
                                 iconClass="accent-color"
                                 tooltipText="{{ 'catches-and-sales.edit-transportation-log-book-page' | tlTranslate }}">
+                </tl-icon-button>
+
+                <tl-icon-button *ngIf="(!row.data.isLogBookFinishedOrSuspended || allowEditAfterFinished)
+                                        && canAddEditFilesTransportationLogBookRecords
+                                         && row.data.status === logBookPageStatusesEnum.Submitted"
+                                typeof="MAT_ICON"
+                                iconClass="accent-color"
+                                icon="attach_file"
+                                tooltipText="{{ 'catches-and-sales.edit-transportation-log-book-page-files' | tlTranslate }}"
+                                (buttonClicked)="onAddEditTransportationLogBookPageFilesBtnClicked(row.data)">
                 </tl-icon-button>
 
                 <tl-icon-button *ngIf="(!row.data.isLogBookFinishedOrSuspended || allowEditAfterFinished)

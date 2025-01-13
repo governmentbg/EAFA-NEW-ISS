@@ -81,6 +81,7 @@ export class RecreationalFishingApplicationsContentComponent implements OnInit, 
     public types!: NomenclatureDTO<number>[];
     public periods!: NomenclatureDTO<number>[];
     public statuses!: NomenclatureDTO<number>[];
+    public paymentStatuses!: NomenclatureDTO<number>[];
     public isDuplicateOptions!: NomenclatureDTO<ThreeState>[];
 
     public canAddRecords!: boolean;
@@ -179,6 +180,14 @@ export class RecreationalFishingApplicationsContentComponent implements OnInit, 
         ).subscribe({
             next: (paymentTypes: NomenclatureDTO<number>[]) => {
                 this.paymentTypes = paymentTypes;
+            }
+        });
+
+        NomenclatureStore.instance.getNomenclature(
+            NomenclatureTypes.PaymentStatuses, this.nomenclatures.getPaymentStatuses.bind(this.nomenclatures), false
+        ).subscribe({
+            next: (paymentStatuses: NomenclatureDTO<number>[]) => {
+                this.paymentStatuses = paymentStatuses;
             }
         });
 
@@ -741,7 +750,9 @@ export class RecreationalFishingApplicationsContentComponent implements OnInit, 
             issueDateControl: new FormControl(),
             isDuplicateControl: new FormControl(),
             statusesControl: new FormControl(),
-            showExpiredControl: new FormControl()
+            paymentStatusesControl: new FormControl(),
+            showExpiredControl: new FormControl(),
+            showOnlinePaidTicketsControl: new FormControl()
         });
     }
 
@@ -762,7 +773,9 @@ export class RecreationalFishingApplicationsContentComponent implements OnInit, 
             issueDateFrom: filters.getValue<DateRangeData>('issueDateControl')?.start,
             issueDateTo: filters.getValue<DateRangeData>('issueDateControl')?.end,
             statusIds: filters.getValue('statusesControl'),
-            showExpired: filters.getValue('showExpiredControl') ?? false
+            paymentStatusIds: filters.getValue('paymentStatusesControl'),
+            showExpired: filters.getValue('showExpiredControl') ?? false,
+            showOnlinePaidTickes: filters.getValue('showOnlinePaidTicketsControl') ?? false
         });
 
         const isDuplicate: ThreeState | undefined = filters.getValue<ThreeState>('isDuplicateControl');

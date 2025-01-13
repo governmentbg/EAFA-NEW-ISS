@@ -13,7 +13,7 @@ export class CatchesAndSalesUtils {
 
         const today: number = now.getDate();
 
-        if (dateToCompare.getTime() === nowNoTimeAndDay.getTime() && today >= numberOfDaysAfterMonth) {
+        if (dateToCompare.getTime() === nowNoTimeAndDay.getTime() && today > numberOfDaysAfterMonth) {
             return true;
         }
 

@@ -30,6 +30,8 @@ import { LogBookPageEditExceptionDTO } from '@app/models/generated/dtos/LogBookP
 import { LogBookOwnerNomenclatureDTO } from '@app/models/generated/dtos/LogBookOwnerNomenclatureDTO';
 import { LogBookPageNomenclatureDTO } from '@app/models/generated/dtos/LogBookPageNomenclatureDTO';
 import { LogBookNomenclatureDTO } from '@app/models/generated/dtos/LogBookNomenclatureDTO';
+import { FileInfoDTO } from '@app/models/generated/dtos/FileInfoDTO';
+import { LogBookPageFilesDTO } from '@app/models/generated/dtos/LogBookPageFilesDTO';
 
 export interface ICatchesAndSalesService {
     getAllCatchesAndSales(request: GridRequestModel<CatchesAndSalesAdministrationFilters | CatchesAndSalesPublicFilters>): Observable<GridResultModel<LogBookRegisterDTO>>;
@@ -122,6 +124,9 @@ export interface ICatchesAndSalesService {
     getTransportationLogBookPageSimpleAudit(id: number): Observable<SimpleAuditDTO>;
     getAquacultureLogBookPageSimpleAudit(id: number): Observable<SimpleAuditDTO>;
     getLogBookAudit(id: number): Observable<SimpleAuditDTO>;
+
+    getLogBookPageFiles(id: number, logBookType: LogBookTypesEnum): Observable<FileInfoDTO[]>;
+    editLogBookPageFiles(page: LogBookPageFilesDTO): Observable<void>;
 
     downloadFile(fileId: number, fileName: string): Observable<boolean>;
 

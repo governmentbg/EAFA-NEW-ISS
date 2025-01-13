@@ -1,4 +1,5 @@
 ﻿using IARA.Mobile.Application;
+using IARA.Mobile.Application.DTObjects.Common;
 using IARA.Mobile.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Domain.Enums;
 using IARA.Mobile.Insp.Application.DTObjects.Nomenclatures;
@@ -10,6 +11,7 @@ using IARA.Mobile.Shared.ViewModels.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using TechnoLogica.Xamarin.Attributes;
 using TechnoLogica.Xamarin.Commands;
@@ -35,11 +37,15 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
             _people = new List<ShipPersonnelDto>();
 
             PersonChosen = CommandBuilder.CreateFrom<ShipPersonnelDto>(OnPersonChosen);
+            SearchPerson = CommandBuilder.CreateFrom(OnSearchPerson);
+            SearchLegal = CommandBuilder.CreateFrom(OnSearchLegal);
 
             this.AddValidation(groups: new Dictionary<string, Func<bool>>
             {
                 { Group.REGISTERED, () => InRegister },
-                { Group.NOT_REGISTERED, () => !InRegister }
+                { Group.NOT_REGISTERED, () => !InRegister },
+                { "IsPerson", () => Action.Code == nameof(SubjectType.Person) },
+                { "IsLegal", () => Action.Code == nameof(SubjectType.Legal) }
             });
 
             InRegister.Value = true;
@@ -94,6 +100,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
         [ValidGroup(Group.REGISTERED)]
         public ValidStateSelect<ShipPersonnelDto> Person { get; set; }
 
+        [Required]
         [MaxLength(200)]
         [ValidGroup(Group.NOT_REGISTERED)]
         public ValidState FirstName { get; set; }
@@ -102,23 +109,30 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
         [ValidGroup(Group.NOT_REGISTERED)]
         public ValidState MiddleName { get; set; }
 
+        [Required]
         [MaxLength(200)]
         [ValidGroup(Group.NOT_REGISTERED)]
+        [ValidGroup("IsPerson")]
         public ValidState LastName { get; set; }
 
+        [Required]
         [EGN(nameof(Egn))]
         [MaxLength(20)]
         [ValidGroup(Group.NOT_REGISTERED)]
+        [ValidGroup("IsPerson")]
         public EgnLncValidState Egn { get; set; }
 
+        [Required]
         [MaxLength(20)]
         [ValidGroup(Group.NOT_REGISTERED)]
+        [ValidGroup("IsLegal")]
         public EgnLncValidState EIK { get; set; }
 
         [MaxLength(4000)]
         [ValidGroup(Group.NOT_REGISTERED)]
         public ValidState Address { get; set; }
 
+        [Required]
         [ValidGroup(Group.NOT_REGISTERED)]
         public ValidStateSelect<SelectNomenclatureDto> Nationality { get; set; }
 
@@ -136,6 +150,41 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
         }
 
         public ICommand PersonChosen { get; set; }
+        public ICommand SearchPerson { get; }
+        public ICommand SearchLegal { get; }
+
+        private async Task OnSearchLegal()
+        {
+            LegalFullDataDto data = await InspectionsTransaction.GetLegalFullData(EIK.Value);
+
+            if (data?.Legal != null)
+            {
+                FirstName.Value = data.Legal.Name;
+                Address.Value = string.Empty;
+                Nationality.AssignFrom(id: null, Nationalities);
+            }
+        }
+
+        private async Task OnSearchPerson()
+        {
+            PersonFullDataDto data = await InspectionsTransaction.GetPersonFullData(Egn.IdentifierType, Egn.Value);
+
+            if (data?.Person != null)
+            {
+                FirstName.Value = data.Person.FirstName;
+                MiddleName.Value = data.Person.MiddleName;
+                LastName.Value = data.Person.LastName;
+                Address.Value = string.Empty;
+                Nationality.AssignFrom(data.Person.CitizenshipCountryId, Nationalities);
+            }
+        }
+
+        public void Reset(bool clearLoadedPeople)
+        {
+            People.Clear();
+            InRegister.Value = !clearLoadedPeople;
+            Person.Value = null;
+        }
 
         public void Init(List<SelectNomenclatureDto> nationalities)
         {

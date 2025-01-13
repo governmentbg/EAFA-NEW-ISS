@@ -1,0 +1,10 @@
+﻿<div fxLayout="column"
+     fxLayoutGap="1em"
+     fxLayoutAlign="space-between stretch"
+     class="dialog-padding"
+     [formGroup]="form">
+    <file-uploader-form-array formControlName="filesControl"
+                              [pageCode]="pageCode"
+                              [downloadFileMethod]="service.downloadFile.bind(service)">
+    </file-uploader-form-array>
+</div>
