@@ -58,6 +58,7 @@ export class EditPenalDecreeComponent implements OnInit, AfterViewInit, IDialogC
     public isAdding: boolean = false;
     public viewMode: boolean = false;
     public isThirdParty: boolean = false;
+    public hasTerritoryUnit: boolean = false;
     public fishCompensationFormTouched: boolean = false;
     public violatedRegulationsTouched: boolean = false;
 
@@ -150,7 +151,7 @@ export class EditPenalDecreeComponent implements OnInit, AfterViewInit, IDialogC
 
                                 if (decree.issueDate !== undefined && decree.issueDate !== null) {
 
-                                // Не може да се избере дата след 31.12.2024 г. за постановленията, чиито номера не са генерирани
+                                    // Не може да се избере дата след 31.12.2024 г. за постановленията, чиито номера не са генерирани
                                     if (decree.issueDate <= PenalDecreeUtils.AUTO_GENERATE_NUMBER_AFTER_DATE) {
                                         this.maxIssueDate = PenalDecreeUtils.AUTO_GENERATE_NUMBER_AFTER_DATE;
                                     }
@@ -171,24 +172,40 @@ export class EditPenalDecreeComponent implements OnInit, AfterViewInit, IDialogC
         else {
             this.isThirdParty = true;
             this.model = new PenalDecreeEditDTO();
+
+            this.form.get('territoryUnitControl')!.setValidators(Validators.required);
+            this.form.get('territoryUnitControl')!.markAsPending();
         }
     }
 
     public ngAfterViewInit(): void {
-        if (!this.viewMode) {
-            this.form.get('drafterControl')!.valueChanges.subscribe({
-                next: (drafter: InspectorUserNomenclatureDTO | undefined) => {
-                    this.drafter = drafter;
+        this.form.get('drafterControl')!.valueChanges.subscribe({
+            next: (drafter: InspectorUserNomenclatureDTO | undefined) => {
+                this.drafter = drafter;
 
-                    if (drafter !== undefined && drafter !== null) {
-                        this.form.get('issuerPositionControl')!.setValue(drafter.issuerPosition);
-                    }
-                    else {
-                        this.form.get('issuerPositionControl')!.setValue(undefined);
-                    }
+                if (drafter !== undefined && drafter !== null) {
+                    this.form.get('issuerPositionControl')!.setValue(drafter.issuerPosition);
                 }
-            });
+                else {
+                    this.form.get('issuerPositionControl')!.setValue(undefined);
+                }
+            }
+        });
 
+        this.form.get('auanControl')!.valueChanges.subscribe({
+            next: (auanData: PenalDecreeAuanDataDTO | undefined) => {
+                if (auanData !== undefined && auanData !== null) {
+                    this.inspectedEnityName = PenalDecreeUtils.getInspectedEntityName(auanData.inspectedEntity);
+                }
+                else {
+                    this.inspectedEnityName = undefined;
+                }
+
+                this.violatedRegulationsTitle = PenalDecreeUtils.getViolatedRegulationsTitle(this.inspectedEnityName, this.translate);
+            }
+        });
+
+        if (!this.viewMode) {
             this.form.get('auanViolatedRegulationsControl')!.valueChanges.subscribe({
                 next: (result: AuanViolatedRegulationDTO[] | undefined) => {
                     if (result !== undefined && result !== null) {
@@ -212,19 +229,6 @@ export class EditPenalDecreeComponent implements OnInit, AfterViewInit, IDialogC
                     this.fishCompensationFormTouched = true;
 
                     this.fishCompensationForm.updateValueAndValidity({ onlySelf: true });
-                }
-            });
-
-            this.form.get('auanControl')!.valueChanges.subscribe({
-                next: (auanData: PenalDecreeAuanDataDTO | undefined) => {
-                    if (auanData !== undefined && auanData !== null) {
-                        this.inspectedEnityName = PenalDecreeUtils.getInspectedEntityName(auanData.inspectedEntity);
-                    }
-                    else {
-                        this.inspectedEnityName = undefined;
-                    }
-
-                    this.violatedRegulationsTitle = PenalDecreeUtils.getViolatedRegulationsTitle(this.inspectedEnityName, this.translate);
                 }
             });
 
@@ -520,6 +524,7 @@ export class EditPenalDecreeComponent implements OnInit, AfterViewInit, IDialogC
         this.model.issuerPosition = this.form.get('issuerPositionControl')!.value;
         this.model.issuerUserId = this.form.get('drafterControl')!.value?.value;
         this.model.appealCourtId = this.form.get('courtControl')!.value?.value;
+        this.model.auanTerritoryUnitId = this.form.get('territoryUnitControl')!.value?.value;
 
         this.model.isRecurrentViolation = this.form.get('isRecurrentViolationControl')!.value;
         this.model.sanctionDescription = this.form.get('sanctionDescriptionControl')!.value;
@@ -559,7 +564,11 @@ export class EditPenalDecreeComponent implements OnInit, AfterViewInit, IDialogC
     }
 
     private fillAuanData(data: PenalDecreeAuanDataDTO): void {
-        this.form.get('territoryUnitControl')!.setValue(this.territoryUnits.find(x => x.value === data.territoryUnitId));
+        if (data.territoryUnitId !== undefined && data.territoryUnitId !== null) {
+            this.hasTerritoryUnit = true;
+            this.form.get('territoryUnitControl')!.setValue(this.territoryUnits.find(x => x.value === data.territoryUnitId));
+        }
+
         this.form.get('auanControl')!.setValue(data);
         this.form.get('constatationCommentsControl')!.setValue(data.constatationComments);
         this.inspectedEnityName = PenalDecreeUtils.getInspectedEntityName(data.inspectedEntity);

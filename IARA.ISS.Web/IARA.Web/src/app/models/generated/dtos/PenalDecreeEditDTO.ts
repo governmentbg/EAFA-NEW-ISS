@@ -77,6 +77,9 @@ export class PenalDecreeEditDTO {
     @StrictlyTyped(Number)
     public appealCourtId?: number;
 
+    @StrictlyTyped(Number)
+    public auanTerritoryUnitId?: number;
+
     @StrictlyTyped(String)
     public issuerPosition?: string;
 
