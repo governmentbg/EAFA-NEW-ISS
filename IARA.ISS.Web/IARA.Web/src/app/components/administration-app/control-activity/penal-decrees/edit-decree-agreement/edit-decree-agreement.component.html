@@ -40,7 +40,7 @@
                 <tl-autocomplete fxFlex="25"
                                  formControlName="territoryUnitControl"
                                  [options]="territoryUnits"
-                                 [readonly]="!isThirdParty"
+                                 [readonly]="!isThirdParty && hasTerritoryUnit"
                                  label="{{ 'penal-decrees.edit-territory-unit' | tlTranslate }}"
                                  tooltipResourceName="penal-decrees.edit-territory-unit-helper">
                 </tl-autocomplete>

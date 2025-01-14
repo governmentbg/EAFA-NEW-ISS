@@ -46,6 +46,7 @@ export class EditDecreeWarningComponent implements OnInit, AfterViewInit, IDialo
     public isAdding: boolean = false;
     public viewMode: boolean = false;
     public isThirdParty: boolean = false;
+    public hasTerritoryUnit: boolean = false;
     public violatedRegulationsTouched: boolean = false;
     public drafter: InspectorUserNomenclatureDTO | undefined;
 
@@ -139,24 +140,27 @@ export class EditDecreeWarningComponent implements OnInit, AfterViewInit, IDialo
         else {
             this.isThirdParty = true;
             this.model = new PenalDecreeEditDTO();
+
+            this.form.get('territoryUnitControl')!.setValidators(Validators.required);
+            this.form.get('territoryUnitControl')!.markAsPending();
         }
     }
 
     public ngAfterViewInit(): void {
-        if (!this.viewMode) {
-            this.form.get('drafterControl')!.valueChanges.subscribe({
-                next: (drafter: InspectorUserNomenclatureDTO | undefined) => {
-                    this.drafter = drafter;
+        this.form.get('drafterControl')!.valueChanges.subscribe({
+            next: (drafter: InspectorUserNomenclatureDTO | undefined) => {
+                this.drafter = drafter;
 
-                    if (drafter !== undefined && drafter !== null) {
-                        this.form.get('issuerPositionControl')!.setValue(drafter.issuerPosition);
-                    }
-                    else {
-                        this.form.get('issuerPositionControl')!.setValue(undefined);
-                    }
+                if (drafter !== undefined && drafter !== null) {
+                    this.form.get('issuerPositionControl')!.setValue(drafter.issuerPosition);
                 }
-            });
+                else {
+                    this.form.get('issuerPositionControl')!.setValue(undefined);
+                }
+            }
+        });
 
+        if (!this.viewMode) {
             this.form.get('auanViolatedRegulationsControl')!.valueChanges.subscribe({
                 next: (result: AuanViolatedRegulationDTO[] | undefined) => {
                     if (result !== undefined && result !== null) {
@@ -421,6 +425,7 @@ export class EditDecreeWarningComponent implements OnInit, AfterViewInit, IDialo
         this.model.issuerPosition = this.form.get('issuerPositionControl')!.value;
         this.model.issuerUserId = this.form.get('drafterControl')!.value?.value;
         this.model.appealCourtId = this.form.get('courtControl')!.value?.value;
+        this.model.auanTerritoryUnitId = this.form.get('territoryUnitControl')!.value?.value;
 
         this.model.isRecurrentViolation = this.form.get('isRecurrentViolationControl')!.value;
         this.model.comments = this.form.get('commentsControl')!.value;
@@ -449,8 +454,12 @@ export class EditDecreeWarningComponent implements OnInit, AfterViewInit, IDialo
     }
 
     private fillAuanData(data: PenalDecreeAuanDataDTO): void {
+        if (data.territoryUnitId !== undefined && data.territoryUnitId !== null) {
+            this.hasTerritoryUnit = true;
+            this.form.get('territoryUnitControl')!.setValue(this.territoryUnits.find(x => x.value === data.territoryUnitId));
+        }
+
         this.form.get('auanControl')!.setValue(data);
-        this.form.get('territoryUnitControl')!.setValue(this.territoryUnits.find(x => x.value === data.territoryUnitId));
         this.form.get('constatationCommentsControl')!.setValue(data.constatationComments);
 
         if (this.isAdding) {

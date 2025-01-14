@@ -47,6 +47,7 @@ export class EditDecreeResolutionComponent implements OnInit, AfterViewInit, IDi
     public isAdding: boolean = false;
     public viewMode: boolean = false;
     public isThirdParty: boolean = false;
+    public hasTerritoryUnit: boolean = false;
     public violatedRegulationsTouched: boolean = false;
 
     public inspectedEnityName: string | undefined;
@@ -145,24 +146,40 @@ export class EditDecreeResolutionComponent implements OnInit, AfterViewInit, IDi
         else {
             this.isThirdParty = true;
             this.model = new PenalDecreeEditDTO();
+
+            this.form.get('territoryUnitControl')!.setValidators(Validators.required);
+            this.form.get('territoryUnitControl')!.markAsPending();
         }
     }
 
     public ngAfterViewInit(): void {
-        if (!this.viewMode) {
-            this.form.get('drafterControl')!.valueChanges.subscribe({
-                next: (drafter: InspectorUserNomenclatureDTO | undefined) => {
-                    this.drafter = drafter;
+        this.form.get('drafterControl')!.valueChanges.subscribe({
+            next: (drafter: InspectorUserNomenclatureDTO | undefined) => {
+                this.drafter = drafter;
 
-                    if (drafter !== undefined && drafter !== null) {
-                        this.form.get('issuerPositionControl')!.setValue(drafter.issuerPosition);
-                    }
-                    else {
-                        this.form.get('issuerPositionControl')!.setValue(undefined);
-                    }
+                if (drafter !== undefined && drafter !== null) {
+                    this.form.get('issuerPositionControl')!.setValue(drafter.issuerPosition);
                 }
-            });
+                else {
+                    this.form.get('issuerPositionControl')!.setValue(undefined);
+                }
+            }
+        });
 
+        this.form.get('auanControl')!.valueChanges.subscribe({
+            next: (auanData: PenalDecreeAuanDataDTO | undefined) => {
+                if (auanData !== undefined && auanData !== null) {
+                    this.inspectedEnityName = PenalDecreeUtils.getInspectedEntityName(auanData.inspectedEntity);
+                }
+                else {
+                    this.inspectedEnityName = undefined;
+                }
+
+                this.violatedRegulationsTitle = PenalDecreeUtils.getViolatedRegulationsTitle(this.inspectedEnityName, this.translate);
+            }
+        });
+
+        if (!this.viewMode) {
             this.form.get('auanViolatedRegulationsControl')!.valueChanges.subscribe({
                 next: (result: AuanViolatedRegulationDTO[] | undefined) => {
                     if (result !== undefined && result !== null) {
@@ -170,19 +187,6 @@ export class EditDecreeResolutionComponent implements OnInit, AfterViewInit, IDi
                         this.violatedRegulationsTouched = true;
                         this.form.updateValueAndValidity({ onlySelf: true });
                     }
-                }
-            });
-
-            this.form.get('auanControl')!.valueChanges.subscribe({
-                next: (auanData: PenalDecreeAuanDataDTO | undefined) => {
-                    if (auanData !== undefined && auanData !== null) {
-                        this.inspectedEnityName = PenalDecreeUtils.getInspectedEntityName(auanData.inspectedEntity);
-                    }
-                    else {
-                        this.inspectedEnityName = undefined;
-                    }
-
-                    this.violatedRegulationsTitle = PenalDecreeUtils.getViolatedRegulationsTitle(this.inspectedEnityName, this.translate);
                 }
             });
 
@@ -466,7 +470,8 @@ export class EditDecreeResolutionComponent implements OnInit, AfterViewInit, IDi
         this.model.seizedFishingGear = this.form.get('seizedFishingGearControl')!.value;
         this.model.auanViolatedRegulations = this.form.get('auanViolatedRegulationsControl')!.value;
         this.model.decreeViolatedRegulations = this.form.get('violatedRegulationsControl')!.value;
-        this.model.appealCourtId = this.form.get('courtControl')!.value?.value;
+        this.model.seizedFishingGear = this.form.get('seizedFishingGearControl')!.value;
+        this.model.auanTerritoryUnitId = this.form.get('territoryUnitControl')!.value?.value;
 
         this.model.resolutionData = new PenalDecreeResolutionDTO({
             id: this.model.resolutionData?.id,
@@ -489,7 +494,11 @@ export class EditDecreeResolutionComponent implements OnInit, AfterViewInit, IDi
     }
 
     private fillAuanData(data: PenalDecreeAuanDataDTO): void {
-        this.form.get('territoryUnitControl')!.setValue(this.territoryUnits.find(x => x.value === data.territoryUnitId));
+        if (data.territoryUnitId !== undefined && data.territoryUnitId !== null) {
+            this.hasTerritoryUnit = true;
+            this.form.get('territoryUnitControl')!.setValue(this.territoryUnits.find(x => x.value === data.territoryUnitId));
+        }
+
         this.form.get('auanControl')!.setValue(data);
         this.form.get('constatationCommentsControl')!.setValue(data.constatationComments);
         this.inspectedEnityName = PenalDecreeUtils.getInspectedEntityName(data.inspectedEntity);
