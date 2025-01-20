@@ -139,7 +139,10 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
                 fishingGear.Type = result.Type;
                 fishingGear.Count = result.Count;
                 fishingGear.NetEyeSize = result.NetEyeSize;
-                fishingGear.Dto = result.Dto;
+
+                fishingGear.Dto.InspectedFishingGear = result.Dto.InspectedFishingGear;
+                fishingGear.Dto.CheckInspectedMatchingRegisteredGear = result.Dto.CheckInspectedMatchingRegisteredGear;
+                fishingGear.Dto.HasAttachedAppliances = result.Dto.HasAttachedAppliances;
 
                 FishingGears.Value.Replace(fishingGear, result);
             }

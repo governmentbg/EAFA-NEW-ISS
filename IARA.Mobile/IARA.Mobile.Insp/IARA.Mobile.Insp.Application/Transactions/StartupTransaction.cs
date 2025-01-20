@@ -58,6 +58,23 @@ namespace IARA.Mobile.Insp.Application.Transactions
             return false;
         }
 
+        public async Task<bool> ShouldResetDatabase()
+        {
+            HttpResult<bool> result = await RestClient.GetAsync<bool>("InspectionData/ShouldResetDatabase", alertOnException: false);
+
+            if (result.IsSuccessful)
+            {
+                return result.Content;
+            }
+
+            return false;
+        }
+
+        public void ResetDatabase()
+        {
+            RestClient.PostAsync("InspectionData/ResetDatabase", null, alertOnException: false);
+        }
+
         public async Task<bool?> IsDeviceAllowed(string imei, IAuthTokenProvider tokenProvider)
         {
             HttpResult<bool> result = await RestClient.GetAsync<bool>("InspectionData/CheckForInstallation");

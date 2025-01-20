@@ -144,6 +144,30 @@ export class EditAccessComponent implements ControlValueAccessor {
         this.onChange(this.userDevices);
     }
 
+    public reloadAppDatabase(id: number, mustReload: boolean): void {
+        const device = this.userDevices.find(x => x.id === id) as MobileDeviceDTO;
+
+        if (mustReload) {
+            this.confirmDialog.open({
+                title: this.translationService.getValue('users-page.reload-database-confirm-dialog-title'),
+                message: `${this.translationService.getValue('users-page.user')} ${this.userFullName}
+                          ${this.translationService.getValue('users-page.user-must-reload-database-confirmation')}`,
+                okBtnLabel: this.translationService.getValue('users-page.user-must-reload-database-ok-btn-label'),
+                cancelBtnLabel: this.translationService.getValue('users-page.user-must-reload-database-cancel-btn-label')
+            }).subscribe((yes: boolean) => {
+                if (yes) {
+                    device.userMustReloadAppDatabase = mustReload;
+                }
+            });
+        }
+        else {
+            device.userMustReloadAppDatabase = mustReload;
+        }
+
+        this.userDevices = this.userDevices.slice();
+        this.onChange(this.userDevices);
+    }
+
     public onSaveRow(row: GridRow<unknown>): void {
         const success = this.datatable.saveRow(row);
         if (success) {

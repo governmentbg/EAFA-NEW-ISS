@@ -421,6 +421,7 @@
     CrossCheckResultsRestoreRecords = 'CrossCheckResultsRestoreRecords',
     CrossCheckResultsAssign = 'CrossCheckResultsAssign',
     CrossCheckResultsResolve = 'CrossCheckResultsResolve',
+    CrossCheckResultAutoAssing = 'CrossCheckResultAutoAssing',
 
     // Catches and sales (log books & log book pages)
     FishLogBooksReadAll = 'FishLogBooksReadAll',

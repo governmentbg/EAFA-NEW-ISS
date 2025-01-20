@@ -12,21 +12,35 @@
                            (addButtonClicked)="onAddRecord()"
                            (activeRecordChanged)="onAddRecord()"
                            (recordChanged)="userDevicesChanged($event)">
-                <data-column columnName="{{ 'users-page.device-number' | tlTranslate }}"
+                <data-column [flexRate]="0.98"
+                             columnName="{{ 'users-page.device-number' | tlTranslate }}"
                              propertyName="imei"
                              [getControlErrorLabelText]="getControlErrorLabelTextMethod"
                              [formGroup]="userMobileDevicesForm">
                 </data-column>
-                <data-column columnName="{{ 'users-page.description' | tlTranslate }}"
+
+                <data-column [flexRate]="0.9"
+                             columnName="{{ 'users-page.description' | tlTranslate }}"
                              propertyName="description"
                              [formGroup]="userMobileDevicesForm">
                 </data-column>
-                <data-column columnName="{{ 'users-page.access-request-date' | tlTranslate }}"
+
+                <data-column [flexRate]="0.5"
+                             columnName="{{ 'users-page.access-request-date' | tlTranslate }}"
                              propertyName="requestAccessDate"
                              dataType="date"
                              [formGroup]="userMobileDevicesForm">
                 </data-column>
-                <data-template-column columnName="{{ 'users-page.status-access' | tlTranslate }}">
+
+                <data-template-column [flexRate]="0.3"
+                                      columnName="{{ 'users-page.app-version' | tlTranslate }}">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                        <span>{{ row.data.appVersion }}</span>
+                    </ng-template>
+                </data-template-column>
+
+                <data-template-column [flexRate]="0.6"
+                                      columnName="{{ 'users-page.status-access' | tlTranslate }}">
                     <ng-template let-row="row" ngx-datatable-cell-template>
                         <div *ngIf="row.data.accessStatus !== undefined">
                             <tl-icon *ngIf="row.data.accessStatus === mobileDeviceStatusEnum.BLOCKED" icon="highlight_off" iconClass="accent-color"></tl-icon>
@@ -36,29 +50,114 @@
                         </div>
                     </ng-template>
                 </data-template-column>
-                <data-template-column [flexRate]="0.4" flexGrow="0.5" *ngIf="!readOnly" columnName="{{'users-page.status-header' | tlTranslate}}">
+
+                <data-template-column [flexRate]="0.3" 
+                                      flexGrow="0.4" 
+                                      *ngIf="!readOnly" 
+                                      columnName="{{'users-page.status-header' | tlTranslate}}">
                     <ng-template let-row="row" ngx-datatable-cell-template>
                         <div fxLayout="row" fxLayoutAlign="center" *ngIf="row.data.accessStatus === mobileDeviceStatusEnum.REQUESTED">
-                            <tl-icon-button icon="done_outline" (buttonClicked)="allowAccess(row.data.id)" iconClass="accent-color"
-                                            tooltipText="{{ 'users-page.allow-access' | tlTranslate }}"></tl-icon-button>
-                            <tl-icon-button icon="highlight_off" (buttonClicked)="denyAccess(row.data.id)" iconClass="accent-color"
-                                            tooltipText="{{ 'users-page.deny-access' | tlTranslate }}"></tl-icon-button>
+                            <tl-icon-button icon="done_outline"
+                                            (buttonClicked)="allowAccess(row.data.id)"
+                                            iconClass="accent-color"
+                                            tooltipText="{{ 'users-page.allow-access' | tlTranslate }}">
+                            </tl-icon-button>
+
+                            <tl-icon-button icon="highlight_off"
+                                            (buttonClicked)="denyAccess(row.data.id)"
+                                            iconClass="accent-color"
+                                            tooltipText="{{ 'users-page.deny-access' | tlTranslate }}">
+                            </tl-icon-button>
                         </div>
+
                         <div fxLayout="row" fxLayoutAlign="center" *ngIf="row.data.accessStatus !== mobileDeviceStatusEnum.REQUESTED">
-                            <tl-icon-button *ngIf="row.data.accessStatus == mobileDeviceStatusEnum.BLOCKED" icon="done_outline" iconClass="accent-color"
-                                            (buttonClicked)="allowAccess(row.data.id)" tooltipText="{{ 'users-page.allow-access' | tlTranslate }}"></tl-icon-button>
-                            <tl-icon-button *ngIf="row.data.accessStatus == mobileDeviceStatusEnum.APPROVED" icon="highlight_off" iconClass="accent-color"
-                                            (buttonClicked)="denyAccess(row.data.id)" tooltipText="{{ 'users-page.deny-access' | tlTranslate }}"></tl-icon-button>
+                            <tl-icon-button *ngIf="row.data.accessStatus == mobileDeviceStatusEnum.BLOCKED"
+                                            icon="done_outline"
+                                            iconClass="accent-color"
+                                            (buttonClicked)="allowAccess(row.data.id)"
+                                            tooltipText="{{ 'users-page.allow-access' | tlTranslate }}">
+                            </tl-icon-button>
+
+                            <tl-icon-button *ngIf="row.data.accessStatus == mobileDeviceStatusEnum.APPROVED"
+                                            icon="highlight_off"
+                                            iconClass="accent-color"
+                                            (buttonClicked)="denyAccess(row.data.id)"
+                                            tooltipText="{{ 'users-page.deny-access' | tlTranslate }}">
+                            </tl-icon-button>
                         </div>
                     </ng-template>
                 </data-template-column>
-                <data-template-column [flexRate]="0.4" flexGrow="0.5" *ngIf="!readOnly">
+
+                <data-template-column [flexRate]="0.5"
+                                      columnName="{{ 'users-page.user-must-reload-app-database' | tlTranslate }}">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                        <div *ngIf="row.data.userMustReloadAppDatabase !== undefined && row.data.userMustReloadAppDatabase !== null">
+                            <tl-icon *ngIf="row.data.userMustReloadAppDatabase === false"
+                                     icon="highlight_off"
+                                     iconClass="accent-color">
+                            </tl-icon>
+
+                            <tl-icon *ngIf="row.data.userMustReloadAppDatabase === true"
+                                     icon="done_outline"
+                                     iconClass="accent-color">
+                            </tl-icon>
+
+                            <span>{{'users-page.must-reload-data-' + row.data.userMustReloadAppDatabase | tlTranslate }}</span>
+                        </div>
+                    </ng-template>
+                </data-template-column>
+
+                <data-template-column [flexRate]="0.3" 
+                                      flexGrow="0.4" 
+                                      *ngIf="!readOnly" 
+                                      columnName="{{'users-page.user-must-reload-app-database-header' | tlTranslate}}">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                        <div fxLayout="row" fxLayoutAlign="center" *ngIf="!row.editMode && (row.data.userMustReloadAppDatabase === null || row.data.userMustReloadAppDatabase === undefined)">
+                            <tl-icon-button icon="done_outline"
+                                            (buttonClicked)="reloadAppDatabase(row.data.id, true)"
+                                            iconClass="accent-color"
+                                            tooltipText="{{ 'users-page.must-reload-app-database' | tlTranslate }}">
+                            </tl-icon-button>
+
+                            <tl-icon-button icon="highlight_off"
+                                            (buttonClicked)="reloadAppDatabase(row.data.id, false)"
+                                            iconClass="accent-color"
+                                            tooltipText="{{ 'users-page.must-not-reload-app-database' | tlTranslate }}">
+                            </tl-icon-button>
+                        </div>
+
+                        <div fxLayout="row" fxLayoutAlign="center" *ngIf="row.data.userMustReloadAppDatabase !== null && row.data.userMustReloadAppDatabase !== undefined">
+                            <tl-icon-button *ngIf="row.data.userMustReloadAppDatabase == false"
+                                            icon="done_outline"
+                                            iconClass="accent-color"
+                                            (buttonClicked)="reloadAppDatabase(row.data.id, true)"
+                                            tooltipText="{{ 'users-page.must-reload-app-database' | tlTranslate }}">
+                            </tl-icon-button>
+
+                            <tl-icon-button *ngIf="row.data.userMustReloadAppDatabase == true"
+                                            icon="highlight_off"
+                                            iconClass="accent-color"
+                                            (buttonClicked)="reloadAppDatabase(row.data.id, false)"
+                                            tooltipText="{{ 'users-page.must-not-reload-app-database' | tlTranslate }}">
+                            </tl-icon-button>
+                        </div>
+                    </ng-template>
+                </data-template-column>
+
+                <data-template-column [flexRate]="0.3" flexGrow="0.4" *ngIf="!readOnly">
                     <ng-template let-row="row" ngx-datatable-cell-template>
                         <div fxLayout="row" fxLayoutAlign="center" *ngIf="row.editMode" fxLayoutGap="1em">
-                            <tl-icon-button icon="save" (buttonClicked)="onSaveRow(row)" iconClass="accent-color"
-                                            tooltipText="{{ 'users-page.mobile-devices-save-button-tooltip' | tlTranslate }}"></tl-icon-button>
-                            <tl-icon-button icon="cancel" (buttonClicked)="onUndoAddEditRow(row)" iconClass="accent-color"
-                                            tooltipText="{{ 'users-page.mobile-devices-undo-button-tooltip' | tlTranslate }}"></tl-icon-button>
+                            <tl-icon-button icon="save"
+                                            (buttonClicked)="onSaveRow(row)"
+                                            iconClass="accent-color"
+                                            tooltipText="{{ 'users-page.mobile-devices-save-button-tooltip' | tlTranslate }}">
+                            </tl-icon-button>
+
+                            <tl-icon-button icon="cancel"
+                                            (buttonClicked)="onUndoAddEditRow(row)"
+                                            iconClass="accent-color"
+                                            tooltipText="{{ 'users-page.mobile-devices-undo-button-tooltip' | tlTranslate }}">
+                            </tl-icon-button>
                         </div>
                     </ng-template>
                 </data-template-column>

@@ -25,7 +25,7 @@ namespace IARA.Mobile.Insp.Infrastructure.Persistence
         /// <summary>
         /// Represents the current version of the migrations
         /// </summary>
-        private const int CURRENT_VERSION = 12;
+        private const int CURRENT_VERSION = 14;
 
         private readonly INomenclatureDatesClear nomenclatureDatesClear;
         private readonly IExceptionHandler exceptionHandler;
@@ -78,6 +78,8 @@ namespace IARA.Mobile.Insp.Infrastructure.Persistence
                             new Version10(authenticationProvider, commonLogout),
                             new Version11(authenticationProvider, commonLogout),
                             new Version12(authenticationProvider, commonLogout),
+                            new Version13(authenticationProvider, commonLogout),
+                            new Version14(authenticationProvider, commonLogout),
                         };
 
                         for (int i = lastVersion; i < CURRENT_VERSION; i++)

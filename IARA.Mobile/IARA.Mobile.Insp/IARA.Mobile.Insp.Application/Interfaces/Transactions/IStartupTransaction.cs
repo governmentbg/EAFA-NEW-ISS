@@ -22,5 +22,7 @@ namespace IARA.Mobile.Insp.Application.Interfaces.Transactions
         Task PostOfflineData();
 
         Task<bool> GetInitialData(bool isLoginRequest, Action<int> countCallback, Action finishCallback);
+        Task<bool> ShouldResetDatabase();
+        void ResetDatabase();
     }
 }

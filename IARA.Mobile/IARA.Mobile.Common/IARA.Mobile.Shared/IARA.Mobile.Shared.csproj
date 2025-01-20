@@ -27,6 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\IARA.Mobile.Insp\IARA.Mobile.Insp.Application\IARA.Mobile.Insp.Application.csproj" />
     <ProjectReference Include="..\..\IARA.Mobile.Pub\IARA.Mobile.Pub.Application\IARA.Mobile.Pub.Application.csproj" />
     <ProjectReference Include="..\IARA.Mobile.Application\IARA.Mobile.Application.csproj" />
   </ItemGroup>

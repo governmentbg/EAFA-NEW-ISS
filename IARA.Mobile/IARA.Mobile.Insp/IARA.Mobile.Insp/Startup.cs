@@ -120,6 +120,9 @@ namespace IARA.Mobile.Insp
             // Set login as successful
             builder.Call<ISettings>(SetLoginAsSuccessful);
 
+            // Check for database reset
+            builder.Call<IStartupTransaction>(ShowResetDatabaseDialog);
+
             // Remind for unsigned inspections
             builder.Call<ICurrentUser, IAuthTokenProvider>(ShowReminderForUnsignedInspections);
         }
@@ -159,7 +162,7 @@ namespace IARA.Mobile.Insp
                 ? "MobileInspections"
                 : "Inspections";
 #if DEBUG
-            serverUrl.Environment = Environments.DEVELOPMENT_INTERNAL;
+            serverUrl.Environment = Environments.DEVELOPMENT_LOCAL;
 #elif PRODRELEASE
             serverUrl.Environment =  Environments.PRODUCTION;
 #else
@@ -429,6 +432,19 @@ namespace IARA.Mobile.Insp
                         string.Format(TranslateExtension.Translator[group + "/UnsignedInspectionsMessage"], unsignedInspectionCount),
                         TranslateExtension.Translator[group + "/Okay"]
                     );
+                }
+            }
+        }
+
+        private async Task ShowResetDatabaseDialog(IStartupTransaction startUp)
+        {
+            if (CommonGlobalVariables.InternetStatus == InternetStatus.Connected)
+            {
+                bool shouldReset = await startUp.ShouldResetDatabase();
+
+                if (shouldReset)
+                {
+                    await PopupNavigation.Instance.PushAsync(new ResetDatabasePopup());
                 }
             }
         }
