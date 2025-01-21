@@ -233,7 +233,22 @@ export class InspectedShipWithPersonnelComponent extends CustomFormControl<ShipW
             shipCaptainControl: new FormControl(undefined, Validators.required),
             togglesControl: new FormControl([]),
             portControl: new FormControl(undefined),
-            observationControl: new FormControl(undefined, Validators.maxLength(4000))
+            observationControl: new FormControl(undefined, Validators.maxLength(4000)),
+            isRepresentativeSameAsOwnerControl: new FormControl(false)
+        });
+
+        form.get('isRepresentativeSameAsOwnerControl')!.valueChanges.subscribe({
+            next: (yes: boolean) => {
+                if (yes) {
+                    const owner: InspectionSubjectPersonnelDTO | undefined = this.form.get('shipOwnerControl')!.value;
+
+                    if (owner !== undefined && owner !== null && !owner.isLegal) {
+                        this.form.get('shipRepresentativeControl')!.setValue(owner);
+                    }
+                }
+
+                this.form.get('shipRepresentativeControl')!.updateValueAndValidity({ emitEvent: false });
+            }
         });
 
         return form;

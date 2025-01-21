@@ -210,6 +210,10 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.FishingGearDialog
                 PermitId = fishingGear.PermitId,
                 Pingers = fishingGear.Pingers,
                 TowelLength = fishingGear.TowelLength,
+                LineCount = fishingGear.LineCount,
+                NetNominalLength = fishingGear.NetNominalLength,
+                NetsInFleetCount = fishingGear.NetsInFleetCount,
+                TrawlModel = fishingGear.TrawlModel,
                 TypeId = fishingGear.TypeId,
                 Marks = new List<FishingGearMarkDto>(),
             };

@@ -18,6 +18,12 @@ export class MobileDeviceDTO {
     @StrictlyTyped(String)
     public accessStatus?: string;
 
+    @StrictlyTyped(String)
+    public appVersion?: string;
+
+    @StrictlyTyped(Boolean)
+    public userMustReloadAppDatabase?: boolean;
+
     @StrictlyTyped(Date)
     public requestAccessDate?: Date;
 }

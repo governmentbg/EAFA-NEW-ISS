@@ -18,6 +18,10 @@ namespace IARA.Mobile.Insp.Application.DTObjects.Inspections
         public decimal? CordThickness { get; set; }
         public int? HouseLength { get; set; }
         public int? HouseWidth { get; set; }
+        public int? LineCount { get; set; }
+        public decimal? NetNominalLength { get; set; }
+        public decimal? NetsInFleetCount { get; set; }
+        public string TrawlModel { get; set; }
         public bool IsActive { get; set; }
     }
 }

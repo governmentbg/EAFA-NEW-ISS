@@ -465,6 +465,10 @@ namespace IARA.Mobile.Insp.Application.Helpers
                     CordThickness = f.CordThickness,
                     TypeId = f.TypeId,
                     ShipUid = f.SubjectId,
+                    LineCount = f.LineCount,
+                    NetsInFleetCount = f.NetsInFleetCount,
+                    TrawlModel = f.TrawlModel,
+                    NetNominalLength = f.NetNominalLength,
                 },
                 f => f.Id,
                 (context, _, __, inactive) =>

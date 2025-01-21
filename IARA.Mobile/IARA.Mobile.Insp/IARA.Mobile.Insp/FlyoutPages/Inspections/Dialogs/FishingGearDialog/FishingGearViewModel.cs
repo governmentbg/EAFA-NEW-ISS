@@ -9,6 +9,7 @@ using IARA.Mobile.Insp.Helpers;
 using IARA.Mobile.Insp.Models;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -56,6 +57,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.FishingGearDialog
         public bool IsInspectedGear { get; set; }
 
         public int? Id { get; set; }
+
 
         public ValidStateValidatableTable<MarkViewModel> Marks { get; set; }
 
@@ -154,7 +156,22 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.FishingGearDialog
             get
             {
                 Validation.Force();
-                return Validation.IsValid || !IsEditable;
+                foreach (var mark in Marks.Value)
+                {
+                    if (!mark.IsValid)
+                    {
+                        return !IsEditable;
+                    }
+                }
+                var generalInfoValidator = Validation.OtherValidations.FirstOrDefault(f => f.Name == nameof(FishingGearGeneralInfoViewModel));
+                if (generalInfoValidator != null)
+                {
+                    if (generalInfoValidator.IsValid)
+                    {
+                        return true;
+                    }
+                }
+                return !IsEditable;
             }
         }
 
@@ -256,6 +273,10 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.FishingGearDialog
                     TowelLength = ParseHelper.ParseInteger(viewModel.FishingGearGeneralInfo.TowelLength),
                     HouseLength = ParseHelper.ParseInteger(viewModel.FishingGearGeneralInfo.HouseLength),
                     HouseWidth = ParseHelper.ParseInteger(viewModel.FishingGearGeneralInfo.HouseWidth),
+                    LineCount = ParseHelper.ParseInteger(viewModel.FishingGearGeneralInfo.LineCount),
+                    NetNominalLength = ParseHelper.ParseInteger(viewModel.FishingGearGeneralInfo.NetNominalLength),
+                    NetsInFleetCount = ParseHelper.ParseInteger(viewModel.FishingGearGeneralInfo.NetsInFleetCount),
+                    TrawlModel = viewModel.FishingGearGeneralInfo.TrawlModel,
                     HasPingers = viewModel.HasPingers,
                     Marks = viewModel.Marks
                         .Select(f => (FishingGearMarkDto)f)

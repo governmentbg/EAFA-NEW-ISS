@@ -995,6 +995,10 @@ namespace IARA.Mobile.Insp.Application.Transactions
                         NetEyeSize = fishingGear.NetEyeSize,
                         TowelLength = fishingGear.TowelLength,
                         CordThickness = fishingGear.CordThickness,
+                        LineCount = fishingGear.LineCount,
+                        NetNominalLength = fishingGear.NetNominalLength,
+                        NetsInFleetCount = fishingGear.NetsInFleetCount,
+                        TrawlModel = fishingGear.TrawlModel,
                         TypeId = fishingGear.TypeId,
                         PermitId = fishingGear.PermitId,
                     }

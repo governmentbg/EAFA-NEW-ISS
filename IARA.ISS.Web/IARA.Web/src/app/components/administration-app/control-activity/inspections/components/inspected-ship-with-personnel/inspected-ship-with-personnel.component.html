@@ -31,6 +31,12 @@
                                     title="{{ 'inspections.ship-user' | tlTranslate }}">
             </inspected-ship-subject>
 
+            <div fxLayout="row" fxLayoutAlign="start center">
+                <tl-checkbox formControlName="isRepresentativeSameAsOwnerControl"
+                             label="{{ 'inspections.is-representative-same-as-owner' | tlTranslate }}">
+                </tl-checkbox>
+            </div>
+
             <inspected-ship-subject formControlName="shipRepresentativeControl"
                                     [subjects]="representatives"
                                     [countries]="countries"

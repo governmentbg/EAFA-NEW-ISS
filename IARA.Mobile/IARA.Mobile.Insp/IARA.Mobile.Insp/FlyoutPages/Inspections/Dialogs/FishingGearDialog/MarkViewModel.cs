@@ -5,6 +5,7 @@ using IARA.Mobile.Insp.Base;
 using IARA.Mobile.Insp.Domain.Enums;
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using TechnoLogica.Xamarin.Helpers;
 using TechnoLogica.Xamarin.ViewModels.Models;
 
@@ -24,14 +25,24 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.FishingGearDialog
         public DateTime? CreatedOn { get; set; }
 
         [Required]
-        [MaxLength(50)]
-        [TLRange(0, 1_000_000_000)]
         public ValidState Number { get; set; }
 
         public string Prefix { get; set; }
 
         [Required]
         public ValidStateSelect<SelectNomenclatureDto> Status { get; set; }
+
+        public bool IsValid
+        {
+            get
+            {
+                if (!string.IsNullOrEmpty(Number.Value) && Status.Value != null)
+                {
+                    return true;
+                }
+                return false;
+            }
+        }
 
         public static implicit operator FishingGearMarkDto(MarkViewModel viewModel)
         {
