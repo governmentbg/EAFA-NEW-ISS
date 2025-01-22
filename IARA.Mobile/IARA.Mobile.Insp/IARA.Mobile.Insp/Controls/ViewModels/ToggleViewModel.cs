@@ -49,6 +49,12 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
 
         public ValidStateMultiToggle Value { get; set; }
 
+        public void Reset()
+        {
+            Description.Value = "";
+            Value.Value = "";
+        }
+
         public static implicit operator InspectionCheckDto(ToggleViewModel viewModel)
         {
             if (Enum.TryParse(viewModel.Value, out CheckTypeEnum checkType))

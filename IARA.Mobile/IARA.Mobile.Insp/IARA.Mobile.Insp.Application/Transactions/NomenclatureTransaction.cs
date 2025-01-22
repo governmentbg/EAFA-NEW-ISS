@@ -438,23 +438,6 @@ namespace IARA.Mobile.Insp.Application.Transactions
         {
             using (IAppDbContext context = ContextBuilder.CreateContext())
             {
-                //var owners = (from owner in context.ShipOwners
-                //              where owner.ShipUid == shipUid
-                //              join legal in context.Legals on owner.LegalId equals legal.Id into legalOwners
-                //              from legal in legalOwners.DefaultIfEmpty()
-                //              join person in context.Persons on owner.PersonId equals person.Id into personOwners
-                //              from person in personOwners.DefaultIfEmpty()
-                //              select new
-                //              {
-                //                  Id = owner?.Id,
-                //                  PersonId = owner?.PersonId,
-                //                  LegalId = owner?.LegalId,
-                //                  EGN = person != null ? person.EgnLnc : legal?.Eik
-                //              })
-                //              .GroupBy(o => o.EGN)
-                //              .Select(g => g.OrderByDescending(o => o.Id).FirstOrDefault())
-                //              .ToList();
-
                 var owners = (from owner in context.ShipOwners
                               where owner.ShipUid == shipUid
                               select new
@@ -583,105 +566,6 @@ namespace IARA.Mobile.Insp.Application.Transactions
                     .GroupBy(x => new { x.Code, x.Type })
                     .Select(x => x.OrderByDescending(f => f.Id).First())
                     .ToList();
-
-                //List<ShipPersonnelDto> personnel = (
-                //    from shipOwner in context.ShipOwners
-                //    join person in context.Persons on shipOwner.PersonId equals person.Id
-                //    where shipOwner.ShipUid == shipUid
-                //    orderby shipOwner.Id
-                //    select new ShipPersonnelDto
-                //    {
-                //        Id = person.Id,
-                //        EntryId = shipOwner.Id,
-                //        Code = person.EgnLnc,
-                //        Type = InspectedPersonType.OwnerPers,
-                //        Name = $"{person.FirstName} {(person.MiddleName == null ? string.Empty : person.MiddleName + " ")}{person.LastName}",
-                //    }
-                //).ToList();
-
-                //personnel.AddRange((
-                //    from shipOwner in context.ShipOwners
-                //    join legal in context.Legals on shipOwner.LegalId equals legal.Id
-                //    where shipOwner.ShipUid == shipUid
-                //    orderby shipOwner.Id
-                //    select new ShipPersonnelDto
-                //    {
-                //        Id = legal.Id,
-                //        EntryId = shipOwner.Id,
-                //        Code = legal.Eik,
-                //        Type = InspectedPersonType.OwnerLegal,
-                //        Name = legal.Name,
-                //    }
-                //).ToList());
-
-                //personnel.AddRange((
-                //    from permit in context.PermitLicenses
-                //    join legal in context.Legals on permit.LegalId equals legal.Id
-                //    where permit.ShipUid == shipUid
-                //    orderby permit.Id
-                //    group permit.Id by new
-                //    {
-                //        legal.Id,
-                //        legal.Eik,
-                //        legal.Name,
-                //    } into grp
-                //    select new ShipPersonnelDto
-                //    {
-                //        Id = grp.Key.Id,
-                //        EntryId = grp.Min(f => f),
-                //        Code = grp.Key.Eik,
-                //        Type = InspectedPersonType.LicUsrLgl,
-                //        Name = grp.Key.Name,
-                //    }
-                //).ToList());
-
-                //personnel.AddRange((
-                //    from permit in context.PermitLicenses
-                //    join person in context.Persons on permit.PersonId equals person.Id
-                //    where permit.ShipUid == shipUid
-                //    orderby permit.Id
-                //    group permit.Id by new
-                //    {
-                //        person.Id,
-                //        person.EgnLnc,
-                //        person.FirstName,
-                //        person.MiddleName,
-                //        person.LastName,
-                //    } into grp
-                //    select new ShipPersonnelDto
-                //    {
-                //        Id = grp.Key.Id,
-                //        EntryId = grp.Min(f => f),
-                //        Code = grp.Key.EgnLnc,
-                //        Type = InspectedPersonType.LicUsrPers,
-                //        Name = $"{grp.Key.FirstName} {(grp.Key.MiddleName == null ? string.Empty : grp.Key.MiddleName + " ")}{grp.Key.LastName}",
-                //    }
-                //).ToList());
-
-                //personnel.AddRange((
-                //    from permit in context.PermitLicenses
-                //    join person in context.Persons on permit.PersonCaptainId equals person.Id
-                //    where permit.ShipUid == shipUid
-                //    orderby permit.Id
-                //    group permit.Id by new
-                //    {
-                //        person.Id,
-                //        person.EgnLnc,
-                //        person.FirstName,
-                //        person.MiddleName,
-                //        person.LastName,
-                //    } into grp
-                //    select new ShipPersonnelDto
-                //    {
-                //        Id = grp.Key.Id,
-                //        EntryId = grp.Min(f => f),
-                //        Code = grp.Key.EgnLnc,
-                //        Type = InspectedPersonType.CaptFshmn,
-                //        Name = $"{grp.Key.FirstName} {(grp.Key.MiddleName == null ? string.Empty : grp.Key.MiddleName + " ")}{grp.Key.LastName}",
-                //    }
-                //).ToList());
-
-                //return personnel;
             }
         }
 

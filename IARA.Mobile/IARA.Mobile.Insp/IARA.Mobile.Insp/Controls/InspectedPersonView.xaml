@@ -10,114 +10,122 @@
         x:Class="IARA.Mobile.Insp.Controls.InspectedPersonView"
         x:DataType="vm:InspectedPersonViewModel"
         x:Name="view">
-    <Label Text="{Binding Title, Source={Reference view}}"
-            FontAttributes="Bold"
-            FontSize="24" />
-    <lc:TLCheckBoxWithPicker Title="{Binding InRegisterText, Source={Reference view}}"
-            ValidState="{Binding Person}"
-            CheckValidState="{Binding InRegister}"
-            ItemsSource="{Binding People}"
-            Command="{Binding PersonChosen}"
-            DialogDisplayValue="DisplayValue"
-            IsVisible="{Binding InRegister.Value}"
-            IsEnabled="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}" />
-    <tl:TLCheckView Text="{Binding InRegisterText, Source={Reference view}}"
-            ValidState="{Binding InRegister}"
-            IsVisible="{Binding InRegister.Value, Converter={StaticResource OppositeBool}}"
-            IsEnabled="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}" />
-    <tl:TLRadioButtonListView ItemsSource="{Binding Actions}"
-            SelectedItem="{Binding Action}"
-            IsLabelVisible="False"
-            IsEnabled="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}">
-        <tl:TLRadioButtonListView.IsVisible>
-            <MultiBinding Converter="{StaticResource All}">
-                <Binding Path="LegalType" Converter="{StaticResource IsNotNull}" />
-                <Binding Path="InRegister.Value" Converter="{StaticResource OppositeBool}" />
-            </MultiBinding>
-        </tl:TLRadioButtonListView.IsVisible>
-    </tl:TLRadioButtonListView>
-    <tl:TLAutoGrid DefaultMinWidth="200">
-        <tl:TLEntry Title="{rt:Translate Name, Group=Common}"
-                ValidState="{Binding FirstName}"
-                IsEnabled="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}"
-                IsVisible="{Binding InRegister.Value, Converter={StaticResource OppositeBool}}" />
-        <tl:TLEntry Title="{rt:Translate MiddleName, Group=Common}"
-                ValidState="{Binding MiddleName}"
-                IsEnabled="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}">
-            <tl:TLEntry.IsVisible>
-                <MultiBinding Converter="{StaticResource All}">
-                    <Binding Path="Action.Code"
-                            Converter="{StaticResource Equal}"
-                            ConverterParameter="Person" />
-                    <Binding Path="InRegister.Value" Converter="{StaticResource OppositeBool}" />
-                </MultiBinding>
-            </tl:TLEntry.IsVisible>
-        </tl:TLEntry>
-        <tl:TLEntry Title="{rt:Translate LastName, Group=Common}"
-                ValidState="{Binding LastName}"
-                IsEnabled="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}">
-            <tl:TLEntry.IsVisible>
-                <MultiBinding Converter="{StaticResource All}">
-                    <Binding Path="Action.Code"
-                            Converter="{StaticResource Equal}"
-                            ConverterParameter="Person" />
-                    <Binding Path="InRegister.Value" Converter="{StaticResource OppositeBool}" />
-                </MultiBinding>
-            </tl:TLEntry.IsVisible>
-        </tl:TLEntry>
-        <Grid ColumnDefinitions="*,Auto">
-            <Grid.IsVisible>
-                <MultiBinding Converter="{StaticResource All}">
-                    <Binding Path="Action.Code"
-                            Converter="{StaticResource Equal}"
-                            ConverterParameter="Person" />
-                    <Binding Path="InRegister.Value" Converter="{StaticResource OppositeBool}" />
-                </MultiBinding>
-            </Grid.IsVisible>
-            <sv:TLEntryWithType ValidState="{Binding Egn}" IsEnabled="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}" />
-            <ImageButton Grid.Column="1"
-                    Source="{FontImageSource Color=White, FontFamily=FA, Glyph={Static h:IconFont.MagnifyingGlass}, Size=25}"
-                    Padding="10"
-                    IsEnabled="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}"
-                    VerticalOptions="End"
-                    Command="{Binding SearchPerson}" />
-        </Grid>
-        <Grid ColumnDefinitions="*,Auto">
-            <Grid.IsVisible>
-                <MultiBinding Converter="{StaticResource All}">
-                    <Binding Path="Action.Code"
-                            Converter="{StaticResource Equal}"
-                            ConverterParameter="Legal" />
-                    <Binding Path="InRegister.Value" Converter="{StaticResource OppositeBool}" />
-                </MultiBinding>
-            </Grid.IsVisible>
-            <tl:TLEntry Title="{rt:Translate EIK, Group=Common}"
-                    ValidState="{Binding EIK}"
+    <Frame Padding="12"
+            CornerRadius="8"
+            HasShadow="False"
+            BorderColor="{StaticResource GrayColor}">
+        <StackLayout>
+            <Label Text="{Binding Title, Source={Reference view}}"
+                    FontAttributes="Bold"
+                    FontSize="24" />
+            <lc:TLCheckBoxWithPicker Title="{Binding InRegisterText, Source={Reference view}}"
+                    ValidState="{Binding Person}"
+                    CheckValidState="{Binding InRegister}"
+                    ItemsSource="{Binding People}"
+                    Command="{Binding PersonChosen}"
+                    DialogDisplayValue="DisplayValue"
+                    IsVisible="{Binding InRegister.Value}"
                     IsEnabled="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}" />
-            <ImageButton Grid.Column="1"
-                    Source="{FontImageSource Color=White, FontFamily=FA, Glyph={Static h:IconFont.MagnifyingGlass}, Size=25}"
-                    Padding="10"
-                    VerticalOptions="End"
-                    IsEnabled="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}"
-                    Command="{Binding SearchLegal}" />
-        </Grid>
-        <tl:TLEntry Title="{rt:Translate Address, Group=Common}" ValidState="{Binding Address}">
-            <tl:TLEntry.IsEnabled>
-                <MultiBinding Converter="{StaticResource All}">
-                    <Binding Path="Inspection.ActivityType" Converter="{StaticResource IsNotReview}" />
-                    <Binding Path="InRegister.Value" Converter="{StaticResource OppositeBool}" />
-                </MultiBinding>
-            </tl:TLEntry.IsEnabled>
-        </tl:TLEntry>
-        <tl:TLPicker Title="{rt:Translate Country, Group=Common}"
-                ValidState="{Binding Nationality}"
-                ItemsSource="{Binding Nationalities}">
-            <tl:TLPicker.IsEnabled>
-                <MultiBinding Converter="{StaticResource All}">
-                    <Binding Path="Inspection.ActivityType" Converter="{StaticResource IsNotReview}" />
-                    <Binding Path="InRegister.Value" Converter="{StaticResource OppositeBool}" />
-                </MultiBinding>
-            </tl:TLPicker.IsEnabled>
-        </tl:TLPicker>
-    </tl:TLAutoGrid>
+            <tl:TLCheckView Text="{Binding InRegisterText, Source={Reference view}}"
+                    ValidState="{Binding InRegister}"
+                    IsVisible="{Binding InRegister.Value, Converter={StaticResource OppositeBool}}"
+                    IsEnabled="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}" />
+            <tl:TLRadioButtonListView ItemsSource="{Binding Actions}"
+                    SelectedItem="{Binding Action}"
+                    Command="{Binding ActionChosen}"
+                    IsLabelVisible="False"
+                    IsEnabled="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}">
+                <tl:TLRadioButtonListView.IsVisible>
+                    <MultiBinding Converter="{StaticResource All}">
+                        <Binding Path="LegalType" Converter="{StaticResource IsNotNull}" />
+                        <Binding Path="InRegister.Value" Converter="{StaticResource OppositeBool}" />
+                    </MultiBinding>
+                </tl:TLRadioButtonListView.IsVisible>
+            </tl:TLRadioButtonListView>
+            <tl:TLAutoGrid DefaultMinWidth="200">
+                <tl:TLEntry Title="{rt:Translate Name, Group=Common}"
+                        ValidState="{Binding FirstName}"
+                        IsEnabled="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}"
+                        IsVisible="{Binding InRegister.Value, Converter={StaticResource OppositeBool}}" />
+                <tl:TLEntry Title="{rt:Translate MiddleName, Group=Common}"
+                        ValidState="{Binding MiddleName}"
+                        IsEnabled="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}">
+                    <tl:TLEntry.IsVisible>
+                        <MultiBinding Converter="{StaticResource All}">
+                            <Binding Path="Action.Code"
+                                    Converter="{StaticResource Equal}"
+                                    ConverterParameter="Person" />
+                            <Binding Path="InRegister.Value" Converter="{StaticResource OppositeBool}" />
+                        </MultiBinding>
+                    </tl:TLEntry.IsVisible>
+                </tl:TLEntry>
+                <tl:TLEntry Title="{rt:Translate LastName, Group=Common}"
+                        ValidState="{Binding LastName}"
+                        IsEnabled="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}">
+                    <tl:TLEntry.IsVisible>
+                        <MultiBinding Converter="{StaticResource All}">
+                            <Binding Path="Action.Code"
+                                    Converter="{StaticResource Equal}"
+                                    ConverterParameter="Person" />
+                            <Binding Path="InRegister.Value" Converter="{StaticResource OppositeBool}" />
+                        </MultiBinding>
+                    </tl:TLEntry.IsVisible>
+                </tl:TLEntry>
+                <Grid ColumnDefinitions="*,Auto">
+                    <Grid.IsVisible>
+                        <MultiBinding Converter="{StaticResource All}">
+                            <Binding Path="Action.Code"
+                                    Converter="{StaticResource Equal}"
+                                    ConverterParameter="Person" />
+                            <Binding Path="InRegister.Value" Converter="{StaticResource OppositeBool}" />
+                        </MultiBinding>
+                    </Grid.IsVisible>
+                    <sv:TLEntryWithType ValidState="{Binding Egn}" IsEnabled="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}" />
+                    <ImageButton Grid.Column="1"
+                            Source="{FontImageSource Color=White, FontFamily=FA, Glyph={Static h:IconFont.MagnifyingGlass}, Size=25}"
+                            Padding="10"
+                            IsEnabled="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}"
+                            VerticalOptions="End"
+                            Command="{Binding SearchPerson}" />
+                </Grid>
+                <Grid ColumnDefinitions="*,Auto">
+                    <Grid.IsVisible>
+                        <MultiBinding Converter="{StaticResource All}">
+                            <Binding Path="Action.Code"
+                                    Converter="{StaticResource Equal}"
+                                    ConverterParameter="Legal" />
+                            <Binding Path="InRegister.Value" Converter="{StaticResource OppositeBool}" />
+                        </MultiBinding>
+                    </Grid.IsVisible>
+                    <tl:TLEntry Title="{rt:Translate EIK, Group=Common}"
+                            ValidState="{Binding EIK}"
+                            IsEnabled="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}" />
+                    <ImageButton Grid.Column="1"
+                            Source="{FontImageSource Color=White, FontFamily=FA, Glyph={Static h:IconFont.MagnifyingGlass}, Size=25}"
+                            Padding="10"
+                            VerticalOptions="End"
+                            IsEnabled="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}"
+                            Command="{Binding SearchLegal}" />
+                </Grid>
+                <tl:TLEntry Title="{rt:Translate Address, Group=Common}" ValidState="{Binding Address}">
+                    <tl:TLEntry.IsEnabled>
+                        <MultiBinding Converter="{StaticResource All}">
+                            <Binding Path="Inspection.ActivityType" Converter="{StaticResource IsNotReview}" />
+                            <Binding Path="InRegister.Value" Converter="{StaticResource OppositeBool}" />
+                        </MultiBinding>
+                    </tl:TLEntry.IsEnabled>
+                </tl:TLEntry>
+                <tl:TLPicker Title="{rt:Translate Country, Group=Common}"
+                        ValidState="{Binding Nationality}"
+                        ItemsSource="{Binding Nationalities}">
+                    <tl:TLPicker.IsEnabled>
+                        <MultiBinding Converter="{StaticResource All}">
+                            <Binding Path="Inspection.ActivityType" Converter="{StaticResource IsNotReview}" />
+                            <Binding Path="InRegister.Value" Converter="{StaticResource OppositeBool}" />
+                        </MultiBinding>
+                    </tl:TLPicker.IsEnabled>
+                </tl:TLPicker>
+            </tl:TLAutoGrid>
+        </StackLayout>
+    </Frame>
 </StackLayout>

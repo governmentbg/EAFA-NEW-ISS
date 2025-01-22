@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using TechnoLogica.Xamarin.Helpers;
 using TechnoLogica.Xamarin.ViewModels.Models;
+using Xamarin.Forms.Internals;
 
 namespace IARA.Mobile.Insp.Controls.ViewModels
 {
@@ -44,6 +45,13 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
             Catches.OnEdit(fishingShipInspection.CatchMeasures);
 
             Toggles.AssignFrom(fishingShipInspection.Checks);
+        }
+
+        public void Reset()
+        {
+            Catches.Reset();
+            Toggles.ForEach(x => x.Reset());
+            ObservationsOrViolations.Value = "";
         }
     }
 }

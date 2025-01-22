@@ -63,7 +63,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FishingGearInspection
             {
                 PersonChosen = CommandBuilder.CreateFrom<ShipPersonnelDto>(OnOwnerChosen),
             };
-            FishingGears = new FishingGearsViewModel(this, null, null, hasPingers: true);
+            FishingGears = new FishingGearsViewModel(this, null, hasPingers: true);
             InspectionGeneralInfo = new InspectionGeneralInfoViewModel(this, false);
             InspectionFiles = new InspectionFilesViewModel(this);
             AdditionalInfo = new AdditionalInfoViewModel(this);

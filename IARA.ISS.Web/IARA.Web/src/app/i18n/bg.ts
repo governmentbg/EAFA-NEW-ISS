@@ -6227,7 +6227,8 @@
 
         'edit-violated-regulations': 'Административнонаказателни разпоредби',
         'edit-auan-violated-regulations': 'Нарушени разпоредби',
-        'at-least-one-violated-regulation-needed': 'Необходима е поне една нарушена разпоредба от АУАН',
+        'at-least-one-violated-regulation-needed': 'Необходима е поне една административнонаказателна разпоредба',
+        'at-least-one-auan-violated-regulation-needed': 'Необходима е поне една нарушена разпоредба от АУАН',
 
         'edit-fish-compensations': 'Постановяване на обезщетение',
         'edit-fish-compensations-violated-regulations': 'Законови разпоредби за постановяване на обезщетение',

@@ -21,14 +21,12 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
     public class FishingGearsViewModel : ViewModel
     {
         private PermitLicensesViewModel _permitLicenses;
-        private ShipFishingGearsViewModel _shipFishingGears;
-        public FishingGearsViewModel(InspectionPageViewModel inspection, PermitLicensesViewModel permitLicenses, ShipFishingGearsViewModel shipFishingGears, bool hasPingers = true, bool hasAttachmentForFishingGear = false)
+        public FishingGearsViewModel(InspectionPageViewModel inspection, PermitLicensesViewModel permitLicenses, bool hasPingers = true, bool hasAttachmentForFishingGear = false)
         {
             Inspection = inspection;
             HasPingers = hasPingers;
             HasAttachmentForFishingGear = hasAttachmentForFishingGear;
             _permitLicenses = permitLicenses;
-            _shipFishingGears = shipFishingGears;
 
             Review = CommandBuilder.CreateFrom<FishingGearModel>(OnReview);
             Add = CommandBuilder.CreateFrom(OnAdd);
@@ -108,6 +106,12 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
             }
         }
 
+        public void Reset()
+        {
+            FishingGears.Value.Clear();
+            AllFishingGears.Clear();
+        }
+
         private Task OnReview(FishingGearModel model)
         {
             return TLDialogHelper.ShowDialog(new FishingGearDialog(Inspection, ViewActivityType.Review, HasPingers, HasAttachmentForFishingGear, model));
@@ -143,6 +147,11 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
                 fishingGear.Dto.InspectedFishingGear = result.Dto.InspectedFishingGear;
                 fishingGear.Dto.CheckInspectedMatchingRegisteredGear = result.Dto.CheckInspectedMatchingRegisteredGear;
                 fishingGear.Dto.HasAttachedAppliances = result.Dto.HasAttachedAppliances;
+
+                if (fishingGear.Dto.PermittedFishingGear.Id != null && fishingGear.Dto.InspectedFishingGear != null)
+                {
+                    fishingGear.Dto.InspectedFishingGear.Id = null;
+                }
 
                 FishingGears.Value.Replace(fishingGear, result);
             }

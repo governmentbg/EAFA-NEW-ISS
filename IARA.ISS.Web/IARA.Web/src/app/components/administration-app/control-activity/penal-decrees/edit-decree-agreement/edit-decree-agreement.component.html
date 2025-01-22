@@ -82,15 +82,15 @@
     <!-- Законови разпоредби от АУАН -->
     <tl-expansion-panel title="{{ (isThirdParty ? 'penal-decrees.edit-external-auan-violated-regulations-panel' : 'penal-decrees.edit-auan-violated-regulations-panel') | tlTranslate }}"
                         tooltipResourceName="penal-decree.edit-auan-violated-regulations-helper"
-                        [validityCheckerExtraCondition]="form.errors?.atLeastOneViolatedRegulationNeeded !== true"
+                        [validityCheckerExtraCondition]="form.errors?.atLeastOneAuanViolatedRegulationNeeded !== true"
                         [validityChecker]="form">
         <div fxLayout="column" fxLayoutGap="1em" fxFlex="100">
             <auan-violated-regulations formControlName="auanViolatedRegulationsControl"
                                        [viewMode]="viewMode">
             </auan-violated-regulations>
 
-            <mat-error *ngIf="violatedRegulationsTouched && form.errors?.atLeastOneViolatedRegulationNeeded === true">
-                * {{ 'penal-decrees.at-least-one-violated-regulation-needed' | tlTranslate }}
+            <mat-error *ngIf="auanViolatedRegulationsTouched && form.errors?.atLeastOneAuanViolatedRegulationNeeded === true">
+                * {{ 'penal-decrees.at-least-one-auan-violated-regulation-needed' | tlTranslate }}
             </mat-error>
         </div>
     </tl-expansion-panel>
@@ -117,10 +117,17 @@
     <!-- Законови разпоредби -->
     <tl-expansion-panel [title]="violatedRegulationsTitle"
                         tooltipResourceName="penal-decree.edit-violated-regulations-helper"
+                        [validityCheckerExtraCondition]="form.errors?.atLeastOneViolatedRegulationNeeded !== true"
                         [validityChecker]="form">
-        <auan-violated-regulations formControlName="violatedRegulationsControl"
-                                   [viewMode]="viewMode">
-        </auan-violated-regulations>
+        <div fxLayout="column" fxLayoutGap="1em" fxFlex="100">
+            <auan-violated-regulations formControlName="violatedRegulationsControl"
+                                       [viewMode]="viewMode">
+            </auan-violated-regulations>
+
+            <mat-error *ngIf="violatedRegulationsTouched && form.errors?.atLeastOneViolatedRegulationNeeded === true">
+                * {{ 'penal-decrees.at-least-one-violated-regulation-needed' | tlTranslate }}
+            </mat-error>
+        </div>
     </tl-expansion-panel>
 
     <!-- Санкции -->

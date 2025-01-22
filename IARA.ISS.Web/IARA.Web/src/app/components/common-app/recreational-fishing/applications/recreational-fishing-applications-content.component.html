@@ -494,7 +494,10 @@
                                 <ng-container *ngTemplateOutlet="applicationActions; context: { value: { row: row.data } }">
                                 </ng-container>
                             </ng-container>
-                            <tl-icon-button *ngIf="canEditRecords && row.data.isActive && row.data.ticketStatus === ticketStatusEnum.APPROVED"
+                            <tl-icon-button *ngIf="canEditRecords
+                                                   && row.data.isActive
+                                                   && row.data.ticketStatus === ticketStatusEnum.APPROVED
+                                                   && (canEditAllOnlineRecords || row.data.isSameTerritoryUnit)"
                                             icon="confirmation_number"
                                             iconClass="accent-color"
                                             tooltipText="{{ 'recreational-fishing.enter-online-ticket-number-button' | tlTranslate }}"
@@ -505,13 +508,17 @@
                                             tooltipText="{{ 'recreational-fishing.application-view-ticket' | tlTranslate }}"
                                             (buttonClicked)="editActionClicked(row.data, true, true)">
                             </tl-icon-button>
-                            <tl-icon-button *ngIf="row.isActive && canDeleteRecords"
+                            <tl-icon-button *ngIf="row.isActive
+                                                   && canDeleteRecords
+                                                   && (canEditAllOnlineRecords || row.data.isSameTerritoryUnit)"
                                             icon="delete"
                                             (buttonClicked)="deleteApplication(row.data)"
                                             iconClass="accent-color"
                                             tooltipText="{{ 'recreational-fishing.application-delete' | tlTranslate }}">
                             </tl-icon-button>
-                            <tl-icon-button *ngIf="!row.isActive && canRestoreRecords"
+                            <tl-icon-button *ngIf="!row.isActive
+                                                  && canRestoreRecords
+                                                  && (canEditAllOnlineRecords || row.data.isSameTerritoryUnit)"
                                             icon="restore"
                                             (buttonClicked)="restoreApplication(row.data)"
                                             iconClass="accent-color"
@@ -536,14 +543,13 @@
     <ng-container [ngSwitch]="value.row.applicationStatus">
         <ng-container *ngSwitchCase="applicationStatusEnum.FILL_BY_APPL">
             <tl-icon-button *ngIf="canEditRecords && (value.row.createdByUserId === currentUserId
-                                                    || (value.row.isOnlineTicket && value.row.prevStatusCode === applicationStatusEnum.EXT_CHK_STARTED))"
+                                                    || (value.row.isOnlineTicket && value.row.prevStatusCode === applicationStatusEnum.EXT_CHK_STARTED && (canEditAllOnlineRecords || value.row.isSameTerritoryUnit)))"
                             icon="edit"
                             iconClass="accent-color"
                             tooltipText="{{ 'applications-register.view-and-edit-application' | tlTranslate }}"
                             (buttonClicked)="editActionClicked(value.row)">
             </tl-icon-button>
-
-            <tl-icon-button *ngIf="canCancelRecords"
+            <tl-icon-button *ngIf="canCancelRecords && (!value.row.isOnlineTicket || canEditAllOnlineRecords || value.row.isSameTerritoryUnit)"
                             icon="ic-fluent-doc-prohibited-24-regular"
                             iconClass="accent-color"
                             [size]="icIconSize"
@@ -552,21 +558,21 @@
             </tl-icon-button>
         </ng-container>
         <ng-container *ngSwitchCase="applicationStatusEnum.WAIT_PMT_FROM_USR">
-            <tl-icon-button *ngIf="canProcessPaymentData && (value.row.createdByUserId === currentUserId || value.row.isOnlineTicket)"
+            <tl-icon-button *ngIf="canProcessPaymentData && (value.row.createdByUserId === currentUserId || (value.row.isOnlineTicket && (canEditAllOnlineRecords || value.row.isSameTerritoryUnit)))"
                             icon="ic-fluent-person-money-24-filled"
                             iconClass="accent-color"
                             [size]="icIconSize"
                             tooltipText="{{ 'applications-register.enter-payment-data' | tlTranslate }}"
                             (buttonClicked)="enterPaymentDataActionClicked(value.row)">
             </tl-icon-button>
-            <tl-icon-button *ngIf="canProcessPaymentData && (value.row.createdByUserId === currentUserId || value.row.isOnlineTicket)"
+            <tl-icon-button *ngIf="canProcessPaymentData && (value.row.createdByUserId === currentUserId || (value.row.isOnlineTicket && (canEditAllOnlineRecords || value.row.isSameTerritoryUnit)))"
                             icon="ic-fluent-person-prohibited-28-filled"
                             iconClass="accent-color"
                             [size]="icIconSize"
                             tooltipText="{{ 'applications-register.payment-refusal' | tlTranslate }}"
                             (buttonClicked)="paymentRefusalActoinClicked(value.row)">
             </tl-icon-button>
-            <tl-icon-button *ngIf="canCancelRecords"
+            <tl-icon-button *ngIf="canCancelRecords && (!value.row.isOnlineTicket || canEditAllOnlineRecords || value.row.isSameTerritoryUnit)"
                             icon="ic-fluent-doc-prohibited-24-regular"
                             iconClass="accent-color"
                             [size]="icIconSize"
@@ -575,7 +581,7 @@
             </tl-icon-button>
         </ng-container>
         <ng-container *ngSwitchCase="applicationStatusEnum.PAYMENT_PROCESSING">
-            <tl-icon-button *ngIf="canCancelRecords"
+            <tl-icon-button *ngIf="canCancelRecords && (!value.row.isOnlineTicket || canEditAllOnlineRecords || value.row.isSameTerritoryUnit)"
                             icon="ic-fluent-doc-prohibited-24-regular"
                             iconClass="accent-color"
                             [size]="icIconSize"
@@ -584,7 +590,7 @@
             </tl-icon-button>
         </ng-container>
         <ng-container *ngSwitchCase="applicationStatusEnum.PAYMENT_ANNUL">
-            <tl-icon-button *ngIf="canCancelRecords"
+            <tl-icon-button *ngIf="canCancelRecords && (!value.row.isOnlineTicket || canEditAllOnlineRecords || value.row.isSameTerritoryUnit)"
                             icon="ic-fluent-doc-prohibited-24-regular"
                             iconClass="accent-color"
                             [size]="icIconSize"
@@ -593,7 +599,7 @@
             </tl-icon-button>
         </ng-container>
         <ng-container *ngSwitchCase="applicationStatusEnum.EXT_CHK_STARTED">
-            <tl-icon-button *ngIf="canCancelRecords"
+            <tl-icon-button *ngIf="canCancelRecords && (!value.row.isOnlineTicket || canEditAllOnlineRecords || value.row.isSameTerritoryUnit)"
                             icon="ic-fluent-doc-prohibited-24-regular"
                             iconClass="accent-color"
                             [size]="icIconSize"
@@ -602,14 +608,14 @@
             </tl-icon-button>
         </ng-container>
         <ng-container *ngSwitchCase="applicationStatusEnum.INSP_CORR_FROM_EMP">
-            <tl-icon-button *ngIf="canInspectAndCorrectRecords && !isAssociation"
+            <tl-icon-button *ngIf="canInspectAndCorrectRecords && !isAssociation && (!value.row.isOnlineTicket || canEditAllOnlineRecords || value.row.isSameTerritoryUnit)"
                             icon="ic-fluent-doc-question-mark-24-regular"
                             iconClass="accent-color"
                             [size]="icIconSize"
                             tooltipText="{{ 'applications-register.view-and-edit-application' | tlTranslate }}"
                             (buttonClicked)="editActionClicked(value.row)">
             </tl-icon-button>
-            <tl-icon-button *ngIf="canCancelRecords"
+            <tl-icon-button *ngIf="canCancelRecords && (!value.row.isOnlineTicket || canEditAllOnlineRecords || value.row.isSameTerritoryUnit)"
                             icon="ic-fluent-doc-prohibited-24-regular"
                             iconClass="accent-color"
                             [size]="icIconSize"
@@ -618,13 +624,13 @@
             </tl-icon-button>
         </ng-container>
         <ng-container *ngSwitchCase="applicationStatusEnum.CORR_BY_USR_NEEDED">
-            <tl-icon-button *ngIf="canEditRecords && (value.row.createdByUserId === currentUserId || value.row.isOnlineTicket)"
+            <tl-icon-button *ngIf="canEditRecords && (value.row.createdByUserId === currentUserId || (value.row.isOnlineTicket && (canEditAllOnlineRecords || value.row.isSameTerritoryUnit)))"
                             icon="edit"
                             iconClass="accent-color"
                             tooltipText="{{ 'applications-register.view-and-edit-application' | tlTranslate }}"
                             (buttonClicked)="editActionClicked(value.row)">
             </tl-icon-button>
-            <tl-icon-button *ngIf="canCancelRecords"
+            <tl-icon-button *ngIf="canCancelRecords && (!value.row.isOnlineTicket || canEditAllOnlineRecords || value.row.isSameTerritoryUnit)"
                             icon="ic-fluent-doc-prohibited-24-regular"
                             iconClass="accent-color"
                             [size]="icIconSize"
@@ -633,7 +639,9 @@
             </tl-icon-button>
         </ng-container>
         <ng-container *ngSwitchDefault>
-            <tl-icon-button *ngIf="canCancelRecords && value.row.ticketStatus !== ticketStatusEnum.CANCELED"
+            <tl-icon-button *ngIf="canCancelRecords
+                                   && value.row.ticketStatus !== ticketStatusEnum.CANCELED
+                                   && (!value.row.isOnlineTicket || canEditAllOnlineRecords || value.row.isSameTerritoryUnit)"
                             icon="ic-fluent-doc-prohibited-24-regular"
                             iconClass="accent-color"
                             [size]="icIconSize"

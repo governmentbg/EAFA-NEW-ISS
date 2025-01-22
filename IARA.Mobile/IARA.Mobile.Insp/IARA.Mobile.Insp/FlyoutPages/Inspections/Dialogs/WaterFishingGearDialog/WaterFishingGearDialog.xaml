@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<tl:TLBaseDialog xmlns="http://xamarin.com/schemas/2014/forms"
+        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+        xmlns:h="clr-namespace:TechnoLogica.Xamarin.Helpers;assembly=TechnoLogica.Xamarin"
+        xmlns:local="clr-namespace:IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.WaterFishingGearDialog"
+        xmlns:m="clr-namespace:IARA.Mobile.Insp.Models"
+        xmlns:rt="clr-namespace:TechnoLogica.Xamarin.ResourceTranslator;assembly=TechnoLogica.Xamarin"
+        xmlns:tl="clr-namespace:TechnoLogica.Xamarin.Controls;assembly=TechnoLogica.Xamarin"
+        xmlns:lc="clr-namespace:IARA.Mobile.Insp.Controls"
+        x:Class="IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.WaterFishingGearDialog.WaterFishingGearDialog"
+        x:Name="dialog"
+        x:DataType="local:WaterFishingGearDialogViewModel"
+        x:TypeArguments="local:WaterFishingGearDialogViewModel, m:WaterFishingGearModel"
+        Title="{rt:Translate DialogTitle, Group=WaterFishingGear}"
+        BackgroundColor="White"
+        IconColor="White"
+        TitleBackgroundColor="{StaticResource Primary}"
+        TitleColor="White">
+    <tl:TLScrollView>
+        <StackLayout Padding="10">
+            <lc:FishingGearGeneralInfo BindingContext="{Binding FishingGearGeneralInfo}" />
+
+            <tl:TLCheckView Text="{rt:Translate Taken, Group=WaterFishingGear}"
+                    IsChecked="{Binding IsTaken}"
+                    IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}" />
+            <tl:TLCheckView Text="{rt:Translate Stored, Group=WaterFishingGear}"
+                    IsChecked="{Binding IsStored}"
+                    IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}" />
+            <tl:TLEntry Title="{rt:Translate Location, Group=WaterFishingGear}"
+                    IsEnabled="{Binding DialogType, Converter={StaticResource IsNotReview}}"
+                    ValidState="{Binding Location}" />
+            <Button Command="{Binding Save}"
+                    IsVisible="{Binding DialogType, Converter={StaticResource IsNotReview}}"
+                    Text="{rt:Translate Save, Group=Common}" />
+        </StackLayout>
+    </tl:TLScrollView>
+</tl:TLBaseDialog>

@@ -4,13 +4,16 @@ using IARA.Mobile.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Domain.Enums;
 using IARA.Mobile.Insp.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Insp.Base;
+using IARA.Mobile.Insp.Domain.Entities.Inspections;
 using IARA.Mobile.Insp.Domain.Enums;
 using IARA.Mobile.Insp.Helpers;
+using IARA.Mobile.Pub.Domain.Entities.ScientificFishing;
 using IARA.Mobile.Shared.Attributes;
 using IARA.Mobile.Shared.ViewModels.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using TechnoLogica.Xamarin.Attributes;
@@ -27,16 +30,18 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
         private SelectNomenclatureDto _action;
         private List<SelectNomenclatureDto> _nationalities;
         private List<ShipPersonnelDto> _people;
-
-        public InspectedPersonViewModel(InspectionPageViewModel inspection, InspectedPersonType personType, InspectedPersonType? legalType = null)
+        private ICommand _personTypeChosen = null;
+        public InspectedPersonViewModel(InspectionPageViewModel inspection, InspectedPersonType personType, InspectedPersonType? legalType = null, ICommand personTypeChosen = null)
         {
             Inspection = inspection;
             PersonType = personType;
             LegalType = legalType;
 
             _people = new List<ShipPersonnelDto>();
+            _personTypeChosen = personTypeChosen;
 
             PersonChosen = CommandBuilder.CreateFrom<ShipPersonnelDto>(OnPersonChosen);
+            ActionChosen = CommandBuilder.CreateFrom<SelectNomenclatureDto>(OnActionChosen);
             SearchPerson = CommandBuilder.CreateFrom(OnSearchPerson);
             SearchLegal = CommandBuilder.CreateFrom(OnSearchLegal);
 
@@ -150,6 +155,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
         }
 
         public ICommand PersonChosen { get; set; }
+        public ICommand ActionChosen { get; set; }
         public ICommand SearchPerson { get; }
         public ICommand SearchLegal { get; }
 
@@ -184,6 +190,17 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
             People.Clear();
             InRegister.Value = !clearLoadedPeople;
             Person.Value = null;
+        }
+
+        public void ResetForm()
+        {
+            Person.Value = null;
+            FirstName.Value = string.Empty;
+            MiddleName.Value = string.Empty;
+            LastName.Value = string.Empty;
+            Egn.Value = string.Empty;
+            EIK.Value = string.Empty;
+            Address.Value = string.Empty;
         }
 
         public void Init(List<SelectNomenclatureDto> nationalities)
@@ -229,7 +246,30 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
                 };
 
                 InRegister.Value = true;
-                Person.AssignFrom(subject.Id.Value, People);
+                if (subject.IsLegal)
+                {
+                    Person.Value = new ShipPersonnelDto()
+                    {
+                        Id = subject.Id.Value,
+                        EntryId = subject.EntryId,
+                        Type = subject.Type,
+                        Name = subject.FirstName,
+                        Code = subject.Eik,
+                    };
+                }
+                else
+                {
+                    Person.Value = new ShipPersonnelDto()
+                    {
+                        Id = subject.Id.Value,
+                        EntryId = subject.EntryId,
+                        Type = subject.Type,
+                        Name = subject.FirstName
+                            + (string.IsNullOrEmpty(subject.MiddleName) ? " " : $" {subject.MiddleName} ")
+                            + subject.LastName,
+                        Code = subject.Eik,
+                    };
+                }
                 Address.Value = subject.RegisteredAddress != null
                     ? subject.RegisteredAddress.BuildAddress()
                     : subject.Address;
@@ -275,7 +315,10 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
                 Nationality.Value = Nationalities.Find(f => f.Id == subject.CitizenshipId.Value);
             }
         }
-
+        public void AssignPerson(ShipPersonnelDto person)
+        {
+            OnPersonChosen(person);
+        }
         private void OnPersonChosen(ShipPersonnelDto person)
         {
             ShipUser = NomenclaturesTransaction.GetDetailedShipPerson(person.EntryId.Value, person.Type);
@@ -296,6 +339,12 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
             MiddleName.Value = ShipUser.MiddleName;
             LastName.Value = ShipUser.LastName;
             Egn.AssignFrom(ShipUser.EgnLnc);
+
+            _personTypeChosen?.Execute(person.Type);
+        }
+        private void OnActionChosen(SelectNomenclatureDto dto)
+        {
+            _personTypeChosen?.Execute(dto.Code == nameof(SubjectType.Person) ? PersonType : LegalType);
         }
 
         public static implicit operator InspectionSubjectPersonnelDto(InspectedPersonViewModel viewModel)

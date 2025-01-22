@@ -91,6 +91,7 @@ export class RecreationalFishingApplicationsContentComponent implements OnInit, 
     public canProcessPaymentData!: boolean;
     public canCancelRecords!: boolean;
     public canInspectAndCorrectRecords!: boolean;
+    public canEditAllOnlineRecords!: boolean;
 
     public currentUserId!: number;
     public onlinePaidTicketsCount: number = 0;
@@ -506,6 +507,7 @@ export class RecreationalFishingApplicationsContentComponent implements OnInit, 
             this.canProcessPaymentData = this.permissions.has(PermissionsEnum.TicketsProcessPaymentData);
             this.canCancelRecords = this.permissions.has(PermissionsEnum.TicketsCancelRecord);
             this.canInspectAndCorrectRecords = this.permissions.has(PermissionsEnum.TicketsInspectAndCorrectRegiXData);
+            this.canEditAllOnlineRecords = this.permissions.has(PermissionsEnum.TicketsEditAllOnlineRecords)
         }
     }
 

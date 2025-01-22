@@ -168,6 +168,7 @@
     TicketsInspectAndCorrectRegiXData = 'TicketsInspectAndCorrectRegiXData',
     TicketsProcessPaymentData = 'TicketsProcessPaymentData',
     TicketsCheckDataRegularity = 'TicketsCheckDataRegularity',
+    TicketsEditAllOnlineRecords = 'TicketsEditAllOnlineRecords',
 
     // Buyers and First Sale Centers
     BuyersReadAll = 'BuyersReadAll',

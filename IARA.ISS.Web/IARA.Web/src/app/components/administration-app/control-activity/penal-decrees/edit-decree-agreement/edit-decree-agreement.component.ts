@@ -47,6 +47,7 @@ export class EditDecreeAgreementComponent implements OnInit, AfterViewInit, IDia
     public viewMode: boolean = false;
     public isThirdParty: boolean = false;
     public hasTerritoryUnit: boolean = false;
+    public auanViolatedRegulationsTouched: boolean = false;
     public violatedRegulationsTouched: boolean = false;
     public inspectedEnityName: string | undefined;
     public violatedRegulationsTitle: string | undefined;
@@ -55,7 +56,8 @@ export class EditDecreeAgreementComponent implements OnInit, AfterViewInit, IDia
 
     public territoryUnits: NomenclatureDTO<number>[] = [];
     public users: InspectorUserNomenclatureDTO[] = [];
-    public violatedRegulations: AuanViolatedRegulationDTO[] = [];
+    public auanViolatedRegulations: AuanViolatedRegulationDTO[] = [];
+    public decreeViolatedRegulations: AuanViolatedRegulationDTO[] = [];
 
     @ViewChild(ValidityCheckerGroupDirective)
     private validityCheckerGroup!: ValidityCheckerGroupDirective;
@@ -167,20 +169,30 @@ export class EditDecreeAgreementComponent implements OnInit, AfterViewInit, IDia
             }
         });
 
+        this.form.get('fineControl')!.valueChanges.subscribe({
+            next: (fineAmount: number | undefined) => {
+                if (fineAmount !== undefined && fineAmount !== null) {
+                    const finePercent: string = (fineAmount * 0.7).toFixed(2);
+                    this.form.get('finePercentControl')!.setValue(finePercent);
+                }
+            }
+        });
+
         if (!this.viewMode) {
-            this.form.get('fineControl')!.valueChanges.subscribe({
-                next: (fineAmount: number | undefined) => {
-                    if (fineAmount !== undefined && fineAmount !== null) {
-                        const finePercent: string = (fineAmount * 0.7).toFixed(2);
-                        this.form.get('finePercentControl')!.setValue(finePercent);
+            this.form.get('auanViolatedRegulationsControl')!.valueChanges.subscribe({
+                next: (result: AuanViolatedRegulationDTO[] | undefined) => {
+                    if (result !== undefined && result !== null) {
+                        this.auanViolatedRegulations = result;
+                        this.auanViolatedRegulationsTouched = true;
+                        this.form.updateValueAndValidity({ onlySelf: true });
                     }
                 }
             });
 
-            this.form.get('auanViolatedRegulationsControl')!.valueChanges.subscribe({
+            this.form.get('violatedRegulationsControl')!.valueChanges.subscribe({
                 next: (result: AuanViolatedRegulationDTO[] | undefined) => {
                     if (result !== undefined && result !== null) {
-                        this.violatedRegulations = result;
+                        this.decreeViolatedRegulations = result;
                         this.violatedRegulationsTouched = true;
                         this.form.updateValueAndValidity({ onlySelf: true });
                     }
@@ -377,7 +389,10 @@ export class EditDecreeAgreementComponent implements OnInit, AfterViewInit, IDia
             seizedApplianceControl: new FormControl(null),
 
             filesControl: new FormControl(null)
-        }, this.violatedRegulationsValidator());
+        }, [
+            this.auanViolatedRegulationsValidator(),
+            this.decreeViolatedRegulationsValidator()
+        ]);
     }
 
     private fillForm(): void {
@@ -408,6 +423,11 @@ export class EditDecreeAgreementComponent implements OnInit, AfterViewInit, IDia
         if (this.model.seizedAppliance !== undefined && this.model.seizedAppliance !== null) {
             this.form.get('seizedApplianceControl')!.setValue(this.model.seizedAppliance);
         }
+
+        setTimeout(() => {
+            this.auanViolatedRegulations = this.model.auanViolatedRegulations ?? [];
+            this.decreeViolatedRegulations = this.model.decreeViolatedRegulations ?? [];
+        });
 
         if (this.viewMode) {
             this.form.disable();
@@ -468,9 +488,18 @@ export class EditDecreeAgreementComponent implements OnInit, AfterViewInit, IDia
         }
     }
 
-    private violatedRegulationsValidator(): ValidatorFn {
+    private auanViolatedRegulationsValidator(): ValidatorFn {
         return (control: AbstractControl): ValidationErrors | null => {
-            if (!this.violatedRegulations.some(x => x.isActive !== false)) {
+            if (!this.auanViolatedRegulations.some(x => x.isActive !== false)) {
+                return { 'atLeastOneAuanViolatedRegulationNeeded': true };
+            }
+            return null;
+        }
+    }
+
+    private decreeViolatedRegulationsValidator(): ValidatorFn {
+        return (control: AbstractControl): ValidationErrors | null => {
+            if (!this.decreeViolatedRegulations.some(x => x.isActive !== false)) {
                 return { 'atLeastOneViolatedRegulationNeeded': true };
             }
             return null;
@@ -480,6 +509,7 @@ export class EditDecreeAgreementComponent implements OnInit, AfterViewInit, IDia
     private markAllAsTouched(): void {
         this.form.markAllAsTouched();
 
+        this.auanViolatedRegulationsTouched = true;
         this.violatedRegulationsTouched = true;
     }
 

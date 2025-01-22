@@ -74,6 +74,11 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
             }));
         }
 
+        public void Reset()
+        {
+            LogBooks.Value.Clear();
+        }
+
         private void OnAdd()
         {
             LogBookModel model = new LogBookModel(_shipCatches)

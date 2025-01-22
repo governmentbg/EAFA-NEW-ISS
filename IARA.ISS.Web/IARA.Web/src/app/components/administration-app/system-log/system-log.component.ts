@@ -36,7 +36,7 @@ export class SystemLogComponent implements AfterViewInit, OnInit {
     public statistics: RequestStatistics[] = [];
     public tracingEnabled = false;
     public listeningForStatistics = false;
-
+    public currentDateRange: DateRangeData | null | undefined;
 
     @ViewChild(SearchPanelComponent)
     public set searchPanel(searchpanel: SearchPanelComponent) {
@@ -130,12 +130,13 @@ export class SystemLogComponent implements AfterViewInit, OnInit {
             this.searchpanel.filtersChanged.subscribe({
                 next: () => {
                     const dateRange: DateRangeData | null = this.searchPanel?.appliedFilters.find(x => CommonUtils.getFormControlName(x.control) === DATE_RANGE_CONTROL_NAME)?.value;
+                    const currentDateRange: DateRangeData | null = this.formGroup.get('dateRangeControl')?.value;
 
-                    if (dateRange === undefined || dateRange === null) {
+                    if (this.currentDateRange === undefined || this.currentDateRange === null || this.currentDateRange.start === undefined || this.currentDateRange.end === undefined) {
                         this.setDateRangeControlValue();
                     }
                 }
-            })
+            });
         }
 
         if (this.gridManager.advancedFilters === undefined || this.gridManager.advancedFilters === null) {
@@ -208,6 +209,12 @@ export class SystemLogComponent implements AfterViewInit, OnInit {
             newValueControl: new FormControl(),
             showRelatedLogsControl: new FormControl(false)
         });
+
+        this.formGroup.valueChanges.subscribe({
+            next: () => {
+                this.currentDateRange = this.formGroup.get('dateRangeControl')?.value;
+            }
+        })
 
         setTimeout(() => {
             this.formGroup.get('dateRangeControl')!.markAsTouched();
