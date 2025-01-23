@@ -19,19 +19,29 @@
             <lc:InspectedPersonView Title="{rt:Translate ShipOwner, Group=FishingShip}"
                     BindingContext="{Binding ShipOwner}"
                     InRegisterText="{rt:Translate ShipOwnerInRegister, Group=FishingShip}" />
-            <BoxView HeightRequest="1" Color="{StaticResource GrayColor}" />
-            <lc:InspectedPersonView Title="{rt:Translate ShipUser, Group=FishingShip}"
-                    BindingContext="{Binding ShipUser}"
-                    InRegisterText="{rt:Translate ShipUserInRegister, Group=FishingShip}" />
-            <BoxView HeightRequest="1" Color="{StaticResource GrayColor}" />
-            <lc:InspectedPersonView Title="{rt:Translate ShipRepresentative, Group=FishingShip}"
-                    BindingContext="{Binding ShipRepresentative}"
-                    InRegisterText="{rt:Translate ShipRepresentativeInRegister, Group=FishingShip}" />
-            <BoxView HeightRequest="1" Color="{StaticResource GrayColor}" />
+            <tl:TLCheckView ValidState="{Binding UserIsOwner}"
+                    Text="{rt:Translate UserIsOwner, Group=FishingShip}"
+                    IsVisible="{Binding IsOwnerUserCheckVisible}"
+                    Command="{Binding UserIsOwnerSwitched}"
+                    IsEnabled="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}" />
+            <Grid IsVisible="{Binding IsUserVisible}">
+                <lc:InspectedPersonView Title="{rt:Translate ShipUser, Group=FishingShip}"
+                        BindingContext="{Binding ShipUser}"
+                        InRegisterText="{rt:Translate ShipUserInRegister, Group=FishingShip}" />
+            </Grid>
+            <tl:TLCheckView ValidState="{Binding RepresentativeIsOwner}"
+                    IsVisible="{Binding IsOwnerRepresentativeCheckVisible}"
+                    Command="{Binding IsOwnerRepresentativeSwitched}"
+                    Text="{rt:Translate RepresentativeIsOwner, Group=FishingShip}"
+                    IsEnabled="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}" />
+            <Grid IsVisible="{Binding IsRepresentativeVisible}">
+                <lc:InspectedPersonView Title="{rt:Translate ShipRepresentative, Group=FishingShip}"
+                        BindingContext="{Binding ShipRepresentative}"
+                        InRegisterText="{rt:Translate ShipRepresentativeInRegister, Group=FishingShip}" />
+            </Grid>
             <lc:InspectedPersonView Title="{rt:Translate ShipCaptain, Group=FishingShip}"
                     BindingContext="{Binding ShipCaptain}"
                     InRegisterText="{rt:Translate ShipCaptainInRegister, Group=FishingShip}" />
-            <BoxView HeightRequest="1" Color="{StaticResource GrayColor}" />
             <lc:TLGeneratedToggles IsEnabled="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}"
                     IsVisible="{Binding Toggles.Value.Count, Converter={StaticResource NotEqual}, ConverterParameter=0}"
                     ValidState="{Binding Toggles}" />

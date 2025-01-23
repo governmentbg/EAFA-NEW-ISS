@@ -56,6 +56,11 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
             }));
         }
 
+        public void Reset()
+        {
+            PermitLicenses.Value.Clear();
+        }
+
         private void OnAdd()
         {
             PermitLicenseModel model = new PermitLicenseModel

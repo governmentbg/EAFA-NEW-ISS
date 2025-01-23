@@ -86,5 +86,8 @@ export class RecreationalFishingTicketApplicationDTO {
     public isExpired?: boolean;
 
     @StrictlyTyped(Boolean)
+    public isSameTerritoryUnit?: boolean;
+
+    @StrictlyTyped(Boolean)
     public isActive?: boolean;
 }

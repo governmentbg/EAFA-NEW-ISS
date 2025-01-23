@@ -12,7 +12,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
         {
             Inspection = inspection;
 
-            FishingGears = new FishingGearsViewModel(inspection, permitLicenses, this, hasAttachmentForFishingGear: hasAttachmentForFishingGear);
+            FishingGears = new FishingGearsViewModel(inspection, permitLicenses, hasAttachmentForFishingGear: hasAttachmentForFishingGear);
 
             this.AddValidation(others: new[] { FishingGears });
 

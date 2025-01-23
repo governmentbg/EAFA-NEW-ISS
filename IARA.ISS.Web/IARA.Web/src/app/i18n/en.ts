@@ -6159,6 +6159,7 @@
         'edit-violated-regulations': 'Violated regulations',
         'edit-auan-violated-regulations': 'AUAN violated regulations',
         'at-least-one-violated-regulation-needed': 'At least one violated regulation needed',
+        'at-least-one-auan-violated-regulation-needed': 'At least one violated regulation needed',
 
         'edit-fish-compensations': 'Compensations',
         'edit-fish-compensations-violated-regulations': 'Fish compensations violated regulations',

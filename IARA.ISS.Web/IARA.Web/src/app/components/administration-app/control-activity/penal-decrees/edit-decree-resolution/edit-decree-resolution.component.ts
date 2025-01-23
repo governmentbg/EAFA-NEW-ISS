@@ -48,6 +48,7 @@ export class EditDecreeResolutionComponent implements OnInit, AfterViewInit, IDi
     public viewMode: boolean = false;
     public isThirdParty: boolean = false;
     public hasTerritoryUnit: boolean = false;
+    public auanViolatedRegulationsTouched: boolean = false;
     public violatedRegulationsTouched: boolean = false;
 
     public inspectedEnityName: string | undefined;
@@ -60,7 +61,8 @@ export class EditDecreeResolutionComponent implements OnInit, AfterViewInit, IDi
     public courts: NomenclatureDTO<number>[] = [];
     public users: InspectorUserNomenclatureDTO[] = [];
 
-    public violatedRegulations: AuanViolatedRegulationDTO[] = [];
+    public auanViolatedRegulations: AuanViolatedRegulationDTO[] = [];
+    public decreeViolatedRegulations: AuanViolatedRegulationDTO[] = [];
 
     @ViewChild(ValidityCheckerGroupDirective)
     private validityCheckerGroup!: ValidityCheckerGroupDirective;
@@ -183,7 +185,17 @@ export class EditDecreeResolutionComponent implements OnInit, AfterViewInit, IDi
             this.form.get('auanViolatedRegulationsControl')!.valueChanges.subscribe({
                 next: (result: AuanViolatedRegulationDTO[] | undefined) => {
                     if (result !== undefined && result !== null) {
-                        this.violatedRegulations = result;
+                        this.auanViolatedRegulations = result;
+                        this.auanViolatedRegulationsTouched = true;
+                        this.form.updateValueAndValidity({ onlySelf: true });
+                    }
+                }
+            });
+
+            this.form.get('violatedRegulationsControl')!.valueChanges.subscribe({
+                next: (result: AuanViolatedRegulationDTO[] | undefined) => {
+                    if (result !== undefined && result !== null) {
+                        this.decreeViolatedRegulations = result;
                         this.violatedRegulationsTouched = true;
                         this.form.updateValueAndValidity({ onlySelf: true });
                     }
@@ -398,7 +410,10 @@ export class EditDecreeResolutionComponent implements OnInit, AfterViewInit, IDi
             deliveryControl: new FormControl(null),
 
             filesControl: new FormControl(null)
-        }, this.violatedRegulationsValidator());
+        }, [
+            this.auanViolatedRegulationsValidator(),
+            this.decreeViolatedRegulationsValidator()
+        ]);
     }
 
     private fillForm(): void {
@@ -443,7 +458,8 @@ export class EditDecreeResolutionComponent implements OnInit, AfterViewInit, IDi
         this.form.get('filesControl')!.setValue(this.model.files);
 
         setTimeout(() => {
-            this.violatedRegulations = this.model.auanViolatedRegulations ?? [];
+            this.auanViolatedRegulations = this.model.auanViolatedRegulations ?? [];
+            this.decreeViolatedRegulations = this.model.decreeViolatedRegulations ?? [];
         });
 
         if (this.viewMode) {
@@ -514,9 +530,18 @@ export class EditDecreeResolutionComponent implements OnInit, AfterViewInit, IDi
         }
     }
 
-    private violatedRegulationsValidator(): ValidatorFn {
+    private auanViolatedRegulationsValidator(): ValidatorFn {
         return (control: AbstractControl): ValidationErrors | null => {
-            if (!this.violatedRegulations.some(x => x.isActive !== false)) {
+            if (!this.auanViolatedRegulations.some(x => x.isActive !== false)) {
+                return { 'atLeastOneAuanViolatedRegulationNeeded': true };
+            }
+            return null;
+        }
+    }
+
+    private decreeViolatedRegulationsValidator(): ValidatorFn {
+        return (control: AbstractControl): ValidationErrors | null => {
+            if (!this.decreeViolatedRegulations.some(x => x.isActive !== false)) {
                 return { 'atLeastOneViolatedRegulationNeeded': true };
             }
             return null;
@@ -526,6 +551,7 @@ export class EditDecreeResolutionComponent implements OnInit, AfterViewInit, IDi
     private markAllAsTouched(): void {
         this.form.markAllAsTouched();
 
+        this.auanViolatedRegulationsTouched = true;
         this.violatedRegulationsTouched = true;
     }
 

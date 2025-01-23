@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 using TechnoLogica.Xamarin.Helpers;
 using TechnoLogica.Xamarin.ViewModels.Interfaces;
 using TechnoLogica.Xamarin.ViewModels.Models;
+using Xamarin.Forms.Internals;
 
 namespace IARA.Mobile.Insp.Controls.ViewModels
 {
@@ -163,6 +164,20 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
                 OPMembership.Value = opMembership.CheckValue.ToString();
                 OPMembershipSelect.AssignFrom(int.TryParse(opMembership.Number, out int result) ? (int?)result : null, ShipAssociations);
             }
+        }
+
+        public void Reset()
+        {
+            Permits.Reset();
+            PermitLicenses.Reset();
+            LogBooks.Reset();
+            Toggles.ForEach(x => x.Reset());
+            OPMembership.Value = "";
+            OPMembershipSelect.Value = null;
+            PreliminaryNotice.Value = "";
+            PreliminaryNoticeNumber.Value = "";
+            PreliminaryNoticePurpose.Value = "";
+            ObservationsOrViolations.Value = "";
         }
 
         public static implicit operator List<InspectionCheckDto>(ShipChecksViewModel viewModel)

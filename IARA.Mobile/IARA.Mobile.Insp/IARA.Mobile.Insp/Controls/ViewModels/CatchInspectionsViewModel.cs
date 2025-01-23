@@ -218,6 +218,11 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
             await TLLoadingHelper.HideFullLoadingScreen();
         }
 
+        public void Reset()
+        {
+            Catches.Value.Clear();
+        }
+
         private void OnAddCatch()
         {
             Catches.Value.Add(new CatchInspectionViewModel(Inspection, this, IsUnloadedQuantityRequired));
