@@ -331,7 +331,7 @@ export class FishingActivityReportsComponent implements OnInit, AfterViewInit {
             viewMode: true,
             headerAuditButton: {
                 id: page.id!,
-                tableName: 'ShipLogBookPage',
+                tableName: 'CatchSales.ShipLogBookPages',
                 tooltip: '',
                 getAuditRecordData: this.catchSalesService.getShipLogBookPageSimpleAudit.bind(this.catchSalesService)
             },

@@ -68,7 +68,7 @@ export class DuplicateEntriesTableComponent {
             headerAuditButton: {
                 id: entry.id!,
                 getAuditRecordData: this.duplicateService.getSimpleAudit.bind(this.duplicateService),
-                tableName: 'DuplicatesRegister'
+                tableName: 'Appl.DuplicatesRegister'
             },
             rightSideActionsCollection: [{
                 id: 'print',
@@ -102,7 +102,7 @@ export class DuplicateEntriesTableComponent {
             headerAuditButton: {
                 id: entry.deliveryId!,
                 getAuditRecordData: this.deliveryService.getSimpleAudit.bind(this.deliveryService),
-                tableName: 'ApplicationDelivery'
+                tableName: 'Appl.ApplicationDelivery'
             }
         }, '1200px').subscribe({
             next: (model: ApplicationDeliveryDTO | undefined) => {

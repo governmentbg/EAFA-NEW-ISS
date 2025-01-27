@@ -142,7 +142,7 @@ export class LogBookPageEditExceptionsComponent implements OnInit, AfterViewInit
         const headerButton: IHeaderAuditButton = {
             id: model.id!,
             getAuditRecordData: this.service.getSimpleAudit.bind(this.service),
-            tableName: 'LogBookPageEditException'
+            tableName: 'CatchSales.LogBookPageEditExceptions'
         };
 
         if (viewMode) {

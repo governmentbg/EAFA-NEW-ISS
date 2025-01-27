@@ -72,6 +72,9 @@ import { LogBookPageFilesDialogParamsModel } from './models/log-book-page-files-
 import { PageCodeEnum } from '@app/enums/page-code.enum';
 import { LogBookPageFilesComponent } from './components/log-book-page-files/log-book-page-files.component';
 import { LogBookPageFilesDTO } from '@app/models/generated/dtos/LogBookPageFilesDTO';
+import { LogBookPageEditExceptionDTO } from '@app/models/generated/dtos/LogBookPageEditExceptionDTO';
+import { CatchesAndSalesUtils } from './utils/catches-and-sales.utils';
+import { SecurityService } from '@app/services/common-app/security.service';
 
 const PAGE_NUMBER_CONTROL_NAME: string = 'pageNumberControl';
 type ThreeState = 'yes' | 'no' | 'both';
@@ -157,8 +160,11 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
     private searchpanel!: SearchPanelComponent;
 
     private systemProperties!: SystemPropertiesDTO;
+    private currentUserId: number;
 
     private gridManager!: DataTableManager<LogBookRegisterDTO, CatchesAndSalesAdministrationFilters | CatchesAndSalesPublicFilters>;
+
+    private logBookExceptions: LogBookPageEditExceptionDTO[] = [];
 
     private readonly nomenclatures: CommonNomenclatures;
     private readonly addShipLogBookPageWizardDialog: TLMatDialog<AddShipPageWizardComponent>;
@@ -195,7 +201,8 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
         editPageNumberDialog: TLMatDialog<EditLogBookPageNumberComponent>,
         editPageFilesDialog: TLMatDialog<LogBookPageFilesComponent>,
         confirmationDialog: TLConfirmDialog,
-        systemPropertiesService: SystemPropertiesService
+        systemPropertiesService: SystemPropertiesService,
+        authService: SecurityService
     ) {
         this.translationService = translationService;
         this.nomenclatures = nomenclatures;
@@ -292,6 +299,8 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
             })
         ];
 
+        this.currentUserId = authService.User!.userId;
+
         this.buildForm();
     }
 
@@ -316,6 +325,12 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
                 this.formGroup.get('logBookStatusesControl')!.setValue(defaultStatuses);
             }
         });
+
+        this.service.getLogBookPageEditExceptions().subscribe({
+            next: (exceptions: LogBookPageEditExceptionDTO[]) => {
+                this.logBookExceptions = exceptions;
+            }
+        })
 
         if (!this.isPublicApp && this.canReadShipLogBookRecords) {
             NomenclatureStore.instance.getNomenclature(
@@ -369,6 +384,7 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
         if (!CommonUtils.isNullOrEmpty(tableId) && !CommonUtils.isNullOrEmpty(pageCode)) {
             switch (pageCode) {
                 case 'ShipLogBookPage':
+                case 'ShipLogBookPages':
                     this.gridManager.advancedFilters = new CatchesAndSalesAdministrationFilters({ shipLogBookPageId: tableId });
                     break;
                 case 'FirstSaleLogBookPage':
@@ -389,21 +405,28 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
         this.gridManager.onRequestServiceMethodCalled.subscribe({
             next: (rows: LogBookRegisterDTO[] | undefined) => {
                 if (rows !== null && rows !== undefined && rows.length > 0) {
+                    const now: Date = new Date();
+
                     if (this.systemProperties.addLogBookPagesDaysTolerance) {
                         for (const row of rows) {
                             if (row.isLogBookFinished || row.isLogBookSuspended) {
-                                if (row.suspendedPermitLicenseValidTo !== undefined && row.suspendedPermitLicenseValidTo !== null) {
-                                    const now: Date = new Date();
-                                    const days: number = Math.round((now.getTime() - new Date(row.suspendedPermitLicenseValidTo).getTime()) / (1000 * 3600 * 24));
-                                    row.allowNewLogBookPages = days < this.systemProperties.addLogBookPagesDaysTolerance;
-                                }
-                                else if (row.finishDate !== undefined && row.finishDate !== null) {
-                                    const now: Date = new Date();
-                                    const days: number = Math.round((now.getTime() - new Date(row.finishDate).getTime()) / (1000 * 3600 * 24));
-                                    row.allowNewLogBookPages = days < this.systemProperties.addLogBookPagesDaysTolerance;
+                                if (!CatchesAndSalesUtils.checkIfLogBookIsUnlocked(this.logBookExceptions, this.currentUserId, row.typeId!, row.id!, now)) {
+                                    if (row.suspendedPermitLicenseValidTo !== undefined && row.suspendedPermitLicenseValidTo !== null) {
+                                        const now: Date = new Date();
+                                        const days: number = Math.round((now.getTime() - new Date(row.suspendedPermitLicenseValidTo).getTime()) / (1000 * 3600 * 24));
+                                        row.allowNewLogBookPages = days < this.systemProperties.addLogBookPagesDaysTolerance;
+                                    }
+                                    else if (row.finishDate !== undefined && row.finishDate !== null) {
+                                        const now: Date = new Date();
+                                        const days: number = Math.round((now.getTime() - new Date(row.finishDate).getTime()) / (1000 * 3600 * 24));
+                                        row.allowNewLogBookPages = days < this.systemProperties.addLogBookPagesDaysTolerance;
+                                    }
+                                    else {
+                                        row.allowNewLogBookPages = false;
+                                    }
                                 }
                                 else {
-                                    row.allowNewLogBookPages = false;
+                                    row.allowNewLogBookPages = true;
                                 }
                             }
                             else {
@@ -500,7 +523,7 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
             headerAuditBtn = {
                 id: logBookRegister.id!,
                 getAuditRecordData: this.service.getLogBookAudit.bind(this.service),
-                tableName: 'LogBook'
+                tableName: 'CatchSales.LogBooks'
             }
         }
 
@@ -557,7 +580,7 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
         if (!IS_PUBLIC_APP) {
             headerAuditBtn = {
                 id: shipPage.id!,
-                tableName: 'ShipLogBookPage',
+                tableName: 'CatchSales.ShipLogBookPages',
                 tooltip: '',
                 getAuditRecordData: this.service.getShipLogBookPageSimpleAudit.bind(this.service)
             };
@@ -642,7 +665,7 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
         if (!IS_PUBLIC_APP) {
             headerAuditBtn = {
                 id: logBookPage.id!,
-                tableName: 'AquacultureLogBookPage',
+                tableName: 'CatchSales.AquacultureLogBookPages',
                 tooltip: '',
                 getAuditRecordData: this.service.getAquacultureLogBookPageSimpleAudit.bind(this.service)
             };
@@ -1243,7 +1266,7 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
         if (!IS_PUBLIC_APP && data.id !== null && data.id !== undefined) {
             headerAuditBtn = {
                 id: data.id!,
-                tableName: 'TransportationLogBookPage',
+                tableName: 'CatchSales.TransportationLogBookPages',
                 tooltip: '',
                 getAuditRecordData: this.service.getTransportationLogBookPageSimpleAudit.bind(this.service)
             };
@@ -1293,7 +1316,7 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
         if (!IS_PUBLIC_APP) {
             headerAuditBtn = {
                 id: logBookPage.id!,
-                tableName: 'AdmissionLogBookPage',
+                tableName: 'CatchSales.AdmissionLogBookPages',
                 tooltip: '',
                 getAuditRecordData: this.service.getAdmissionLogBookPageSimpleAudit.bind(this.service)
             };
@@ -1343,7 +1366,7 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
         if (!IS_PUBLIC_APP) {
             headerAuditBtn = {
                 id: logBookPage.id!,
-                tableName: 'FirstSaleLogBookPage',
+                tableName: 'CatchSales.FirstSaleLogBookPages',
                 tooltip: '',
                 getAuditRecordData: this.service.getFirstSaleLogBookPageSimpleAudit.bind(this.service)
             };

@@ -578,7 +578,7 @@ export class RecreationalFishingApplicationsContentComponent implements OnInit, 
             headerAuditButton: {
                 id: params.id,
                 getAuditRecordData: this.service.getSimpleAudit.bind(this.service),
-                tableName: 'FishingTicket'
+                tableName: 'LRib.FishingTickets'
             },
             cancelBtn: {
                 id: 'cancel',
@@ -653,7 +653,7 @@ export class RecreationalFishingApplicationsContentComponent implements OnInit, 
                 : {
                     id: params.id,
                     getAuditRecordData: this.service.getSimpleAudit.bind(this.service),
-                    tableName: 'FishingTicket'
+                    tableName: 'LRib.FishingTickets'
                 },
             rightSideActionsCollection: rightButtons,
             cancelBtn: {

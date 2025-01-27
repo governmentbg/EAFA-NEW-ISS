@@ -511,7 +511,7 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
             auditBtn = {
                 id: entry.id!,
                 getAuditRecordData: this.service.getSimpleAudit.bind(this.service),
-                tableName: 'InspectionRegister'
+                tableName: 'RInsp.InspectionRegister'
             };
 
             if (entry.inspectionState === InspectionStatesEnum.Submitted || entry.inspectionState === InspectionStatesEnum.Signed) {

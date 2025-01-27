@@ -87,7 +87,7 @@ export class WaterVesselsTableComponent extends CustomFormControl<WaterInspectio
                 auditBtn = {
                     id: vessel.id,
                     getAuditRecordData: this.service.getInspectionVesselSimpleAudit.bind(this.service),
-                    tableName: 'InspectionVessels'
+                    tableName: 'RInsp.InspectionVessels'
                 };
             }
 

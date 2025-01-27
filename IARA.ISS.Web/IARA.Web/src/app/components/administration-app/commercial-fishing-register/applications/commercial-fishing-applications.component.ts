@@ -453,7 +453,7 @@ export class CommercialFishingApplicationsComponent {
         const auditButton: IHeaderAuditButton = {
             id: data.model!.id!,
             getAuditRecordData: this.service.getPermitLicenseSimpleAudit.bind(this.service),
-            tableName: 'PermitLicensesRegister' 
+            tableName: 'RStRib.PermitLicensesRegister' 
         };
 
         const rightButtons: IActionInfo[] = [];

@@ -875,14 +875,14 @@ export class ApplicationsTableComponent<T extends IDialogComponent> implements O
                 auditButton = {
                     id: applicationId,
                     getAuditRecordData: this.service.getApplicationHistorySimpleAudit.bind(this.service),
-                    tableName: 'ApplicationChangeHistory'
+                    tableName: 'Appl.ApplicationChangeHistory'
                 };
             }
             else {
                 auditButton = {
                     id: applicationId,
                     getAuditRecordData: this.service.getApplicationsSimpleAudit.bind(this.service),
-                    tableName: 'Applications'
+                    tableName: 'Appl.Applications'
                 };
             }
         }
@@ -1134,7 +1134,7 @@ export class ApplicationsTableComponent<T extends IDialogComponent> implements O
             auditButton = {
                 id: applicationId,
                 getAuditRecordData: this.service.getApplicationsSimpleAudit.bind(this.service),
-                tableName: 'Applications'
+                tableName: 'Appl.Applications'
             };
         }
 

@@ -145,7 +145,7 @@ export class CrossChecksResultsComponent implements AfterViewInit {
             auditButton = {
                 id: crossCheckResult.id,
                 getAuditRecordData: this.service.getCrossCheckResultSimpleAudit.bind(this.service),
-                tableName: 'CrossCheckResult'
+                tableName: 'Checks.CrossCheckResults'
             };
         }
 
@@ -235,6 +235,7 @@ export class CrossChecksResultsComponent implements AfterViewInit {
     public showCrossCheckResultResource(crossCheckresult: CrossCheckResultDTO): void {
         switch (crossCheckresult.pageCode) {
             case 'ShipLogBookPage':
+            case 'ShipLogBookPages':
             case 'FirstSaleLogBookPage':
             case 'AdmissionLogBookPage':
             case 'TransportationLogBookPage':
@@ -253,6 +254,7 @@ export class CrossChecksResultsComponent implements AfterViewInit {
     public canReadRegister(pageCode: string): boolean {
         switch (pageCode) {
             case 'ShipLogBookPage':
+            case 'ShipLogBookPages':
                 return this.canReadShipLogBookPages;
             case 'FirstSaleLogBookPage':
                 return this.canReadFirstSaleLogBookPages;

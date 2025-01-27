@@ -361,7 +361,7 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
         if (!IS_PUBLIC_APP && catchRecord !== undefined) {
             headerAuditBtn = {
                 id: catchRecord.id!,
-                tableName: 'CatchRecord',
+                tableName: 'CatchSales.CatchRecords',
                 tooltip: '',
                 getAuditRecordData: this.service.getCatchRecordSimpleAudit.bind(this.service)
             };
@@ -521,7 +521,7 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
         ) {
             headerAuditBtn = {
                 id: declarationOfOriginCatchRecord.id!,
-                tableName: 'OriginDeclarationFish',
+                tableName: 'CatchSales.OriginDeclarationFishes',
                 tooltip: '',
                 getAuditRecordData: this.service.getOriginDeclarationFishSimpleAudit.bind(this.service)
             };

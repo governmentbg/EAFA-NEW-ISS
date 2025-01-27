@@ -299,7 +299,7 @@ export class PenalDecreesComponent implements OnInit, AfterViewInit {
             const auditBtn: IHeaderAuditButton = {
                 id: decree.id!,
                 getAuditRecordData: this.service.getSimpleAudit.bind(this.service),
-                tableName: 'PenalDecreesRegister'
+                tableName: 'RInsp.PenalDecreesRegister'
             };
 
             const printBtnTitle: string = viewMode
@@ -445,7 +445,7 @@ export class PenalDecreesComponent implements OnInit, AfterViewInit {
                 auditBtn = {
                     id: status.id,
                     getAuditRecordData: this.service.getPenalDecreeStatusAudit.bind(this.service),
-                    tableName: 'PenalDecreeStatus'
+                    tableName: 'RInsp.PenalDecreeStatuses'
                 }
             }
 
@@ -573,7 +573,7 @@ export class PenalDecreesComponent implements OnInit, AfterViewInit {
             auditBtn = {
                 id: decree.deliveryId,
                 getAuditRecordData: this.service.getInspDeliverySimpleAudit.bind(this.service),
-                tableName: 'InspDelivery'
+                tableName: 'RInsp.InspDelivery'
             };
         }
 

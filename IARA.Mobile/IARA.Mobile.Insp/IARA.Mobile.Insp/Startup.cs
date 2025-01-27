@@ -24,6 +24,7 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 using TechnoLogica.Xamarin.Core;
+using TechnoLogica.Xamarin.Helpers;
 using TechnoLogica.Xamarin.ResourceTranslator;
 using Xamarin.Essentials;
 using Xamarin.Forms;
@@ -162,7 +163,7 @@ namespace IARA.Mobile.Insp
                 ? "MobileInspections"
                 : "Inspections";
 #if DEBUG
-            serverUrl.Environment = Environments.DEVELOPMENT_LOCAL;
+            serverUrl.Environment = Environments.DEVELOPMENT_INTERNAL;
 #elif PRODRELEASE
             serverUrl.Environment =  Environments.PRODUCTION;
 #else
@@ -382,7 +383,23 @@ namespace IARA.Mobile.Insp
         private async Task PostOfflineData(IStartupTransaction startUp, IInspectionsTransaction inspections)
         {
             await startUp.PostOfflineData();
-            await inspections.PostOfflineInspections();
+
+            var result = await inspections.CanMakeInspection();
+            if (result != null)
+            {
+                if (result.UnresolvedCrossChecks > 0)
+                {
+                    await PopupNavigation.Instance.PushAsync(new UnresolvedCrossChecksPopup(result));
+                }
+                if (result.CanMakeInspection)
+                {
+                    await inspections.PostOfflineInspections();
+                }
+            }
+            else
+            {
+                await inspections.PostOfflineInspections();
+            }
         }
 
         private async Task NavigateToMainPage()

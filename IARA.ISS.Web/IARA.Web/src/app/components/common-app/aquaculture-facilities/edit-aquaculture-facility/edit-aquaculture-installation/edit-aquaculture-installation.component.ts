@@ -221,7 +221,7 @@ export class EditAquacultureInstallationComponent implements OnInit, AfterViewIn
                 auditBtn = {
                     id: netCage.id,
                     getAuditRecordData: this.service.getInstallationNetCageAudit.bind(this.service),
-                    tableName: 'AquacultureInstallationNetCage'
+                    tableName: 'RAquaSt.AquacultureInstallationNetCages'
                 };
             }
 

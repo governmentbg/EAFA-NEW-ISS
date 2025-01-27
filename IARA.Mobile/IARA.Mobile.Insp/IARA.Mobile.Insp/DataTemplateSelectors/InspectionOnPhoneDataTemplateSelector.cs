@@ -3,6 +3,7 @@ using IARA.Mobile.Domain.Enums;
 using IARA.Mobile.Insp.Application.DTObjects.Inspections;
 using IARA.Mobile.Insp.Domain.Enums;
 using IARA.Mobile.Insp.FlyoutPages.InspectionsPage;
+using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Converters;
 using TechnoLogica.Xamarin.DataTemplates.Base;
 using TechnoLogica.Xamarin.Extensions;
@@ -101,8 +102,11 @@ namespace IARA.Mobile.Insp.DataTemplateSelectors
                     Size = 25
                 },
                 Padding = 10,
-                Command = bindingContext.OpenInspection,
-                CommandParameter = item,
+                Command = CommandBuilder.CreateFrom(() =>
+                {
+                    item.IsReview = true;
+                    bindingContext.OpenInspection.Execute(item);
+                }),
             });
 
             const string group = nameof(GroupResourceEnum.Inspections);

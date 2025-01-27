@@ -107,7 +107,7 @@ export class PermissionsRegisterComponent implements OnInit, AfterViewInit {
         const auditButton: IHeaderAuditButton = {
             id: permission.id!,
             getAuditRecordData: this.service.getSimpleAudit.bind(this.service),
-            tableName: 'Npermission'
+            tableName: 'UsrMgmt.Npermissions'
         };
 
         const title: string = viewMode

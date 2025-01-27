@@ -333,7 +333,7 @@ export class EditLegalEntityComponent implements OnInit, IDialogComponent {
                 headerAuditBtn = {
                     id: person.id,
                     getAuditRecordData: this.service.getAuthorizedPersonSimpleAudit.bind(this.service),
-                    tableName: 'Person'
+                    tableName: 'Legals.Persons'
                 };
             }
 

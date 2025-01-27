@@ -4,10 +4,13 @@ using IARA.Mobile.Application;
 using IARA.Mobile.Application.Extensions;
 using IARA.Mobile.Application.Interfaces.Utilities;
 using IARA.Mobile.Domain.Enums;
+using IARA.Mobile.Insp.Application;
 using IARA.Mobile.Insp.Application.Interfaces.Transactions;
 using IARA.Mobile.Shared.Extensions;
+using IARA.Mobile.Shared.Menu;
 using IARA.Mobile.Shared.Popups;
 using Rg.Plugins.Popup.Services;
+using TechnoLogica.Xamarin.Helpers;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 
@@ -90,7 +93,23 @@ namespace IARA.Mobile.Insp.Utilities
             await startup.PostOfflineData();
 
             IInspectionsTransaction inspections = DependencyService.Resolve<IInspectionsTransaction>();
-            await inspections.PostOfflineInspections();
+            var result = await inspections.CanMakeInspection();
+            if (result != null)
+            {
+                if (result.UnresolvedCrossChecks > 0)
+                {
+                    await PopupNavigation.Instance.PushAsync(new UnresolvedCrossChecksPopup(result));
+                }
+                if (result.CanMakeInspection)
+                {
+                    await inspections.PostOfflineInspections();
+                }
+            }
+            else
+            {
+                await inspections.PostOfflineInspections();
+
+            }
         }
     }
 }

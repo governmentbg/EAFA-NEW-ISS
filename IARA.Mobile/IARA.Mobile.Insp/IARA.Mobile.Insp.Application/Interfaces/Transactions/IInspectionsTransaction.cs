@@ -73,6 +73,7 @@ namespace IARA.Mobile.Insp.Application.Interfaces.Transactions
         Task<PersonFullDataDto> GetPersonFullData(IdentifierTypeEnum identifierType, string identifier);
 
         Task<LegalFullDataDto> GetLegalFullData(string eik);
+        Task<CanMakeInspectionDto> CanMakeInspection();
         InspectionDraftDto MapToDraftDto<TDto>(TDto dto) where TDto : InspectionEditDto;
 
         string GetInspectionJson(int id);

@@ -2638,6 +2638,7 @@
         'ship-user': 'Ползвател',
         'ship-representative-registered': 'Представител съществува в регистъра',
         'is-representative-same-as-owner': 'Представителят съвпада със собственика',
+        'is-user-same-as-owner': 'Ползвателят съвпада със собственика',
         'ship-representative': 'Представител',
         'ship-captain-registered': 'Капитанът съществува в регистъра',
         'ship-captain': 'Капитан',

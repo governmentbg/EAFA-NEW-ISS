@@ -220,7 +220,7 @@ export class QualifiedFishersComponent extends BasePageComponent implements Afte
             headerAuditBtn = {
                 getAuditRecordData: this.service.getSimpleAudit.bind(this.service),
                 id: entry.id,
-                tableName: 'FishermenRegister'
+                tableName: 'RPravRib.FishermenRegister'
             } as IHeaderAuditButton;
 
             if (readOnly) {
@@ -315,7 +315,7 @@ export class QualifiedFishersComponent extends BasePageComponent implements Afte
             auditButton = {
                 id: entry.deliveryId,
                 getAuditRecordData: this.deliveryService.getSimpleAudit.bind(this.deliveryService),
-                tableName: 'ApplicationDelivery'
+                tableName: 'Appl.ApplicationDelivery'
             };
         }
 

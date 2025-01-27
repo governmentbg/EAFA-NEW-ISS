@@ -258,7 +258,7 @@ export class ReportViewContentComponent implements OnInit, AfterViewInit {
             auditButtons = {
                 getAuditRecordData: this.reportService.getReportGroupsAudit.bind(this.reportService),
                 id: groupId,
-                tableName: 'ReportGroup',
+                tableName: 'Rep.ReportGroups',
             } as IHeaderAuditButton;
         }
         //add

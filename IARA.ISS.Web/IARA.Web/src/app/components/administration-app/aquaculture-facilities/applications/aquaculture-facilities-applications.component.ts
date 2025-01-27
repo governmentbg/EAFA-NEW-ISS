@@ -192,7 +192,7 @@ export class AquacultureFacilitiesApplicationsComponent {
         const auditBtn: IHeaderAuditButton = {
             id: data.model!.id!,
             getAuditRecordData: this.service.getSimpleAudit.bind(this.service),
-            tableName: 'AquacultureFacilityRegister'
+            tableName: 'RAquaSt.AquacultureFacilityRegister'
         };
 
         const rightButtons: IActionInfo[] = [];

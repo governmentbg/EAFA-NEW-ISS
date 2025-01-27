@@ -100,7 +100,7 @@ export class ReportParameterDefinitionComponent implements AfterViewInit {
                 auditButtons = {
                     getAuditRecordData: this.reportService.getParametersAudit.bind(this.reportService),
                     id: nParameterId,
-                    tableName: 'NreportParameter',
+                    tableName: 'Rep.NReportParameters',
                 } as IHeaderAuditButton;
             }
         }

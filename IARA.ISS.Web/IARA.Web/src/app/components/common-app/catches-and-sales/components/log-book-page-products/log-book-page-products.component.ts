@@ -204,7 +204,7 @@ export class LogBookPageProductsComponent extends CustomFormControl<LogBookPageP
                     headerAuditBtn = {
                         id: product.id,
                         getAuditRecordData: this.service.getLogBookPageProductAudit.bind(this.service),
-                        tableName: 'LogBookPageProduct'
+                        tableName: 'CatchSales.LogBookPageProducts'
                     };
                 }
 

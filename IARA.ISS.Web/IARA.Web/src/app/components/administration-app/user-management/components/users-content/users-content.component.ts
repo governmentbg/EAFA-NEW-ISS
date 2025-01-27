@@ -185,7 +185,7 @@ export class UsersContentComponent implements OnInit, AfterViewInit {
             headerAuditBtn = {
                 getAuditRecordData: this.service.getSimpleAudit.bind(this.service),
                 id: id,
-                tableName: 'Users'
+                tableName: 'UsrMgmt.Users'
             } as IHeaderAuditButton;
 
             headerTitle = this.isInternalUser ?
@@ -269,7 +269,7 @@ export class UsersContentComponent implements OnInit, AfterViewInit {
             headerAuditBtn = {
                 getAuditRecordData: this.service.getSimpleAudit.bind(this.service),
                 id: id,
-                tableName: 'Users'
+                tableName: 'UsrMgmt.Users'
             } as IHeaderAuditButton;
         }
 
@@ -300,7 +300,7 @@ export class UsersContentComponent implements OnInit, AfterViewInit {
             headerAuditBtn = {
                 getAuditRecordData: this.service.getSimpleAudit.bind(this.service),
                 id: user.id,
-                tableName: 'Users'
+                tableName: 'UsrMgmt.Users'
             } as IHeaderAuditButton;
         }
 

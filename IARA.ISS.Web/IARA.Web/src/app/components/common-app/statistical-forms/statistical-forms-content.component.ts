@@ -204,7 +204,7 @@ export class StatisticalFormsContentComponent implements AfterViewInit {
                 auditButton = {
                     id: form.id,
                     getAuditRecordData: this.service.getSimpleAudit.bind(this.service),
-                    tableName: 'StatisticalFormsRegister'
+                    tableName: 'RInfStat.StatisticalFormsRegister'
                 };
             }
 

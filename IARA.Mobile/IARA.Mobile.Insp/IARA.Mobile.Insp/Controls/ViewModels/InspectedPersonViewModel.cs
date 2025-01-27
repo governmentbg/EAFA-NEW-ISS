@@ -31,6 +31,8 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
         private List<SelectNomenclatureDto> _nationalities;
         private List<ShipPersonnelDto> _people;
         private ICommand _personTypeChosen = null;
+        private ViewActivityType _activityType;
+
         public InspectedPersonViewModel(InspectionPageViewModel inspection, InspectedPersonType personType, InspectedPersonType? legalType = null, ICommand personTypeChosen = null)
         {
             Inspection = inspection;
@@ -44,6 +46,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
             ActionChosen = CommandBuilder.CreateFrom<SelectNomenclatureDto>(OnActionChosen);
             SearchPerson = CommandBuilder.CreateFrom(OnSearchPerson);
             SearchLegal = CommandBuilder.CreateFrom(OnSearchLegal);
+            InRegisterSwitched = CommandBuilder.CreateFrom(OnInRegisterSwitched);
 
             this.AddValidation(groups: new Dictionary<string, Func<bool>>
             {
@@ -82,7 +85,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
                 }
             };
 
-            _action = Actions[0];
+            Action = Actions[0];
         }
 
         public InspectionPageViewModel Inspection { get; }
@@ -153,11 +156,26 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
             get => _people;
             set => SetProperty(ref _people, value);
         }
+        public ViewActivityType ActivityType
+        {
+            get => _activityType;
+            set => SetProperty(ref _activityType, value);
+        }
 
         public ICommand PersonChosen { get; set; }
         public ICommand ActionChosen { get; set; }
         public ICommand SearchPerson { get; }
         public ICommand SearchLegal { get; }
+        public ICommand InRegisterSwitched { get; }
+
+        public void SwitchActivityType(bool canEdit)
+        {
+            if (Inspection.ActivityType == ViewActivityType.Review)
+            {
+                return;
+            }
+            ActivityType = canEdit ? Inspection.ActivityType : ViewActivityType.Review;
+        }
 
         private async Task OnSearchLegal()
         {
@@ -190,6 +208,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
             People.Clear();
             InRegister.Value = !clearLoadedPeople;
             Person.Value = null;
+            Action = Actions[0];
         }
 
         public void ResetForm()
@@ -201,13 +220,14 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
             Egn.Value = string.Empty;
             EIK.Value = string.Empty;
             Address.Value = string.Empty;
+            Action = Actions[0];
         }
 
         public void Init(List<SelectNomenclatureDto> nationalities)
         {
             Nationalities = nationalities;
-
             Nationality.Value = nationalities.Find(f => f.Code == CommonConstants.NomenclatureBulgaria);
+            ActivityType = Inspection.ActivityType;
         }
 
         public void OnEdit(List<InspectionSubjectPersonnelDto> personnel)
@@ -344,7 +364,25 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
         }
         private void OnActionChosen(SelectNomenclatureDto dto)
         {
-            _personTypeChosen?.Execute(dto.Code == nameof(SubjectType.Person) ? PersonType : LegalType);
+            _personTypeChosen?.Execute(Action.Code == nameof(SubjectType.Person) ? PersonType : LegalType);
+        }
+        private void OnInRegisterSwitched()
+        {
+            if (InRegister)
+            {
+                if (Person.Value != null)
+                {
+                    _personTypeChosen?.Execute(Person.Value.Type);
+                }
+                else
+                {
+                    _personTypeChosen?.Execute(null);
+                }
+            }
+            else
+            {
+                _personTypeChosen?.Execute(Action.Code == nameof(SubjectType.Person) ? PersonType : LegalType);
+            }
         }
 
         public static implicit operator InspectionSubjectPersonnelDto(InspectedPersonViewModel viewModel)

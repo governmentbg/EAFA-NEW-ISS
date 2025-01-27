@@ -164,7 +164,7 @@ export class RecreationalFishingAssociationsComponent implements OnInit, AfterVi
             const auditButton: IHeaderAuditButton = {
                 id: association.id,
                 getAuditRecordData: this.service.getSimpleAudit.bind(this.service),
-                tableName: 'FishingAssociation'
+                tableName: 'LRib.FishingAssociations'
             };
 
             const title: string = viewMode

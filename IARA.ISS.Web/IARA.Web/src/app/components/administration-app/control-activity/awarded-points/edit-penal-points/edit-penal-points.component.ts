@@ -300,7 +300,7 @@ export class EditPenalPointsComponent implements OnInit, AfterViewInit, IDialogC
                 auditBtn = {
                     id: complaint.id,
                     getAuditRecordData: this.service.getPenalPointsStatusAudit.bind(this.service),
-                    tableName: 'PenalPointComplaintStatus'
+                    tableName: 'RInsp.PenalPointComplaintStatus'
                 };
             }
 

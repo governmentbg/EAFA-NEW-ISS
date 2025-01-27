@@ -181,7 +181,7 @@ export class ScientificFishingContent implements OnInit, AfterViewInit {
                 auditButton = {
                     id: permit.id,
                     getAuditRecordData: this.service.getSimpleAudit.bind(this.service),
-                    tableName: 'ScientificPermitRegister'
+                    tableName: 'RNauR.ScientificPermitRegister'
                 };
             }
 
@@ -307,7 +307,7 @@ export class ScientificFishingContent implements OnInit, AfterViewInit {
             auditButton = {
                 id: permit.deliveryId,
                 getAuditRecordData: this.deliveryService.getSimpleAudit.bind(this.deliveryService),
-                tableName: 'ApplicationDelivery'
+                tableName: 'Appl.ApplicationDelivery'
             };
         }
 

@@ -695,7 +695,7 @@ export class EditBuyersComponent implements OnInit, AfterViewInit, IDialogCompon
                 auditBtn = {
                     id: document.id,
                     getAuditRecordData: this.service.getPremiseUsageDocumentAudit.bind(this.service),
-                    tableName: 'BuyerPremiseUsageDocument'
+                    tableName: 'RCPP.BuyerPremiseUsageDocuments'
                 };
             }
 
@@ -796,7 +796,7 @@ export class EditBuyersComponent implements OnInit, AfterViewInit, IDialogCompon
                 auditBtn = {
                     id: license.id,
                     getAuditRecordData: this.service.getBuyerLicensesAudit.bind(this.service),
-                    tableName: 'BuyerLicense'
+                    tableName: 'RCPP.BuyerLicenses'
                 };
             }
 
@@ -897,7 +897,7 @@ export class EditBuyersComponent implements OnInit, AfterViewInit, IDialogCompon
                 auditBtn = {
                     id: license.id,
                     getAuditRecordData: this.service.getBuyerLicensesAudit.bind(this.service),
-                    tableName: 'BuyerLicense'
+                    tableName: 'RCPP.BuyerLicenses'
                 };
             }
 

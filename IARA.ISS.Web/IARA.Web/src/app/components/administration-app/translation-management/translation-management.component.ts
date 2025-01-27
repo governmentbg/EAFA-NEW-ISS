@@ -132,7 +132,7 @@ export class TranslationManagementComponent extends BasePageComponent implements
             headerAuditButton: {
                 id: entry.id!,
                 getAuditRecordData: this.service.getSimpleAudit.bind(this.service),
-                tableName: 'NtranslationResource'
+                tableName: 'Admin.NTranslationResources'
             },
             headerCancelButton: {
                 cancelBtnClicked: (closeFn: HeaderCloseFunction): void => {

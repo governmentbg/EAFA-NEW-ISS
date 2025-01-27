@@ -231,7 +231,6 @@ namespace IARA.Mobile.Infrastructure.Utilities
                 httpContent?.Dispose();
 
                 Debug.WriteLine($"{requestUri} | Status Code={response.StatusCode}");
-                Console.WriteLine($"{requestUri} | Status Code={response.StatusCode}");
 
                 switch (response.StatusCode)
                 {

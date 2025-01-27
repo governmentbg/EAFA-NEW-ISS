@@ -121,7 +121,7 @@ export class YearlyQuotasComponent extends BasePageComponent implements OnInit, 
             headerAuditBtn = {
                 getAuditRecordData: this.service.getSimpleAudit.bind(this.service),
                 id: entry!.id,
-                tableName: 'CatchQuota'
+                tableName: 'RQuo.CatchQuotas'
             } as IHeaderAuditButton;
             headerTitle = this.translationService.getValue('catch-quotas.edit-dialog');
         }

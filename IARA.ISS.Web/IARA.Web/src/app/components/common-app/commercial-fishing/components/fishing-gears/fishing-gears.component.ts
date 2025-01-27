@@ -131,7 +131,7 @@ export class FishingGearsComponent extends CustomFormControl<FishingGearDTO[]> i
                 headerAuditBtn = {
                     id: fishingGear.id,
                     getAuditRecordData: this.service.getFishingGearAudit.bind(this.service),
-                    tableName: 'FishingGearRegister'
+                    tableName: 'RStRib.FishingGearRegister'
                 };
             }
 

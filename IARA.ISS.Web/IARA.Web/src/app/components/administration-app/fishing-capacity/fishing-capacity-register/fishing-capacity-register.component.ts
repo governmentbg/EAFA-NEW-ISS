@@ -118,7 +118,7 @@ export class FishingCapacityRegisterComponent implements AfterViewInit {
             auditButton = {
                 id: history.shipId!,
                 getAuditRecordData: this.shipsService.getSimpleAudit.bind(this.shipsService),
-                tableName: 'ShipRegister'
+                tableName: 'RShips.ShipRegister'
             };
         }
         else if (history.pageCode === PageCodeEnum.DeregShip) {
@@ -129,7 +129,7 @@ export class FishingCapacityRegisterComponent implements AfterViewInit {
             auditButton = {
                 id: history.shipId!,
                 getAuditRecordData: this.shipsService.getSimpleAudit.bind(this.shipsService),
-                tableName: 'ShipRegister'
+                tableName: 'RShips.ShipRegister'
             };
         }
         else if (history.pageCode === PageCodeEnum.IncreaseFishCap) {
@@ -140,7 +140,7 @@ export class FishingCapacityRegisterComponent implements AfterViewInit {
             auditButton = {
                 id: history.id!,
                 getAuditRecordData: this.service.getSimpleAudit.bind(this.service),
-                tableName: 'ShipCapacityRegister'
+                tableName: 'RCap.ShipCapacityRegister'
             };
         }
         else if (history.pageCode === PageCodeEnum.ReduceFishCap) {
@@ -151,7 +151,7 @@ export class FishingCapacityRegisterComponent implements AfterViewInit {
             auditButton = {
                 id: history.id!,
                 getAuditRecordData: this.service.getSimpleAudit.bind(this.service),
-                tableName: 'ShipCapacityRegister'
+                tableName: 'RCap.ShipCapacityRegister'
             };
         }
 

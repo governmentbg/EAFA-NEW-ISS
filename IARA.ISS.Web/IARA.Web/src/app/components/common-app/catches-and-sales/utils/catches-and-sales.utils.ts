@@ -61,4 +61,38 @@ export class CatchesAndSalesUtils {
             return false;
         }
     }
+
+    public static checkIfLogBookIsUnlocked(
+        logBookPageEditExceptions: LogBookPageEditExceptionDTO[],
+        currentUserId: number,
+        logBookTypeId: number,
+        logBookId: number,
+        now: Date
+    ): boolean {
+        if (logBookPageEditExceptions.some
+            (x =>
+                x.exceptionActiveFrom!.getTime() <= now.getTime()
+                && x.exceptionActiveTo!.getTime() > now.getTime()
+
+                && (
+                    (x.userId === currentUserId
+                        && (x.logBookTypeId === logBookTypeId || x.logBookTypeId === null || x.logBookTypeId === undefined)
+                        && (x.logBookId === logBookId || x.logBookId === null || x.logBookId === undefined))
+
+                    || ((x.userId === null || x.userId === undefined)
+                        && x.logBookTypeId === logBookTypeId
+                        && (x.logBookId === logBookId || x.logBookId === null || x.logBookId === undefined))
+
+                    || ((x.userId === null || x.userId === undefined)
+                        && (x.logBookTypeId === null || x.logBookTypeId === undefined)
+                        && x.logBookId === logBookId)
+                )
+            )
+        ) { // този дневник го има в изключение за потребител и/или тип дневник, и/или дневник
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
 }

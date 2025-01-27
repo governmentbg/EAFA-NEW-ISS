@@ -310,9 +310,18 @@ namespace IARA.Mobile.Insp.FlyoutPages.InspectionsPage
                 GlobalVariables.IsAddingInspection = true;
             }
 
-            ViewActivityType viewActivity = dto.SubmitType == SubmitType.Finish || !dto.CreatedByCurrentUser
+            ViewActivityType viewActivity;
+            if (dto.IsReview)
+            {
+                viewActivity = ViewActivityType.Review;
+            }
+            else
+            {
+                viewActivity = dto.SubmitType == SubmitType.Finish || !dto.CreatedByCurrentUser
                 ? ViewActivityType.Review
                 : ViewActivityType.Edit;
+            }
+
 
             await ForInspectionType(dto, viewActivity);
         }

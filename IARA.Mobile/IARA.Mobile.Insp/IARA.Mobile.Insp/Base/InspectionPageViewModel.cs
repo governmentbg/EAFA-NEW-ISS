@@ -65,7 +65,7 @@ namespace IARA.Mobile.Insp.Base
         private async Task OnReturnForEdit()
         {
             bool hasPermission = DependencyService.Resolve<IProfileTransaction>().HasPermission("InspectionLockedEdit");
-            if (hasPermission || ProtectedEdit.StartDate.HasValue && ProtectedEdit.StartDate.Value.AddHours(48) > DateTime.Now)
+            if (hasPermission || CreatedOn.AddHours(48) > DateTime.Now)
             {
                 ProtectedEdit.InspectionState = InspectionState.Draft;
                 string json = GetInspectionJson();

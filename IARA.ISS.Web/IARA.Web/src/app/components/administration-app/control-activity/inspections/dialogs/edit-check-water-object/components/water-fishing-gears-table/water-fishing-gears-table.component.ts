@@ -88,7 +88,7 @@ export class WaterFishingGearsTableComponent extends CustomFormControl<WaterInsp
                 auditBtn = {
                     id: fishingGear.inspectedFishingGearId,
                     getAuditRecordData: this.service.getInspectedFishingGearSimpleAudit.bind(this.service),
-                    tableName: 'InspectedFishingGears'
+                    tableName: 'RInsp.InspectedFishingGears'
                 };
             }
 

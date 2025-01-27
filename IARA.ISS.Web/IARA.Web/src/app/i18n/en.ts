@@ -2577,6 +2577,7 @@
         'ship-user': 'User',
         'ship-representative-registered': 'Representer is registered',
         'is-representative-same-as-owner': 'Representative is same as ship owner',
+        'is-user-same-as-owner': 'Ship user is same as ship owner',
         'ship-representative': 'Representer',
         'ship-captain-registered': 'Captain is registered',
         'ship-captain': 'Captain',

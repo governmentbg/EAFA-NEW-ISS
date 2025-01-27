@@ -307,7 +307,7 @@ export class BuyersComponent implements OnInit, AfterViewInit {
 
         const headerAuditBtn: IHeaderAuditButton = {
             id: entry.id!,
-            tableName: 'BuyerRegister',
+            tableName: 'RCPP.BuyerRegister',
             tooltip: '',
             getAuditRecordData: this.service.getSimpleAudit.bind(this.service),
         };
@@ -408,7 +408,7 @@ export class BuyersComponent implements OnInit, AfterViewInit {
         const headerAuditBtn: IHeaderAuditButton = {
             id: logBook.id!,
             getAuditRecordData: this.service.getLogBookAudit.bind(this.service),
-            tableName: 'LogBook'
+            tableName: 'CatchSales.LogBooks'
         };
 
         this.openLogBookDialog(title, data, headerAuditBtn, viewMode);

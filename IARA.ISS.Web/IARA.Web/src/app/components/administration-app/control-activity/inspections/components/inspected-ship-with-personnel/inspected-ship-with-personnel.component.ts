@@ -1,4 +1,4 @@
-﻿import { Component, EventEmitter, Input, OnChanges, OnInit, Output, Self, SimpleChanges } from '@angular/core';
+﻿import { AfterViewInit, Component, EventEmitter, Input, OnChanges, OnInit, Output, Self, SimpleChanges } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, NgControl, Validators } from '@angular/forms';
 
 import { CustomFormControl } from '@app/shared/utils/custom-form-control';
@@ -24,7 +24,7 @@ import { ShipsUtils } from '@app/shared/utils/ships.utils';
     selector: 'inspected-ship-with-personnel',
     templateUrl: './inspected-ship-with-personnel.component.html'
 })
-export class InspectedShipWithPersonnelComponent extends CustomFormControl<ShipWithPersonnelModel> implements OnInit, OnChanges {
+export class InspectedShipWithPersonnelComponent extends CustomFormControl<ShipWithPersonnelModel> implements OnInit, AfterViewInit, OnChanges {
     @Input()
     public hasMap: boolean = true;
 
@@ -102,8 +102,53 @@ export class InspectedShipWithPersonnelComponent extends CustomFormControl<ShipW
         }
     }
 
-    public async ngOnInit(): Promise<void> {
+    public ngOnInit(): void {
         this.initCustomFormControl();
+    }
+
+    public ngAfterViewInit(): void {
+        if (!this.isDisabled) {
+            this.form.get('isRepresentativeSameAsOwnerControl')!.valueChanges.subscribe({
+                next: (yes: boolean) => {
+                    if (yes) {
+                        const owner: InspectionSubjectPersonnelDTO | undefined = this.form.get('shipOwnerControl')!.value;
+
+                        if (owner !== undefined && owner !== null && !owner.isLegal) {
+                            this.form.get('shipRepresentativeControl')!.setValue(owner);
+                            this.form.get('shipRepresentativeControl')!.disable();
+                        }
+                    }
+                    else {
+                        this.form.get('shipRepresentativeControl')!.enable();
+                    }
+
+                    this.form.get('shipRepresentativeControl')!.updateValueAndValidity({ emitEvent: false });
+                    this.form.get('shipRepresentativeControl')!.markAsPending();
+                }
+            });
+
+            this.form.get('isUserSameAsOwnerControl')!.valueChanges.subscribe({
+                next: (yes: boolean) => {
+                    if (yes) {
+                        const owner: InspectionSubjectPersonnelDTO | undefined = this.form.get('shipOwnerControl')!.value;
+
+                        if (owner !== undefined && owner !== null) {
+                            const type: InspectedPersonTypeEnum = owner.isLegal ? InspectedPersonTypeEnum.LicUsrLgl : InspectedPersonTypeEnum.LicUsrPers;
+                            const shipSubject: InspectionSubjectPersonnelDTO = this.mapSubjectToOwner(owner, type);
+
+                            this.form.get('shipUserControl')!.setValue(shipSubject);
+                            this.form.get('shipUserControl')!.disable();
+                        }
+                    }
+                    else {
+                        this.form.get('shipUserControl')!.enable();
+                    }
+
+                    this.form.get('shipUserControl')!.updateValueAndValidity({ emitEvent: false });
+                    this.form.get('shipUserControl')!.markAsPending();
+                }
+            });
+        }
     }
 
     public writeValue(value: ShipWithPersonnelModel): void {
@@ -234,21 +279,8 @@ export class InspectedShipWithPersonnelComponent extends CustomFormControl<ShipW
             togglesControl: new FormControl([]),
             portControl: new FormControl(undefined),
             observationControl: new FormControl(undefined, Validators.maxLength(4000)),
+            isUserSameAsOwnerControl: new FormControl(false),
             isRepresentativeSameAsOwnerControl: new FormControl(false)
-        });
-
-        form.get('isRepresentativeSameAsOwnerControl')!.valueChanges.subscribe({
-            next: (yes: boolean) => {
-                if (yes) {
-                    const owner: InspectionSubjectPersonnelDTO | undefined = this.form.get('shipOwnerControl')!.value;
-
-                    if (owner !== undefined && owner !== null && !owner.isLegal) {
-                        this.form.get('shipRepresentativeControl')!.setValue(owner);
-                    }
-                }
-
-                this.form.get('shipRepresentativeControl')!.updateValueAndValidity({ emitEvent: false });
-            }
         });
 
         return form;
@@ -288,9 +320,69 @@ export class InspectedShipWithPersonnelComponent extends CustomFormControl<ShipW
     }
 
     private fillPersonnelControls(personnel: InspectionSubjectPersonnelDTO[]): void {
-        this.form.get('shipOwnerControl')!.setValue(personnel.find(x => x.type === InspectedPersonTypeEnum.OwnerLegal || x.type === InspectedPersonTypeEnum.OwnerPers));
-        this.form.get('shipUserControl')!.setValue(personnel.find(x => x.type === InspectedPersonTypeEnum.LicUsrLgl || x.type === InspectedPersonTypeEnum.LicUsrPers));
-        this.form.get('shipRepresentativeControl')!.setValue(personnel.find(x => x.type === InspectedPersonTypeEnum.ReprsPers));
-        this.form.get('shipCaptainControl')!.setValue(personnel.find(x => x.type === InspectedPersonTypeEnum.CaptFshmn));
+        const shipOwner: InspectionSubjectPersonnelDTO | undefined = personnel.find(x => x.type === InspectedPersonTypeEnum.OwnerLegal || x.type === InspectedPersonTypeEnum.OwnerPers);
+        const shipUser: InspectionSubjectPersonnelDTO | undefined = personnel.find(x => x.type === InspectedPersonTypeEnum.LicUsrLgl || x.type === InspectedPersonTypeEnum.LicUsrPers);
+        const shipRepresentative: InspectionSubjectPersonnelDTO | undefined = personnel.find(x => x.type === InspectedPersonTypeEnum.ReprsPers);
+        const shipCaptain: InspectionSubjectPersonnelDTO | undefined = personnel.find(x => x.type === InspectedPersonTypeEnum.CaptFshmn);
+
+        this.form.get('shipOwnerControl')!.setValue(shipOwner);
+        this.form.get('shipUserControl')!.setValue(shipUser);
+        this.form.get('shipRepresentativeControl')!.setValue(shipRepresentative);
+        this.form.get('shipCaptainControl')!.setValue(shipCaptain);
+
+        if (shipOwner !== undefined && shipOwner !== null) {
+            if (shipUser !== undefined && shipUser !== null) {
+                const isSameAsOwner: boolean = this.isInspectedSubjectSameAsShipOwner(shipOwner, shipUser);
+                this.form.get('isUserSameAsOwnerControl')!.setValue(isSameAsOwner);
+            }
+
+            if (shipRepresentative !== undefined && shipRepresentative !== null) {
+                const isSameAsOwner: boolean = this.isInspectedSubjectSameAsShipOwner(shipOwner, shipRepresentative);
+                this.form.get('isRepresentativeSameAsOwnerControl')!.setValue(isSameAsOwner);
+            }
+        }
+    }
+
+    private isInspectedSubjectSameAsShipOwner(shipOwner: InspectionSubjectPersonnelDTO, inspectedSubject: InspectionSubjectPersonnelDTO): boolean {
+        if (shipOwner.isLegal === inspectedSubject.isLegal) {
+            if (shipOwner.entryId === undefined || shipOwner.entryId === null) {
+                if (shipOwner.isLegal && inspectedSubject.isLegal) {
+                    if (shipOwner.eik === inspectedSubject.eik) {
+                        return true;
+                    }
+                }
+                else {
+                    if (shipOwner.egnLnc?.identifierType === inspectedSubject.egnLnc?.identifierType && shipOwner.egnLnc?.egnLnc === inspectedSubject.egnLnc?.egnLnc) {
+                        return true;
+                    }
+                }
+            }
+            else if (shipOwner.entryId === inspectedSubject.entryId) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private mapSubjectToOwner(owner: InspectionSubjectPersonnelDTO, type: InspectedPersonTypeEnum): InspectionSubjectPersonnelDTO {
+        const shipSubject: InspectionSubjectPersonnelDTO = new InspectionSubjectPersonnelDTO({
+            isLegal: owner.isLegal,
+            isRegistered: owner.isRegistered,
+            citizenshipId: owner.citizenshipId,
+            entryId: owner.entryId,
+            address: owner.address,
+            comment: owner.comment,
+            egnLnc: owner.egnLnc,
+            eik: owner.eik,
+            firstName: owner.firstName,
+            middleName: owner.middleName,
+            hasBulgarianAddressRegistration: owner.hasBulgarianAddressRegistration,
+            registeredAddress: owner.registeredAddress,
+            lastName: owner.lastName,
+            type: type
+        });
+
+        return shipSubject;
     }
 }

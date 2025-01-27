@@ -110,7 +110,7 @@ export class RolesRegisterComponent implements OnInit, AfterViewInit {
             auditButton = {
                 id: role.id,
                 getAuditRecordData: this.service.getSimpleAudit.bind(this.service),
-                tableName: 'Role'
+                tableName: 'UsrMgmt.UserRoles'
             };
 
             title = viewMode

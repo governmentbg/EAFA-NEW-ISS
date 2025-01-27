@@ -160,7 +160,7 @@ export class PatrolVehiclesComponent implements AfterViewInit, OnInit {
             auditButton = {
                 id: vehicle.id,
                 getAuditRecordData: this.service.getSimpleAudit.bind(this.service),
-                tableName: 'UnregisteredVessel'
+                tableName: 'RInsp.UnregisteredVessels'
             };
 
             title = viewMode

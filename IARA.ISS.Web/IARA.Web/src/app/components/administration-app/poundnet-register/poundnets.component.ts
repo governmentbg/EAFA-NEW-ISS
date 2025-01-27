@@ -172,7 +172,7 @@ export class PoundnetsComponent implements OnInit, AfterViewInit {
             headerAuditBtn = {
                 id: poundnet.id,
                 getAuditRecordData: this.service.getSimpleAudit.bind(this.service),
-                tableName: 'PoundnetRegister'
+                tableName: 'RDal.PoundNetRegister'
             };
 
             headerTitle = this.translate.getValue('poundnet-page.edit-poundnet-dialog-title');
