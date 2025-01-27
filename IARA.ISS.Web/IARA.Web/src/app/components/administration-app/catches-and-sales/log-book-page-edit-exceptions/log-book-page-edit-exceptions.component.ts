@@ -212,7 +212,7 @@ export class LogBookPageEditExceptionsComponent implements OnInit, AfterViewInit
             headerCancelButton: {
                 cancelBtnClicked: (closeFn: HeaderCloseFunction) => { closeFn(); }
             },
-        }, '800px').subscribe({
+        }, '1200px').subscribe({
             next: (result: LogBookPageEditExceptionEditDTO | undefined) => {
                 if (result !== null && result !== undefined) {
                     this.gridManager.refreshData();

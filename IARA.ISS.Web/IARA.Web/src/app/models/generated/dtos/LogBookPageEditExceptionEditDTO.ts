@@ -1,6 +1,7 @@
 ﻿
 
 import { StrictlyTyped } from '@app/shared/decorators/strictly-typed.decorator';
+import { FileInfoDTO } from './FileInfoDTO';
 
 export class LogBookPageEditExceptionEditDTO { 
     public constructor(obj?: Partial<LogBookPageEditExceptionEditDTO>) {
@@ -30,4 +31,7 @@ export class LogBookPageEditExceptionEditDTO {
 
     @StrictlyTyped(Date)
     public editPageTo?: Date;
+
+    @StrictlyTyped(FileInfoDTO)
+    public files?: FileInfoDTO[];
 }

@@ -4851,7 +4851,10 @@
         'external-users-group': 'External users',
         'user': 'User',
         'log-book': 'Log book',
-        'is-valid': 'Valid'
+        'is-valid': 'Valid',
+        'show-finished-or-suspended': 'Show finished or suspended',
+        'edit-page-exception-files': 'Files',
+        'edit-page-exception-basic-info': 'Basic info',
     },
     'fishing-activities': {
         'filters-trip-identifier': 'Trip identifier',

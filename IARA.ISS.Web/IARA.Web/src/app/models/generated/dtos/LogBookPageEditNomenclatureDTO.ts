@@ -16,4 +16,7 @@ export class LogBookPageEditNomenclatureDTO extends NomenclatureDTO<number> {
   
     @StrictlyTyped(String)
     public logBookTypeCode?: string;
+
+    @StrictlyTyped(Boolean)
+    public isFinishedOrSuspended?: boolean;
 }

@@ -66,7 +66,7 @@
     </data-column>
 
     <data-column propertyName="saleLocation"
-                 [flexRate]="0.3"
+                 [flexRate]="0.4"
                  columnName="{{ 'catches-and-sales.first-sale-sale-location' | tlTranslate }}">
     </data-column>
 
@@ -75,7 +75,7 @@
                  columnName="{{ 'catches-and-sales.first-sale-products-information' | tlTranslate }}">
     </data-column>
 
-    <data-template-column *ngIf="showActionButtons" [flexRate]="0.2" [cellClass]="'justify-center'">
+    <data-template-column *ngIf="showActionButtons" [flexRate]="0.3" [cellClass]="'justify-center'">
         <ng-template let-row="row" ngx-datatable-cell-template>
             <div fxLayout="row wrap" fxLayoutAlign="end center">
                 <tl-icon-button *ngIf="(!row.data.isLogBookFinished || allowEditAfterFinished)
