@@ -480,7 +480,7 @@ export class EditScientificPermitComponent implements OnInit, IDialogComponent {
                 headerAuditBtn = {
                     id: holder.id,
                     getAuditRecordData: this.service.getPermitHolderAudit.bind(this.service),
-                    tableName: 'ScientificPermitOwner'
+                    tableName: 'RNauR.ScientificPermitOwners'
                 };
             }
 
@@ -580,7 +580,7 @@ export class EditScientificPermitComponent implements OnInit, IDialogComponent {
             headerAuditBtn = {
                 id: outingId,
                 getAuditRecordData: this.service.getPermitOutingAudit.bind(this.service),
-                tableName: 'ScientificPermitOuting'
+                tableName: 'RNauR.ScientificPermitOutings'
             };
         }
         else {

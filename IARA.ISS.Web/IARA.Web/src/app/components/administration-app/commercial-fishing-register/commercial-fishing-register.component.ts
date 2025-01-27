@@ -516,12 +516,12 @@ export class CommercialFishingRegisterComponent implements OnInit, AfterViewInit
             || permit.typeCode === CommercialFishingTypesEnum.PoundNetPermit
             || permit.typeCode === CommercialFishingTypesEnum.ThirdCountryPermit) {
 
-            tableName = 'PermitRegister';
+            tableName = 'RStRib.PermitRegister';
             isPermit = true;
             simpleAuditMethod = this.service.getSimpleAudit.bind(this.service);
         }
         else {
-            tableName = 'PermitLicensesRegister';
+            tableName = 'RStRib.PermitLicensesRegister';
             isPermit = false;
             simpleAuditMethod = this.service.getPermitLicenseSimpleAudit.bind(this.service);
         }
@@ -696,7 +696,7 @@ export class CommercialFishingRegisterComponent implements OnInit, AfterViewInit
             auditButton = {
                 id: register.deliveryId,
                 getAuditRecordData: this.deliveryService.getSimpleAudit.bind(this.deliveryService),
-                tableName: 'ApplicationDelivery'
+                tableName: 'Appl.ApplicationDelivery'
             };
         }
 

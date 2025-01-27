@@ -135,7 +135,7 @@ export class ShipQuotasComponent extends BasePageComponent implements OnInit, Af
             headerAuditBtn = {
                 getAuditRecordData: this.service.getSimpleAudit.bind(this.service),
                 id: entry!.id,
-                tableName: 'ShipCatchQuota'
+                tableName: 'RQuo.ShipCatchQuotas'
             } as IHeaderAuditButton;
             headerTitle = this.translationService.getValue('catch-quotas.edit-dialog');
         }

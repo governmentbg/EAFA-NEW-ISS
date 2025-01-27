@@ -104,7 +104,11 @@ namespace IARA.Mobile.Insp.DataTemplateSelectors
                     Size = 25
                 },
                 Padding = 10,
-                Command = bindingContext.OpenInspection,
+                Command = CommandBuilder.CreateFrom(() =>
+                {
+                    item.IsReview = true;
+                    bindingContext.OpenInspection.Execute(item);
+                }),
                 CommandParameter = item,
             });
 

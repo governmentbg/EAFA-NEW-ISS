@@ -745,7 +745,7 @@ export class EditShipRegisterComponent extends BasePageComponent implements OnIn
             },
             headerAuditButton: {
                 id: page.id!,
-                tableName: 'ShipLogBookPage',
+                tableName: 'CatchSales.ShipLogBookPages',
                 getAuditRecordData: this.service.getShipLogBookPageSimpleAudit.bind(this.service)
             },
             componentData: new EditShipLogBookPageDialogParams({
@@ -793,7 +793,7 @@ export class EditShipRegisterComponent extends BasePageComponent implements OnIn
             this.router.navigateByUrl('/system-log', {
                 state: {
                     tableId: this.model.id.toString(),
-                    tableName: 'ShipRegister'
+                    tableName: 'RShips.ShipRegister'
                 }
             });
         }

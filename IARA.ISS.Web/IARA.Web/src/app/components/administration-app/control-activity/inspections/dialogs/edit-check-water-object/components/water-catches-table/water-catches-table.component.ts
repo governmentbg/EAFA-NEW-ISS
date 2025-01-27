@@ -93,7 +93,7 @@ export class WaterCatchesTableComponent extends CustomFormControl<InspectionCatc
                 auditBtn = {
                     id: catchMeasure.id,
                     getAuditRecordData: this.service.getInspectionCatchMeasureSimpleAudit.bind(this.service),
-                    tableName: 'InspectionCatchMeasures'
+                    tableName: 'RInsp.InspectionCatchMeasures'
                 };
             }
 

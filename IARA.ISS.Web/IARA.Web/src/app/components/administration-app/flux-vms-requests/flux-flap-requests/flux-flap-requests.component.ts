@@ -102,7 +102,7 @@ export class FluxFlapRequestsComponent implements OnInit, AfterViewInit {
             audit = {
                 id: flap.id!,
                 getAuditRecordData: this.service.getFlapRequestAudit.bind(this.service),
-                tableName: 'FluxFlapRequest'
+                tableName: 'iss.FluxFlapRequest'
             };
 
             data = new DialogParamsModel({

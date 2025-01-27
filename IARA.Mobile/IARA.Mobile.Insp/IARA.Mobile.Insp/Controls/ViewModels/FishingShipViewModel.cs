@@ -23,14 +23,14 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
     {
         private bool _isOwnerUserCheckVisible = false;
         private bool _isOwnerRepresentativeCheckVisible = false;
-        private bool _isUserVisible = true;
-        private bool _isRepresentativeVisible = true;
+        private bool _isUserDisabled = true;
+        private bool _isRepresentativeDisabled = true;
         public FishingShipViewModel(InspectionPageViewModel inspection, bool canPickLocation = true, bool hasLastPort = true)
         {
             Inspection = inspection;
             HasLastPort = hasLastPort;
 
-            OwnerTypeChosen = CommandBuilder.CreateFrom<InspectedPersonType>(OnOwnerChosen);
+            OwnerTypeChosen = CommandBuilder.CreateFrom<InspectedPersonType?>(OnOwnerChosen);
             UserIsOwnerSwitched = CommandBuilder.CreateFrom<bool>(OnUserIsOwnerSwitched);
             IsOwnerRepresentativeSwitched = CommandBuilder.CreateFrom<bool>(OnIsOwnerRepresentativeSwitched);
 
@@ -100,15 +100,15 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
             get => _isOwnerRepresentativeCheckVisible;
             set => SetProperty(ref _isOwnerRepresentativeCheckVisible, value);
         }
-        public bool IsUserVisible
+        public bool IsUserDisabled
         {
-            get => _isUserVisible;
-            set => SetProperty(ref _isUserVisible, value);
+            get => _isUserDisabled;
+            set => SetProperty(ref _isUserDisabled, value);
         }
-        public bool IsRepresentativeVisible
+        public bool IsRepresentativeDisabled
         {
-            get => _isRepresentativeVisible;
-            set => SetProperty(ref _isRepresentativeVisible, value);
+            get => _isRepresentativeDisabled;
+            set => SetProperty(ref _isRepresentativeDisabled, value);
         }
         public InspectedShipDataViewModel ShipData { get; }
         public InspectedPersonViewModel ShipOwner { get; }
@@ -219,37 +219,49 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
             IsOwnerUserCheckVisible = false;
             RepresentativeIsOwner.Value = false;
             UserIsOwner.Value = false;
-            IsUserVisible = true;
-            IsRepresentativeVisible = true;
+            ShipUser.SwitchActivityType(true);
+            ShipRepresentative.SwitchActivityType(true);
 
-            ShipCaptain.Reset(true);
+            ShipCaptain.Reset(false);
             ShipCaptain.ResetForm();
-            ShipOwner.Reset(true);
+            ShipOwner.Reset(false);
             ShipOwner.ResetForm();
-            ShipUser.Reset(true);
+            ShipUser.Reset(false);
             ShipUser.ResetForm();
-            ShipRepresentative.Reset(true);
+            ShipRepresentative.Reset(false);
             ShipRepresentative.ResetForm();
         }
 
-        private void OnOwnerChosen(InspectedPersonType type)
+        private void OnOwnerChosen(InspectedPersonType? type)
         {
-            IsOwnerRepresentativeCheckVisible = type == InspectedPersonType.OwnerPers;
-
-            if (!IsOwnerRepresentativeCheckVisible)
+            if (type == null)
             {
-                IsRepresentativeVisible = true;
                 RepresentativeIsOwner.Value = false;
+                UserIsOwner.Value = false;
+                ShipUser.SwitchActivityType(true);
+                ShipRepresentative.SwitchActivityType(true);
                 ShipRepresentative.ResetForm();
+                ShipUser.ResetForm();
+                IsOwnerRepresentativeCheckVisible = false;
+                IsOwnerUserCheckVisible = false;
             }
+            else
+            {
+                IsOwnerRepresentativeCheckVisible = type == InspectedPersonType.OwnerPers;
 
-            IsOwnerUserCheckVisible = true;
+                if (!IsOwnerRepresentativeCheckVisible)
+                {
+                    ShipRepresentative.SwitchActivityType(true);
+                    RepresentativeIsOwner.Value = false;
+                    ShipRepresentative.ResetForm();
+                }
+
+                IsOwnerUserCheckVisible = true;
+            }
         }
 
         private void OnUserIsOwnerSwitched(bool switchValue)
         {
-            IsUserVisible = !switchValue;
-
             if (switchValue)
             {
                 ShipUser.OnEdit(ShipOwner);
@@ -258,12 +270,11 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
             {
                 ShipUser.ResetForm();
             }
+            ShipUser.SwitchActivityType(!switchValue);
         }
 
         private void OnIsOwnerRepresentativeSwitched(bool switchValue)
         {
-            IsRepresentativeVisible = !switchValue;
-
             if (switchValue)
             {
                 ShipRepresentative.OnEdit(ShipOwner);
@@ -272,6 +283,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
             {
                 ShipRepresentative.ResetForm();
             }
+            ShipRepresentative.SwitchActivityType(!switchValue);
         }
 
         public static implicit operator List<InspectionSubjectPersonnelDto>(FishingShipViewModel viewModel)

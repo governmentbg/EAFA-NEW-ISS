@@ -576,7 +576,7 @@ export class EditShipComponent extends CustomFormControl<ShipRegisterEditDTO | n
                 headerAuditBtn = {
                     id: owner.id,
                     getAuditRecordData: this.service.getShipOwnerAudit.bind(this.service),
-                    tableName: 'ShipOwner'
+                    tableName: 'RShips.ShipOwners'
                 };
             }
 

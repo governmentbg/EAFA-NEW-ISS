@@ -77,14 +77,14 @@ export class BuyersFSCApplicationsComponent {
         });
 
         this.processingPermissions = new Map<PageCodeEnum, ApplicationProcessingPermissions>([
-            [ PageCodeEnum.RegFirstSaleBuyer, processingPermissions ],
-            [ PageCodeEnum.RegFirstSaleCenter, processingPermissions ],
-            [ PageCodeEnum.ChangeFirstSaleBuyer, processingPermissions ],
-            [ PageCodeEnum.ChangeFirstSaleCenter, processingPermissions ],
-            [ PageCodeEnum.TermFirstSaleBuyer, processingPermissions ],
-            [ PageCodeEnum.TermFirstSaleCenter, processingPermissions ],
-            [ PageCodeEnum.DupFirstSaleBuyer, processingPermissions ],
-            [ PageCodeEnum.DupFirstSaleCenter, processingPermissions ]
+            [PageCodeEnum.RegFirstSaleBuyer, processingPermissions],
+            [PageCodeEnum.RegFirstSaleCenter, processingPermissions],
+            [PageCodeEnum.ChangeFirstSaleBuyer, processingPermissions],
+            [PageCodeEnum.ChangeFirstSaleCenter, processingPermissions],
+            [PageCodeEnum.TermFirstSaleBuyer, processingPermissions],
+            [PageCodeEnum.TermFirstSaleCenter, processingPermissions],
+            [PageCodeEnum.DupFirstSaleBuyer, processingPermissions],
+            [PageCodeEnum.DupFirstSaleCenter, processingPermissions]
         ]);
 
         this.applicationsRegisterData = new Map<PageCodeEnum, BuyersFirstSaleCenterApplicationsRegisterDataType>([
@@ -285,7 +285,7 @@ export class BuyersFSCApplicationsComponent {
         const auditBtn: IHeaderAuditButton = {
             id: data.model!.id!,
             getAuditRecordData: this.service.getSimpleAudit.bind(this.service),
-            tableName: 'BuyerRegister'
+            tableName: 'RCPP.BuyerRegister'
         };
 
         const rightButtons: IActionInfo[] = [];

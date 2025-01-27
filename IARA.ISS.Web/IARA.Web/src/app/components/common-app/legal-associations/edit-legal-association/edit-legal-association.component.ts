@@ -368,7 +368,7 @@ export class EditLegalAssociationComponent implements OnInit, IDialogComponent {
                 headerAuditBtn = {
                     id: person.id,
                     getAuditRecordData: this.service.getFishingAssociationPersonSimpleAudit.bind(this.service),
-                    tableName: 'Person'
+                    tableName: 'Legals.Persons'
                 };
             }
 

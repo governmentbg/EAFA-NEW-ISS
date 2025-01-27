@@ -220,7 +220,7 @@ export class ReportDefinitionComponent implements OnInit, AfterViewInit {
             this.router.navigateByUrl('/system-log', {
                 state: {
                     tableId: this.report.id.toString(),
-                    tableName: 'Report'
+                    tableName: 'Rep.Reports'
                 }
             });
         }
@@ -249,7 +249,7 @@ export class ReportDefinitionComponent implements OnInit, AfterViewInit {
                 auditButtons = {
                     getAuditRecordData: this.reportService.getReportParametersAudit.bind(this.reportService),
                     id: parameterId,
-                    tableName: 'ReportParameter',
+                    tableName: 'Rep.ReportParameters',
                 } as IHeaderAuditButton;
             }
         }

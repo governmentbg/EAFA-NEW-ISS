@@ -53,7 +53,7 @@ export class EditTranslationComponent implements IDialogComponent, OnInit {
                             this.dialogData.dialogRef.componentInstance.headerAuditBtn = {
                                 id: this.model.id!,
                                 getAuditRecordData: this.service.getSimpleAudit.bind(this.service),
-                                tableName: 'NTranslationResource'
+                                tableName: 'Admin.NTranslationResources'
                             };
                         }
                     }

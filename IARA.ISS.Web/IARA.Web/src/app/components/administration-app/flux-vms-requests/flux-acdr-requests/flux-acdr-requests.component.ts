@@ -166,7 +166,7 @@ export class FluxAcdrRequestsComponent implements OnInit, AfterViewInit {
         const headerAuditBtn: IHeaderAuditButton = {
             id: report.requestId!,
             getAuditRecordData: this.service.getSimpleAudit.bind(this.service),
-            tableName: 'FLUXFVMSRequests'
+            tableName: 'iss.FLUXFVMSRequests'
         };
 
         this.viewDialog.open({

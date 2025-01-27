@@ -201,13 +201,13 @@ export class SuspensionsComponent extends CustomFormControl<SuspensionDataDTO[]>
                     case PageCodeEnum.RightToFishThirdCountry:
                     case PageCodeEnum.PoundnetCommFish: {
                         getAuditRecordDataMethod = this.service.getPermitSuspensionAudit.bind(this.service);
-                        tableName = 'PermitSuspensionChangeHistory';
+                        tableName = 'RStRib.PermitSuspensionChangeHistory';
                     } break;
                     case PageCodeEnum.RightToFishResource:
                     case PageCodeEnum.CatchQuataSpecies:
                     case PageCodeEnum.PoundnetCommFishLic: {
                         getAuditRecordDataMethod = this.service.getPermitLicenseSuspensionAudit.bind(this.service);
-                        tableName = 'PermitLicenseSuspensionChangeHistory';
+                        tableName = 'RStRib.PermitLicenseSuspensionChangeHistory';
                     } break;
                 }
 

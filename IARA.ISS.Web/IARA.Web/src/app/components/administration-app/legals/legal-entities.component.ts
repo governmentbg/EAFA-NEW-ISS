@@ -141,7 +141,7 @@ export class LegalEntitiesComponent implements AfterViewInit {
         const auditBtn: IHeaderAuditButton = {
             id: legal.id!,
             getAuditRecordData: this.service.getSimpleAudit.bind(this.service),
-            tableName: 'Legal'
+            tableName: 'Legals.Legals'
         };
 
         const title: string = viewMode

@@ -650,7 +650,7 @@ export class EditAquacultureFacilityComponent implements OnInit, AfterViewInit, 
                 auditBtn = {
                     id: installation.id,
                     getAuditRecordData: this.service.getInstallationAudit.bind(this.service),
-                    tableName: 'AquacultureFacilityInstallation'
+                    tableName: 'RAquaSt.AquacultureFacilityInstallations'
                 };
             }
 
@@ -746,7 +746,7 @@ export class EditAquacultureFacilityComponent implements OnInit, AfterViewInit, 
                 auditBtn = {
                     id: document.id,
                     getAuditRecordData: this.service.getUsageDocumentAudit.bind(this.service),
-                    tableName: 'UsageDocument'
+                    tableName: 'iss.UsageDocuments'
                 };
             }
 
@@ -847,7 +847,7 @@ export class EditAquacultureFacilityComponent implements OnInit, AfterViewInit, 
                 auditBtn = {
                     id: certificate.id,
                     getAuditRecordData: this.service.getWaterLawCertificateAudit.bind(this.service),
-                    tableName: 'AquacultureWaterLawCertificate'
+                    tableName: 'RAquaSt.AquacultureWaterLawCertificates'
                 };
             }
 
@@ -947,7 +947,7 @@ export class EditAquacultureFacilityComponent implements OnInit, AfterViewInit, 
                 auditBtn = {
                     id: certificate.id,
                     getAuditRecordData: this.service.getOvosCertificateAudit.bind(this.service),
-                    tableName: 'AquacultureOvosCertificate'
+                    tableName: 'RAquaSt.AquacultureOvosCertificates'
                 };
             }
 
@@ -1046,7 +1046,7 @@ export class EditAquacultureFacilityComponent implements OnInit, AfterViewInit, 
                 auditBtn = {
                     id: certificate.id,
                     getAuditRecordData: this.service.getBabhCertificateAudit.bind(this.service),
-                    tableName: 'AquacultureBabhCertificate'
+                    tableName: 'RAquaSt.AquacultureBabhCertificates'
                 };
             }
 

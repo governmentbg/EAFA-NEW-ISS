@@ -22,6 +22,12 @@
                                     title="{{ 'inspections.ship-owner' | tlTranslate }}">
             </inspected-ship-subject>
 
+            <div *ngIf="!isDisabled" fxLayout="row" fxLayoutAlign="start center">
+                <tl-checkbox formControlName="isUserSameAsOwnerControl"
+                             label="{{ 'inspections.is-user-same-as-owner' | tlTranslate }}">
+                </tl-checkbox>
+            </div>
+
             <inspected-ship-subject formControlName="shipUserControl"
                                     [subjects]="users"
                                     [countries]="countries"
@@ -31,7 +37,7 @@
                                     title="{{ 'inspections.ship-user' | tlTranslate }}">
             </inspected-ship-subject>
 
-            <div fxLayout="row" fxLayoutAlign="start center">
+            <div *ngIf="!isDisabled" fxLayout="row" fxLayoutAlign="start center">
                 <tl-checkbox formControlName="isRepresentativeSameAsOwnerControl"
                              label="{{ 'inspections.is-representative-same-as-owner' | tlTranslate }}">
                 </tl-checkbox>

@@ -196,7 +196,7 @@ export class PenalPointsComponent implements OnInit, AfterViewInit, OnChanges {
             const auditBtn: IHeaderAuditButton = {
                 id: points.id!,
                 getAuditRecordData: this.service.getSimpleAudit.bind(this.service),
-                tableName: 'PenalPointsRegister'
+                tableName: 'RInsp.PenalPointsRegister'
             };
 
             const title: string = viewMode

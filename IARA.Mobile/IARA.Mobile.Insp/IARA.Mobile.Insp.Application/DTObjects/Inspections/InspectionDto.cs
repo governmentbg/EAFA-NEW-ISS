@@ -18,5 +18,6 @@ namespace IARA.Mobile.Insp.Application.DTObjects.Inspections
         public DateTime StartDate { get; set; }
         public bool CreatedByCurrentUser { get; set; }
         public DateTime CreatedOn { get; set; }
+        public bool IsReview { get; set; } = false;
     }
 }

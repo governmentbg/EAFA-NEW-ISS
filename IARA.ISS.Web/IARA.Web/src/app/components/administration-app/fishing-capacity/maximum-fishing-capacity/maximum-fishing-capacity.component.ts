@@ -80,7 +80,7 @@ export class MaximumFishingCapacityComponent implements AfterViewInit {
             auditButton = {
                 id: capacity.id,
                 getAuditRecordData: this.service.getMaximumCapacitySimpleAudit.bind(this.service),
-                tableName: 'CountryCapacityRegister'
+                tableName: 'RCap.CountryCapacityRegister'
             };
 
             title = viewMode

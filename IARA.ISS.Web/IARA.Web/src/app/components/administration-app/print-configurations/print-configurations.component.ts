@@ -124,7 +124,7 @@ export class PrintConfigurationsComponent implements OnInit, AfterViewInit {
         const headerAuditBtn: IHeaderAuditButton = {
             getAuditRecordData: this.service.getSimpleAudit.bind(this.service),
             id: id,
-            tableName: 'ApplicationPrintSignUsers'
+            tableName: 'Appl.ApplicationPrintSignUsers'
         };
 
         this.openEditDialog(title, data, headerAuditBtn, viewMode);

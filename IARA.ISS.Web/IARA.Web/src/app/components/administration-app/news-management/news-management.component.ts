@@ -128,7 +128,7 @@ export class NewsManagementComponent implements OnInit, AfterViewInit {
             auditButton = {
                 getAuditRecordData: this.newsManagmentService.getSimpleAudit.bind(this.newsManagmentService),
                 id: id,
-                tableName: 'News',
+                tableName: 'News.News',
             };
         }
         //add

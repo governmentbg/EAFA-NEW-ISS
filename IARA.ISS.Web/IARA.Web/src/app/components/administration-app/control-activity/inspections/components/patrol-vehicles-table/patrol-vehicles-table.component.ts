@@ -95,7 +95,7 @@ export class PatrolVehiclesTableComponent extends CustomFormControl<VesselDuring
                 auditBtn = {
                     id: patrolVehicle.id,
                     getAuditRecordData: this.service.getInspectionPatrolVehicleSimpleAudit.bind(this.service),
-                    tableName: 'InspectionPatrolVehicles'
+                    tableName: 'RInsp.InspectionPatrolVehicles'
                 };
             }
 

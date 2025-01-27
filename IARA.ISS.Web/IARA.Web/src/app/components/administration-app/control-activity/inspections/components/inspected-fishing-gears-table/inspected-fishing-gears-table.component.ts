@@ -192,7 +192,7 @@ export class InspectedFishingGearsTableComponent extends CustomFormControl<Inspe
                 auditBtn = {
                     id: fishingGear.gear.id!,
                     getAuditRecordData: this.service.getInspectedFishingGearSimpleAudit.bind(this.service),
-                    tableName: 'InspectedFishingGears'
+                    tableName: 'RInsp.InspectedFishingGears'
                 };
             }
 

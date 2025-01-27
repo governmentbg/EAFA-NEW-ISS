@@ -239,7 +239,7 @@ export class AuanRegisterComponent implements OnInit, AfterViewInit {
             const auditBtn: IHeaderAuditButton = {
                 id: auan.id!,
                 getAuditRecordData: this.service.getSimpleAudit.bind(this.service),
-                tableName: 'Auanregister'
+                tableName: 'RInsp.AUANRegister'
             };
 
             const title: string = viewMode
@@ -415,7 +415,7 @@ export class AuanRegisterComponent implements OnInit, AfterViewInit {
             auditBtn = {
                 id: auan.deliveryId,
                 getAuditRecordData: this.service.getInspDeliverySimpleAudit.bind(this.service),
-                tableName: 'InspDelivery'
+                tableName: 'RInsp.InspDelivery'
             };
         }
 

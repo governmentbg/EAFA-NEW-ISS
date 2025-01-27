@@ -24,21 +24,17 @@
                     IsVisible="{Binding IsOwnerUserCheckVisible}"
                     Command="{Binding UserIsOwnerSwitched}"
                     IsEnabled="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}" />
-            <Grid IsVisible="{Binding IsUserVisible}">
-                <lc:InspectedPersonView Title="{rt:Translate ShipUser, Group=FishingShip}"
-                        BindingContext="{Binding ShipUser}"
-                        InRegisterText="{rt:Translate ShipUserInRegister, Group=FishingShip}" />
-            </Grid>
+            <lc:InspectedPersonView Title="{rt:Translate ShipUser, Group=FishingShip}"
+                    BindingContext="{Binding ShipUser}"
+                    InRegisterText="{rt:Translate ShipUserInRegister, Group=FishingShip}" />
             <tl:TLCheckView ValidState="{Binding RepresentativeIsOwner}"
                     IsVisible="{Binding IsOwnerRepresentativeCheckVisible}"
                     Command="{Binding IsOwnerRepresentativeSwitched}"
                     Text="{rt:Translate RepresentativeIsOwner, Group=FishingShip}"
                     IsEnabled="{Binding Inspection.ActivityType, Converter={StaticResource IsNotReview}}" />
-            <Grid IsVisible="{Binding IsRepresentativeVisible}">
-                <lc:InspectedPersonView Title="{rt:Translate ShipRepresentative, Group=FishingShip}"
-                        BindingContext="{Binding ShipRepresentative}"
-                        InRegisterText="{rt:Translate ShipRepresentativeInRegister, Group=FishingShip}" />
-            </Grid>
+            <lc:InspectedPersonView Title="{rt:Translate ShipRepresentative, Group=FishingShip}"
+                    BindingContext="{Binding ShipRepresentative}"
+                    InRegisterText="{rt:Translate ShipRepresentativeInRegister, Group=FishingShip}" />
             <lc:InspectedPersonView Title="{rt:Translate ShipCaptain, Group=FishingShip}"
                     BindingContext="{Binding ShipCaptain}"
                     InRegisterText="{rt:Translate ShipCaptainInRegister, Group=FishingShip}" />

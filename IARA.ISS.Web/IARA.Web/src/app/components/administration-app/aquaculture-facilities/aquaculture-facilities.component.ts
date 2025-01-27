@@ -309,7 +309,7 @@ export class AquacultureFacilitiesComponent implements OnInit, AfterViewInit {
             auditButton = {
                 id: aquaculture.id,
                 getAuditRecordData: this.service.getSimpleAudit.bind(this.service),
-                tableName: 'AquacultureFacilityRegister'
+                tableName: 'RAquaSt.AquacultureFacilityRegister'
             };
 
             title = viewMode
@@ -423,7 +423,7 @@ export class AquacultureFacilitiesComponent implements OnInit, AfterViewInit {
             auditButton = {
                 id: aquaculture.deliveryId,
                 getAuditRecordData: this.deliveryService.getSimpleAudit.bind(this.deliveryService),
-                tableName: 'ApplicationDelivery'
+                tableName: 'Appl.ApplicationDelivery'
             };
         }
 
@@ -492,7 +492,7 @@ export class AquacultureFacilitiesComponent implements OnInit, AfterViewInit {
         const headerAuditBtn: IHeaderAuditButton = {
             id: logBook.id!,
             getAuditRecordData: this.service.getLogBookAudit.bind(this.service),
-            tableName: 'LogBook'
+            tableName: 'CatchSales.LogBooks'
         };
 
         this.openLogBookDialog(title, data, headerAuditBtn, viewMode);

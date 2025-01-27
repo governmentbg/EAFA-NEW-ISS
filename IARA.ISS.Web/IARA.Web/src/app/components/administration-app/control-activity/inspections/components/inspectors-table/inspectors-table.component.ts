@@ -138,7 +138,7 @@ export class InspectorsTableComponent extends CustomFormControl<InspectorDuringI
                 auditBtn = {
                     id: inspector.id,
                     getAuditRecordData: this.service.getInspectionInspectorSimpleAudit.bind(this.service),
-                    tableName: 'InspectionInspectors'
+                    tableName: 'RInsp.InspectionInspectors'
                 };
             }
 

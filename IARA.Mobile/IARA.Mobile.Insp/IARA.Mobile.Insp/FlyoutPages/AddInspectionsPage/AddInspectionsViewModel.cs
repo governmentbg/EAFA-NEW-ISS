@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using IARA.Mobile.Domain.Enums;
 using IARA.Mobile.Insp.Application;
+using IARA.Mobile.Insp.Application.Interfaces.Transactions;
 using IARA.Mobile.Insp.Base;
 using IARA.Mobile.Insp.FlyoutPages.Inspections.AquacultureFarmInspection;
 using IARA.Mobile.Insp.FlyoutPages.Inspections.BoatOnOpenWater;
@@ -15,8 +16,11 @@ using IARA.Mobile.Insp.FlyoutPages.Inspections.InWaterOnBoard;
 using IARA.Mobile.Insp.FlyoutPages.Inspections.TranshipmentInspection;
 using IARA.Mobile.Insp.FlyoutPages.Inspections.VehicleInspection;
 using IARA.Mobile.Shared.Menu;
+using IARA.Mobile.Shared.Popups;
+using Rg.Plugins.Popup.Services;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Helpers;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace IARA.Mobile.Insp.FlyoutPages.AddInspectionsPage
@@ -54,8 +58,28 @@ namespace IARA.Mobile.Insp.FlyoutPages.AddInspectionsPage
         public async Task OnGoToAdd(string type)
         {
             await TLLoadingHelper.ShowFullLoadingScreen();
-            GlobalVariables.IsAddingInspection = true;
-            await MainNavigator.Current.GoToPageAsync(GetPage(type));
+            var result = await DependencyService.Resolve<IInspectionsTransaction>().CanMakeInspection();
+            if (result != null)
+            {
+                if (result.UnresolvedCrossChecks > 0)
+                {
+                    await PopupNavigation.Instance.PushAsync(new UnresolvedCrossChecksPopup(result));
+                }
+                if (result.CanMakeInspection)
+                {
+                    GlobalVariables.IsAddingInspection = true;
+                    await MainNavigator.Current.GoToPageAsync(GetPage(type));
+                }
+                else
+                {
+                    await TLLoadingHelper.HideFullLoadingScreen();
+                }
+            }
+            else
+            {
+                GlobalVariables.IsAddingInspection = true;
+                await MainNavigator.Current.GoToPageAsync(GetPage(type));
+            }
         }
 
         private Page GetPage(string type)

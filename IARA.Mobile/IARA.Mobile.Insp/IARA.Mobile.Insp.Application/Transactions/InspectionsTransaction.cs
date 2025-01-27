@@ -1,6 +1,7 @@
 ﻿using IARA.Mobile.Application;
 using IARA.Mobile.Application.DTObjects.Common;
 using IARA.Mobile.Application.Extensions;
+using IARA.Mobile.Application.Interfaces.Utilities;
 using IARA.Mobile.Domain.Enums;
 using IARA.Mobile.Domain.Models;
 using IARA.Mobile.Insp.Application.DTObjects.Inspections;
@@ -31,6 +32,7 @@ namespace IARA.Mobile.Insp.Application.Transactions
         private const string UrlPrefix = "Inspections/";
         private readonly IOfflineFiles _offlineFiles;
         private readonly IMessagingCenter _messagingCenter;
+
 
         public InspectionsTransaction(IOfflineFiles offlineFiles, IMessagingCenter messagingCenter, BaseTransactionProvider provider)
             : base(provider)
@@ -580,9 +582,13 @@ namespace IARA.Mobile.Insp.Application.Transactions
             where TDto : InspectionEditDto
         {
             int localId = dto.Id ?? 0;
+            if (localId < 0)
+            {
+                dto.Id = 0;
+            }
             PostEnum postEnum;
             Task<HttpResult<int>> taskResult;
-
+            string jsonContent = JsonSerializer.Serialize(dto);
             if (submitType == SubmitType.Draft || (dto.IsOfflineOnly && submitType == SubmitType.Edit))
             {
                 taskResult = RestClient.PostAsFormDataAsync<int>(UrlPrefix + "Add", MapToDraftDto(dto));
@@ -603,6 +609,10 @@ namespace IARA.Mobile.Insp.Application.Transactions
             else
             {
                 taskResult = RestClient.PutAsFormDataAsync<int>(UrlPrefix + "Edit", MapToDraftDto(dto));
+            }
+            if (localId < 0)
+            {
+                dto.Id = localId;
             }
 
             HttpResult<int> result = await taskResult;
@@ -879,47 +889,108 @@ namespace IARA.Mobile.Insp.Application.Transactions
                 {
                     Inspection inspection = localInspections[i];
 
-                    InspectionEditDto dto = null;
-
                     switch (inspection.InspectionType)
                     {
                         case InspectionType.OFS:
-                            dto = JsonSerializer.Deserialize<ObservationAtSeaDto>(inspection.JsonContent);
+                            ObservationAtSeaDto observationAtSeaDto = JsonSerializer.Deserialize<ObservationAtSeaDto>(inspection.JsonContent);
+                            if (observationAtSeaDto != null)
+                            {
+                                postTasks[i] = HandleInspection(observationAtSeaDto, inspection.SubmitType, null, true);
+                            }
+                            else
+                            {
+                                postTasks[i] = Task.FromResult(PostEnum.Success);
+                            }
                             break;
                         case InspectionType.IBS:
-                            dto = JsonSerializer.Deserialize<InspectionAtSeaDto>(inspection.JsonContent);
+                            InspectionAtSeaDto atSeaDto = JsonSerializer.Deserialize<InspectionAtSeaDto>(inspection.JsonContent);
+                            if (atSeaDto != null)
+                            {
+                                postTasks[i] = HandleInspection(atSeaDto, inspection.SubmitType, null, true);
+                            }
+                            else
+                            {
+                                postTasks[i] = Task.FromResult(PostEnum.Success);
+                            }
                             break;
                         case InspectionType.IBP:
                         case InspectionType.ITB:
-                            dto = JsonSerializer.Deserialize<InspectionTransboardingDto>(inspection.JsonContent);
+                            InspectionTransboardingDto transboardingDto = JsonSerializer.Deserialize<InspectionTransboardingDto>(inspection.JsonContent);
+                            if (transboardingDto != null)
+                            {
+                                postTasks[i] = HandleInspection(transboardingDto, inspection.SubmitType, null, true);
+                            }
+                            else
+                            {
+                                postTasks[i] = Task.FromResult(PostEnum.Success);
+                            }
                             break;
                         case InspectionType.IVH:
-                            dto = JsonSerializer.Deserialize<InspectionTransportVehicleDto>(inspection.JsonContent);
+                            InspectionTransportVehicleDto transportVehicleDto = JsonSerializer.Deserialize<InspectionTransportVehicleDto>(inspection.JsonContent);
+                            if (transportVehicleDto != null)
+                            {
+                                postTasks[i] = HandleInspection(transportVehicleDto, inspection.SubmitType, null, true);
+                            }
+                            else
+                            {
+                                postTasks[i] = Task.FromResult(PostEnum.Success);
+                            }
                             break;
                         case InspectionType.IFS:
-                            dto = JsonSerializer.Deserialize<InspectionFirstSaleDto>(inspection.JsonContent);
+                            InspectionFirstSaleDto firstSaleDto = JsonSerializer.Deserialize<InspectionFirstSaleDto>(inspection.JsonContent);
+                            if (firstSaleDto != null)
+                            {
+                                postTasks[i] = HandleInspection(firstSaleDto, inspection.SubmitType, null, true);
+                            }
+                            else
+                            {
+                                postTasks[i] = Task.FromResult(PostEnum.Success);
+                            }
                             break;
                         case InspectionType.IAQ:
-                            dto = JsonSerializer.Deserialize<InspectionAquacultureDto>(inspection.JsonContent);
+                            InspectionAquacultureDto aquacultureDto = JsonSerializer.Deserialize<InspectionAquacultureDto>(inspection.JsonContent);
+                            if (aquacultureDto != null)
+                            {
+                                postTasks[i] = HandleInspection(aquacultureDto, inspection.SubmitType, null, true);
+                            }
+                            else
+                            {
+                                postTasks[i] = Task.FromResult(PostEnum.Success);
+                            }
                             break;
                         case InspectionType.IFP:
-                            dto = JsonSerializer.Deserialize<InspectionFisherDto>(inspection.JsonContent);
+                            InspectionFisherDto fisherDto = JsonSerializer.Deserialize<InspectionFisherDto>(inspection.JsonContent);
+                            if (fisherDto != null)
+                            {
+                                postTasks[i] = HandleInspection(fisherDto, inspection.SubmitType, null, true);
+                            }
+                            else
+                            {
+                                postTasks[i] = Task.FromResult(PostEnum.Success);
+                            }
                             break;
                         case InspectionType.CWO:
-                            dto = JsonSerializer.Deserialize<InspectionCheckWaterObjectDto>(inspection.JsonContent);
+                            InspectionCheckWaterObjectDto checkWaterObjectDto = JsonSerializer.Deserialize<InspectionCheckWaterObjectDto>(inspection.JsonContent);
+                            if (checkWaterObjectDto != null)
+                            {
+                                postTasks[i] = HandleInspection(checkWaterObjectDto, inspection.SubmitType, null, true);
+                            }
+                            else
+                            {
+                                postTasks[i] = Task.FromResult(PostEnum.Success);
+                            }
                             break;
                         case InspectionType.IGM:
-                            dto = JsonSerializer.Deserialize<InspectionCheckToolMarkDto>(inspection.JsonContent);
+                            InspectionCheckToolMarkDto checkToolMarkDto = JsonSerializer.Deserialize<InspectionCheckToolMarkDto>(inspection.JsonContent);
+                            if (checkToolMarkDto != null)
+                            {
+                                postTasks[i] = HandleInspection(checkToolMarkDto, inspection.SubmitType, null, true);
+                            }
+                            else
+                            {
+                                postTasks[i] = Task.FromResult(PostEnum.Success);
+                            }
                             break;
-                    }
-
-                    if (dto != null)
-                    {
-                        postTasks[i] = HandleInspection(dto, inspection.SubmitType, null, true);
-                    }
-                    else
-                    {
-                        postTasks[i] = Task.FromResult(PostEnum.Success);
                     }
                 }
 
@@ -1518,6 +1589,18 @@ namespace IARA.Mobile.Insp.Application.Transactions
                     select logBook.Number
                 ).First();
             }
+        }
+
+        public async Task<CanMakeInspectionDto> CanMakeInspection()
+        {
+            HttpResult<CanMakeInspectionDto> result = await RestClient.GetAsync<CanMakeInspectionDto>("Profile/CanMakeInspection");
+
+            if (result.IsSuccessful)
+            {
+                return result.Content;
+            }
+
+            return null;
         }
     }
 }

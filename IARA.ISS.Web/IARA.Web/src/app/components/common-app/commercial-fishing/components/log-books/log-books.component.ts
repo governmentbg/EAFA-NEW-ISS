@@ -650,7 +650,7 @@ export class LogBooksComponent extends CustomFormControl<LogBookEditDTO[] | Comm
                 headerAuditBtn = {
                     id: logBook.logBookId,
                     getAuditRecordData: this.getLogBookSimpleAuditMethod,
-                    tableName: 'LogBook'
+                    tableName: 'CatchSales.LogBooks'
                 }
             }
 
