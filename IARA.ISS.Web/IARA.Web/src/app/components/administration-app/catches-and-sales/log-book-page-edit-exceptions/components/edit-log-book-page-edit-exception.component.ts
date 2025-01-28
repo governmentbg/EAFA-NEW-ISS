@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { forkJoin } from 'rxjs';
 
@@ -19,6 +19,8 @@ import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.
 import { IGroupedOptions } from '@app/shared/components/input-controls/tl-autocomplete/interfaces/grouped-options.interface';
 import { CommonUtils } from '@app/shared/utils/common.utils';
 import { LogBookPageEditNomenclatureDTO } from '@app/models/generated/dtos/LogBookPageEditNomenclatureDTO';
+import { PageCodeEnum } from '@app/enums/page-code.enum';
+import { ValidityCheckerGroupDirective } from '@app/shared/directives/validity-checker/validity-checker-group.directive';
 
 @Component({
     selector: 'edit-log-book-page-edit-exception',
@@ -29,16 +31,24 @@ export class EditLogBookPageEditExceptionComponent implements OnInit, IDialogCom
     public users: IGroupedOptions<number>[] = [];
     public logBookTypes: NomenclatureDTO<number>[] = [];
     public activeLogBooks: LogBookPageEditNomenclatureDTO[] = [];
+    public logBooks: LogBookPageEditNomenclatureDTO[] = [];
 
     public viewMode: boolean = true;
 
+    public readonly pageCode: PageCodeEnum = PageCodeEnum.LogBookPageException;
+    public readonly service: ILogBookPageEditExceptionsService;
+
+    @ViewChild(ValidityCheckerGroupDirective)
+    private validityCheckerGroup!: ValidityCheckerGroupDirective;
+
     private allLogBookTypes: NomenclatureDTO<number>[] = [];
     private allActiveLogBooks: LogBookPageEditNomenclatureDTO[] = [];
+    private allLogBooks: LogBookPageEditNomenclatureDTO[] = [];
+    private filteredLogBooks: LogBookPageEditNomenclatureDTO[] = [];
 
     private model!: LogBookPageEditExceptionEditDTO;
     private id: number | undefined;
 
-    private readonly service: ILogBookPageEditExceptionsService;
     private readonly commonNomenclatures: CommonNomenclatures;
     private readonly translationService: FuseTranslationLoaderService;
 
@@ -55,7 +65,7 @@ export class EditLogBookPageEditExceptionComponent implements OnInit, IDialogCom
     }
 
     public async ngOnInit(): Promise<void> {
-        const nomenclatures: (SystemUserNomenclatureDTO[] | NomenclatureDTO<number>[])[] = await forkJoin([
+        const nomenclatures: (SystemUserNomenclatureDTO[] | NomenclatureDTO<number>[] | LogBookPageEditNomenclatureDTO[])[] = await forkJoin([
             this.service.getAllUsersNomenclature(),
             NomenclatureStore.instance.getNomenclature(NomenclatureTypes.LogBookTypes, this.commonNomenclatures.getLogBookTypes.bind(this.commonNomenclatures), false),
             this.service.getActiveLogBooksNomenclature(this.id)
@@ -75,8 +85,11 @@ export class EditLogBookPageEditExceptionComponent implements OnInit, IDialogCom
         this.allLogBookTypes = nomenclatures[1];
         this.logBookTypes = this.allLogBookTypes.slice();
 
-        this.allActiveLogBooks = nomenclatures[2];
+        this.allLogBooks = nomenclatures[2];
+        this.allActiveLogBooks = (nomenclatures[2] as LogBookPageEditNomenclatureDTO[]).filter(x => x.isFinishedOrSuspended === false);
         this.activeLogBooks = this.allActiveLogBooks.slice();
+        this.filteredLogBooks = this.allLogBooks.slice();
+        this.logBooks = this.allActiveLogBooks.slice();
 
         if (this.id !== null && this.id !== undefined) {
             this.service.getLogBookPageEditException(this.id).subscribe({
@@ -108,6 +121,7 @@ export class EditLogBookPageEditExceptionComponent implements OnInit, IDialogCom
 
     public saveBtnClicked(actionInfo: IActionInfo, dialogClose: DialogCloseCallback): void {
         this.form.markAllAsTouched();
+        this.validityCheckerGroup.validate();
 
         if (this.form.valid) {
             this.fillModel();
@@ -154,7 +168,9 @@ export class EditLogBookPageEditExceptionComponent implements OnInit, IDialogCom
             exceptionActiveFromControl: new FormControl(exceptionActiveFrom),
             exceptionActiveToControl: new FormControl(exceptionActiveTo),
             editPageFromControl: new FormControl(),
-            editPageToControl: new FormControl()
+            editPageToControl: new FormControl(),
+            showFinshedOrSuspendedControl: new FormControl(false),
+            filesControl: new FormControl(null)
         });
 
         // validators
@@ -168,19 +184,33 @@ export class EditLogBookPageEditExceptionComponent implements OnInit, IDialogCom
 
         this.form.get('logBookTypeControl')!.valueChanges.subscribe({
             next: (logBookType: NomenclatureDTO<number> | null | undefined | string) => {
+                const showFinishedOrSuspended: boolean = this.form.get('showFinshedOrSuspendedControl')!.value;
+
                 if (logBookType !== null && logBookType !== undefined && logBookType instanceof NomenclatureDTO) {
                     this.activeLogBooks = this.allActiveLogBooks.filter(x => x.logBookTypeCode === logBookType.code);
+                    this.filteredLogBooks = this.allLogBooks.filter(x => x.logBookTypeCode === logBookType.code);
 
                     const selectedLogBook: NomenclatureDTO<number> | null | undefined | string = this.form.get('logBookControl')!.value;
 
                     if (selectedLogBook !== null && selectedLogBook !== undefined && selectedLogBook instanceof NomenclatureDTO) {
-                        if (!this.activeLogBooks.some(x => x.value === selectedLogBook.value)) {
+                        if (!showFinishedOrSuspended && !this.activeLogBooks.some(x => x.value === selectedLogBook.value)) {
+                            this.form.get('logBookControl')!.setValue(undefined, { emitEvent: false });
+                        }
+                        else if (showFinishedOrSuspended && !this.filteredLogBooks.some(x => x.value === selectedLogBook.value)) {
                             this.form.get('logBookControl')!.setValue(undefined, { emitEvent: false });
                         }
                     }
                 }
                 else {
                     this.activeLogBooks = this.allActiveLogBooks.slice();
+                    this.filteredLogBooks = this.allLogBooks.slice();
+                }
+
+                if (showFinishedOrSuspended) {
+                    this.logBooks = this.filteredLogBooks.slice();
+                }
+                else {
+                    this.logBooks = this.activeLogBooks.slice();
                 }
             }
         });
@@ -231,6 +261,27 @@ export class EditLogBookPageEditExceptionComponent implements OnInit, IDialogCom
                 this.form.get('editPageFromControl')!.updateValueAndValidity({ emitEvent: false });
             }
         });
+
+        this.form.get('showFinshedOrSuspendedControl')!.valueChanges.subscribe({
+            next: (value: boolean) => {
+                if (value) {
+                    this.logBooks = this.filteredLogBooks;
+                }
+                else {
+                    this.logBooks = this.activeLogBooks;
+                }
+
+                this.logBooks = this.logBooks.slice();
+
+                const selectedLogBook: NomenclatureDTO<number> | null | undefined | string = this.form.get('logBookControl')!.value;
+
+                if (selectedLogBook !== null && selectedLogBook !== undefined && selectedLogBook instanceof NomenclatureDTO) {
+                    if (!this.logBooks.some(x => x.value === selectedLogBook.value)) {
+                        this.form.get('logBookControl')!.setValue(undefined, { emitEvent: false });
+                    }
+                }
+            }
+        });
     }
 
     private fillForm(): void {
@@ -244,13 +295,20 @@ export class EditLogBookPageEditExceptionComponent implements OnInit, IDialogCom
         }
 
         if (this.model.logBookId !== null && this.model.logBookId !== undefined) {
-            this.form.get('logBookControl')!.setValue(this.activeLogBooks.find(x => x.value === this.model.logBookId));
+            const logBook: LogBookPageEditNomenclatureDTO | undefined = this.allLogBooks.find(x => x.value === this.model.logBookId);
+
+            if (logBook !== undefined && logBook !== null) {
+                this.form.get('showFinshedOrSuspendedControl')!.setValue(logBook.isFinishedOrSuspended);
+            }
+
+            this.form.get('logBookControl')!.setValue(this.logBooks.find(x => x.value === this.model.logBookId));
         }
 
         this.form.get('exceptionActiveFromControl')!.setValue(this.model.exceptionActiveFrom);
         this.form.get('exceptionActiveToControl')!.setValue(this.model.exceptionActiveTo);
         this.form.get('editPageFromControl')!.setValue(this.model.editPageFrom);
         this.form.get('editPageToControl')!.setValue(this.model.editPageTo);
+        this.form.get('filesControl')!.setValue(this.model.files);
     }
 
     private fillModel(): void {
@@ -260,6 +318,8 @@ export class EditLogBookPageEditExceptionComponent implements OnInit, IDialogCom
 
         this.model.exceptionActiveFrom = this.form.get('exceptionActiveFromControl')!.value;
         this.model.exceptionActiveTo = this.form.get('exceptionActiveToControl')!.value;
+
+        this.model.files = this.form.get('filesControl')!.value;
 
         this.model.editPageFrom = this.form.get('editPageFromControl')!.value;
         this.model.editPageFrom!.setHours(0);

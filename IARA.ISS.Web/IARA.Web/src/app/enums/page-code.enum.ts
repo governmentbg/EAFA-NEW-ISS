@@ -257,6 +257,11 @@
      * */
     InspDelivery,
 
+    /**
+     * Изключение за редакция на страници от дневник
+     * */
+    LogBookPageException,
+
     FVMS,
 
     migrate

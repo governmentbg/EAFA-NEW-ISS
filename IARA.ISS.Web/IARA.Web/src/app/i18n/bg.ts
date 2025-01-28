@@ -4912,7 +4912,10 @@
         'external-users-group': 'Външни потребители',
         'user': 'Потребител',
         'log-book': 'Дневник',
-        'is-valid': 'Валидно'
+        'is-valid': 'Валидно',
+        'show-finished-or-suspended': 'Покажи и дневници в статус "Приключен" или "Прекратено УСР"',
+        'edit-page-exception-files': 'Файлове',
+        'edit-page-exception-basic-info': 'Основна информация',
     },
     'fishing-activities': {
         'filters-trip-identifier': 'Идентификатор',

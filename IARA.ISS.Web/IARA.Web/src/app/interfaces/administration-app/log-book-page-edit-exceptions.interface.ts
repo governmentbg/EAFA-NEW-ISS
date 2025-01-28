@@ -18,6 +18,8 @@ export interface ILogBookPageEditExceptionsService extends IBaseAuditService {
     deleteLogBookPageEditException(id: number): Observable<void>;
     restoreLogBookPageEditException(id: number): Observable<void>;
 
+    downloadFile(fileId: number): Observable<boolean>;
+
     getAllUsersNomenclature(): Observable<SystemUserNomenclatureDTO[]>;
     getActiveLogBooksNomenclature(logBookPageEditExceptionId?: number): Observable<NomenclatureDTO<number>[]>;
 }

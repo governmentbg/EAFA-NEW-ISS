@@ -45,12 +45,14 @@ export class LogBookPageEditExceptionsService extends BaseAuditService implement
 
     public addLogBookPageEditException(model: LogBookPageEditExceptionEditDTO): Observable<void> {
         return this.requestService.post(this.area, this.controller, 'AddLogBookPageEditException', model, {
+            properties: new RequestProperties({ asFormData: true }),
             successMessage: 'succ-add-log-book-page-edit-exception'
         });
     }
 
     public editLogBookPageEditException(model: LogBookPageEditExceptionEditDTO): Observable<void> {
-        return this.requestService.put(this.area, this.controller, 'EditLogBookPageEditException', model, {
+        return this.requestService.post(this.area, this.controller, 'EditLogBookPageEditException', model, {
+            properties: new RequestProperties({ asFormData: true }),
             successMessage: 'succ-edit-log-book-page-edit-exception'
         });
     }
@@ -69,6 +71,11 @@ export class LogBookPageEditExceptionsService extends BaseAuditService implement
             httpParams: params,
             successMessage: 'succ-restore-log-book-page-edit-exception'
         })
+    }
+
+    public downloadFile(fileId: number): Observable<boolean> {
+        const params = new HttpParams().append('id', fileId.toString());
+        return this.requestService.download(this.area, this.controller, 'DownloadFile', '', { httpParams: params });
     }
 
     // Nomenclatures
