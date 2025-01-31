@@ -33,6 +33,7 @@ export class AuanRegisterFilters extends BaseRequestModel {
     public identifier: string | undefined;
     public deliveryDateFrom: Date | undefined;
     public deliveryDateTo: Date | undefined;
+    public year: number | undefined;
     public personId: number | undefined;
     public legalId: number | undefined;
     public inspectionId: number | undefined;

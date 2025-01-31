@@ -9,6 +9,7 @@
     public canEditShipLogBookRecords: boolean = false;
     public canEditNumberShipLogBookRecords: boolean = false;
     public canAddEditFilesShipLogBookRecords: boolean = false;
+    public canEditOnlineShipLogBookRecords: boolean = false;
 
     public constructor(obj?: Partial<PagesPermissions>) {
         Object.assign(this, obj);

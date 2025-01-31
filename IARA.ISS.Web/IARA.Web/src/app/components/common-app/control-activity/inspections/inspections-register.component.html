@@ -53,18 +53,17 @@
                                label="{{ 'inspections.report-creation-date' | tlTranslate }}">
                 </tl-date-range>
 
+                <tl-date-year fxFlex="25"
+                              formControlName="yearControl"
+                              label="{{ 'inspections.year' | tlTranslate }}"
+                              tooltipResourceName="inspections.year-helper">
+                </tl-date-year>
+
                 <tl-autocomplete fxFlex="25"
                                  formControlName="aquacultureControl"
                                  [options]="aquacultureFacilities"
                                  tooltipResourceName="inspections.aquaculture-helper"
                                  label="{{ 'inspections.registered-aquaculture-facility' | tlTranslate }}">
-                </tl-autocomplete>
-
-                <tl-autocomplete fxFlex="25"
-                                 formControlName="poundNetControl"
-                                 [options]="poundNets"
-                                 tooltipResourceName="inspections.poundnet-helper"
-                                 label="{{ 'inspections.registered-poundnet' | tlTranslate }}">
                 </tl-autocomplete>
             </div>
 
@@ -116,7 +115,12 @@
                           label="{{ 'inspections.trailer-license-plate-number' | tlTranslate }}">
                 </tl-input>
 
-                <div fxFlex="25"></div>
+                <tl-autocomplete fxFlex="25"
+                                 formControlName="poundNetControl"
+                                 [options]="poundNets"
+                                 tooltipResourceName="inspections.poundnet-helper"
+                                 label="{{ 'inspections.registered-poundnet' | tlTranslate }}">
+                </tl-autocomplete>
             </div>
 
             <!-- Юридическо лице -->

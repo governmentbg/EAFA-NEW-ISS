@@ -63,6 +63,9 @@ export class LogBookRegisterDTO {
     @StrictlyTyped(Boolean)
     public allowNewLogBookPages?: boolean;
 
+    @StrictlyTyped(Boolean)
+    public allowEditLogBookPages?: boolean;
+
     @StrictlyTyped(Date)
     public suspendedPermitLicenseValidTo?: Date;
 

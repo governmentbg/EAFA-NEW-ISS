@@ -2570,6 +2570,7 @@
         'inspectors': 'Инспектори',
         'date': 'Дата',
         'state': 'Статус',
+        'year': 'Година',
         'registered-aquaculture-facility': 'Аквакултурно стопанство',
         'registered-poundnet': 'Далян',
         'registered-ship': 'Кораб',
@@ -5428,6 +5429,7 @@
         'filters-draft-date': 'Дата на съставяне',
         'filters-inspection-type': 'Тип инспекция и проверка',
         'filters-location-description': 'Място',
+        'filters-year': 'Година на съставяне',
         'filters-insp-entity-first-name': 'Име на нарушител',
         'filters-insp-entity-middle-name': 'Презиме на нарушител',
         'filters-insp-entity-last-name': 'Фамилия на нарушител',
@@ -5968,6 +5970,7 @@
         'filters-delivery-type': 'Начини за потвърждение за връчване',
         'filters-penal-decree-types': 'Тип',
         'filters-penal-decree-statuses': 'Статус на постановлението',
+        'filters-year': 'Година на съставяне',
 
         'table-penal-decree-num': '№ на наказателно постановление',
         'table-penal-decree-name': 'Тип',
@@ -6519,6 +6522,7 @@
         'filters-permit-owner-identifier': 'ЕГН/ЛНЧ/ЕИК на титуляр на РСР',
         'filters-captain-name': 'Име на капитан',
         'filters-captain-identifier': 'ЕГН/ЛНЧ на капитан',
+        'filters-year': 'Година на издаване',
 
         'table-penal-decree-num': '№ на наказателно постановление',
         'table-order-num': '№ на заповед',

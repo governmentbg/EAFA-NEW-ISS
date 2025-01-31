@@ -381,7 +381,7 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
         }, '1400px').subscribe({
             next: (result?: CatchRecordDTO) => {
                 if (result !== undefined && result !== null) {
-                    const difference: DateDifference | undefined = DateUtils.getDateDifference(result.gearEntryTime!, result.gearExitTime!);
+                    const difference: DateDifference | undefined = CatchesAndSalesUtils.getDateTimeDifference(result.gearEntryTime!, result.gearExitTime!);
                     result.totalTime = this.dateDifferencePipe.transform(difference);
 
                     result.catchRecordFishesSummary = result.catchRecordFishes
@@ -801,7 +801,7 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
 
         this.catchRecords.push(...this.model.catchRecords ?? []);
         for (const record of this.catchRecords) {
-            const difference: DateDifference | undefined = DateUtils.getDateDifference(record.gearEntryTime!, record.gearExitTime!);
+            const difference: DateDifference | undefined = CatchesAndSalesUtils.getDateTimeDifference(record.gearEntryTime!, record.gearExitTime!);
             record.totalTime = this.dateDifferencePipe.transform(difference);
         }
 
@@ -1449,7 +1449,7 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
             const startDate: Moment | null | undefined = this.form.get('fishTripStartDateTimeControl')!.value;
 
             if (startDate !== null && startDate !== undefined && startDate.isValid()) {
-                const difference: DateDifference | undefined = DateUtils.getDateDifference(startDate.toDate(), endDate.toDate());
+                const difference: DateDifference | undefined = CatchesAndSalesUtils.getDateTimeDifference(startDate.toDate(), endDate.toDate());
                 const daysAtSeaValue: string = this.getDaysAtSeaValue(difference);
 
                 this.form.get('daysAtSeaCountControl')!.setValue(daysAtSeaValue);
@@ -1726,7 +1726,7 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
             const logBookId: number = this.model.logBookId!;
             const logBookTypeId: number = this.model.logBookTypeId!;
 
-            const difference: DateDifference | undefined = DateUtils.getDateDifference(date, now);
+            const difference: DateDifference | undefined = CatchesAndSalesUtils.getDateTimeDifference(date, now);
 
             if (difference === null || difference === undefined) {
                 return null;

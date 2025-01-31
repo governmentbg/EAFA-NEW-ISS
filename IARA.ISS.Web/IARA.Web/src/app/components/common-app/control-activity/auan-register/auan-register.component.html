@@ -89,7 +89,7 @@
                 </tl-date-range>
             </div>
 
-            <!-- Тип на инспекция и проверка, описание на проверяван обект -->
+            <!-- Статус, място, година на съставяне, тип на инспекция и проверка -->
             <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="1em">
                 <tl-select fxFlex="25"
                            formControlName="statusesControl"
@@ -105,7 +105,13 @@
                           tooltipResourceName="auan-register.filters-location-description-helper">
                 </tl-input>
 
-                <tl-autocomplete fxFlex="50"
+                <tl-date-year fxFlex="25"
+                              formControlName="yearControl"
+                              label="{{ 'auan-register.filters-year' | tlTranslate }}"
+                              tooltipResourceName="auan-register.filters-year-helper">
+                </tl-date-year>
+
+                <tl-autocomplete fxFlex="25"
                                  formControlName="inspectionTypeControl"
                                  [options]="inspectionTypes"
                                  label="{{ 'auan-register.filters-inspection-type' | tlTranslate }}"

@@ -1,5 +1,6 @@
 import { DateDifference } from '@app/models/common/date-difference.model';
-import { LogBookPageEditExceptionDTO } from '../../../../models/generated/dtos/LogBookPageEditExceptionDTO';
+import { LogBookPageEditExceptionDTO } from '@app/models/generated/dtos/LogBookPageEditExceptionDTO';
+import { DateUtils } from '@app/shared/utils/date.utils';
 
 export class CatchesAndSalesUtils {
     public static pageHasLogBookPageDateLockedViaDaysAfterMonth(pageFillDate: Date, now: Date, numberOfDaysAfterMonth: number): boolean {
@@ -94,5 +95,19 @@ export class CatchesAndSalesUtils {
         else {
             return false;
         }
+    }
+
+    public static getFormattedDate(date: Date): Date {
+        const result: Date = new Date(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes());
+        return result;
+    }
+
+    public static getDateTimeDifference(startDate: Date, endDate: Date): DateDifference | undefined {
+        const startDateFormatted: Date = this.getFormattedDate(startDate);
+        const endDateFormatted: Date = this.getFormattedDate(endDate);
+
+        const difference: DateDifference | undefined = DateUtils.getDateDifference(startDateFormatted, endDateFormatted);
+
+        return difference;
     }
 }

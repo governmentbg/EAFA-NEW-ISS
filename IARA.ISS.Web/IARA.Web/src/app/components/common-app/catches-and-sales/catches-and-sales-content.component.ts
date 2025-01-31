@@ -104,6 +104,7 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
     public readonly canCancelShipLogBookRecords: boolean;
     public readonly canEditNumberShipLogBookRecords: boolean;
     public readonly canAddEditFilesShipLogBookRecords: boolean;
+    public readonly canEditOnlineShipLogBookRecords: boolean;
 
     public readonly canReadFirstSaleLogBookRecords: boolean;
     public readonly canAddFirstSaleLogBookRecords: boolean;
@@ -229,6 +230,7 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
         this.canCancelShipLogBookRecords = permissions.has(PermissionsEnum.FishLogBookPageCancel);
         this.canEditNumberShipLogBookRecords = permissions.has(PermissionsEnum.FishLogBookPageEditNumber);
         this.canAddEditFilesShipLogBookRecords = permissions.has(PermissionsEnum.FishLogBookPageEditFiles);
+        this.canEditOnlineShipLogBookRecords = permissions.has(PermissionsEnum.FishLogBookPageOnlineEdit);
 
         this.canReadFirstSaleLogBookRecords = permissions.has(PermissionsEnum.FirstSaleLogBookRead) || permissions.has(PermissionsEnum.FirstSaleLogBookPageReadAll);
         this.canAddFirstSaleLogBookRecords = permissions.has(PermissionsEnum.FirstSaleLogBookPageAdd);
@@ -273,7 +275,8 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
             canEditShipLogBookRecords: this.canEditShipLogBookRecords,
             canEditTransportationLogBookRecords: this.canEditTransportationLogBookRecords,
             canEditNumberShipLogBookRecords: this.canEditNumberShipLogBookRecords,
-            canAddEditFilesShipLogBookRecords: this.canAddEditFilesShipLogBookRecords
+            canAddEditFilesShipLogBookRecords: this.canAddEditFilesShipLogBookRecords,
+            canEditOnlineShipLogBookRecords: this.canEditOnlineShipLogBookRecords
         });
 
         this.shipForbiddenForPagesTooltip = this.translationService.getValue('catches-and-sales.ship-is-forbidden-for-page-add');
@@ -406,11 +409,22 @@ export class CatchesAndSalesContent implements OnInit, AfterViewInit {
             next: (rows: LogBookRegisterDTO[] | undefined) => {
                 if (rows !== null && rows !== undefined && rows.length > 0) {
                     const now: Date = new Date();
-
                     if (this.systemProperties.addLogBookPagesDaysTolerance) {
                         for (const row of rows) {
+                            const isUnlocked: boolean = CatchesAndSalesUtils.checkIfLogBookIsUnlocked(this.logBookExceptions, this.currentUserId, row.typeId!, row.id!, now);
+
+                            //Страниците от електронните дневници може да се редактират, ако потребителят има такова право или има изключение за дневника
+                            if (row.typeCode === LogBookTypesEnum.Ship) {
+                                if (row.isOnline && !this.canEditOnlineShipLogBookRecords) {
+                                    row.allowEditLogBookPages = isUnlocked;
+                                }
+                                else {
+                                    row.allowEditLogBookPages = true;
+                                }
+                            }
+
                             if (row.isLogBookFinished || row.isLogBookSuspended) {
-                                if (!CatchesAndSalesUtils.checkIfLogBookIsUnlocked(this.logBookExceptions, this.currentUserId, row.typeId!, row.id!, now)) {
+                                if (!isUnlocked) {
                                     if (row.suspendedPermitLicenseValidTo !== undefined && row.suspendedPermitLicenseValidTo !== null) {
                                         const now: Date = new Date();
                                         const days: number = Math.round((now.getTime() - new Date(row.suspendedPermitLicenseValidTo).getTime()) / (1000 * 3600 * 24));

@@ -23,6 +23,7 @@ import { TLError } from '@app/shared/components/input-controls/models/tl-error.m
 import { CatchRecordFishDTO } from '@app/models/generated/dtos/CatchRecordFishDTO';
 import { ShipLogBookPageDataService } from '../ship-log-book/services/ship-log-book-page-data.service';
 import { GetControlErrorLabelTextCallback } from '@app/shared/components/input-controls/base-tl-control';
+import { CatchesAndSalesUtils } from '../../utils/catches-and-sales.utils';
 
 @Component({
     selector: 'edit-catch-record',
@@ -106,7 +107,10 @@ export class EditCatchRecordComponent implements AfterViewInit, IDialogComponent
         this.permitLicenseAquaticOrganismTypeIds = data.permitLicenseAquaticOrganismTypeIds;
         this.shipLogBookPageDataService = data.shipLogBookPageDataService;
         this.tripStartDateTime = data.tripStartDateTime;
-        this.tripEndDateTime = data.tripEndDateTime;
+
+        if (data.tripEndDateTime !== undefined && data.tripEndDateTime !== null) {
+            this.tripEndDateTime = CatchesAndSalesUtils.getFormattedDate(data.tripEndDateTime);
+        }
 
         this.setGearEntryExitMinMaxValidators();
 
@@ -352,7 +356,7 @@ export class EditCatchRecordComponent implements AfterViewInit, IDialogComponent
         const exitDate: Moment | null | undefined = this.form.get('gearExitDateTimeControl')!.value;
 
         if (entryDate !== null && entryDate !== undefined && exitDate !== null && exitDate !== undefined) {
-            const difference: DateDifference | undefined = DateUtils.getDateDifference(entryDate.toDate(), exitDate.toDate());
+            const difference: DateDifference | undefined = CatchesAndSalesUtils.getDateTimeDifference(entryDate.toDate(), exitDate.toDate());
 
             return difference;
         }

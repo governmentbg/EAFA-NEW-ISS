@@ -467,7 +467,8 @@ export class AuanRegisterComponent implements OnInit, AfterViewInit {
             inspEntityFirstNameControl: new FormControl(),
             inspEntityMiddleNameControl: new FormControl(),
             inspEntityLastNameControl: new FormControl(),
-            statusesControl: new FormControl()
+            statusesControl: new FormControl(),
+            yearControl: new FormControl()
         });
     }
 
@@ -490,7 +491,7 @@ export class AuanRegisterComponent implements OnInit, AfterViewInit {
             identifier: filters.getValue('identifierControl'),
             inspectedEntityFirstName: filters.getValue('inspEntityFirstNameControl'),
             inspectedEntityMiddleName: filters.getValue('inspEntityMiddleNameControl'),
-            inspectedEntityLastName: filters.getValue('inspEntityLastNameControl')
+            inspectedEntityLastName: filters.getValue('inspEntityLastNameControl'),
         });
 
         const drafter: number | string | undefined = filters.getValue('drafterControl');
@@ -508,6 +509,11 @@ export class AuanRegisterComponent implements OnInit, AfterViewInit {
             result.auanStatuses = statuses.map((status: AuanStatusEnum) => {
                 return AuanStatusEnum[status];
             });
+        }
+
+        const yearValue = filters.getValue('yearControl');
+        if (yearValue !== null && yearValue !== undefined) {
+            result.year = (filters.getValue('yearControl') as Date).getFullYear();
         }
 
         return result;

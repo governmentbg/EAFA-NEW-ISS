@@ -323,7 +323,7 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
     }
 
     public addEditEntry(entry: InspectionDTO | undefined, viewMode: boolean = false): void {
-        if (!this.isInspector) {
+        if (!this.isInspector && !viewMode) {
             this.confirmDialog.open({
                 title: this.translate.getValue('inspections.user-not-inspector-title'),
                 message: this.translate.getValue('inspections.user-not-inspector-msg'),
@@ -334,7 +334,11 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
             return;
         }
 
-        if (!this.canResolveCrossChecks && (this.shipId === null || this.shipId === undefined) && (this.logBookPageId === null || this.logBookPageId === undefined)) {
+        if (!this.canResolveCrossChecks
+            && (this.shipId === null || this.shipId === undefined)
+            && (this.logBookPageId === null || this.logBookPageId === undefined)
+            && !viewMode
+        ) {
             this.confirmDialog.open({
                 title: this.translate.getValue('inspections.user-has-unresolved-cross-checks-title'),
                 message: this.translate.getValue('inspections.user-has-unresolved-cross-checks-message'),
@@ -518,7 +522,7 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
                 readOnly = true;
 
                 if (entry.inspectionType !== InspectionTypesEnum.OTH) {
-                    if (this.canDownloadRecords) {
+                    if (this.canDownloadRecords && this.isInspector) {
                         rightSideButtons.push({
                             id: 'print',
                             color: 'accent',
@@ -533,6 +537,7 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
                 && (this.shipId === null || this.shipId === undefined)
                 && entry.inspectionState === InspectionStatesEnum.Signed
                 && this.fluxReportInspectionTypes.includes(entry.inspectionType!)
+                && this.isInspector
             ) {
                 rightSideButtons.push({
                     id: 'send-to-flux',
@@ -548,6 +553,7 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
                 && entry.inspectionState !== InspectionStatesEnum.Draft
                 && entry.inspectionType !== InspectionTypesEnum.OTH
                 && (this.canEditLockedInspections || (!entry.isReportLocked && entry.createdByUserId === this.userId))
+                && this.isInspector
             ) {
                 rightSideButtons.push({
                     id: 'more-corrections-needed',
@@ -661,6 +667,11 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
             else {
                 result.inspector = inspector;
             }
+        }
+
+        const yearValue = filters.getValue('yearControl');
+        if (yearValue !== null && yearValue !== undefined) {
+            result.year = (filters.getValue('yearControl') as Date).getFullYear();
         }
 
         return result;
@@ -887,7 +898,8 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
             firstSaleCenterNameControl: new FormControl(),
             tractorLicensePlateNumberControl: new FormControl(),
             trailerLicensePlateNumberControl: new FormControl(),
-            showOnlyUserInspectionsControl: new FormControl()
+            showOnlyUserInspectionsControl: new FormControl(),
+            yearControl: new FormControl()
         });
     }
 }

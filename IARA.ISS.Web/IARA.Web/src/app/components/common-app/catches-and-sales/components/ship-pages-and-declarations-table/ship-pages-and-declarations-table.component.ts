@@ -47,6 +47,9 @@ export class ShipPagesAndDeclarationsTableComponent {
     public canReadInspections: boolean = false;
 
     @Input()
+    public canEditLogBookPages: boolean = false;
+
+    @Input()
     public set pagesPermissions(value: PagesPermissions | undefined) {
         if (value !== null && value !== undefined) {
             this._pagesPermissions = value;

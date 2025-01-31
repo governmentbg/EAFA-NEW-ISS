@@ -153,7 +153,7 @@
                 </tl-select>
             </div>
 
-            <!-- Тип, статус/Чернова, Подадено, Анулирано/ -->
+            <!-- Тип, статус/Чернова, Подадено, Анулирано/, година на съставяне -->
             <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="1em">
                 <tl-select fxFlex="25"
                            formControlName="penalDecreeTypesControl"
@@ -171,7 +171,12 @@
                            tooltipResourceName="penal-decrees.filters-penal-decree-statuses-helper">
                 </tl-select>
 
-                <div fxFlex="25"></div>
+                <tl-date-year fxFlex="25"
+                              formControlName="yearControl"
+                              label="{{ 'penal-decrees.filters-year' | tlTranslate }}"
+                              tooltipResourceName="penal-decrees.filters-year-helper">
+                </tl-date-year>
+
                 <div fxFlex="25"></div>
             </div>
         </div>

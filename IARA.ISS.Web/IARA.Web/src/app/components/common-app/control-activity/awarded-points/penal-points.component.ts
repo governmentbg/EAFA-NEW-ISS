@@ -299,7 +299,8 @@ export class PenalPointsComponent implements OnInit, AfterViewInit, OnChanges {
             permitOwnerNameControl: new FormControl(),
             permitOwnerIdentifierControl: new FormControl(),
             captainNameControl: new FormControl(),
-            captainIdentifierControl: new FormControl()
+            captainIdentifierControl: new FormControl(),
+            yearControl: new FormControl()
         });
     }
 
@@ -331,6 +332,11 @@ export class PenalPointsComponent implements OnInit, AfterViewInit, OnChanges {
         if (pointsAmount !== undefined && pointsAmount !== null) {
             result.pointsAmountFrom = pointsAmount.start;
             result.pointsAmountTo = pointsAmount.end;
+        }
+
+        const yearValue = filters.getValue('yearControl');
+        if (yearValue !== null && yearValue !== undefined) {
+            result.year = (filters.getValue('yearControl') as Date).getFullYear();
         }
 
         return result;

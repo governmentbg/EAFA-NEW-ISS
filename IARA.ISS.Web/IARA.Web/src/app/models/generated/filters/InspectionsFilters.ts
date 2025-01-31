@@ -23,6 +23,7 @@ export class InspectionsFilters extends BaseRequestModel {
     public reportNumber: string | undefined;
     public dateFrom: Date | undefined;
     public dateTo: Date | undefined;
+    public year: number | undefined;
     public subjectIsLegal: boolean | undefined;
     public subjectName: string | undefined;
     public subjectEIK: string | undefined;

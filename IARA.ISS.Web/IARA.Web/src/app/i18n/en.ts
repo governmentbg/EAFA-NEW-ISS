@@ -2509,6 +2509,7 @@
         'inspectors': 'Inspectors',
         'date': 'Date',
         'state': 'Status',
+        'year': 'Year',
         'registered-aquaculture-facility': 'Aquaculture facility',
         'registered-poundnet': 'Poundnet',
         'registered-ship': 'Ship',
@@ -5365,6 +5366,7 @@
         'filters-draft-date': 'Draw up date',
         'filters-inspection-type': 'Type of inspection',
         'filters-location-description': 'Location description',
+        'filters-year': 'Draft year',
         'filters-insp-entity-first-name': 'Name',
         'filters-insp-entity-middle-name': 'Middle name',
         'filters-insp-entity-last-name': 'Last name',
@@ -5905,6 +5907,7 @@
         'filters-delivery-type': 'Delivery type',
         'filters-penal-decree-types': 'Type',
         'filters-penal-decree-statuses': 'Penal decree status',
+        'filters-year': 'Issue year',
 
         'table-penal-decree-num': 'Penal decree no.',
         'table-penal-decree-name': 'Type',
@@ -6516,6 +6519,7 @@
         'filters-permit-owner-identifier': 'Permit owner identifier',
         'filters-captain-name': 'Captain',
         'filters-captain-identifier': 'Captain identifier',
+        'filters-year': 'Issue year',
 
         'table-penal-decree-num': 'Penal decree num',
         'table-order-num': 'Order num',

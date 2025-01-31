@@ -641,7 +641,7 @@ export class EditFirstSaleLogBookPageComponent implements OnInit, AfterViewInit,
             const logBookTypeId: number = this.logBookTypeId!;
             const logBookId: number = this.model.logBookId!;
 
-            const difference: DateDifference | undefined = DateUtils.getDateDifference(saleDate, now);
+            const difference: DateDifference | undefined = CatchesAndSalesUtils.getDateTimeDifference(saleDate, now);
 
             if (difference === null || difference === undefined) {
                 return null;
