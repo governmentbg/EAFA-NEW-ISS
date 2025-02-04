@@ -145,6 +145,7 @@
                                                                    [showDocumentActionButtons]="!isPublicApp"
                                                                    [allowEditAfterFinished]="row.data.allowNewLogBookPages"
                                                                    [canReadInspections]="canReadInspections"
+                                                                   [canEditLogBookPages]=" row.data.allowEditLogBookPages"
                                                                    (onActiveRecordChanged)="editShipLogBookPage($event.shipPage, $event.viewMode)"
                                                                    (onEditAdmissionLogBookPage)="editAdmissionLogBookPage($event, false)"
                                                                    (onViewAdmissionLogBookPage)="editAdmissionLogBookPage($event, true)"

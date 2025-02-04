@@ -114,6 +114,19 @@
                           tooltipResourceName="penal-points.filters-captain-identifier-helper">
                 </tl-input>
             </div>
+
+            <!-- Година на издаване -->
+            <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="1em">
+                <tl-date-year fxFlex="25"
+                              formControlName="yearControl"
+                              label="{{ 'penal-points.filters-year' | tlTranslate }}"
+                              tooltipResourceName="penal-points.filters-year-helper">
+                </tl-date-year>
+
+                <div fxFlex="25"></div>
+                <div fxFlex="25"></div>
+                <div fxFlex="25"></div>
+            </div>
         </div>
     </search-panel>
 

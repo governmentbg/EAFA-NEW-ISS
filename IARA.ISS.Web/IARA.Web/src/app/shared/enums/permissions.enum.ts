@@ -447,6 +447,7 @@
     FishLogBookPageCancel = 'FishLogBookPageCancel',
     FishLogBookPageEditNumber = 'FishLogBookPageEditNumber',
     FishLogBookPageEditFiles = 'FishLogBookPageEditFiles',
+    FishLogBookPageOnlineEdit = 'FishLogBookPageOnlineEdit',
 
     FirstSaleLogBookPageReadAll = 'FirstSaleLogBookPageReadAll',
     FirstSaleLogBookPageRead = 'FirstSaleLogBookPageRead',

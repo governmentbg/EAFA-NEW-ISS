@@ -183,7 +183,7 @@ export class StatisticalFormsReworkComponent implements OnInit, IDialogComponent
                         const statisticalForm: StatisticalFormReworkApplicationEditDTO = new StatisticalFormReworkApplicationEditDTO(contentObject);
                         statisticalForm.files = content.files;
                         statisticalForm.applicationId = content.applicationId;
-
+               
                         this.isOnlineApplication = statisticalForm.isOnlineApplication!;
                         this.refreshFileTypes.next();
 
@@ -399,30 +399,16 @@ export class StatisticalFormsReworkComponent implements OnInit, IDialogComponent
     }
 
     public fileTypeFilterFn(options: PermittedFileTypeDTO[]): PermittedFileTypeDTO[] {
-        const pdfs: FileTypeEnum[] = [FileTypeEnum.SIGNEDAPPL, FileTypeEnum.APPLICATION_PDF];
-        const offlines: FileTypeEnum[] = [FileTypeEnum.PAYEDFEE, FileTypeEnum.SCANNED_FORM];
-
         let result: PermittedFileTypeDTO[] = options;
 
-        if (!this.isOnlineApplication) {
-            result = result.filter(x => !pdfs.includes(FileTypeEnum[x.code as keyof typeof FileTypeEnum]));
-        }
-
         if (this.isOnlineApplication) {
-            if (this.isApplication && !this.isReadonly) {
-                result = result.filter(x => !pdfs.includes(FileTypeEnum[x.code as keyof typeof FileTypeEnum]));
-            }
-
+            const offlines: FileTypeEnum[] = [FileTypeEnum.PAYEDFEE, FileTypeEnum.SCANNED_FORM];
             result = result.filter(x => !offlines.includes(FileTypeEnum[x.code as keyof typeof FileTypeEnum]));
         }
-        if (this.isApplication || !this.isOnlineApplication) {
+        else {
+            const pdfs: FileTypeEnum[] = [FileTypeEnum.SIGNEDAPPL, FileTypeEnum.APPLICATION_PDF];
             result = result.filter(x => !pdfs.includes(FileTypeEnum[x.code as keyof typeof FileTypeEnum]));
         }
-
-        if (this.isOnlineApplication) {
-            result = result.filter(x => !offlines.includes(FileTypeEnum[x.code as keyof typeof FileTypeEnum]));
-        }
-
         return result;
     }
 

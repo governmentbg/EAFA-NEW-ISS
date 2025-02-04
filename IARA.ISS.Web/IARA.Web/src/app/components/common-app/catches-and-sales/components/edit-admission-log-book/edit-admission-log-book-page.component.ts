@@ -581,7 +581,7 @@ export class EditAdmissionLogBookPageComponent implements OnInit, IDialogCompone
                 return null;
             }
 
-            const difference: DateDifference | undefined = DateUtils.getDateDifference(admissionDate, now);
+            const difference: DateDifference | undefined = CatchesAndSalesUtils.getDateTimeDifference(admissionDate, now);
 
             if (difference === null || difference === undefined) {
                 return null;

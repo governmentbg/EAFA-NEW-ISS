@@ -34,6 +34,7 @@ export class PenalPointsFilters extends BaseRequestModel {
     public captainIdentifier: string | undefined;
     public isIncreasePoints: boolean | undefined;
     public pointsType: PointsTypeEnum | undefined;
+    public year: number | undefined;
     public personId: number | undefined;
     public legalId: number | undefined;
     public penalDecreeId: number | undefined;

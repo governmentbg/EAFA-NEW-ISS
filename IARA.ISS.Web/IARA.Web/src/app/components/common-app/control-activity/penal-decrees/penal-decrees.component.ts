@@ -637,7 +637,8 @@ export class PenalDecreesComponent implements OnInit, AfterViewInit {
             inspEntityMiddleNameControl: new FormControl(),
             inspEntityLastNameControl: new FormControl(),
             penalDecreeStatusControl: new FormControl(),
-            penalDecreeTypesControl: new FormControl()
+            penalDecreeTypesControl: new FormControl(),
+            yearControl: new FormControl()
         });
     }
 
@@ -699,6 +700,11 @@ export class PenalDecreesComponent implements OnInit, AfterViewInit {
             result.penalDecreeStatuses = statuses.map((status: AuanStatusEnum) => {
                 return AuanStatusEnum[status];
             });
+        }
+
+        const yearValue = filters.getValue('yearControl');
+        if (yearValue !== null && yearValue !== undefined) {
+            result.year = (filters.getValue('yearControl') as Date).getFullYear();
         }
 
         return result;
