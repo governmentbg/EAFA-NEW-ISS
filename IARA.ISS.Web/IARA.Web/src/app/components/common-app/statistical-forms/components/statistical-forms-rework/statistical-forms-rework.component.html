@@ -139,11 +139,13 @@
                           tooltipResourceName="statistical-forms.rework-total-reworked-product-tons-helper"
                           label="{{ 'statistical-forms.rework-total-reworked-product-tons' | tlTranslate }}">
                 </tl-input>
-                <tl-input fxFlex="33"
+                <tl-input *ngIf="hasTotalYearTurnover"
+                          fxFlex="33"
                           formControlName="totalYearTurnoverControl"
                           tooltipResourceName="statistical-forms.rework-total-year-turnover-helper"
                           label="{{ 'statistical-forms.rework-total-year-turnover' | tlTranslate }}">
                 </tl-input>
+                <div *ngIf="!hasTotalYearTurnover" fxFlex="33"></div>
             </div>
 
             <div fxLayout="row wrap" fxLayoutGap="1em" fxFlex="100">

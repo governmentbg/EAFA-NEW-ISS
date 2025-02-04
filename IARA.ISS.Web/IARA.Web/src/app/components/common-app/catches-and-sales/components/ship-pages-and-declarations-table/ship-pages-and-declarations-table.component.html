@@ -325,7 +325,6 @@
         <ng-template let-row="row" ngx-datatable-cell-template>
             <div fxLayout="row wrap" fxLayoutAlign="end center">
                 <tl-icon-button *ngIf="(!row.data.isLogBookFinishedOrSuspended || allowEditAfterFinished)
-                                       && canEditLogBookPages
                                        && _pagesPermissions.canCancelShipLogBookRecords
                                        && row.data.status !== logBookPageStatusesEnum.Canceled
                                        && row.data.transportationDocuments?.length === 0
@@ -340,7 +339,6 @@
 
                 <tl-icon-button *ngIf="(!row.data.isLogBookFinishedOrSuspended || allowEditAfterFinished)
                                        && row.data.status === logBookPageStatusesEnum.Canceled
-                                       && canEditLogBookPages
                                        && _pagesPermissions.canCancelShipLogBookRecords"
                                 icon="restore"
                                 iconClass="accent-color"
@@ -352,12 +350,10 @@
                                && row.data.status !== logBookPageStatusesEnum.Canceled
                                && row.data.status !== logBookPageStatusesEnum.Missing
                                && row.data.hasOriginDeclaration
-                               && canEditLogBookPages
                                && showDocumentActionButtons
                                && (_pagesPermissions.canAddAdmissionLogBookRecords
                                  || _pagesPermissions.canAddFirstSaleLogBookRecords
-                                 || _pagesPermissions.canAddTransportationLogBookRecords
-                                 || _pagesPermissions.canEditShipLogBookRecords)"
+                                 || _pagesPermissions.canAddTransportationLogBookRecords)"
                         mat-icon-button
                         color="accent"
                         matTooltip="{{ 'catches-and-sales.document-attachment' | tlTranslate }}"
@@ -381,7 +377,7 @@
                         <span>{{ 'catches-and-sales.first-sale-document' | tlTranslate }}</span>
                     </button>
                     <button mat-menu-item
-                            *ngIf="_pagesPermissions.canEditShipLogBookRecords && row.data.needRelatedLogBookPage"
+                            *ngIf="row.data.needRelatedLogBookPage"
                             (click)="onAddRelatedDeclarationBtnClicked(row.data)">
                         <span>{{ 'catches-and-sales.related-declaration' | tlTranslate }}</span>
                     </button>
@@ -416,7 +412,6 @@
 
                 <tl-icon-button *ngIf="(!row.data.isLogBookFinishedOrSuspended || allowEditAfterFinished)
                                        && _pagesPermissions.canEditNumberShipLogBookRecords
-                                       && canEditLogBookPages
                                        && row.data.status !== logBookPageStatusesEnum.Canceled"
                                 icon="ic-fluent-doc-arrow-right-24-regular"
                                 iconClass="accent-color"
