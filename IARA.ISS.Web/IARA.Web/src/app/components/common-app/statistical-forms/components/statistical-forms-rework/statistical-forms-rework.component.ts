@@ -49,6 +49,9 @@ import { PermittedFileTypeDTO } from '@app/models/generated/dtos/PermittedFileTy
 
 type YesNo = 'yes' | 'no';
 
+//По изкане от заявка № 31766.2
+const SHOW_TOTAL_TURNOVER_BEFORE_YEAR: number = 2023;
+
 @Component({
     selector: 'statistical-forms-rework',
     templateUrl: './statistical-forms-rework.component.html',
@@ -77,6 +80,7 @@ export class StatisticalFormsReworkComponent implements OnInit, IDialogComponent
     public isReadonly: boolean = false;
     public isRegisterEntry: boolean = false;
     public isIdReadOnly: boolean = false;
+    public hasTotalYearTurnover: boolean = false;
     public refreshFileTypes: Subject<void> = new Subject<void>();
 
     public fishTypes: NomenclatureDTO<number>[] = [];
@@ -183,7 +187,7 @@ export class StatisticalFormsReworkComponent implements OnInit, IDialogComponent
                         const statisticalForm: StatisticalFormReworkApplicationEditDTO = new StatisticalFormReworkApplicationEditDTO(contentObject);
                         statisticalForm.files = content.files;
                         statisticalForm.applicationId = content.applicationId;
-               
+
                         this.isOnlineApplication = statisticalForm.isOnlineApplication!;
                         this.refreshFileTypes.next();
 
@@ -304,6 +308,24 @@ export class StatisticalFormsReworkComponent implements OnInit, IDialogComponent
 
     public ngAfterViewInit(): void {
         if (!this.showOnlyRegiXData) {
+            this.form.get('yearControl')?.valueChanges.subscribe({
+                next: (value: Date | undefined) => {
+                    if (value !== undefined && value !== null) {
+                        if ((value as Date).getFullYear() <= SHOW_TOTAL_TURNOVER_BEFORE_YEAR) {
+                            this.hasTotalYearTurnover = true;
+                            this.form.get('totalYearTurnoverControl')!.setValidators([Validators.required, TLValidators.number(0)]);
+                        }
+                        else {
+                            this.hasTotalYearTurnover = false;
+                            this.form.get('totalYearTurnoverControl')!.clearValidators();
+                        }
+
+                        this.form.get('totalYearTurnoverControl')!.markAsPending();
+                        this.form.get('totalYearTurnoverControl')!.updateValueAndValidity({ emitEvent: false });
+                    }
+                }
+            });
+
             this.productGroup?.get('productTypeIdControl')?.valueChanges.subscribe({
                 next: () => {
                     this.productTypes = [...this.allProductTypes];
@@ -436,7 +458,7 @@ export class StatisticalFormsReworkComponent implements OnInit, IDialogComponent
                 licenceDateControl: new FormControl(null),
                 totalRawMaterialTonsControl: new FormControl(null, [Validators.required, TLValidators.number(0)]),
                 totalReworkedProductTonsControl: new FormControl(null, [Validators.required, TLValidators.number(0)]),
-                totalYearTurnoverControl: new FormControl(null, [Validators.required, TLValidators.number(0)]),
+                totalYearTurnoverControl: new FormControl(null),
                 isOwnerEmployeeControl: new FormControl(null, Validators.required),
                 employeeInfoArray: new FormArray([], this.payColumnCountValidator()),
                 employeeStatsArray: new FormArray([]),
@@ -453,7 +475,7 @@ export class StatisticalFormsReworkComponent implements OnInit, IDialogComponent
 
             this.productGroup = new FormGroup({
                 productTypeIdControl: new FormControl(null, Validators.required),
-                tonsControl: new FormControl(null, [Validators.required, TLValidators.number(0)])
+                tonsControl: new FormControl(null)
             });
         }
         else {
@@ -465,7 +487,7 @@ export class StatisticalFormsReworkComponent implements OnInit, IDialogComponent
                 licenceDateControl: new FormControl(null),
                 totalRawMaterialTonsControl: new FormControl(null, [Validators.required, TLValidators.number(0)]),
                 totalReworkedProductTonsControl: new FormControl(null, [Validators.required, TLValidators.number(0)]),
-                totalYearTurnoverControl: new FormControl(null, [Validators.required, TLValidators.number(0)]),
+                totalYearTurnoverControl: new FormControl(null),
                 isOwnerEmployeeControl: new FormControl(null, Validators.required),
                 employeeInfoArray: new FormArray([], this.payColumnCountValidator()),
                 employeeStatsArray: new FormArray([]),
@@ -557,8 +579,11 @@ export class StatisticalFormsReworkComponent implements OnInit, IDialogComponent
         this.form.get('licenceDateControl')!.setValue(model.licenceDate);
         this.form.get('totalRawMaterialTonsControl')!.setValue(model.totalRawMaterialTons);
         this.form.get('totalReworkedProductTonsControl')!.setValue(model.totalReworkedProductTons);
-        this.form.get('totalYearTurnoverControl')!.setValue(model.totalYearTurnover);
         this.form.get('filesControl')!.setValue(model.files);
+
+        if (this.hasTotalYearTurnover) {
+            this.form.get('totalYearTurnoverControl')!.setValue(model.totalYearTurnover);
+        }
 
         if (model.isOwnerEmployee !== undefined && model.isOwnerEmployee !== null) {
             if (model.isOwnerEmployee) {
@@ -633,12 +658,14 @@ export class StatisticalFormsReworkComponent implements OnInit, IDialogComponent
         this.form.get('licenceDateControl')!.setValue(model.licenceDate);
         this.form.get('totalRawMaterialTonsControl')!.setValue(model.totalRawMaterialTons);
         this.form.get('totalReworkedProductTonsControl')!.setValue(model.totalReworkedProductTons);
-        this.form.get('totalYearTurnoverControl')!.setValue(model.totalYearTurnover);
-
         this.form.get('filesControl')!.setValue(model.files);
 
         const eik: string | undefined = this.model.submittedFor?.legal?.eik;
         this.isIdReadOnly = CommonUtils.hasDigitsOnly(eik);
+
+        if (this.hasTotalYearTurnover) {
+            this.form.get('totalYearTurnoverControl')!.setValue(model.totalYearTurnover);
+        }
 
         if (model.isOwnerEmployee) {
             this.form.get('isOwnerEmployeeControl')!.setValue(this.ownerEmployeeOptions.find(x => x.value === 'yes'));
@@ -727,8 +754,11 @@ export class StatisticalFormsReworkComponent implements OnInit, IDialogComponent
         model.licenceDate = this.form.get('licenceDateControl')!.value;
         model.totalRawMaterialTons = this.form.get('totalRawMaterialTonsControl')!.value;
         model.totalReworkedProductTons = this.form.get('totalReworkedProductTonsControl')!.value;
-        model.totalYearTurnover = this.form.get('totalYearTurnoverControl')!.value;
         model.files = this.form.get('filesControl')!.value;
+
+        if (this.hasTotalYearTurnover) {
+            model.totalYearTurnover = this.form.get('totalYearTurnoverControl')!.value;
+        }
 
         if (this.form.get('isOwnerEmployeeControl')!.value) {
             model.isOwnerEmployee = this.form.get('isOwnerEmployeeControl')!.value!.value === 'yes';
@@ -752,9 +782,12 @@ export class StatisticalFormsReworkComponent implements OnInit, IDialogComponent
         model.licenceDate = this.form.get('licenceDateControl')!.value;
         model.totalRawMaterialTons = this.form.get('totalRawMaterialTonsControl')!.value;
         model.totalReworkedProductTons = this.form.get('totalReworkedProductTonsControl')!.value;
-        model.totalYearTurnover = this.form.get('totalYearTurnoverControl')!.value;
         model.files = this.form.get('filesControl')!.value;
         model.isOwnerEmployee = this.form.get('isOwnerEmployeeControl')!.value!.value === 'yes';
+
+        if (this.hasTotalYearTurnover) {
+            model.totalYearTurnover = this.form.get('totalYearTurnoverControl')!.value;
+        }
 
         model.rawMaterial = this.getRawMaterialFromTable();
         model.products = this.getProductFromTable();

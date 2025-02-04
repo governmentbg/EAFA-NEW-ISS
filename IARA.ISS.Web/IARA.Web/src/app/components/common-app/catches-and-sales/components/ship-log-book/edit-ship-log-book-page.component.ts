@@ -381,8 +381,10 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
         }, '1400px').subscribe({
             next: (result?: CatchRecordDTO) => {
                 if (result !== undefined && result !== null) {
-                    const difference: DateDifference | undefined = CatchesAndSalesUtils.getDateTimeDifference(result.gearEntryTime!, result.gearExitTime!);
-                    result.totalTime = this.dateDifferencePipe.transform(difference);
+                    if (result.gearEntryTime !== undefined && result.gearEntryTime !== null && result.gearExitTime !== undefined && result.gearExitTime !== null) {
+                        const difference: DateDifference | undefined = CatchesAndSalesUtils.getDateTimeDifference(result.gearEntryTime!, result.gearExitTime!);
+                        result.totalTime = this.dateDifferencePipe.transform(difference);
+                    }
 
                     result.catchRecordFishesSummary = result.catchRecordFishes
                         ?.filter(x => !x.isDiscarded)
@@ -801,8 +803,10 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
 
         this.catchRecords.push(...this.model.catchRecords ?? []);
         for (const record of this.catchRecords) {
-            const difference: DateDifference | undefined = CatchesAndSalesUtils.getDateTimeDifference(record.gearEntryTime!, record.gearExitTime!);
-            record.totalTime = this.dateDifferencePipe.transform(difference);
+            if (record.gearEntryTime !== undefined && record.gearEntryTime !== null && record.gearExitTime !== undefined && record.gearExitTime !== null) {
+                const difference: DateDifference | undefined = CatchesAndSalesUtils.getDateTimeDifference(record.gearEntryTime!, record.gearExitTime!);
+                record.totalTime = this.dateDifferencePipe.transform(difference);
+            }
         }
 
         this.declarationOfOriginCatchRecords.push(...this.model.originDeclarationFishes ?? []);
@@ -1815,6 +1819,8 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
                     if (x.isActive !== false
                         && x.gearEntryTime !== null
                         && x.gearEntryTime !== undefined
+                        && catchRecord.gearEntryTime !== null
+                        && catchRecord.gearEntryTime !== undefined
                         && x.gearEntryTime?.getFullYear() === catchRecord.gearEntryTime?.getFullYear()
                         && x.gearEntryTime?.getMonth() === catchRecord.gearEntryTime?.getMonth()
                         && x.gearEntryTime?.getDate() === catchRecord.gearEntryTime?.getDate()
@@ -1993,13 +1999,15 @@ export class EditShipLogBookPageComponent implements OnInit, IDialogComponent {
 
         for (const catchRecord of catchRecords) {
             if (catchRecord.gearEntryTime !== undefined && catchRecord.gearEntryTime !== null) {
-                if (result.findIndex(x => x.gearEntryTime?.getFullYear() === catchRecord.gearEntryTime?.getFullYear()
+                if (result.findIndex(x => x.gearEntryTime !== undefined && x.gearEntryTime !== null
+                    && x.gearEntryTime?.getFullYear() === catchRecord.gearEntryTime?.getFullYear()
                     && x.gearEntryTime?.getMonth() === catchRecord.gearEntryTime?.getMonth()
                     && x.gearEntryTime?.getDate() === catchRecord.gearEntryTime?.getDate()
                     && x.gearEntryTime?.getHours() === catchRecord.gearEntryTime?.getHours()
                     && x.gearEntryTime?.getMinutes() === catchRecord.gearEntryTime?.getMinutes()) === -1
                 ) {
-                    const original = catchRecords.filter(x => x.gearEntryTime?.getFullYear() === catchRecord.gearEntryTime?.getFullYear()
+                    const original = catchRecords.filter(x => x.gearEntryTime !== undefined && x.gearEntryTime !== null
+                        && x.gearEntryTime?.getFullYear() === catchRecord.gearEntryTime?.getFullYear()
                         && x.gearEntryTime?.getMonth() === catchRecord.gearEntryTime?.getMonth()
                         && x.gearEntryTime?.getDate() === catchRecord.gearEntryTime?.getDate()
                         && x.gearEntryTime?.getHours() === catchRecord.gearEntryTime?.getHours()
