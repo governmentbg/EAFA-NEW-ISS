@@ -674,7 +674,7 @@ namespace IARA.Mobile.Insp.Application.Helpers
         private static IPullData PullPoundNetFishingGears()
         {
             return new PullData<FishingGearInspectionNomenclatureDto, PoundNetFishingGear>(
-                NomenclatureEnum.ShipFishingGear,
+                NomenclatureEnum.PoundNetFishingGear,
                 "InspectionData/GetPoundNetFishingGears",
                 f => new PoundNetFishingGear
                 {

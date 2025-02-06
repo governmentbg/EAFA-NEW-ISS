@@ -271,7 +271,7 @@
                 IsVisible="{Binding HasPingers}">
             <tl:TLResponsiveTable.TableColumns>
                 <tl:TLTableColumn Text="{rt:Translate PingerNumber, Group=FishingGear}" Width="*" />
-                <tl:TLTableColumn Text="{rt:Translate PingerStatus, Group=FishingGear}" Width="*" />
+                <tl:TLTableColumn Text="{rt:Translate PingerModel, Group=FishingGear}" Width="*" />
                 <tl:TLTableColumn Width="{Binding BindingContext.DialogType, Converter={StaticResource ReviewToWidth}, ConverterParameter=40, Source={Reference view}}" />
             </tl:TLResponsiveTable.TableColumns>
             <tl:TLResponsiveTable.DefaultItemTemplate>
@@ -281,7 +281,7 @@
                                 LineBreakMode="WordWrap"
                                 VerticalOptions="Center"
                                 IsEnabled="{Binding BindingContext.Inspection.ActivityType, Converter={StaticResource IsNotReview}, Source={Reference view}}" />
-                        <Label Text="{Binding Status.Name}"
+                        <Label Text="{Binding Model}"
                                 LineBreakMode="WordWrap"
                                 VerticalOptions="Center"
                                 IsEnabled="{Binding BindingContext.Inspection.ActivityType, Converter={StaticResource IsNotReview}, Source={Reference view}}" />

@@ -58,6 +58,7 @@
                 </inspected-ship-subject>
 
                 <inspected-port formControlName="portControl"
+                                [hasDate]="false"
                                 [ports]="ports"
                                 [countries]="countries">
                 </inspected-port>
@@ -84,7 +85,8 @@
                                  tooltipResourceName="inspections.mark-reason-helper">
                 </tl-autocomplete>
 
-                <tl-autocomplete fxFlex="50"
+                <tl-autocomplete *ngIf="form.controls.markReasonControl.value?.code === gearCheckRecheck"
+                                 fxFlex="50"
                                  formControlName="remarkReasonControl"
                                  [options]="remarkReasons"
                                  label="{{ 'inspections.remark-reason' | tlTranslate }}"

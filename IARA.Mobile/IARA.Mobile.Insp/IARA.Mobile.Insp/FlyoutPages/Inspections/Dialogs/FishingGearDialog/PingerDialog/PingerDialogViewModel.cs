@@ -4,6 +4,7 @@ using IARA.Mobile.Insp.Helpers;
 using IARA.Mobile.Insp.Models;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using TechnoLogica.Xamarin.Commands;
@@ -29,9 +30,6 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.FishingGearDialog.Pin
         [Required]
         public ValidState Number { get; set; }
 
-        [Required]
-        public ValidStateSelect<SelectNomenclatureDto> Status { get; set; }
-
         public ValidState Model { get; set; }
 
         public ValidState Brand { get; set; }
@@ -49,7 +47,6 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.FishingGearDialog.Pin
             if (ViewActivityType != ViewActivityType.Add)
             {
                 Number.AssignFrom(Pinger.Number);
-                Status.AssignFrom(Pinger.Status.Code, PingerStatuses);
                 Model.AssignFrom(Pinger.Model);
                 Brand.AssignFrom(Pinger.Brand);
             }
@@ -68,7 +65,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.FishingGearDialog.Pin
             {
                 Id = Pinger != null ? Pinger.Id : null,
                 Number = Number.Value,
-                Status = Status.Value,
+                Status = PingerStatuses.Where(x => x.Code == "NEW").First(),
                 Model = Model.Value,
                 Brand = Brand.Value
             });

@@ -22,10 +22,6 @@
                 <tl:TLEntry Title="{rt:Translate PingerNumber, Group=FishingGear}"
                         ValidState="{Binding Number}"
                         IsEnabled="{Binding IsEditable}" />
-                <tl:TLNativePicker Title="{rt:Translate PingerStatus, Group=FishingGear}"
-                        ValidState="{Binding Status}"
-                        ItemsSource="{Binding PingerStatuses}"
-                        IsEnabled="{Binding IsEditable}" />
                 <tl:TLEntry Title="{rt:Translate PingerModel, Group=FishingGear}"
                         ValidState="{Binding Model}"
                         IsEnabled="{Binding IsEditable}" />

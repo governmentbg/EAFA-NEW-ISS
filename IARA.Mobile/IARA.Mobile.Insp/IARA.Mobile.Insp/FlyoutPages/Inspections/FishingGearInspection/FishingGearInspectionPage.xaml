@@ -44,15 +44,18 @@
                 <StackLayout IsVisible="{Binding FishingGearType.Code, Converter={StaticResource Equal}, ConverterParameter={Static local:FishingGearInspectionViewModel.FishingPoundNet}}">
                     <lc:CustomInfinitePicker Title="{rt:Translate PoundNet, Group=FishingGearInspection}"
                             ValidState="{Binding PoundNet}"
+                            Command="{Binding PoundNetChosen}"
                             IsEnabled="{Binding ActivityType, Converter={StaticResource IsNotReview}}" />
                 </StackLayout>
                 <tl:TLNativePicker Title="{rt:Translate CheckReason, Group=FishingGearInspection}"
                         ValidState="{Binding CheckReason}"
+                        Command="{Binding CheckReasonChosen}"
                         ItemsSource="{Binding CheckReasons}"
                         IsEnabled="{Binding ActivityType, Converter={StaticResource IsNotReview}}" />
                 <tl:TLNativePicker Title="{rt:Translate RecheckReason, Group=FishingGearInspection}"
                         ValidState="{Binding RecheckReason}"
                         ItemsSource="{Binding RecheckReasons}"
+                        IsVisible="{Binding CheckReason.Value.Code, Converter={StaticResource Equal}, ConverterParameter=Recheck, FallbackValue=False}"
                         IsEnabled="{Binding ActivityType, Converter={StaticResource IsNotReview}}" />
                 <tl:TLEntry Title="{rt:Translate OtherRecheckReason, Group=FishingGearInspection}"
                         ValidState="{Binding OtherRecheckReason}"
@@ -67,7 +70,14 @@
                 <tl:TLRadioButtonListView IsLabelVisible="False"
                         ItemsSource="{Binding PermitTypes}"
                         SelectedItem="{Binding PermitType}"
-                        IsEnabled="{Binding ActivityType, Converter={StaticResource IsNotReview}}" />
+                        Command="{Binding PermitTypeChosen}">
+                    <tl:TLRadioButtonListView.IsEnabled>
+                        <MultiBinding Converter="{StaticResource All}">
+                            <Binding Path="ActivityType" Converter="{StaticResource IsNotReview}" />
+                            <Binding Path="IsPermitTypeEditable" />
+                        </MultiBinding>
+                    </tl:TLRadioButtonListView.IsEnabled>
+                </tl:TLRadioButtonListView>
                 <lc:CustomInfinitePicker Title="{rt:Translate Permit, Group=FishingGearInspection}"
                         ValidState="{Binding Permit}"
                         Command="{Binding PermitChosen}"

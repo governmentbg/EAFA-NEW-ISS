@@ -10,6 +10,7 @@ using IARA.Mobile.Insp.Application.Interfaces.Transactions;
 using IARA.Mobile.Insp.Base;
 using IARA.Mobile.Insp.Controls;
 using IARA.Mobile.Insp.Controls.ViewModels;
+using IARA.Mobile.Insp.Domain.Entities.Nomenclatures;
 using IARA.Mobile.Insp.Domain.Enums;
 using IARA.Mobile.Insp.Helpers;
 using IARA.Mobile.Insp.Models;
@@ -51,6 +52,8 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FishingGearInspection
             FishingGearTypeSwitched = CommandBuilder.CreateFrom(OnFishingGearTypeSwitched);
             PoundNetChosen = CommandBuilder.CreateFrom<SelectNomenclatureDto>(OnPoundNetChosen);
             PermitChosen = CommandBuilder.CreateFrom<SelectNomenclatureDto>(OnPermitChosen);
+            CheckReasonChosen = CommandBuilder.CreateFrom<SelectNomenclatureDto>(OnCheckReasonChosen);
+            PermitTypeChosen = CommandBuilder.CreateFrom(OnPermitTypeChosen);
             SaveDraft = CommandBuilder.CreateFrom(OnSaveDraft);
             Finish = CommandBuilder.CreateFrom(OnFinish);
 
@@ -58,7 +61,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FishingGearInspection
             {
                 ShipSelected = CommandBuilder.CreateFrom<ShipSelectNomenclatureDto>(OnShipChosen)
             };
-            LastHarbour = new InspectionHarbourViewModel(this);
+            LastHarbour = new InspectionHarbourViewModel(this, false);
             Owner = new InspectedPersonViewModel(this, InspectedPersonType.OwnerPers, InspectedPersonType.OwnerLegal)
             {
                 PersonChosen = CommandBuilder.CreateFrom<ShipPersonnelDto>(OnOwnerChosen),
@@ -150,6 +153,15 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FishingGearInspection
 
         public ValidStateValidatableTable<ToggleViewModel> Toggles { get; set; }
 
+        private bool _isPermitTypeEditable = true;
+
+        public bool IsPermitTypeEditable
+        {
+            get => _isPermitTypeEditable;
+            set => SetProperty(ref _isPermitTypeEditable, value);
+        }
+
+
         public List<SelectNomenclatureDto> CheckReasons
         {
             get => _checkReasons;
@@ -184,6 +196,8 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FishingGearInspection
         public ICommand FishingGearTypeSwitched { get; }
         public ICommand PoundNetChosen { get; }
         public ICommand PermitChosen { get; }
+        public ICommand CheckReasonChosen { get; }
+        public ICommand PermitTypeChosen { get; }
 
         public override void OnDisappearing()
         {
@@ -286,6 +300,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FishingGearInspection
                 OwnerComment.AssignFrom(Edit.OwnerComment);
 
                 LastHarbour.OnEdit(Edit.Port);
+                OnCheckReasonChosen(CheckReasons.Where(x => x.Id == Edit.CheckReasonId).First());
 
                 if (Edit.PermitId != null)
                 {
@@ -378,6 +393,26 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FishingGearInspection
             }
 
             await TLLoadingHelper.HideFullLoadingScreen();
+        }
+
+        private void OnCheckReasonChosen(SelectNomenclatureDto dto)
+        {
+            IsPermitTypeEditable = dto.Code == "Recheck";
+            PermitType = dto.Code == "New" ? PermitTypes[1] : PermitTypes[0];
+            ResetPermitData();
+        }
+
+        private void OnPermitTypeChosen()
+        {
+            ResetPermitData();
+        }
+
+        private void ResetPermitData()
+        {
+            FishingGears.Reset();
+            Permit.Value = null;
+            PermitNumber.Value = "";
+            PermitYear.Value = "";
         }
 
         private void OnFishingGearTypeSwitched()

@@ -357,7 +357,7 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
 
         this.pingersForm = new FormGroup({
             numberControl: new FormControl(undefined, Validators.required),
-            statusIdControl: new FormControl(undefined, Validators.required),
+            //statusIdControl: new FormControl(undefined, Validators.required),
             modelControl: new FormControl(undefined, Validators.maxLength(500)),
             brandControl: new FormControl(undefined, Validators.maxLength(500)),
         });
@@ -598,13 +598,16 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
     }
 
     private getPingersFromTable(): FishingGearPingerDTO[] {
+        const status: FishingGearPingerStatusesEnum = FishingGearPingerStatusesEnum.NEW;
+        const statusId: number = this.pingerStatuses.find(x => x.code === FishingGearPingerStatusesEnum[status])!.value!;
+
         if (this.pingersTable !== null && this.pingersTable !== undefined && this.pingersTable.rows !== null && this.pingersTable !== undefined) {
             return this.pingersTable.rows.map((row: FishingGearPingerDTO) => {
                 return new FishingGearPingerDTO({
                     id: row.id,
                     number: row.number,
-                    statusId: row.statusId,
-                    selectedStatus: FishingGearPingerStatusesEnum[this.pingerStatuses.find(x => x.value === row.statusId)!.code as keyof typeof FishingGearPingerStatusesEnum],
+                    statusId: statusId,
+                    selectedStatus: status,
                     isActive: row.isActive ?? true,
                     model: row.model,
                     brand: row.brand,
