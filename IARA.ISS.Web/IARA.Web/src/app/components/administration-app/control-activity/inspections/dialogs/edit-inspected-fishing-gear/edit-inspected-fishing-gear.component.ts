@@ -401,7 +401,9 @@ export class EditInspectedFishingGearComponent implements OnInit, IDialogCompone
                 isActive: f.isActive,
                 number: f.number,
                 selectedStatus: f.selectedStatus,
-                statusId: f.statusId
+                statusId: f.statusId,
+                brand: f.brand,
+                model: f.model
             }));
         }
 

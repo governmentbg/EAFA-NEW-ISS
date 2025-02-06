@@ -8,7 +8,7 @@ namespace IARA.Mobile.Application.DTObjects.Nomenclatures
         public string Code { get; set; }
         public string Name { get; set; }
 
-        public string DisplayValue => string.IsNullOrEmpty(Code) ? Name : $"{Code} - {Name}";
+        public virtual string DisplayValue => string.IsNullOrEmpty(Code) ? Name : $"{Code} - {Name}";
 
         public override string ToString()
         {

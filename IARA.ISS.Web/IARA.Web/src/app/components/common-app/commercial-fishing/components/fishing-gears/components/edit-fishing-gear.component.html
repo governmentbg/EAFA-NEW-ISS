@@ -234,24 +234,21 @@
                                (recordChanged)="onEditedPinger()">
                     <data-column columnName="{{ 'fishing-gears.pinger-number' | tlTranslate }}"
                                  propertyName="number"
-                                 [formGroup]="pingersForm"
-                                 dataType="string">
+                                 [formGroup]="pingersForm">
                     </data-column>
-                    <data-column columnName="{{ 'fishing-gears.pinger-status' | tlTranslate }}"
+                    <!--<data-column columnName="{{ 'fishing-gears.pinger-status' | tlTranslate }}"
                                  propertyName="statusId"
                                  [formGroup]="pingersForm"
                                  [options]="pingerStatuses"
                                  dataType="nomenclature">
-                    </data-column>
+                    </data-column>-->
                     <data-column columnName="{{ 'fishing-gears.pinger-model' | tlTranslate }}"
                                  propertyName="model"
-                                 [formGroup]="pingersForm"
-                                 dataType="string">
+                                 [formGroup]="pingersForm">
                     </data-column>
                     <data-column columnName="{{ 'fishing-gears.pinger-brand' | tlTranslate }}"
                                  propertyName="brand"
-                                 [formGroup]="pingersForm"
-                                 dataType="string">
+                                 [formGroup]="pingersForm">
                     </data-column>
                     <data-column-inline [flexRate]="isInspected ? 0.9 : 0.5"
                                         *ngIf="!isDisabled">

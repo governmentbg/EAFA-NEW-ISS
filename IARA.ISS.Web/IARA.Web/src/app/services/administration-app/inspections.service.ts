@@ -131,14 +131,16 @@ export class InspectionsService extends BaseAuditService {
         });
     }
 
-    public getShipPermitLicenses(shipId: number): Observable<InspectionPermitLicenseDTO[]> {
-        const params = new HttpParams().append('shipId', shipId.toString());
+    public getShipPermitLicenses(shipId: number, includeOld: boolean = false): Observable<InspectionPermitLicenseDTO[]> {
+        const params = new HttpParams()
+            .append('shipId', shipId.toString())
+            .append('includeOld', includeOld.toString());
 
         return this.requestService.get<InspectionPermitLicenseDTO[]>(this.area, this.controller, 'GetShipPermitLicenses', {
             httpParams: params,
             responseTypeCtr: InspectionPermitLicenseDTO,
         }).pipe(map((licenses: InspectionPermitLicenseDTO[]) => {
-            this.setPermitLicensesDisplayNames(licenses);
+            this.setPermitLicensesDisplayNames(licenses, includeOld);
 
             return licenses;
         }));
@@ -491,7 +493,7 @@ export class InspectionsService extends BaseAuditService {
         });
     }
 
-    private setPermitLicensesDisplayNames(licenses: InspectionPermitLicenseDTO[]): void {
+    private setPermitLicensesDisplayNames(licenses: InspectionPermitLicenseDTO[], setValidFromDate: boolean = false): void {
         for (const license of licenses) {
             const captain: string = this.translate.getValue('inspections.permit-license-nomenclature-captain');
 
@@ -500,6 +502,10 @@ export class InspectionsService extends BaseAuditService {
             }
             else {
                 license.displayName = `${license.waterType} | ${captain}: ${license.captainName}`;
+            }
+
+            if (setValidFromDate && license.validFrom) {
+                license.displayName += ` | ${license.validFrom.getFullYear()}`;
             }
         }
     }
