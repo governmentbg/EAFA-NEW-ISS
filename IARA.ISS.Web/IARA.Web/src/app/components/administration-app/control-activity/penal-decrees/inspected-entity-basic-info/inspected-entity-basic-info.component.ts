@@ -105,10 +105,7 @@ export class InspectedEntityBasicInfoComponent extends CustomFormControl<AuanIns
 
             if (value.isPerson !== undefined && value.isPerson !== null) {
                 this.inspectedEntity.isPerson = value.isPerson;
-
-                if (!this.isFromRegister) {
-                    this.form.get('isInspectedEntityPersonControl')!.setValue(this.inspectedEntityOptions.find(x => x.value === value.isPerson));
-                }
+                this.form.get('isInspectedEntityPersonControl')!.setValue(this.inspectedEntityOptions.find(x => x.value === value.isPerson));
 
                 if (value.isPerson === true) {
                     if (this.inspectedEntity.person !== undefined && this.inspectedEntity.person !== null) {

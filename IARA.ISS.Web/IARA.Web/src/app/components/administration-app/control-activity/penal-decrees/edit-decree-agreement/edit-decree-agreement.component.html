@@ -72,10 +72,10 @@
             </mat-error>
 
             <decree-auan-basic-info formControlName="auanControl"
-                                    validityChecker
-                                    [isAdding]="isAdding"
+                                    validityChecker 
+                                    [isAdding]="isAdding || isThirdParty"
                                     [isFromRegister]="!isThirdParty">
-            </decree-auan-basic-info>
+            </decree-auan-basic-info> 
         </div>
     </tl-expansion-panel>
 
