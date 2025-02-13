@@ -428,7 +428,7 @@ export class EditPenalDecreeComponent implements OnInit, AfterViewInit, IDialogC
             issueDateControl: new FormControl(null, Validators.required),
             effectiveDateControl: new FormControl(null),
             territoryUnitControl: new FormControl(null),
-            courtControl: new FormControl(null),
+            courtControl: new FormControl(null, Validators.required),
 
             auanControl: new FormControl(null),
             auanViolatedRegulationsControl: new FormControl(null),
@@ -576,6 +576,7 @@ export class EditPenalDecreeComponent implements OnInit, AfterViewInit, IDialogC
             this.model.auanData!.territoryUnitId = this.form.get('territoryUnitControl')!.value?.value;
             this.model.auanData!.constatationComments = this.form.get('constatationCommentsControl')!.value;
             this.model.auanData!.violatedRegulations = this.form.get('auanViolatedRegulationsControl')!.value;
+            this.model.auanData!.isExternal = true;
         }
     }
 

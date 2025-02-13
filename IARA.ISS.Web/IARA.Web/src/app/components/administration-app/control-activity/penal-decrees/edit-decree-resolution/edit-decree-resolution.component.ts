@@ -386,7 +386,7 @@ export class EditDecreeResolutionComponent implements OnInit, AfterViewInit, IDi
             territoryUnitControl: new FormControl(null),
             appealCourtControl: new FormControl(null),
             appealSectorControl: new FormControl(null),
-            courtControl: new FormControl(null),
+            courtControl: new FormControl(null, Validators.required),
 
             reasonsControl: new FormControl(null, Validators.maxLength(4000)),
             motivesControl: new FormControl(null, Validators.maxLength(4000)),
@@ -500,12 +500,13 @@ export class EditDecreeResolutionComponent implements OnInit, AfterViewInit, IDi
         this.model.resolutionData.zra = this.form.get('zraControl')!.value;
         this.model.resolutionData.materialEvidence = this.form.get('materialEvidenceControl')!.value;
 
-        if (this.isThirdParty && this.isAdding) {
+        if (this.isThirdParty) {
             this.model.auanData = this.form.get('auanControl')!.value;
             this.model.auanData!.userId = this.form.get('drafterControl')!.value?.value;
             this.model.auanData!.territoryUnitId = this.form.get('territoryUnitControl')!.value?.value;
             this.model.auanData!.constatationComments = this.form.get('constatationCommentsControl')!.value;
             this.model.auanData!.violatedRegulations = this.form.get('auanViolatedRegulationsControl')!.value;
+            this.model.auanData!.isExternal = true;
         }
     }
 

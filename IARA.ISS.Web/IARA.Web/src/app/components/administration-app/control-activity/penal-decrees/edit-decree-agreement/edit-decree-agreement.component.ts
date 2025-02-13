@@ -456,12 +456,13 @@ export class EditDecreeAgreementComponent implements OnInit, AfterViewInit, IDia
         this.model.auanViolatedRegulations = this.form.get('auanViolatedRegulationsControl')!.value;
         this.model.decreeViolatedRegulations = this.form.get('violatedRegulationsControl')!.value;
 
-        if (this.isThirdParty && this.isAdding) {
+        if (this.isThirdParty) {
             this.model.auanData = this.form.get('auanControl')!.value;
             this.model.auanData!.userId = this.form.get('drafterControl')!.value?.value;
             this.model.auanData!.territoryUnitId = this.form.get('territoryUnitControl')!.value?.value;
             this.model.auanData!.constatationComments = this.form.get('constatationCommentsControl')!.value;
             this.model.auanData!.violatedRegulations = this.form.get('auanViolatedRegulationsControl')!.value;
+            this.model.auanData!.isExternal = true;
         }
 
         this.model.files = this.form.get('filesControl')!.value;
