@@ -116,6 +116,18 @@ export class AquacultureApplicationEditDTO extends AquacultureBaseRegixDataDTO {
     @StrictlyTyped(String)
     public comments?: string;
 
+    @StrictlyTyped(String)
+    public locationAreaCode?: string;
+
+    @StrictlyTyped(String)
+    public locationAreaName?: string;
+
+    @StrictlyTyped(String)
+    public waterBodyCode?: string;
+
+    @StrictlyTyped(String)
+    public waterBodyName?: string;
+
     @StrictlyTyped(ApplicationPaymentInformationDTO)
     public paymentInformation?: ApplicationPaymentInformationDTO;
 

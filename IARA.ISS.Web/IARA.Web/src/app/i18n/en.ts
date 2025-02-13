@@ -5007,6 +5007,10 @@
         'ekatte': 'EKATTE',
         'gps-coordinates': 'GPS coordinates',
         'location-description': 'Location description',
+        'location-area-code': 'Location area code',
+        'location-area-name': 'Location area name',
+        'water-body-code': 'Water body code',
+        'water-body-name': 'Water body name',
         'point': 'Point',
         'longitude': 'Longitude',
         'latitude': 'Latitude',
@@ -5740,6 +5744,7 @@
 
         'aqua-farm-fish-organism-error': 'The combination of fish type and breading material weight is already added for this installation.',
         'aqua-farm-medicine-error': 'This type of medicine is already added.',
+        'aqua-farm-at-least-one-installation-system-error': 'There should be at least one installation system.',
 
         //Rework
         'rework-requester': 'Sender',
@@ -6010,6 +6015,8 @@
         'edit-external-auan-date': 'Date',
         'edit-auan-drafter': 'Drafter',
         'edit-auan-location-description': 'Location description',
+        'edit-drafter-name': 'Prosecutor name',
+        'edit-location-description': 'Prosecutor',
         'edit-auan-constatation-comments': 'Constatation comments',
         'edit-evidence-comments': 'Evidence comments',
         'edit-auan-offender-comments': 'Offender comments',

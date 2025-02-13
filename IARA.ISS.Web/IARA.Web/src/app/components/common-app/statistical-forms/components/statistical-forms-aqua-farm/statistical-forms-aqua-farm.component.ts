@@ -99,6 +99,7 @@ export class StatisticalFormsAquaFarmComponent implements OnInit, IDialogCompone
 
     public readonly pageCode: PageCodeEnum = PageCodeEnum.StatFormAquaFarm;
     public readonly today: Date = new Date();
+    public lastYear: Date;
 
     public notifier: Notifier = new Notifier();
     public expectedResults: StatisticalFormAquaFarmRegixDataDTO;
@@ -205,6 +206,8 @@ export class StatisticalFormsAquaFarmComponent implements OnInit, IDialogCompone
                 isActive: true
             })
         ];
+
+        this.lastYear = new Date(this.today.getFullYear() - 1, 0, 1);
 
         this.buildForm();
     }
@@ -476,6 +479,8 @@ export class StatisticalFormsAquaFarmComponent implements OnInit, IDialogCompone
 
                     this.installationTypes = this.installationTypes.filter(x => !currentIds.includes(x.value!));
                     this.installationTypes = this.installationTypes.slice();
+
+                    this.form.updateValueAndValidity({ onlySelf: true });
                 }
             });
 
@@ -486,6 +491,8 @@ export class StatisticalFormsAquaFarmComponent implements OnInit, IDialogCompone
 
                     this.installationTypes = this.installationTypes.filter(x => !currentIds.includes(x.value!));
                     this.installationTypes = this.installationTypes.slice();
+
+                    this.form.updateValueAndValidity({ onlySelf: true });
                 }
             });
 
@@ -570,6 +577,21 @@ export class StatisticalFormsAquaFarmComponent implements OnInit, IDialogCompone
                     this.form.updateValueAndValidity({ onlySelf: true });
                 }
             });
+
+            if (this.isSystemFull) {
+                this.systemFullTable.recordChanged.subscribe({
+                    next: (event: RecordChangedEventArgs<StatisticalFormAquaFarmInstallationSystemFullDTO>) => {
+                        this.form.updateValueAndValidity({ onlySelf: true });
+                    }
+                });
+            }
+            else {
+                this.systemNotFullTable.recordChanged.subscribe({
+                    next: (event: RecordChangedEventArgs<StatisticalFormAquaFarmInstallationSystemNotFullDTO>) => {
+                        this.form.updateValueAndValidity({ onlySelf: true });
+                    }
+                });
+            }
         }
     }
 
@@ -1527,7 +1549,7 @@ export class StatisticalFormsAquaFarmComponent implements OnInit, IDialogCompone
 
     private baseFormValidators(): ValidatorFn[] {
         return [
-            this.producedFishValidator(), this.soldFishValidator(), this.unrealizedFishValidator(), this.givenMedicineValidator()
+            this.producedFishValidator(), this.soldFishValidator(), this.unrealizedFishValidator(), this.givenMedicineValidator(), this.atLeatsOneInstallationSystemFullValidator()
         ];
     }
 
@@ -1561,6 +1583,31 @@ export class StatisticalFormsAquaFarmComponent implements OnInit, IDialogCompone
 
             if (isInvalid) {
                 return { 'unrealizedFishError': true };
+            }
+
+            return null;
+        }
+    }
+
+    private atLeatsOneInstallationSystemFullValidator(): ValidatorFn {
+        return (control: AbstractControl): ValidationErrors | null => {
+            if (this.isSystemFull) {
+                if (this.systemFullTable !== undefined && this.systemFullTable !== null) {
+                    const rows = this.systemFullTable.rows.filter(x => x.isActive !== false) as StatisticalFormAquaFarmInstallationSystemFullDTO[];
+
+                    if (rows.length < 1) {
+                        return { 'atLeastOneInstallationSystemError': true };
+                    }
+                }
+            }
+            else {
+                if (this.systemNotFullTable !== undefined && this.systemNotFullTable !== null) {
+                    const rows = this.systemNotFullTable.rows.filter(x => x.isActive !== false) as StatisticalFormAquaFarmInstallationSystemNotFullDTO[];
+
+                    if (rows.length < 1) {
+                        return { 'atLeastOneInstallationSystemError': true };
+                    }
+                }
             }
 
             return null;

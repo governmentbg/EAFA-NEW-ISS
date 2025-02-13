@@ -61,6 +61,7 @@ export class StatisticalFormsReworkComponent implements OnInit, IDialogComponent
     public readonly pageCode: PageCodeEnum = PageCodeEnum.StatFormRework;
     public readonly companyHeadquartersType: AddressTypesEnum = AddressTypesEnum.COMPANY_HEADQUARTERS;
     public readonly currentDate: Date = new Date();
+    public lastYear: Date;
 
     public translate: FuseTranslationLoaderService;
     public form!: FormGroup;
@@ -169,6 +170,8 @@ export class StatisticalFormsReworkComponent implements OnInit, IDialogComponent
                 isActive: true
             })
         ];
+
+        this.lastYear = new Date(this.currentDate.getFullYear() - 1, 0, 1);
 
         this.buildForm();
     }

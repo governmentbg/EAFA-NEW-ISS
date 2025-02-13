@@ -170,6 +170,7 @@ export class EditAquacultureFacilityComponent implements OnInit, AfterViewInit, 
     public isIdReadOnly: boolean = false;
     public hasStatisticalFormReadPermission: boolean = false;
     public hideRelation: boolean = true;
+    public showBlackSeaControls: boolean = false;
 
     public aquaticOrganismsTouched: boolean = false;
     public installationsTouched: boolean = false;
@@ -233,6 +234,7 @@ export class EditAquacultureFacilityComponent implements OnInit, AfterViewInit, 
     private readonly internalFishCodes: string[] = ['4'];
     private readonly danubeFishCodes: string[] = ['2', '3', '4'];
     private readonly blackSeaFishCodes: string[] = ['1', '3', '4', '6'];
+    private readonly blackSeaCodes: string[] = ['1'];
 
     public constructor(
         translate: FuseTranslationLoaderService,
@@ -1344,6 +1346,10 @@ export class EditAquacultureFacilityComponent implements OnInit, AfterViewInit, 
                 populatedAreaControl: new FormControl(null),
                 ekatteControl: new FormControl({ value: null, disabled: true }),
                 locationDescriptionControl: new FormControl(null, [Validators.required, Validators.maxLength(500)]),
+                locationAreaCodeControl: new FormControl(null),
+                locationAreaNameControl: new FormControl(null),
+                waterBodyCodeControl: new FormControl(null),
+                waterBodyNameControl: new FormControl(null),
                 waterSalinityControl: new FormControl(null, Validators.required),
                 waterTemperatureControl: new FormControl(null, Validators.required),
                 systemControl: new FormControl(null, Validators.required),
@@ -1393,6 +1399,10 @@ export class EditAquacultureFacilityComponent implements OnInit, AfterViewInit, 
                 populatedAreaControl: new FormControl(null),
                 ekatteControl: new FormControl({ value: null, disabled: true }),
                 locationDescriptionControl: new FormControl(null, [Validators.required, Validators.maxLength(500)]),
+                locationAreaCodeControl: new FormControl(null),
+                locationAreaNameControl: new FormControl(null),
+                waterBodyCodeControl: new FormControl(null),
+                waterBodyNameControl: new FormControl(null),
                 waterSalinityControl: new FormControl(null, Validators.required),
                 waterTemperatureControl: new FormControl(null, Validators.required),
                 systemControl: new FormControl(null, Validators.required),
@@ -1481,6 +1491,8 @@ export class EditAquacultureFacilityComponent implements OnInit, AfterViewInit, 
                     const danube: boolean = this.danubeFishCodes.includes(waterArea.code!);
                     const blackSea: boolean = this.blackSeaFishCodes.includes(waterArea.code!);
 
+                    this.showBlackSeaControls = this.blackSeaCodes.includes(waterArea.code!);
+
                     this.allAquaticOrganisms = this.unfilteredAquaticOrganisms.filter(x => {
                         return (internal && x.isInternal === true)
                             || (danube && x.isDanube === true)
@@ -1499,9 +1511,12 @@ export class EditAquacultureFacilityComponent implements OnInit, AfterViewInit, 
                 }
                 else {
                     this.allAquaticOrganisms = [...this.unfilteredAquaticOrganisms];
+                    this.showBlackSeaControls = false;
                 }
 
                 this.aquaticOrganisms = [...this.allAquaticOrganisms];
+
+                this.setBlackSeaControlsValidators(this.showBlackSeaControls);
             }
         });
     }
@@ -1683,6 +1698,13 @@ export class EditAquacultureFacilityComponent implements OnInit, AfterViewInit, 
             this.form.get('babhCertificateControl')!.setValue(null);
         }
 
+        if (this.showBlackSeaControls) {
+            this.form.get('locationAreaCodeControl')!.setValue(model.locationAreaCode);
+            this.form.get('locationAreaNameControl')!.setValue(model.locationAreaName);
+            this.form.get('waterBodyCodeControl')!.setValue(model.waterBodyCode);
+            this.form.get('waterBodyNameControl')!.setValue(model.waterBodyName);
+        }
+
         this.form.get('commentsControl')!.setValue(model.comments);
         this.form.get('filesControl')!.setValue(model.files);
 
@@ -1745,6 +1767,13 @@ export class EditAquacultureFacilityComponent implements OnInit, AfterViewInit, 
         if (model.status !== AquacultureStatusEnum.Application) {
             const code: string = AquacultureStatusEnum[model.status!];
             this.form.get('statusControl')!.setValue(this.allStatuses.find(x => x.code === code));
+        }
+
+        if (this.showBlackSeaControls) {
+            this.form.get('locationAreaCodeControl')!.setValue(model.locationAreaCode);
+            this.form.get('locationAreaNameControl')!.setValue(model.locationAreaName);
+            this.form.get('waterBodyCodeControl')!.setValue(model.waterBodyCode);
+            this.form.get('waterBodyNameControl')!.setValue(model.waterBodyName);
         }
 
         setTimeout(() => {
@@ -1863,6 +1892,19 @@ export class EditAquacultureFacilityComponent implements OnInit, AfterViewInit, 
             model.babhCertificate = undefined;
         }
 
+        if (this.showBlackSeaControls) {
+            model.locationAreaCode = this.form.get('locationAreaCodeControl')!.value;
+            model.locationAreaName = this.form.get('locationAreaNameControl')!.value;
+            model.waterBodyCode = this.form.get('waterBodyCodeControl')!.value;
+            model.waterBodyName = this.form.get('waterBodyNameControl')!.value;
+        }
+        else {
+            model.locationAreaCode = undefined;
+            model.locationAreaName = undefined;
+            model.waterBodyCode = undefined;
+            model.waterBodyName = undefined;
+        }
+
         model.comments = this.form.get('commentsControl')!.value;
         model.files = this.form.get('filesControl')!.value;
 
@@ -1900,6 +1942,19 @@ export class EditAquacultureFacilityComponent implements OnInit, AfterViewInit, 
 
         if (this.showHatcheryEquipment) {
             model.hatcheryCapacity = this.form.get('hatcheryCapacityControl')!.value;
+        }
+
+        if (this.showBlackSeaControls) {
+            model.locationAreaCode = this.form.get('locationAreaCodeControl')!.value;
+            model.locationAreaName = this.form.get('locationAreaNameControl')!.value;
+            model.waterBodyCode = this.form.get('waterBodyCodeControl')!.value;
+            model.waterBodyName = this.form.get('waterBodyNameControl')!.value;
+        }
+        else {
+            model.locationAreaCode = undefined;
+            model.locationAreaName = undefined;
+            model.waterBodyCode = undefined;
+            model.waterBodyName = undefined;
         }
 
         model.status = AquacultureStatusEnum[this.form.get('statusControl')!.value!.code as keyof typeof AquacultureStatusEnum];
@@ -2071,6 +2126,38 @@ export class EditAquacultureFacilityComponent implements OnInit, AfterViewInit, 
         this.waterLawCertificatesTouched = true;
         this.ovosCertificatesTouched = true;
         this.babhCertificatesTouched = true;
+    }
+
+    private setBlackSeaControlsValidators(showBlackSeaControls: boolean): void {
+        if (showBlackSeaControls) {
+            this.form.get('locationAreaCodeControl')!.setValidators([Validators.required, Validators.maxLength(50)]);
+            this.form.get('locationAreaNameControl')!.setValidators([Validators.required, Validators.maxLength(200)]);
+            this.form.get('waterBodyCodeControl')!.setValidators([Validators.required, Validators.maxLength(50)]);
+            this.form.get('waterBodyNameControl')!.setValidators([Validators.required, Validators.maxLength(200)]);
+
+            this.form.get('locationAreaCodeControl')!.markAsPending({ emitEvent: false });
+            this.form.get('locationAreaNameControl')!.markAsPending({ emitEvent: false });
+            this.form.get('waterBodyCodeControl')!.markAsPending({ emitEvent: false });
+            this.form.get('waterBodyNameControl')!.markAsPending({ emitEvent: false });
+
+            if (this.isReadonly || this.viewMode) {
+                this.form.get('locationAreaCodeControl')!.disable();
+                this.form.get('locationAreaNameControl')!.disable();
+                this.form.get('waterBodyCodeControl')!.disable();
+                this.form.get('waterBodyNameControl')!.disable();
+            }
+        }
+        else {
+            this.form.get('locationAreaCodeControl')!.clearValidators();
+            this.form.get('locationAreaNameControl')!.clearValidators();
+            this.form.get('waterBodyCodeControl')!.clearValidators();
+            this.form.get('waterBodyNameControl')!.clearValidators();
+
+            this.form.get('locationAreaCodeControl')!.updateValueAndValidity({ emitEvent: false });
+            this.form.get('locationAreaNameControl')!.updateValueAndValidity({ emitEvent: false });
+            this.form.get('waterBodyCodeControl')!.updateValueAndValidity({ emitEvent: false });
+            this.form.get('waterBodyNameControl')!.updateValueAndValidity({ emitEvent: false });
+        }
     }
 
     private sum(nums: number[]): number {

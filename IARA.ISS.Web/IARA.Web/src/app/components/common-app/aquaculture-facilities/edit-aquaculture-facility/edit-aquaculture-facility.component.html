@@ -73,8 +73,12 @@
                             <tl-icon [icon]="row.data.isCancelled ? 'highlight_off' : 'done_outline'"
                                      iconClass="accent-color">
                             </tl-icon>
-                            <div>{{ row.data.isCancelled ? ('aquacultures.cancelled-status' | tlTranslate) :
-                                ('aquacultures.active-status' | tlTranslate) }}</div>
+                            <div>
+                                {{
+ row.data.isCancelled ? ('aquacultures.cancelled-status' | tlTranslate) :
+                                ('aquacultures.active-status' | tlTranslate)
+                                }}
+                            </div>
                         </div>
                     </ng-template>
                 </data-template-column>
@@ -197,6 +201,40 @@
                                              label="{{ 'aquacultures.location-description' | tlTranslate }}"
                                              tooltipResourceName="aquacultures.location-description-helper">
                                 </tl-textarea>
+                            </div>
+
+                            <div *ngIf="showBlackSeaControls"
+                                 fxLayout="row"
+                                 fxLayoutAlign="space-between center"
+                                 fxLayoutGap="1em">
+                                <tl-input fxFlex="50"
+                                          formControlName="locationAreaCodeControl"
+                                          label="{{ 'aquacultures.location-area-code' | tlTranslate }}"
+                                          tooltipResourceName="aquacultures.location-area-code-helper">
+                                </tl-input>
+
+                                <tl-input fxFlex="50"
+                                          formControlName="locationAreaNameControl"
+                                          label="{{ 'aquacultures.location-area-name' | tlTranslate }}"
+                                          tooltipResourceName="aquacultures.location-area-name-helper">
+                                </tl-input>
+                            </div>
+
+                            <div *ngIf="showBlackSeaControls"
+                                 fxLayout="row"
+                                 fxLayoutAlign="space-between center"
+                                 fxLayoutGap="1em">
+                                <tl-input fxFlex="50"
+                                          formControlName="waterBodyCodeControl"
+                                          label="{{ 'aquacultures.water-body-code' | tlTranslate }}"
+                                          tooltipResourceName="aquacultures.water-body-code-helper">
+                                </tl-input>
+
+                                <tl-input fxFlex="50"
+                                          formControlName="waterBodyNameControl"
+                                          label="{{ 'aquacultures.water-body-name' | tlTranslate }}"
+                                          tooltipResourceName="aquacultures.water-body-name-helper">
+                                </tl-input>
                             </div>
                         </tl-card-content>
                     </tl-card>
@@ -455,8 +493,7 @@
                     * {{ 'aquacultures.at-least-one-installation-neccessary-error' | tlTranslate }}
                 </mat-error>
 
-                <mat-error
-                           *ngIf="installationsTouched && form.touched && form.errors?.installationsValidation === true">
+                <mat-error *ngIf="installationsTouched && form.touched && form.errors?.installationsValidation === true">
                     * {{ 'aquacultures.installations-validation-errors' | tlTranslate }}
                 </mat-error>
 
@@ -500,9 +537,9 @@
         </tl-expansion-panel>
 
         <!-- Основание за ползване - заявление -->
-        <tl-expansion-panel *ngIf="isApplication 
-                                && ((showOnlyRegiXData 
-                                    && form.controls.usageDocumentControl.value?.isLessorPerson !== null 
+        <tl-expansion-panel *ngIf="isApplication
+                                && ((showOnlyRegiXData
+                                    && form.controls.usageDocumentControl.value?.isLessorPerson !== null
                                     && form.controls.usageDocumentControl.value?.isLessorPerson !== undefined) || !showOnlyRegiXData)"
                             [validityChecker]="form"
                             tooltipResourceName="aquacultures.grounds-for-use-helper"
@@ -737,8 +774,7 @@
                     </data-template-column>
                 </tl-data-table>
 
-                <mat-error
-                           *ngIf="waterLawCertificatesTouched && form.errors?.atLeastOneActiveWaterLawCertificateNeeded === true">
+                <mat-error *ngIf="waterLawCertificatesTouched && form.errors?.atLeastOneActiveWaterLawCertificateNeeded === true">
                     * {{ 'aquacultures.at-least-one-active-water-law-certificate-neccessary-error' | tlTranslate }}
                 </mat-error>
             </div>

@@ -53,7 +53,7 @@
                               tooltipResourceName="statistical-forms.fish-vessel-year-helper"
                               label="{{ 'statistical-forms.fish-vessel-year' | tlTranslate }}"
                               [readonly]="showOnlyRegiXData"
-                              [max]="currentDate">
+                              [max]="lastYear">
                 </tl-date-year>
                 <tl-autocomplete fxFlex="50"
                                  formControlName="shipNameControl"

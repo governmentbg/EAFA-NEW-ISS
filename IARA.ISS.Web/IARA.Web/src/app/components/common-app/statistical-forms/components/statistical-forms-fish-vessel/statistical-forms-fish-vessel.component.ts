@@ -64,6 +64,7 @@ export class StatisticalFormsFishVesselComponent implements OnInit, IDialogCompo
     public translate: FuseTranslationLoaderService;
     public form!: FormGroup;
     public readOnly: boolean = false;
+    public lastYear: Date;
 
     public notifier: Notifier = new Notifier();
     public expectedResults: StatisticalFormFishVesselRegixDataDTO;
@@ -189,6 +190,8 @@ export class StatisticalFormsFishVesselComponent implements OnInit, IDialogCompo
             })
         ];
 
+        this.lastYear = new Date(this.currentDate.getFullYear() - 1, 0, 1);
+       
         this.buildForm();
 
         this.expectedResults = new StatisticalFormFishVesselRegixDataDTO({
