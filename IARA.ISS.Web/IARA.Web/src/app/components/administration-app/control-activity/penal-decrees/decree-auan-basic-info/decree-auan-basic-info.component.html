@@ -30,7 +30,19 @@
                   label="{{ 'penal-decrees.edit-auan-location-description' | tlTranslate }}">
         </tl-input>
 
-        <div *ngIf="!isFromRegister" fxFlex="60"></div>
+        <tl-input *ngIf="!isFromRegister"
+                  fxFlex="20"
+                  [readonly]="!isAdding"
+                  formControlName="drafterNameControl"
+                  label="{{ 'penal-decrees.edit-drafter-name' | tlTranslate }}">
+        </tl-input>
+
+        <tl-input *ngIf="!isFromRegister"
+                  fxFlex="40"
+                  [readonly]="!isAdding"
+                  formControlName="locationDescriptionControl"
+                  label="{{ 'penal-decrees.edit-location-description' | tlTranslate }}">
+        </tl-input>
     </div>
 
     <tl-card [validityChecker]="form">

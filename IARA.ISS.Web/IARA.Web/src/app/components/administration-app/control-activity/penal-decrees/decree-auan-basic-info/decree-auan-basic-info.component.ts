@@ -54,11 +54,18 @@ export class DecreeAuanBasicInfoComponent extends CustomFormControl<PenalDecreeA
     public writeValue(value: PenalDecreeAuanDataDTO): void {
         if (value !== undefined && value !== null) {
             this.auan = value;
-
+          
             this.form.get('auanNumControl')!.setValue(value.auanNum);
             this.form.get('auanDraftDateControl')!.setValue(value.draftDate);
-            this.form.get('auanDrafterControl')!.setValue(value.drafter);
-            this.form.get('auanLocationDescriptionControl')!.setValue(value.locationDescription);
+
+            if (value.isExternal) {
+                this.form.get('drafterNameControl')!.setValue(value.inspectorName);
+                this.form.get('locationDescriptionControl')!.setValue(value.locationDescription);
+            }
+            else {
+                this.form.get('auanDrafterControl')!.setValue(value.drafter);
+                this.form.get('auanLocationDescriptionControl')!.setValue(value.locationDescription);
+            }
 
             this.form.get('auanInspectedEntityControl')!.setValue(value.inspectedEntity);
         }
@@ -69,21 +76,34 @@ export class DecreeAuanBasicInfoComponent extends CustomFormControl<PenalDecreeA
             auanNum: this.form.get('auanNumControl')!.value,
             draftDate: this.form.get('auanDraftDateControl')!.value,
             userId: this.form.get('drafterUserControl')!.value?.value,
-            locationDescription: this.form.get('auanLocationDescriptionControl')!.value,
             inspectedEntity: this.form.get('auanInspectedEntityControl')!.value
         });
+
+        if (!this.isFromRegister) {
+            result.inspectorName = this.form.get('drafterNameControl')!.value;
+            result.locationDescription = this.form.get('locationDescriptionControl')!.value;
+        }
 
         return result;
     }
 
     protected buildForm(): AbstractControl {
-        return new FormGroup({
+        const form: FormGroup = new FormGroup({
             auanNumControl: new FormControl(null, [Validators.required, Validators.maxLength(20)]),
             auanDraftDateControl: new FormControl(null, Validators.required),
             auanDrafterControl: new FormControl(null),
             drafterUserControl: new FormControl(null),
             auanLocationDescriptionControl: new FormControl(null, Validators.maxLength(400)),
+            locationDescriptionControl: new FormControl(null, Validators.maxLength(400)),
+            drafterNameControl: new FormControl(null),
             auanInspectedEntityControl: new FormControl(null)
         });
+
+        if (!this.isFromRegister) {
+            form.get('drafterNameControl')!.setValidators([Validators.required, Validators.maxLength(4000)]);
+            form.get('locationDescriptionControl')!.setValidators([Validators.required, Validators.maxLength(400)]);
+        }
+
+        return form;
     }
 }

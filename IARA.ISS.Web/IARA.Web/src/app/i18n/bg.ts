@@ -5086,6 +5086,10 @@
         'populated-area': 'Населено място',
         'ekatte': 'EKATTE',
         'location-description': 'Описание на местоположението',
+        'location-area-code': 'Код на района',
+        'location-area-name': 'Наименование на района',
+        'water-body-code': 'Код на крайбрежното тяло',
+        'water-body-name': 'Име на крайбрежно водно тяло',
         'gps-coordinates': 'GPS координати',
         'point': 'Точка',
         'longitude': 'Дължина',
@@ -5800,6 +5804,7 @@
 
         'aqua-farm-fish-organism-error': 'За това съоръжение вече съществува запис за риба/воден организъм със същото средно единично тегло.',
         'aqua-farm-medicine-error': 'Вече съществува запис за ветеринарномедицински препарат от този вид.',
+        'aqua-farm-at-least-one-installation-system-error': 'Трябва да бадат въведени използвани съоръжения',
 
         //Rework
         'rework-requester': 'Подател',
@@ -6094,6 +6099,8 @@
         'edit-external-auan-date': 'Дата',
         'edit-auan-drafter': 'Актосъставител',
         'edit-auan-location-description': 'Място',
+        'edit-drafter-name': 'Име на издаващ прокурор',
+        'edit-location-description': 'Прокуратура',
         'edit-auan-constatation-comments': 'Описание на нарушението',
         'edit-evidence-comments': 'Обстоятелства, при които е извършено и доказвателства, които го потвърждават',
         'edit-auan-offender-comments': 'Обяснения от посочения за нарушител',

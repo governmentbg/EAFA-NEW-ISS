@@ -39,7 +39,7 @@
                                [expectedResults]="expectedResults.submittedFor"
                                [hideRelation]="showOnlyRegiXData || !isApplication">
         <!-- Основна информация -->
-        <tl-expansion-panel *ngIf="showOnlyRegiXData || showBasicInfo" 
+        <tl-expansion-panel *ngIf="showOnlyRegiXData || showBasicInfo"
                             middle
                             title=" {{ 'statistical-forms.aqua-farm-basic-information-title' | tlTranslate }}"
                             tooltipResourceName="statistical-forms.aqua-farm-basic-information-title-helper"
@@ -49,7 +49,7 @@
                 <tl-date-year fxFlex="25"
                               formControlName="yearControl"
                               tooltipResourceName="statistical-forms.aqua-farm-year-helper"
-                              [max]="today"
+                              [max]="lastYear"
                               [readonly]="showOnlyRegiXData"
                               label="{{ 'statistical-forms.aqua-farm-year' | tlTranslate }}">
                 </tl-date-year>
@@ -173,6 +173,7 @@
                              dataType="nomenclature"
                              columnName="{{ 'statistical-forms.aqua-farm-sold-fish-organism-installation-type' | tlTranslate }}">
                 </data-column>
+
                 <data-column [flexRate]="0.1"
                              propertyName="fishTypeId"
                              [formGroup]="soldFishOrganismGroup"
@@ -256,6 +257,7 @@
                              dataType="nomenclature"
                              columnName="{{ 'statistical-forms.aqua-farm-unrealized-fish-organism-installation-type' | tlTranslate }}">
                 </data-column>
+
                 <data-column [flexRate]="0.1"
                              propertyName="fishTypeId"
                              [formGroup]="unrealizedFishOrganismGroup"
@@ -453,64 +455,72 @@
     <tl-expansion-panel *ngIf="!showOnlyRegiXData"
                         title="{{ 'statistical-forms.aqua-farm-installation-title' | tlTranslate }}"
                         tooltipResourceName="statistical-forms.aqua-farm-installation-title-helper"
-                        [validityChecker]="form">
-        <tl-data-table *ngIf="isSystemFull"
-                       fxFlexFill
-                       #systemFullTable
-                       [isRemote]="false"
-                       [isSoftDeletable]="true"
-                       [showInactiveRecords]="false"
-                       [rows]="installationsSystemFull"
-                       [showAddButton]="!viewMode && !isReadonly"
-                       (activeRecordChanged)="installationsSystemFullActiveRecordChanged()">
-            <data-column columnName="{{ 'statistical-forms.aqua-farm-installation-system-full-installation' | tlTranslate }}"
-                         propertyName="installationTypeId"
-                         [formGroup]="installationSystemFullGroup"
-                         [flexRate]="0.5"
-                         [options]="installationTypes"
-                         [displayOptions]="allInstallationTypes"
-                         dataType="nomenclature">
-            </data-column>
-            <data-column columnName="{{ 'statistical-forms.aqua-farm-installation-system-full-installation-used' | tlTranslate }}"
-                         propertyName="isInstallationUsed"
-                         [formGroup]="installationSystemFullGroup"
-                         [flexRate]="0.5"
-                         dataType="boolean">
-            </data-column>
-            <data-column-inline [flexRate]="0.1" *ngIf="!viewMode && !isReadonly"></data-column-inline>
-        </tl-data-table>
+                        [validityChecker]="form"
+                        [validityCheckerExtraCondition]="form.errors?.atLeastOneInstallationSystemError !== true">
+        <div fxLayout="column"
+             fxLayoutGap="1em">
+            <tl-data-table *ngIf="isSystemFull"
+                           fxFlexFill
+                           #systemFullTable
+                           [isRemote]="false"
+                           [isSoftDeletable]="true"
+                           [showInactiveRecords]="false"
+                           [rows]="installationsSystemFull"
+                           [showAddButton]="!viewMode && !isReadonly"
+                           (activeRecordChanged)="installationsSystemFullActiveRecordChanged()">
+                <data-column columnName="{{ 'statistical-forms.aqua-farm-installation-system-full-installation' | tlTranslate }}"
+                             propertyName="installationTypeId"
+                             [formGroup]="installationSystemFullGroup"
+                             [flexRate]="0.5"
+                             [options]="installationTypes"
+                             [displayOptions]="allInstallationTypes"
+                             dataType="nomenclature">
+                </data-column>
+                <data-column columnName="{{ 'statistical-forms.aqua-farm-installation-system-full-installation-used' | tlTranslate }}"
+                             propertyName="isInstallationUsed"
+                             [formGroup]="installationSystemFullGroup"
+                             [flexRate]="0.5"
+                             dataType="boolean">
+                </data-column>
+                <data-column-inline [flexRate]="0.1" *ngIf="!viewMode && !isReadonly"></data-column-inline>
+            </tl-data-table>
 
-        <tl-data-table *ngIf="!isSystemFull"
-                       fxFlexFill
-                       #systemNotFullTable
-                       [isRemote]="false"
-                       [isSoftDeletable]="true"
-                       [showInactiveRecords]="false"
-                       [rows]="installationsSystemNotFull"
-                       [showAddButton]="!viewMode && !isReadonly"
-                       (activeRecordChanged)="installationsSystemNotFullActiveRecordChanged()">
-            <data-column columnName="{{ 'statistical-forms.aqua-farm-installation-system-not-full-installation' | tlTranslate }}"
-                         propertyName="installationTypeId"
-                         [formGroup]="installationSystemNotFullGroup"
-                         [flexRate]="0.3"
-                         [options]="installationTypes"
-                         [displayOptions]="allInstallationTypes"
-                         dataType="nomenclature">
-            </data-column>
-            <data-column columnName="{{ 'statistical-forms.aqua-farm-installation-system-not-full-installation-used-breeding-material' | tlTranslate }}"
-                         propertyName="isInstallationUsedBreedingMaterial"
-                         [formGroup]="installationSystemNotFullGroup"
-                         [flexRate]="0.3"
-                         dataType="boolean">
-            </data-column>
-            <data-column columnName="{{ 'statistical-forms.aqua-farm-installation-system-not-full-installation-used-consumation-fish' | tlTranslate }}"
-                         propertyName="isInstallationUsedConsumationFish"
-                         [formGroup]="installationSystemNotFullGroup"
-                         [flexRate]="0.3"
-                         dataType="boolean">
-            </data-column>
-            <data-column-inline [flexRate]="0.1" *ngIf="!viewMode && !isReadonly"></data-column-inline>
-        </tl-data-table>
+            <tl-data-table *ngIf="!isSystemFull"
+                           fxFlexFill
+                           #systemNotFullTable
+                           [isRemote]="false"
+                           [isSoftDeletable]="true"
+                           [showInactiveRecords]="false"
+                           [rows]="installationsSystemNotFull"
+                           [showAddButton]="!viewMode && !isReadonly"
+                           (activeRecordChanged)="installationsSystemNotFullActiveRecordChanged()">
+                <data-column columnName="{{ 'statistical-forms.aqua-farm-installation-system-not-full-installation' | tlTranslate }}"
+                             propertyName="installationTypeId"
+                             [formGroup]="installationSystemNotFullGroup"
+                             [flexRate]="0.3"
+                             [options]="installationTypes"
+                             [displayOptions]="allInstallationTypes"
+                             dataType="nomenclature">
+                </data-column>
+                <data-column columnName="{{ 'statistical-forms.aqua-farm-installation-system-not-full-installation-used-breeding-material' | tlTranslate }}"
+                             propertyName="isInstallationUsedBreedingMaterial"
+                             [formGroup]="installationSystemNotFullGroup"
+                             [flexRate]="0.3"
+                             dataType="boolean">
+                </data-column>
+                <data-column columnName="{{ 'statistical-forms.aqua-farm-installation-system-not-full-installation-used-consumation-fish' | tlTranslate }}"
+                             propertyName="isInstallationUsedConsumationFish"
+                             [formGroup]="installationSystemNotFullGroup"
+                             [flexRate]="0.3"
+                             dataType="boolean">
+                </data-column>
+                <data-column-inline [flexRate]="0.1" *ngIf="!viewMode && !isReadonly"></data-column-inline>
+            </tl-data-table>
+
+            <mat-error *ngIf="form.errors?.atLeastOneInstallationSystemError === true">
+                * {{ 'statistical-forms.aqua-farm-at-least-one-installation-system-error' | tlTranslate }}
+            </mat-error>
+        </div>
     </tl-expansion-panel>
 
     <!--Информация за заети лица-->

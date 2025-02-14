@@ -28,6 +28,9 @@ export class PenalDecreeAuanDataDTO extends AuanInspectionDTO {
     public drafter?: string;
 
     @StrictlyTyped(String)
+    public inspectorName?: string;
+
+    @StrictlyTyped(String)
     public locationDescription?: string;
 
     @StrictlyTyped(String)
