@@ -6,7 +6,7 @@
         <tl-input fxFlex="20"
                   formControlName="auanNumControl"
                   [readonly]="!isAdding"
-                  label="{{ (isFromRegister ? 'penal-decrees.edit-auan-num' : 'penal-decrees.edit-external-auan-num') | tlTranslate }}">
+                  label="{{ (isFromRegister ? 'penal-decrees.edit-auan-num' : 'penal-decrees.edit-external-decree-num') | tlTranslate }}">
         </tl-input>
 
         <tl-date fxFlex="20"
@@ -30,14 +30,14 @@
                   label="{{ 'penal-decrees.edit-auan-location-description' | tlTranslate }}">
         </tl-input>
 
-        <tl-input *ngIf="!isFromRegister"
+        <tl-input *ngIf="showExternalControls"
                   fxFlex="20"
                   [readonly]="!isAdding"
                   formControlName="drafterNameControl"
                   label="{{ 'penal-decrees.edit-drafter-name' | tlTranslate }}">
         </tl-input>
 
-        <tl-input *ngIf="!isFromRegister"
+        <tl-input *ngIf="showExternalControls"
                   fxFlex="40"
                   [readonly]="!isAdding"
                   formControlName="locationDescriptionControl"

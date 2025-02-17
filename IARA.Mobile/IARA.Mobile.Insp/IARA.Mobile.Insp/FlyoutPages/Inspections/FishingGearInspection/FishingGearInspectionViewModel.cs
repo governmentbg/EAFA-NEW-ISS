@@ -10,8 +10,11 @@ using IARA.Mobile.Insp.Application.Interfaces.Transactions;
 using IARA.Mobile.Insp.Base;
 using IARA.Mobile.Insp.Controls;
 using IARA.Mobile.Insp.Controls.ViewModels;
+using IARA.Mobile.Insp.Domain.Entities.Inspections;
 using IARA.Mobile.Insp.Domain.Entities.Nomenclatures;
 using IARA.Mobile.Insp.Domain.Enums;
+using IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.FishingGearDialog.PingerDialog;
+using IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.LoadFromOldPermitsDialog;
 using IARA.Mobile.Insp.Helpers;
 using IARA.Mobile.Insp.Models;
 using IARA.Mobile.Insp.ViewModels.Models;
@@ -19,6 +22,7 @@ using IARA.Mobile.Shared.Views;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -54,6 +58,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FishingGearInspection
             PermitChosen = CommandBuilder.CreateFrom<SelectNomenclatureDto>(OnPermitChosen);
             CheckReasonChosen = CommandBuilder.CreateFrom<SelectNomenclatureDto>(OnCheckReasonChosen);
             PermitTypeChosen = CommandBuilder.CreateFrom(OnPermitTypeChosen);
+            OpenLoadFromOldPermitDialog = CommandBuilder.CreateFrom(OnOpenLoadFromOldPermitDialog);
             SaveDraft = CommandBuilder.CreateFrom(OnSaveDraft);
             Finish = CommandBuilder.CreateFrom(OnFinish);
 
@@ -141,7 +146,6 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FishingGearInspection
         [ValidGroup(PermitRegistered)]
         public ValidStateInfiniteSelect<PermitNomenclatureDto> Permit { get; set; }
 
-        [Required]
         [MaxLength(50)]
         [ValidGroup(PermitUnregistered)]
         public ValidState PermitNumber { get; set; }
@@ -198,6 +202,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FishingGearInspection
         public ICommand PermitChosen { get; }
         public ICommand CheckReasonChosen { get; }
         public ICommand PermitTypeChosen { get; }
+        public ICommand OpenLoadFromOldPermitDialog { get; }
 
         public override void OnDisappearing()
         {
@@ -300,7 +305,11 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FishingGearInspection
                 OwnerComment.AssignFrom(Edit.OwnerComment);
 
                 LastHarbour.OnEdit(Edit.Port);
-                OnCheckReasonChosen(CheckReasons.Where(x => x.Id == Edit.CheckReasonId).First());
+
+                if (Edit.CheckReasonId != null)
+                {
+                    OnCheckReasonChosen(CheckReasons.Where(x => x.Id == Edit.CheckReasonId).First());
+                }
 
                 if (Edit.PermitId != null)
                 {
@@ -380,6 +389,11 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FishingGearInspection
                         ? new List<int> { Edit.PermitId.Value }
                         : new List<int>()
                 );
+                if (Edit.PermitId == null && Edit.FishingGears?.Count() > 0)
+                {
+                    FishingGears.FishingGears.Value.Clear();
+                    FishingGears.FishingGears.Value.AddRange(FishingGears.AllFishingGears);
+                }
 
                 Toggles.AssignFrom(Edit.Checks);
             }
@@ -393,6 +407,35 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FishingGearInspection
             }
 
             await TLLoadingHelper.HideFullLoadingScreen();
+        }
+
+        private async Task OnOpenLoadFromOldPermitDialog()
+        {
+            PermitNomenclatureDto permit = null;
+            if (FishingGearType.Code == FishingGearTypes[0].Code)
+            {
+                if (ShipData.Ship.Value != null)
+                {
+                    permit = await TLDialogHelper.ShowDialog(new LoadFromOldPermitsDialog(null, ShipData.Ship.Value.Uid));
+                }
+            }
+            else
+            {
+                if (PoundNet.Value != null)
+                {
+                    permit = await TLDialogHelper.ShowDialog(new LoadFromOldPermitsDialog(PoundNet.Value, null));
+                }
+            }
+
+
+            if (permit != null)
+            {
+                OnPermitChosen(permit);
+            }
+            else
+            {
+                await TLSnackbar.Show(TranslateExtension.Translator[nameof(GroupResourceEnum.FishingGear) + "/NoShipOrPoundNetSelected"], App.GetResource<Color>("ErrorColor"));
+            }
         }
 
         private void OnCheckReasonChosen(SelectNomenclatureDto dto)
@@ -511,7 +554,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FishingGearInspection
             {
                 if (PoundNet.Value != null)
                 {
-                    List<FishingGearDto> fishingGears = InspectionsTransaction.GetFishingGearsForPoundNet(PoundNet.Value, Permit.Value);
+                    List<FishingGearDto> fishingGears = InspectionsTransaction.GetFishingGearsForPoundNet(PoundNet.Value, nom.Id);
                     LoadFishingGears(fishingGears);
                 }
             }
@@ -519,7 +562,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FishingGearInspection
             {
                 if (ShipData.ShipInRegister.Value && ShipData.Ship.Value != null)
                 {
-                    List<FishingGearDto> fishingGears = InspectionsTransaction.GetFishingGearsForShip(ShipData.Ship.Value.Uid, Permit.Value);
+                    List<FishingGearDto> fishingGears = InspectionsTransaction.GetFishingGearsForShip(ShipData.Ship.Value.Uid, nom.Id);
                     LoadFishingGears(fishingGears);
                 }
             }

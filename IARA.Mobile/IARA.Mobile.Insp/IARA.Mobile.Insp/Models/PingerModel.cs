@@ -13,6 +13,8 @@ namespace IARA.Mobile.Insp.Models
         public SelectNomenclatureDto Status { get; set; }
         public string Model { get; set; }
         public string Brand { get; set; }
+        public bool AddedByInspector { get; set; }
+        public bool IsSameAsInspected { get; set; }
 
         public static implicit operator FishingGearPingerDto(PingerModel model)
         {

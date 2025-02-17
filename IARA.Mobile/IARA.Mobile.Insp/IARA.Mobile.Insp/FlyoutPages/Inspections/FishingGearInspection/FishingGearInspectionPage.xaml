@@ -114,16 +114,22 @@
                         </Grid>
                     </DataTemplate>
                 </lc:CustomInfinitePicker>
-                <StackLayout Orientation="Horizontal" IsVisible="{Binding PermitType.Code, Converter={StaticResource Equal}, ConverterParameter={Static local:FishingGearInspectionViewModel.PermitUnregistered}}">
-                    <tl:TLEntry HorizontalOptions="FillAndExpand"
-                            Title="{rt:Translate Permit, Group=FishingGearInspection}"
-                            ValidState="{Binding PermitNumber}"
-                            IsEnabled="{Binding ActivityType, Converter={StaticResource IsNotReview}}" />
-                    <tl:TLEntry HorizontalOptions="FillAndExpand"
-                            Title="{rt:Translate PermitYear, Group=FishingGearInspection}"
-                            ValidState="{Binding PermitYear}"
-                            Keyboard="Numeric"
-                            IsEnabled="{Binding ActivityType, Converter={StaticResource IsNotReview}}" />
+                <StackLayout Orientation="Vertical" IsVisible="{Binding PermitType.Code, Converter={StaticResource Equal}, ConverterParameter={Static local:FishingGearInspectionViewModel.PermitUnregistered}}">
+                    <StackLayout Orientation="Horizontal">
+                        <tl:TLEntry HorizontalOptions="FillAndExpand"
+                                Title="{rt:Translate Permit, Group=FishingGearInspection}"
+                                ValidState="{Binding PermitNumber}"
+                                IsEnabled="{Binding ActivityType, Converter={StaticResource IsNotReview}}" />
+                        <tl:TLEntry HorizontalOptions="FillAndExpand"
+                                Title="{rt:Translate PermitYear, Group=FishingGearInspection}"
+                                ValidState="{Binding PermitYear}"
+                                Keyboard="Numeric"
+                                IsEnabled="{Binding ActivityType, Converter={StaticResource IsNotReview}}" />
+                    </StackLayout>
+                    <Button Text="{rt:Translate LoadFromOldPermit, Group=FishingGear}"
+                            Command="{Binding OpenLoadFromOldPermitDialog}"
+                            ImageSource="{FontImage FontFamily=FA, Glyph={Static h:IconFont.CirclePlus}, Size=25, Color=White}"
+                            IsVisible="{Binding ActivityType, Converter={StaticResource IsNotReview}}" />
                 </StackLayout>
                 <lc:FishingGearsView BindingContext="{Binding FishingGears}" />
                 <lc:TLGeneratedToggles ValidState="{Binding Toggles}" IsEnabled="{Binding ActivityType, Converter={StaticResource IsNotReview}}" />

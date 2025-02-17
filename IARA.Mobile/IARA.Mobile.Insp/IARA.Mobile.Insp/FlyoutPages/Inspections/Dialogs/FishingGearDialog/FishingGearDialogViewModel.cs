@@ -14,18 +14,24 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using TechnoLogica.Xamarin.Commands;
 using TechnoLogica.Xamarin.Helpers;
+using TechnoLogica.Xamarin.ResourceTranslator;
 using TechnoLogica.Xamarin.ViewModels.Base;
 using TechnoLogica.Xamarin.ViewModels.Interfaces;
 using TechnoLogica.Xamarin.ViewModels.Models;
 using Xamarin.Forms;
+using Xamarin.Forms.Internals;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.FishingGearDialog
 {
     public class FishingGearDialogViewModel : TLBaseDialogViewModel<FishingGearModel>
     {
+        public static FishingGearDialogViewModel Instance { get; set; }
         public FishingGearDialogViewModel()
         {
             Save = CommandBuilder.CreateFrom(OnSave);
+            CorrespondsChanged = CommandBuilder.CreateFrom<string>(OnCorrespondsChanged);
+            Instance = this;
         }
 
         public InspectionPageViewModel Inspection { get; set; }
@@ -40,6 +46,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.FishingGearDialog
         public ValidStateMultiToggle HasAttachedAppliances { get; set; }
 
         public ICommand Save { get; }
+        public ICommand CorrespondsChanged { get; }
 
         public void BeforeInit()
         {
@@ -49,11 +56,22 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.FishingGearDialog
                 MoveMark = DialogType != ViewActivityType.Review
                     ? CommandBuilder.CreateFrom<MarkViewModel>(OnMoveMark)
                     : null,
+                MoveAllMarks = DialogType != ViewActivityType.Review
+                    ? CommandBuilder.CreateFrom(OnMoveAllMark)
+                    : null,
+                MovePinger = DialogType != ViewActivityType.Review
+                    ? CommandBuilder.CreateFrom<PingerViewModel>(OnMovePinger)
+                    : null,
+                MoveAllPingers = DialogType != ViewActivityType.Review
+                    ? CommandBuilder.CreateFrom(OnMoveAllPinger)
+                    : null,
             };
             InspectedFishingGear = new FishingGearViewModel(Inspection, DialogType, true)
             {
                 HasPingers = HasPingers,
                 IsInspectedGear = true,
+                MarkDeleted = CommandBuilder.CreateFrom<MarkViewModel>(OnInspectedMarkDeleted),
+                PingerDeleted = CommandBuilder.CreateFrom<PingerViewModel>(OnInspectedPingerDeleted),
             };
 
             this.AddValidation(others: new IValidatableViewModel[] { PermittedFishingGear, InspectedFishingGear });
@@ -107,19 +125,133 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.FishingGearDialog
                     : nameof(CheckTypeEnum.N);
 
                 Validation.Force();
+
+                if (Edit.Dto.InspectedFishingGear != null)
+                {
+                    foreach (var permittedMark in PermittedFishingGear.Marks)
+                    {
+                        if (Edit.Dto.InspectedFishingGear.Marks.Any(x => x.FullNumber.ToString() == permittedMark.Number))
+                        {
+                            permittedMark.IsSameAsInspected = true;
+                        }
+                    }
+
+                    foreach (var permittedPinger in PermittedFishingGear.Pingers)
+                    {
+                        if (Edit.Dto.InspectedFishingGear.Pingers.Any(x => x.Number == permittedPinger.Number))
+                        {
+                            permittedPinger.IsSameAsInspected = true;
+                        }
+                    }
+                }
             }
 
             return Task.CompletedTask;
         }
 
+        private void OnCorrespondsChanged(string corresponds)
+        {
+            if (string.IsNullOrEmpty(corresponds))
+            {
+                return;
+            }
+
+            if (corresponds != nameof(CheckTypeEnum.N))
+            {
+                PermittedFishingGear.Marks.ForEach(x => x.IsSameAsInspected = false);
+                InspectedFishingGear.Marks.Value.Clear();
+            }
+
+        }
+
+        private void OnMoveAllPinger()
+        {
+            if (Corresponds.Value == nameof(CheckTypeEnum.N))
+            {
+                foreach (var pinger in PermittedFishingGear.Pingers)
+                {
+                    if (!InspectedFishingGear.Pingers.Any(f => f.Id == pinger.Id))
+                    {
+                        PingerViewModel newPinger = new PingerViewModel
+                        {
+                            Id = pinger.Id,
+                            Number = pinger.Number,
+                            Status = pinger.Status,
+                            Model = pinger.Model,
+                            Brand = pinger.Brand
+                        };
+                        InspectedFishingGear.Pingers.Value.Add(newPinger);
+                        pinger.IsSameAsInspected = true;
+                    }
+                }
+            }
+        }
+
+        private void OnMovePinger(PingerViewModel pinger)
+        {
+            if (Corresponds.Value == nameof(CheckTypeEnum.N))
+            {
+                if (!InspectedFishingGear.Pingers.Any(f => f.Id == pinger.Id))
+                {
+                    PingerViewModel newPinger = new PingerViewModel
+                    {
+                        Id = pinger.Id,
+                        Number = pinger.Number,
+                        Status = pinger.Status,
+                        Model = pinger.Model,
+                        Brand = pinger.Brand
+                    };
+                    InspectedFishingGear.Pingers.Value.Add(newPinger);
+                    pinger.IsSameAsInspected = true;
+                    return;
+                }
+            }
+        }
+
+        private void OnInspectedPingerDeleted(PingerViewModel model)
+        {
+            var pingerViewModels = PermittedFishingGear.Pingers.Where(f => f.Number.Value == model.Number.Value);
+
+            if (!InspectedFishingGear.Pingers.Any(x => x.Number.Value == model.Number.Value))
+            {
+                foreach (var pinger in pingerViewModels)
+                {
+                    pinger.IsSameAsInspected = false;
+                }
+            }
+        }
+
+        private void OnMoveAllMark()
+        {
+            if (Corresponds.Value == nameof(CheckTypeEnum.N))
+            {
+                foreach (var mark in PermittedFishingGear.Marks)
+                {
+                    if (!InspectedFishingGear.Marks.Any(f => f.Id == mark.Id))
+                    {
+                        MarkViewModel newMark = new MarkViewModel(mark.Status.Value.Code == nameof(FishingGearMarkStatus.MARKED))
+                        {
+                            Id = mark.Id,
+                        };
+
+                        newMark.Status.Value = mark.Status.Value;
+                        newMark.Number.Value = mark.Number.Value;
+                        newMark.CreatedOn = mark.CreatedOn;
+
+                        InspectedFishingGear.Marks.Value.Add(newMark);
+                        mark.IsSameAsInspected = true;
+                    }
+                }
+            }
+        }
+
         private void OnMoveMark(MarkViewModel mark)
         {
-            if (!InspectedFishingGear.Marks.Any(f => f.Id == mark.Id))
+            if (!InspectedFishingGear.Marks.Any(f => f.Id == mark.Id) && Corresponds.Value == nameof(CheckTypeEnum.N))
             {
-                MarkViewModel newMark = new MarkViewModel
+                MarkViewModel newMark = new MarkViewModel(mark.Status.Value.Code == nameof(FishingGearMarkStatus.MARKED))
                 {
                     Id = mark.Id,
-                    AddedByInspector = mark.Status.Value.Code == nameof(FishingGearMarkStatus.MARKED),
                 };
 
                 newMark.Status.Value = mark.Status.Value;
@@ -127,6 +259,22 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.FishingGearDialog
                 newMark.CreatedOn = mark.CreatedOn;
 
                 InspectedFishingGear.Marks.Value.Add(newMark);
+
+                mark.IsSameAsInspected = true;
+
+                return;
+            }
+        }
+        private void OnInspectedMarkDeleted(MarkViewModel model)
+        {
+            var markViewModels = PermittedFishingGear.Marks.Where(f => f.Number.Value == model.Number.Value);
+
+            if (!InspectedFishingGear.Marks.Any(x => x.Number.Value == model.Number.Value))
+            {
+                foreach (var mark in markViewModels)
+                {
+                    mark.IsSameAsInspected = false;
+                }
             }
         }
 
@@ -208,13 +356,13 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.FishingGearDialog
                 Length = fishingGear.Length,
                 NetEyeSize = fishingGear.NetEyeSize,
                 PermitId = fishingGear.PermitId,
-                Pingers = fishingGear.Pingers,
                 TowelLength = fishingGear.TowelLength,
                 LineCount = fishingGear.LineCount,
                 NetNominalLength = fishingGear.NetNominalLength,
                 NetsInFleetCount = fishingGear.NetsInFleetCount,
                 TrawlModel = fishingGear.TrawlModel,
                 TypeId = fishingGear.TypeId,
+                Pingers = new List<FishingGearPingerDto>(),
                 Marks = new List<FishingGearMarkDto>(),
             };
         }

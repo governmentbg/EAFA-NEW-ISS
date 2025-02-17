@@ -16,140 +16,34 @@
         IsExpanded="False">
     <ContentView.Resources>
         <conv:MarkColumnWidthConverter x:Key="MarkColumnWidth" HasMoveMark="{Binding MoveMark, Converter={StaticResource IsNotNull}}" />
+        <conv:MarkCheckColumnConverter x:Key="MarkCheckColumn" />
+        <conv:PingerCheckColumnConverter x:Key="PingerCheckColumn" />
     </ContentView.Resources>
     <StackLayout Padding="10">
-
         <lc:FishingGearGeneralInfo BindingContext="{Binding FishingGearGeneralInfo}" />
-
-        <!--<tl:TLTable Title="{rt:Translate Marks, Group=FishingGear}" ValidState="{Binding Marks}">
-            <tl:TLTable.TableColumns>
-                <tl:TLTableColumn Text="{rt:Translate Number, Group=FishingGear}" Width="*" />
-                <tl:TLTableColumn Text="{rt:Translate Status, Group=FishingGear}" Width="*" />
-                <tl:TLTableColumn Width="{Binding BindingContext.DialogType, Converter={StaticResource MarkColumnWidth}, Source={Reference view}}" />
-            </tl:TLTable.TableColumns>
-            <DataTemplate>
-                <tl:TLTableRow x:DataType="local:MarkViewModel">
-                    <tl:TLEntry IsTitleVisible="False"
-                            ValidState="{Binding Number}"
-                            Keyboard="Numeric">
-                        <StackLayout Orientation="Horizontal" Spacing="0">
-                            <Label Text="{Binding BindingContext.Prefix, Source={Reference view}}"
-                                    VerticalOptions="Center"
-                                    IsVisible="{Binding BindingContext.Prefix, Converter={StaticResource IsNotNull}, Source={Reference view}}" />
-                            <tl:TLInnerInput />
-                        </StackLayout>
-                        <tl:TLEntry.IsEnabled>
-                            <MultiBinding Converter="{StaticResource All}">
-                                <Binding Path="BindingContext.DialogType"
-                                        Converter="{StaticResource IsNotReview}"
-                                        Source="{Reference view}" />
-                                <Binding Path="BindingContext.IsEditable" Source="{Reference view}" />
-                            </MultiBinding>
-                        </tl:TLEntry.IsEnabled>
-                    </tl:TLEntry>
-                    <tl:TLNativePicker IsTitleVisible="False"
-                            Title="{rt:Translate Status, Group=FishingGear}"
-                            ValidState="{Binding Status}"
-                            ItemsSource="{Binding BindingContext.MarkStatuses, Source={Reference view}}">
-                        <tl:TLNativePicker.IsEnabled>
-                            <MultiBinding Converter="{StaticResource All}">
-                                <Binding Path="BindingContext.DialogType"
-                                        Converter="{StaticResource IsNotReview}"
-                                        Source="{Reference view}" />
-                                <Binding Path="BindingContext.IsEditable" Source="{Reference view}" />
-                                <Binding Path="AddedByInspector" Converter="{StaticResource OppositeBool}" />
-                            </MultiBinding>
-                        </tl:TLNativePicker.IsEnabled>
-                    </tl:TLNativePicker>
-                    <Grid>
-                        <ImageButton Source="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Trash}, Size=20, Color=White}"
-                                Padding="10"
-                                Command="{Binding BindingContext.RemoveMark, Source={Reference view}}"
-                                CommandParameter="{Binding}">
-                            <ImageButton.IsVisible>
-                                <MultiBinding Converter="{StaticResource All}">
-                                    <Binding Path="BindingContext.DialogType"
-                                            Converter="{StaticResource IsNotReview}"
-                                            Source="{Reference view}" />
-                                    <Binding Path="BindingContext.IsEditable" Source="{Reference view}" />
-                                </MultiBinding>
-                            </ImageButton.IsVisible>
-                        </ImageButton>
-                        <ImageButton Source="{FontImage FontFamily=FA, Glyph={Static h:IconFont.ArrowRight}, Size=20, Color=White}"
-                                Padding="10"
-                                Command="{Binding BindingContext.MoveMark, Source={Reference view}}"
-                                CommandParameter="{Binding}"
-                                IsVisible="{Binding BindingContext.MoveMark, Converter={StaticResource IsNotNull}, Source={Reference view}}" />
-                    </Grid>
-                </tl:TLTableRow>
-            </DataTemplate>
-            <tl:TLTable.FooterView>
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
-
-                    <Button Grid.Row="0"
-                            Grid.Column="1"
-                            Text="{rt:Translate AddMark, Group=FishingGear}"
-                            Command="{Binding AddMark}"
-                            ImageSource="{FontImage FontFamily=FA, Glyph={Static h:IconFont.CirclePlus}, Size=25, Color=White}">
-                        <Button.IsVisible>
-                            <MultiBinding Converter="{StaticResource All}">
-                                <Binding Path="DialogType" Converter="{StaticResource IsNotReview}" />
-                                <Binding Path="IsEditable" />
-                            </MultiBinding>
-                        </Button.IsVisible>
-                    </Button>
-
-                    <Button Grid.Row="1"
-                            Grid.Column="1"
-                            Text="{rt:Translate GenerateMarks, Group=FishingGear}"
-                            Command="{Binding GenerateMarks}"
-                            ImageSource="{FontImage FontFamily=FA, Glyph={Static h:IconFont.CirclePlus}, Size=25, Color=White}">
-                        <Button.IsVisible>
-                            <MultiBinding Converter="{StaticResource All}">
-                                <Binding Path="DialogType" Converter="{StaticResource IsNotReview}" />
-                                <Binding Path="IsEditable" />
-                            </MultiBinding>
-                        </Button.IsVisible>
-                    </Button>
-                </Grid>
-            </tl:TLTable.FooterView>
-            <tl:TLTable.EmptyView>
-                <Label Text="{rt:Translate NoInformation, Group=Common}" Margin="20,10" />
-            </tl:TLTable.EmptyView>
-        </tl:TLTable>-->
-
         <Label Text="{rt:Translate Marks, Group=FishingGear}"
-                FontSize="21"
+                FontSize="24"
                 Margin="0,10,0,0" />
 
         <Frame BackgroundColor="Transparent"
                 CornerRadius="6"
                 BorderColor="{StaticResource GrayColor}">
             <StackLayout>
+                <Grid Margin="0,0,0,10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="{Binding BindingContext.DialogType, Converter={StaticResource MarkColumnWidth}, Source={Reference view}}" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Label Text="{rt:Translate Number, Group=FishingGear}" FontSize="16" />
+                    <Label Grid.Column="1"
+                            Text="{rt:Translate Status, Group=FishingGear}"
+                            FontSize="16" />
+                </Grid>
                 <CollectionView ItemsSource="{Binding Marks.Value}"
-                        HeightRequest="300"
+                        HeightRequest="200"
                         HorizontalOptions="Fill">
-                    <CollectionView.Header>
-                        <Grid Margin="0,0,0,10">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="{Binding BindingContext.DialogType, Converter={StaticResource MarkColumnWidth}, Source={Reference view}}" />
-                            </Grid.ColumnDefinitions>
-                            <Label Text="{rt:Translate Number, Group=FishingGear}" FontSize="16" />
-                            <Label Grid.Column="1"
-                                    Text="{rt:Translate Status, Group=FishingGear}"
-                                    FontSize="16" />
-                        </Grid>
-                    </CollectionView.Header>
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="local:MarkViewModel">
                             <StackLayout>
@@ -159,6 +53,7 @@
                                         <ColumnDefinition Width="*" />
                                         <ColumnDefinition Width="*" />
                                         <ColumnDefinition Width="{Binding BindingContext.DialogType, Converter={StaticResource MarkColumnWidth}, Source={Reference view}}" />
+                                        <ColumnDefinition Width="Auto" />
                                     </Grid.ColumnDefinitions>
                                     <tl:TLEntry IsTitleVisible="False"
                                             ValidState="{Binding Number}"
@@ -175,6 +70,7 @@
                                                         Converter="{StaticResource IsNotReview}"
                                                         Source="{Reference view}" />
                                                 <Binding Path="BindingContext.IsEditable" Source="{Reference view}" />
+                                                <Binding Path="AddedByInspector.Value" />
                                             </MultiBinding>
                                         </tl:TLEntry.IsEnabled>
                                     </tl:TLEntry>
@@ -189,7 +85,7 @@
                                                         Converter="{StaticResource IsNotReview}"
                                                         Source="{Reference view}" />
                                                 <Binding Path="BindingContext.IsEditable" Source="{Reference view}" />
-                                                <Binding Path="AddedByInspector" Converter="{StaticResource OppositeBool}" />
+                                                <Binding Path="AddedByInspector.Value" Converter="{StaticResource OppositeBool}" />
                                             </MultiBinding>
                                         </tl:TLNativePicker.IsEnabled>
                                     </tl:TLNativePicker>
@@ -207,12 +103,27 @@
                                                 </MultiBinding>
                                             </ImageButton.IsVisible>
                                         </ImageButton>
-                                        <ImageButton Source="{FontImage FontFamily=FA, Glyph={Static h:IconFont.ArrowRight}, Size=20, Color=White}"
+                                        <Button ImageSource="{FontImage FontFamily=FA, Glyph={Static h:IconFont.ArrowRight}, Size=20, Color=White}"
                                                 Padding="10"
                                                 Command="{Binding BindingContext.MoveMark, Source={Reference view}}"
-                                                CommandParameter="{Binding}"
-                                                IsVisible="{Binding BindingContext.MoveMark, Converter={StaticResource IsNotNull}, Source={Reference view}}" />
+                                                CommandParameter="{Binding}">
+                                            <Button.IsVisible>
+                                                <MultiBinding Converter="{StaticResource All}">
+                                                    <Binding Path="BindingContext.MoveMark"
+                                                            Converter="{StaticResource IsNotNull}"
+                                                            Source="{Reference view}" />
+                                                    <Binding Path="IsSameAsInspected" Converter="{StaticResource OppositeBool}" />
+                                                </MultiBinding>
+                                            </Button.IsVisible>
+                                        </Button>
                                     </Grid>
+                                    <ImageButton Source="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Check}, Size=20, Color=White}"
+                                            Grid.Column="{Binding BindingContext.DialogType, Source={Reference view}, Converter={StaticResource MarkCheckColumn}}"
+                                            BackgroundColor="Green"
+                                            Padding="10"
+                                            Margin="5,0,0,5"
+                                            IsEnabled="False"
+                                            IsVisible="{Binding IsSameAsInspected}" />
                                 </Grid>
                             </StackLayout>
                         </DataTemplate>
@@ -225,6 +136,7 @@
                 </CollectionView>
                 <Grid>
                     <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
@@ -252,11 +164,24 @@
                             </MultiBinding>
                         </Button.IsVisible>
                     </Button>
+
+                    <Button Text="{rt:Translate MoveAllMarks, Group=FishingGear}"
+                            Command="{Binding MoveAllMarks}"
+                            ImageSource="{FontImage FontFamily=FA, Glyph={Static h:IconFont.CirclePlus}, Size=25, Color=White}"
+                            Grid.Row="2">
+
+                        <Button.IsVisible>
+                            <MultiBinding Converter="{StaticResource All}">
+                                <Binding Path="DialogType" Converter="{StaticResource IsNotReview}" />
+                                <Binding Path="MoveAllMarks" Converter="{StaticResource IsNotNull}" />
+                            </MultiBinding>
+                        </Button.IsVisible>
+                    </Button>
                 </Grid>
             </StackLayout>
         </Frame>
 
-        <tl:TLCheckView Text="{rt:Translate HasPingers, Group=FishingGear}"
+        <!--<tl:TLCheckView Text="{rt:Translate HasPingers, Group=FishingGear}"
                 IsChecked="{Binding HasPingers}"
                 Margin="0,10,0,0">
             <tl:TLCheckView.IsEnabled>
@@ -316,6 +241,29 @@
                                     </MultiBinding>
                                 </ImageButton.IsVisible>
                             </ImageButton>
+                            <ImageButton Source="{FontImage FontFamily=FA, Glyph={Static h:IconFont.ArrowRight}, Size=20, Color=White}"
+                                    Padding="10"
+                                    Command="{Binding BindingContext.MovePinger, Source={Reference view}}"
+                                    CommandParameter="{Binding}">
+                                <ImageButton.IsVisible>
+                                    <MultiBinding Converter="{StaticResource All}">
+                                        <Binding Path="BindingContext.DialogType"
+                                                Converter="{StaticResource IsNotReview}"
+                                                Source="{Reference view}" />
+                                        <Binding Path="BindingContext.MovePinger"
+                                                Source="{Reference view}"
+                                                Converter="{StaticResource IsNotNull}" />
+                                        <Binding Path="IsSameAsInspected" Converter="{StaticResource OppositeBool}" />
+                                    </MultiBinding>
+                                </ImageButton.IsVisible>
+                            </ImageButton>
+                            <ImageButton Source="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Check}, Size=20, Color=White}"
+                                    Grid.Column="{Binding BindingContext.DialogType, Source={Reference view}, Converter={StaticResource MarkCheckColumn}}"
+                                    BackgroundColor="Green"
+                                    Padding="10"
+                                    Margin="5,0,0,5"
+                                    IsEnabled="False"
+                                    IsVisible="{Binding IsSameAsInspected}" />
                         </StackLayout>
                     </tl:TLTableRow>
                 </DataTemplate>
@@ -323,21 +271,221 @@
             <tl:TLResponsivleTableChild TableLayout="Table" />
             <tl:TLResponsivleTableChild TableLayout="Sections" QueryWidth="800" />
             <tl:TLResponsiveTable.FooterView>
-                <Button Text="{rt:Translate AddPinger, Group=FishingGear}"
-                        Command="{Binding AddPinger}"
-                        ImageSource="{FontImage FontFamily=FA, Glyph={Static h:IconFont.CirclePlus}, Size=25, Color=White}"
-                        HorizontalOptions="End">
-                    <Button.IsVisible>
-                        <MultiBinding Converter="{StaticResource All}">
-                            <Binding Path="DialogType" Converter="{StaticResource IsNotReview}" />
-                            <Binding Path="IsEditable" />
-                        </MultiBinding>
-                    </Button.IsVisible>
-                </Button>
+                <StackLayout>
+                    <Button Text="{rt:Translate AddPinger, Group=FishingGear}"
+                            Command="{Binding AddPinger}"
+                            ImageSource="{FontImage FontFamily=FA, Glyph={Static h:IconFont.CirclePlus}, Size=25, Color=White}"
+                            HorizontalOptions="End">
+                        <Button.IsVisible>
+                            <MultiBinding Converter="{StaticResource All}">
+                                <Binding Path="DialogType" Converter="{StaticResource IsNotReview}" />
+                                <Binding Path="IsEditable" />
+                            </MultiBinding>
+                        </Button.IsVisible>
+                    </Button>
+
+                    <Button Text="{rt:Translate MoveAllPingers, Group=FishingGear}"
+                            Command="{Binding MoveAllPingers}"
+                            ImageSource="{FontImage FontFamily=FA, Glyph={Static h:IconFont.CirclePlus}, Size=25, Color=White}"
+                            Grid.Row="2">
+
+                        <Button.IsVisible>
+                            <MultiBinding Converter="{StaticResource All}">
+                                <Binding Path="DialogType" Converter="{StaticResource IsNotReview}" />
+                                <Binding Path="MoveAllPingers" Converter="{StaticResource IsNotNull}" />
+                            </MultiBinding>
+                        </Button.IsVisible>
+                    </Button>
+                </StackLayout>
             </tl:TLResponsiveTable.FooterView>
             <tl:TLResponsiveTable.EmptyView>
                 <Label Text="{rt:Translate NoInformation, Group=Common}" Margin="20,10" />
             </tl:TLResponsiveTable.EmptyView>
-        </tl:TLResponsiveTable>
+        </tl:TLResponsiveTable>-->
+
+        <tl:TLCheckView Text="{rt:Translate HasPingers, Group=FishingGear}"
+                IsChecked="{Binding HasPingers}"
+                Margin="0,10,0,0">
+            <tl:TLCheckView.IsEnabled>
+                <MultiBinding Converter="{StaticResource All}">
+                    <Binding Path="DialogType" Converter="{StaticResource IsNotReview}" />
+                    <Binding Path="IsEditable" />
+                </MultiBinding>
+            </tl:TLCheckView.IsEnabled>
+        </tl:TLCheckView>
+        <StackLayout IsVisible="{Binding HasPingers}">
+
+            <Label Text="{rt:Translate Pingers, Group=FishingGear}"
+                    FontSize="24"
+                    Margin="0,10,0,0" />
+            <Frame BackgroundColor="Transparent"
+                    CornerRadius="6"
+                    BorderColor="{StaticResource GrayColor}">
+                <StackLayout>
+                    <Grid Margin="0,0,0,10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="{Binding BindingContext.DialogType, Converter={StaticResource MarkColumnWidth}, Source={Reference view}}" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Label Text="{rt:Translate PingerNumber, Group=FishingGear}" FontSize="16" />
+                        <Label Grid.Column="1"
+                                Text="{rt:Translate PingerModel, Group=FishingGear}"
+                                FontSize="16" />
+                        <Label Grid.Column="2"
+                                Text="{rt:Translate PingerBrand, Group=FishingGear}"
+                                FontSize="16" />
+                    </Grid>
+                    <CollectionView ItemsSource="{Binding Pingers.Value}"
+                            HeightRequest="200"
+                            HorizontalOptions="Fill">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="local:PingerViewModel">
+                                <StackLayout>
+                                    <BoxView HeightRequest="1" BackgroundColor="{StaticResource GrayColor}" />
+                                    <Grid Margin="5,0,0,5">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="{Binding BindingContext.DialogType, Converter={StaticResource MarkColumnWidth}, Source={Reference view}}" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <tl:TLEntry IsTitleVisible="False"
+                                                ValidState="{Binding Number}"
+                                                Keyboard="Numeric">
+                                            <StackLayout Orientation="Horizontal" Spacing="0">
+                                                <Label Text="{Binding BindingContext.Prefix, Source={Reference view}}"
+                                                        VerticalOptions="Center"
+                                                        IsVisible="{Binding BindingContext.Prefix, Converter={StaticResource IsNotNull}, Source={Reference view}}" />
+                                                <tl:TLInnerInput />
+                                            </StackLayout>
+                                            <tl:TLEntry.IsEnabled>
+                                                <MultiBinding Converter="{StaticResource All}">
+                                                    <Binding Path="BindingContext.DialogType"
+                                                            Converter="{StaticResource IsNotReview}"
+                                                            Source="{Reference view}" />
+                                                    <Binding Path="BindingContext.IsEditable" Source="{Reference view}" />
+                                                    <Binding Path="AddedByInspector.Value" />
+                                                </MultiBinding>
+                                            </tl:TLEntry.IsEnabled>
+                                        </tl:TLEntry>
+                                        <tl:TLEntry IsTitleVisible="False"
+                                                ValidState="{Binding Model}"
+                                                Grid.Column="1">
+                                            <StackLayout Orientation="Horizontal" Spacing="0">
+                                                <Label Text="{Binding BindingContext.Prefix, Source={Reference view}}"
+                                                        VerticalOptions="Center"
+                                                        IsVisible="{Binding BindingContext.Prefix, Converter={StaticResource IsNotNull}, Source={Reference view}}" />
+                                                <tl:TLInnerInput />
+                                            </StackLayout>
+                                            <tl:TLEntry.IsEnabled>
+                                                <MultiBinding Converter="{StaticResource All}">
+                                                    <Binding Path="BindingContext.DialogType"
+                                                            Converter="{StaticResource IsNotReview}"
+                                                            Source="{Reference view}" />
+                                                    <Binding Path="BindingContext.IsEditable" Source="{Reference view}" />
+                                                </MultiBinding>
+                                            </tl:TLEntry.IsEnabled>
+                                        </tl:TLEntry>
+                                        <tl:TLEntry IsTitleVisible="False"
+                                                ValidState="{Binding Brand}"
+                                                Grid.Column="2">
+                                            <StackLayout Orientation="Horizontal" Spacing="0">
+                                                <Label Text="{Binding BindingContext.Prefix, Source={Reference view}}"
+                                                        VerticalOptions="Center"
+                                                        IsVisible="{Binding BindingContext.Prefix, Converter={StaticResource IsNotNull}, Source={Reference view}}" />
+                                                <tl:TLInnerInput />
+                                            </StackLayout>
+                                            <tl:TLEntry.IsEnabled>
+                                                <MultiBinding Converter="{StaticResource All}">
+                                                    <Binding Path="BindingContext.DialogType"
+                                                            Converter="{StaticResource IsNotReview}"
+                                                            Source="{Reference view}" />
+                                                    <Binding Path="BindingContext.IsEditable" Source="{Reference view}" />
+                                                </MultiBinding>
+                                            </tl:TLEntry.IsEnabled>
+                                        </tl:TLEntry>
+                                        <Grid Margin="5,0,0,5" Grid.Column="3">
+                                            <ImageButton Source="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Trash}, Size=20, Color=White}"
+                                                    Padding="10"
+                                                    Command="{Binding BindingContext.RemovePinger, Source={Reference view}}"
+                                                    CommandParameter="{Binding}">
+                                                <ImageButton.IsVisible>
+                                                    <MultiBinding Converter="{StaticResource All}">
+                                                        <Binding Path="BindingContext.DialogType"
+                                                                Converter="{StaticResource IsNotReview}"
+                                                                Source="{Reference view}" />
+                                                        <Binding Path="BindingContext.IsEditable" Source="{Reference view}" />
+                                                    </MultiBinding>
+                                                </ImageButton.IsVisible>
+                                            </ImageButton>
+                                            <Button ImageSource="{FontImage FontFamily=FA, Glyph={Static h:IconFont.ArrowRight}, Size=20, Color=White}"
+                                                    Padding="10"
+                                                    Command="{Binding BindingContext.MovePinger, Source={Reference view}}"
+                                                    CommandParameter="{Binding}">
+                                                <Button.IsVisible>
+                                                    <MultiBinding Converter="{StaticResource All}">
+                                                        <Binding Path="BindingContext.MovePinger"
+                                                                Converter="{StaticResource IsNotNull}"
+                                                                Source="{Reference view}" />
+                                                        <Binding Path="IsSameAsInspected" Converter="{StaticResource OppositeBool}" />
+                                                    </MultiBinding>
+                                                </Button.IsVisible>
+                                            </Button>
+                                            <ImageButton Source="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Check}, Size=20, Color=White}"
+                                                    BackgroundColor="Green"
+                                                    Padding="10"
+                                                    IsEnabled="False"
+                                                    IsVisible="{Binding IsSameAsInspected}" />
+                                        </Grid>
+                                        <ImageButton Source="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Check}, Size=20, Color=White}"
+                                                Grid.Column="{Binding BindingContext.DialogType, Source={Reference view}, Converter={StaticResource PingerCheckColumn}}"
+                                                BackgroundColor="Green"
+                                                Padding="10"
+                                                Margin="5,0,0,5"
+                                                IsEnabled="False"
+                                                IsVisible="{Binding IsSameAsInspected}" />
+                                    </Grid>
+                                </StackLayout>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                        <CollectionView.EmptyView>
+                            <Label Text="{rt:Translate NoInformation, Group=Common}"
+                                    VerticalOptions="Center"
+                                    HorizontalOptions="Center" />
+                        </CollectionView.EmptyView>
+                    </CollectionView>
+                    <StackLayout>
+                        <Button Text="{rt:Translate AddPinger, Group=FishingGear}"
+                                Command="{Binding AddPinger}"
+                                ImageSource="{FontImage FontFamily=FA, Glyph={Static h:IconFont.CirclePlus}, Size=25, Color=White}">
+                            <Button.IsVisible>
+                                <MultiBinding Converter="{StaticResource All}">
+                                    <Binding Path="DialogType" Converter="{StaticResource IsNotReview}" />
+                                    <Binding Path="IsEditable" />
+                                </MultiBinding>
+                            </Button.IsVisible>
+                        </Button>
+
+                        <Button Text="{rt:Translate MoveAllPingers, Group=FishingGear}"
+                                Command="{Binding MoveAllPingers}"
+                                ImageSource="{FontImage FontFamily=FA, Glyph={Static h:IconFont.CirclePlus}, Size=25, Color=White}"
+                                Grid.Row="2">
+
+                            <Button.IsVisible>
+                                <MultiBinding Converter="{StaticResource All}">
+                                    <Binding Path="DialogType" Converter="{StaticResource IsNotReview}" />
+                                    <Binding Path="MoveAllPingers" Converter="{StaticResource IsNotNull}" />
+                                </MultiBinding>
+                            </Button.IsVisible>
+                        </Button>
+                    </StackLayout>
+                </StackLayout>
+            </Frame>
+        </StackLayout>
+
     </StackLayout>
 </sv:SectionView>

@@ -582,6 +582,9 @@ export class StatisticalFormsFishVesselComponent implements OnInit, IDialogCompo
         if (model.year !== null && model.year !== undefined) {
             this.form.get('yearControl')!.setValue(new Date(model.year, 0, 1));
         }
+        else {
+            this.form.get('yearControl')!.setValue(this.lastYear);
+        }
 
         this.form.get('shipPriceControl')!.setValue(model.shipPrice);
         this.form.get('fuelConsumptionControl')!.setValue(model.fuelConsumption);
