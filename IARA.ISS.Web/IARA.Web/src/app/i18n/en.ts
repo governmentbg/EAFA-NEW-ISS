@@ -6009,6 +6009,7 @@
         'edit-external-auan': 'External AUAN',
         'edit-auan-num': 'AUAN no.',
         'edit-external-auan-num': 'Num',
+        'edit-external-decree-num': 'Num',
         'edit-drafter': 'Drafter',
         'edit-drafter-position': 'Issuer position',
         'edit-auan-draft-date': 'Draft date',

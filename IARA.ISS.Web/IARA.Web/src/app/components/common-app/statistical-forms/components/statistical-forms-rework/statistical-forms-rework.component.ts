@@ -576,6 +576,9 @@ export class StatisticalFormsReworkComponent implements OnInit, IDialogComponent
         if (model.year !== null && model.year !== undefined) {
             this.form.get('yearControl')!.setValue(new Date(model.year, 0, 1));
         }
+        else {
+            this.form.get('yearControl')!.setValue(this.lastYear);
+        }
 
         this.form.get('vetRegistrationNumControl')!.setValue(model.vetRegistrationNum);
         this.form.get('licenceNumControl')!.setValue(model.licenceNum);

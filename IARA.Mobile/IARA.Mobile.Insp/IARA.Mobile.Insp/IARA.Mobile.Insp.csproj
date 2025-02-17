@@ -51,6 +51,9 @@
     <Compile Update="Controls\WaterCatchesView.xaml.cs">
       <DependentUpon>WaterCatchesView.xaml</DependentUpon>
     </Compile>
+    <Compile Update="FlyoutPages\Inspections\Dialogs\LoadFromOldPermitsDialog\LoadFromOldPermitsDialog.xaml.cs">
+      <DependentUpon>LoadFromOldPermitsDialog.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
 
   <ItemGroup>
@@ -135,7 +138,7 @@
     <EmbeddedResource Update="FlyoutPages\Inspections\Dialogs\FishingGearDialog\GenerateMarksDialog\GenerateMarksDialog.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="FlyoutPages\Inspections\Dialogs\FishingGearDialog\PingerDialog\PingerDialog.xaml">
+    <EmbeddedResource Update="FlyoutPages\Inspections\Dialogs\LoadFromOldPermitsDialog\LoadFromOldPermitsDialog.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="FlyoutPages\Inspections\Dialogs\InspectorDialog\InspectorDialog.xaml">

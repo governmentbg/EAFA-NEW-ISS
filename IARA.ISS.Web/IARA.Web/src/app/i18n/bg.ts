@@ -6095,6 +6095,7 @@
         'edit-external-auan': 'Информация за акт от външна институция',
         'edit-auan-num': '№ на АУАН',
         'edit-external-auan-num': '№ на акт',
+        'edit-external-decree-num': '№ на постановление',
         'edit-auan-draft-date': 'Дата на съставяне',
         'edit-external-auan-date': 'Дата',
         'edit-auan-drafter': 'Актосъставител',

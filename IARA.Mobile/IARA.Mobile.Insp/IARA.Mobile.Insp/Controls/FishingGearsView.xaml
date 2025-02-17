@@ -67,7 +67,7 @@
                                 <Binding Path="BindingContext.Inspection.ActivityType"
                                         Converter="{StaticResource IsNotReview}"
                                         Source="{Reference view}" />
-                                <Binding Path="IsAddedByInspector" />
+                                <Binding Path="IsAddedByInspector.Value" />
                             </MultiBinding>
                         </ImageButton.IsVisible>
                     </ImageButton>

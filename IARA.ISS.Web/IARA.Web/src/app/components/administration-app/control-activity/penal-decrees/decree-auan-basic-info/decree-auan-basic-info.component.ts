@@ -19,6 +19,9 @@ export class DecreeAuanBasicInfoComponent extends CustomFormControl<PenalDecreeA
     @Input()
     public isFromRegister: boolean = false;
 
+    @Input()
+    public showExternalControls: boolean = false;
+
     public auan: PenalDecreeAuanDataDTO | undefined;
 
     public readonly today: Date = new Date();

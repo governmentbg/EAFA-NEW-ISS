@@ -1,0 +1,58 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<tl:TLBaseDialog xmlns="http://xamarin.com/schemas/2014/forms"
+        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+        xmlns:rt="clr-namespace:TechnoLogica.Xamarin.ResourceTranslator;assembly=TechnoLogica.Xamarin"
+        xmlns:tl="clr-namespace:TechnoLogica.Xamarin.Controls;assembly=TechnoLogica.Xamarin"
+        xmlns:h="clr-namespace:TechnoLogica.Xamarin.Helpers;assembly=TechnoLogica.Xamarin"
+        xmlns:sv="clr-namespace:IARA.Mobile.Shared.Views;assembly=IARA.Mobile.Shared"
+        xmlns:lc="clr-namespace:IARA.Mobile.Insp.Controls"
+        xmlns:nom="clr-namespace:IARA.Mobile.Insp.Application.DTObjects.Nomenclatures;assembly=IARA.Mobile.Insp.Application"
+        xmlns:local="clr-namespace:IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.LoadFromOldPermitsDialog"
+        x:Name="dialog"
+        x:Class="IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.LoadFromOldPermitsDialog.LoadFromOldPermitsDialog"
+        Title="{rt:Translate PingerDialogTitle, Group=FishingGear}"
+        x:DataType="local:LoadFromOldPermitsDialogViewModel"
+        x:TypeArguments="local:LoadFromOldPermitsDialogViewModel, nom:PermitNomenclatureDto"
+        BackgroundColor="White"
+        IconColor="White"
+        TitleBackgroundColor="{StaticResource Primary}"
+        TitleColor="White">
+    <StackLayout Padding="10">
+        <lc:CustomInfinitePicker Title="{rt:Translate Permit, Group=FishingGearInspection}"
+                ValidState="{Binding Permit}"
+                DisplayValue="DisplayValue">
+            <DataTemplate>
+                <Grid x:DataType="nom:PermitNomenclatureDto"
+                        RowDefinitions="Auto,Auto,1"
+                        RowSpacing="0">
+                    <tl:TLRichLabel Margin="5,5,5,0">
+                        <Span Text="{Binding Name}" />
+                        <Span Text=" (" />
+                        <Span Text="{Binding Code}" />
+                        <Span Text=")" />
+                    </tl:TLRichLabel>
+                    <StackLayout Grid.Row="1"
+                            Orientation="Horizontal"
+                            Margin="5,0,5,10">
+                        <tl:TLRichLabel>
+                            <Span Text="{rt:Translate From, Group=Common}" />
+                            <Span Text=": " />
+                            <sv:DateSpan Date="{Binding From}" />
+                        </tl:TLRichLabel>
+                        <tl:TLRichLabel>
+                            <Span Text="{rt:Translate To, Group=Common}" />
+                            <Span Text=": " />
+                            <sv:DateSpan Date="{Binding To}" />
+                        </tl:TLRichLabel>
+                    </StackLayout>
+                    <BoxView Grid.Row="2"
+                            Margin="5,0"
+                            Color="LightGray" />
+                </Grid>
+            </DataTemplate>
+        </lc:CustomInfinitePicker>
+        <Button Text="{rt:Translate Save, Group=Common}"
+                HorizontalOptions="End"
+                Command="{Binding Save}" />
+    </StackLayout>
+</tl:TLBaseDialog>

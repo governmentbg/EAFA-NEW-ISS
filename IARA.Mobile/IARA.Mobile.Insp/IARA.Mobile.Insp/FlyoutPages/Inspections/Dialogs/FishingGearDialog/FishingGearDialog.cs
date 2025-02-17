@@ -6,8 +6,11 @@ using IARA.Mobile.Insp.Models;
 using IARA.Mobile.Shared.Views;
 using TechnoLogica.Xamarin.Controls;
 using TechnoLogica.Xamarin.Extensions;
+using Xamarin.CommunityToolkit.Extensions;
 using Xamarin.CommunityToolkit.Markup;
+using Xamarin.CommunityToolkit.UI.Views.Options;
 using Xamarin.Forms;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.FishingGearDialog
 {
@@ -67,6 +70,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.FishingGearDialog
                             .BindTranslation(FishingGearView.TextProperty, "FishingGear", nameof(GroupResourceEnum.FishingGear)),
                         new TLMultiToggleView
                         {
+                            Command = ViewModel.CorrespondsChanged,
                             ValidState = ViewModel.Corresponds,
                             Buttons = InspectionTogglesHelper.YesNoUnavailableMultiToggles,
                             IsEnabled = dialogType != ViewActivityType.Review,

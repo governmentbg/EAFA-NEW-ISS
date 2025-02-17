@@ -40,9 +40,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.FishingGearDialog
             GenerateMarks = CommandBuilder.CreateFrom(OnGenerateMarks);
             RemoveMark = CommandBuilder.CreateFrom<MarkViewModel>(OnRemoveMark);
             AddPinger = CommandBuilder.CreateFrom(OnAddPinger);
-            RemovePinger = CommandBuilder.CreateFrom<PingerModel>(OnRemovePinger);
-            EditPinger = CommandBuilder.CreateFrom<PingerModel>(OnEditPinger);
-            ViewPinger = CommandBuilder.CreateFrom<PingerModel>(OnViewPinger);
+            RemovePinger = CommandBuilder.CreateFrom<PingerViewModel>(OnRemovePinger);
 
             this.AddValidation(others: new IValidatableViewModel[]
             {
@@ -61,7 +59,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.FishingGearDialog
 
         public ValidStateValidatableTable<MarkViewModel> Marks { get; set; }
 
-        public ValidStateTable<PingerModel> Pingers { get; set; }
+        public ValidStateValidatableTable<PingerViewModel> Pingers { get; set; }
 
 
         public List<SelectNomenclatureDto> MarkStatuses
@@ -74,11 +72,13 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.FishingGearDialog
             get => _pingerStatuses;
             private set => SetProperty(ref _pingerStatuses, value);
         }
+        public SelectNomenclatureDto DefaultPingerStatus { get; set; }
         public bool HasPingers
         {
             get { return _hasPingers; }
             set { SetProperty(ref _hasPingers, value); }
         }
+
         public ICommand AddMark { get; }
         public ICommand GenerateMarks { get; }
         public ICommand RemoveMark { get; }
@@ -87,6 +87,11 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.FishingGearDialog
         public ICommand EditPinger { get; }
         public ICommand ViewPinger { get; }
         public ICommand MoveMark { get; set; }
+        public ICommand MoveAllMarks { get; set; }
+        public ICommand MovePinger { get; set; }
+        public ICommand MoveAllPingers { get; set; }
+        public ICommand MarkDeleted { get; set; }
+        public ICommand PingerDeleted { get; set; }
 
         public void Init(List<FishingGearSelectNomenclatureDto> fishingGearTypes, List<SelectNomenclatureDto> markStatuses, List<SelectNomenclatureDto> pingerStatuses)
         {
@@ -97,6 +102,8 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.FishingGearDialog
 
             MarkStatuses = markStatuses.FindAll(f => f.Code != "MARKED");
             _inspectedMarkStatus = markStatuses.Find(f => f.Code == "MARKED");
+
+            DefaultPingerStatus = PingerStatuses.Where(x => x.Code == nameof(FishingGearPingerStatusesEnum.NEW)).First();
         }
 
         public void AssignEdit(FishingGearDto dto)
@@ -114,10 +121,9 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.FishingGearDialog
             {
                 foreach (FishingGearMarkDto mark in dto.Marks)
                 {
-                    MarkViewModel markViewModel = new MarkViewModel
+                    MarkViewModel markViewModel = new MarkViewModel(mark.SelectedStatus == FishingGearMarkStatus.MARKED)
                     {
                         Id = mark.Id,
-                        AddedByInspector = mark.SelectedStatus == FishingGearMarkStatus.MARKED,
                         CreatedOn = mark.CreatedOn,
                     };
                     if (mark.FullNumber != null)
@@ -134,14 +140,19 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.FishingGearDialog
             {
                 foreach (FishingGearPingerDto pinger in dto.Pingers)
                 {
-                    PingerModel pingerModel = new PingerModel
+                    bool addedByInspector = false;
+                    if (IsEditable)
+                    {
+                        addedByInspector = !FishingGearDialogViewModel.Instance.PermittedFishingGear.Pingers.Select(x => x.Number.Value).ToList().Contains(pinger.Number);
+                    }
+                    PingerViewModel pingerModel = new PingerViewModel(addedByInspector)
                     {
                         Id = pinger.Id,
                     };
-                    pingerModel.Number = pinger.Number;
+                    pingerModel.Number.Value = pinger.Number;
                     pingerModel.Status = PingerStatuses.Find(f => f.Id == pinger.StatusId);
-                    pingerModel.Model = pinger.Model;
-                    pingerModel.Brand = pinger.Brand;
+                    pingerModel.Model.Value = pinger.Model;
+                    pingerModel.Brand.Value = pinger.Brand;
                     Pingers.Value.Add(pingerModel);
                 }
             }
@@ -163,6 +174,13 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.FishingGearDialog
                         return !IsEditable;
                     }
                 }
+                foreach (var pinger in Pingers.Value)
+                {
+                    if (!pinger.IsValid)
+                    {
+                        return !IsEditable;
+                    }
+                }
                 var generalInfoValidator = Validation.OtherValidations.FirstOrDefault(f => f.Name == nameof(FishingGearGeneralInfoViewModel));
                 if (generalInfoValidator != null)
                 {
@@ -177,9 +195,8 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.FishingGearDialog
 
         private void OnAddMark()
         {
-            MarkViewModel mark = new MarkViewModel
+            MarkViewModel mark = new MarkViewModel(true)
             {
-                AddedByInspector = true,
                 CreatedOn = DateTime.Now,
             };
             mark.Status.Value = _inspectedMarkStatus;
@@ -194,9 +211,8 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.FishingGearDialog
                 List<MarkViewModel> marks = new List<MarkViewModel>();
                 for (int i = generateMarks.From; i <= generateMarks.To; i++)
                 {
-                    MarkViewModel mark = new MarkViewModel
+                    MarkViewModel mark = new MarkViewModel(true)
                     {
-                        AddedByInspector = true,
                         CreatedOn = DateTime.Now,
                     };
                     mark.Number.AssignFrom(i);
@@ -210,49 +226,22 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.FishingGearDialog
         private void OnRemoveMark(MarkViewModel mark)
         {
             Marks.Value.Remove(mark);
+            MarkDeleted?.Execute(mark);
         }
 
-        private async Task OnAddPinger()
+        private void OnAddPinger()
         {
-            PingerModel pinger = await TLDialogHelper.ShowDialog(new PingerDialog.PingerDialog(null, ViewActivityType.Add, PingerStatuses));
-            if (pinger != null)
+            PingerViewModel pinger = new PingerViewModel(true)
             {
-                Pingers.Value.Add(pinger);
-            }
+                Status = DefaultPingerStatus,
+            };
+            Pingers.Value.Add(pinger);
         }
 
-        private async Task OnViewPinger(PingerModel model)
+        private void OnRemovePinger(PingerViewModel pinger)
         {
-            await TLDialogHelper.ShowDialog(new PingerDialog.PingerDialog(model, ViewActivityType.Review, PingerStatuses));
-        }
-
-        private async Task OnEditPinger(PingerModel model)
-        {
-            PingerModel pinger = await TLDialogHelper.ShowDialog(new PingerDialog.PingerDialog(model, ViewActivityType.Edit, PingerStatuses));
-
-            if (pinger != null)
-            {
-                model.Number = pinger.Number;
-                model.Status = pinger.Status;
-                model.Model = pinger.Model;
-                model.Brand = pinger.Brand;
-
-                Pingers.Value.Replace(model, pinger);
-            }
-        }
-
-        private async Task OnRemovePinger(PingerModel pinger)
-        {
-            bool result = await App.Current.MainPage.DisplayAlert(null,
-                TranslateExtension.Translator[nameof(GroupResourceEnum.Common) + "/DeleteMessage"],
-                TranslateExtension.Translator[nameof(GroupResourceEnum.Common) + "/Yes"],
-                TranslateExtension.Translator[nameof(GroupResourceEnum.Common) + "/No"]
-            );
-
-            if (result)
-            {
-                Pingers.Value.Remove(pinger);
-            }
+            Pingers.Value.Remove(pinger);
+            PingerDeleted?.Execute(pinger);
         }
 
         public static implicit operator FishingGearDto(FishingGearViewModel viewModel)
@@ -282,7 +271,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.FishingGearDialog
                         .Select(f => (FishingGearMarkDto)f)
                         .Where(f => f != null)
                         .ToList(),
-                    Pingers = viewModel.HasPingers ? viewModel.Pingers
+                    Pingers = viewModel.HasPingers || viewModel.Pingers.Count() != 0 ? viewModel.Pingers
                         .Select(f => (FishingGearPingerDto)f)
                         .Where(f => f != null)
                         .ToList() : null
