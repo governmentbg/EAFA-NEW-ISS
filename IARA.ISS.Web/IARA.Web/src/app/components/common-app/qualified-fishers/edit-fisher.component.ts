@@ -47,6 +47,7 @@ import { QualifiedFisherStatusesEnum } from '@app/enums/qualified-fisher-statuse
 })
 export class EditFisherComponent implements OnInit, AfterViewInit, IDialogComponent {
     public readonly pageCode: PageCodeEnum = PageCodeEnum.CommFishLicense;
+    public readonly today: Date = new Date();
 
     public editForm!: FormGroup;
     public expectedResults: QualifiedFisherRegixDataDTO;
@@ -606,7 +607,13 @@ export class EditFisherComponent implements OnInit, AfterViewInit, IDialogCompon
 
         if (this.model instanceof QualifiedFisherEditDTO) {
             this.editForm.controls.registrationNumberControl.setValue(this.model.registrationNum);
-            this.editForm.controls.registrationDateControl.setValue(this.model.registrationDate);
+
+            if (this.model.registrationDate !== undefined && this.model.registrationDate !== null) {
+                this.editForm.controls.registrationDateControl.setValue(this.model.registrationDate);
+            }
+            else {
+                this.editForm.controls.registrationDateControl.setValue(this.today);
+            }
 
             const status: NomenclatureDTO<QualifiedFisherStatusesEnum> = this.statuses.find(x => x.value === (this.model as QualifiedFisherEditDTO).status)!;
             this.editForm.controls.statusControl.setValue(status);

@@ -80,6 +80,7 @@
                      formControlName="requestDateControl"
                      tooltipResourceName="scientific-fishing.request-date-helper"
                      [max]="currentDate"
+                     [readonly]="true"
                      label="{{ 'scientific-fishing.request-date' | tlTranslate }}">
             </tl-date>
             <tl-date [fxFlex]="isApplication ? 25 : 20"

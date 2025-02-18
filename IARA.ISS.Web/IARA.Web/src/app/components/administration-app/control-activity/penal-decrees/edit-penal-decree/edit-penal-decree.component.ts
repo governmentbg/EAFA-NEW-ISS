@@ -38,6 +38,10 @@ import { GetControlErrorLabelTextCallback } from '@app/shared/components/input-c
 import { AuanInspectedEntityDTO } from '@app/models/generated/dtos/AuanInspectedEntityDTO';
 import { PenalDecreeUtils } from '../utils/penal-decree.utils';
 import { AuanStatusEnum } from '@app/enums/auan-status.enum';
+import { SystemPropertiesDTO } from '@app/models/generated/dtos/SystemPropertiesDTO';
+import { SystemParametersService } from '@app/services/common-app/system-parameters.service';
+import { DateUtils } from '@app/shared/utils/date.utils';
+import { DateDifference } from '@app/models/common/date-difference.model';
 
 @Component({
     selector: 'edit-penal-decree',
@@ -62,10 +66,12 @@ export class EditPenalDecreeComponent implements OnInit, AfterViewInit, IDialogC
     public fishCompensationFormTouched: boolean = false;
     public auanViolatedRegulationsTouched: boolean = false;
     public violatedRegulationsTouched: boolean = false;
+    public canSaveAfterHours: boolean = false;
 
     public inspectedEnityName: string | undefined;
     public violatedRegulationsTitle: string | undefined;
     public drafter: InspectorUserNomenclatureDTO | undefined;
+    public canAddAfterHours: number | undefined;
 
     public decreeNumErrorLabelTextMethod: GetControlErrorLabelTextCallback = this.decreeNumErrorLabelText.bind(this);
 
@@ -94,6 +100,7 @@ export class EditPenalDecreeComponent implements OnInit, AfterViewInit, IDialogC
     private decreeNum: string | undefined;
     private readonly nomenclatures: CommonNomenclatures;
     private readonly translate: FuseTranslationLoaderService;
+    private readonly systemParametersService: SystemParametersService;
     private readonly confirmDialog: TLConfirmDialog;
     private readonly snackbar: TLSnackbar;
 
@@ -101,12 +108,14 @@ export class EditPenalDecreeComponent implements OnInit, AfterViewInit, IDialogC
         service: PenalDecreesService,
         translate: FuseTranslationLoaderService,
         nomenclatures: CommonNomenclatures,
+        systemParametersService: SystemParametersService,
         confirmDialog: TLConfirmDialog,
         snackbar: TLSnackbar
     ) {
         this.service = service;
         this.nomenclatures = nomenclatures;
         this.translate = translate;
+        this.systemParametersService = systemParametersService;
         this.confirmDialog = confirmDialog;
         this.snackbar = snackbar;
 
@@ -133,6 +142,9 @@ export class EditPenalDecreeComponent implements OnInit, AfterViewInit, IDialogC
         this.users = nomenclatures[4];
 
         this.addSanctionControls();
+
+        const systemParameters: SystemPropertiesDTO = await this.systemParametersService.systemParameters();
+        this.canAddAfterHours = systemParameters.addAuanAfterHours;
 
         if (this.auanId !== undefined && this.auanId !== null) {
             this.service.getPenalDecreeAuanData(this.auanId).subscribe({
@@ -275,6 +287,7 @@ export class EditPenalDecreeComponent implements OnInit, AfterViewInit, IDialogC
             this.auanId = data.auanId;
             this.penalDecreeId = data.id;
             this.typeId = data.typeId;
+            this.canSaveAfterHours = data.canSaveAfterHours;
             this.viewMode = data.isReadonly ?? false;
         }
     }
@@ -368,7 +381,7 @@ export class EditPenalDecreeComponent implements OnInit, AfterViewInit, IDialogC
         else if (action.id === 'save-draft') {
             this.markAllAsTouched();
             this.validityCheckerGroup.validate();
-
+          
             if (this.form.valid) {
                 this.fillModel();
                 CommonUtils.sanitizeModelStrings(this.model);
@@ -425,7 +438,7 @@ export class EditPenalDecreeComponent implements OnInit, AfterViewInit, IDialogC
             decreeNumControl: new FormControl(null, Validators.maxLength(20)),
             drafterControl: new FormControl(null, Validators.required),
             issuerPositionControl: new FormControl(null, Validators.maxLength(100)),
-            issueDateControl: new FormControl(null, Validators.required),
+            issueDateControl: new FormControl(null, [Validators.required, this.cannotAddAfterHours()]),
             effectiveDateControl: new FormControl(null),
             territoryUnitControl: new FormControl(null),
             courtControl: new FormControl(null, Validators.required),
@@ -643,6 +656,51 @@ export class EditPenalDecreeComponent implements OnInit, AfterViewInit, IDialogC
             if (!this.decreeViolatedRegulations.some(x => x.isActive !== false)) {
                 return { 'atLeastOneViolatedRegulationNeeded': true };
             }
+            return null;
+        }
+    }
+
+    private cannotAddAfterHours(): ValidatorFn {
+        return (control: AbstractControl): ValidationErrors | null => {
+            if (control === undefined || control === null) {
+                return null;
+            }
+
+            if (this.form === undefined || this.form === null) {
+                return null;
+            }
+
+            if (control.value === null || control.value === undefined) {
+                return null;
+            }
+
+            if (this.canSaveAfterHours) {
+                return null;
+            }
+
+            if (this.canAddAfterHours === undefined || this.canAddAfterHours === null) {
+                return null;
+            }
+
+            const startDate: Date = control.value;
+            const now: Date = new Date();
+
+            const difference: DateDifference | undefined = DateUtils.getDateDifference(startDate, now);
+
+            if (difference === undefined || difference === null) {
+                return null;
+            }
+
+            if (difference.minutes === 0 && difference.hours === 0 && difference.days === 0) {
+                return null;
+            }
+
+            const differenceHours: number = (difference.days! * 24) + difference.hours! + (difference.minutes! / 60);
+
+            if (differenceHours > this.canAddAfterHours) {
+                return { cannotAddAfterHours: true };
+            }
+
             return null;
         }
     }

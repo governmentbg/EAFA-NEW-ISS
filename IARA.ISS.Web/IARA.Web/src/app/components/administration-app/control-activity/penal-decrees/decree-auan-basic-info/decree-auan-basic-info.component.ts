@@ -1,4 +1,4 @@
-﻿import { Component, Input, OnInit, Optional, Self } from '@angular/core';
+﻿import { Component, Input, OnChanges, OnInit, Optional, Self, SimpleChanges } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, NgControl, Validators } from '@angular/forms';
 import { PenalDecreeAuanDataDTO } from '@app/models/generated/dtos/PenalDecreeAuanDataDTO';
 import { CustomFormControl } from '@app/shared/utils/custom-form-control';
@@ -12,7 +12,7 @@ import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.
     selector: 'decree-auan-basic-info',
     templateUrl: './decree-auan-basic-info.component.html'
 })
-export class DecreeAuanBasicInfoComponent extends CustomFormControl<PenalDecreeAuanDataDTO> implements OnInit {
+export class DecreeAuanBasicInfoComponent extends CustomFormControl<PenalDecreeAuanDataDTO> implements OnInit, OnChanges {
     @Input()
     public isAdding: boolean = false;
 
@@ -54,10 +54,22 @@ export class DecreeAuanBasicInfoComponent extends CustomFormControl<PenalDecreeA
         }
     }
 
+    public ngOnChanges(changes: SimpleChanges): void {
+        const showExternalControls: boolean | undefined = changes['showExternalControls']?.currentValue;
+
+        if (showExternalControls === true) {
+            this.form.get('drafterNameControl')!.setValidators([Validators.required, Validators.maxLength(4000)]);
+            this.form.get('locationDescriptionControl')!.setValidators([Validators.required, Validators.maxLength(400)]);
+
+            this.form.get('drafterNameControl')!.markAsPending();
+            this.form.get('locationDescriptionControl')!.markAsPending();
+        }
+    }
+
     public writeValue(value: PenalDecreeAuanDataDTO): void {
         if (value !== undefined && value !== null) {
             this.auan = value;
-          
+
             this.form.get('auanNumControl')!.setValue(value.auanNum);
             this.form.get('auanDraftDateControl')!.setValue(value.draftDate);
 
@@ -101,11 +113,6 @@ export class DecreeAuanBasicInfoComponent extends CustomFormControl<PenalDecreeA
             drafterNameControl: new FormControl(null),
             auanInspectedEntityControl: new FormControl(null)
         });
-
-        if (!this.isFromRegister) {
-            form.get('drafterNameControl')!.setValidators([Validators.required, Validators.maxLength(4000)]);
-            form.get('locationDescriptionControl')!.setValidators([Validators.required, Validators.maxLength(400)]);
-        }
 
         return form;
     }

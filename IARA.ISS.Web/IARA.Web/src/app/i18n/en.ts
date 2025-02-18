@@ -2926,6 +2926,8 @@
         'edit-inspection-dialog-title': 'Edit inspection',
         'cannot-edit-inspection-locked-error': 'You cannot edit inspection',
         'hours-have-passed-error': ' hours after it was created. In order to edit inspection for the locked period, please contact an administrator',
+        'cannot-add-inspection-after-hours-error': 'You cannot edit inspection ',
+        'cannot-add-inspection-after-hours-passed-error': ' hours after it was created. In order to edit inspection for the locked period, please contact an administrator',
 
         'delete-inspection-dialog-title': 'Remove inspection',
         'delete-inspection-dialog-message': 'Are you sure you want to remove the inspection?',
@@ -3393,7 +3395,8 @@
         'delete-btn-label': 'Delete suspension',
         'permit-suspension-valid-to-already-exists': 'There is already a suspension for this permit for the same period',
         'permit-license-suspension-valid-to-already-exists': 'There is already a suspension for this permit license for the same period',
-        'there-is-a-suspension-with-already-existing-valid-to-error': 'There are more than one suspensions with the same validity end date'
+        'there-is-a-suspension-with-already-existing-valid-to-error': 'There are more than one suspensions with the same validity end date',
+        'no-suspension-permissions-error': 'Current user does not have permissions for suspending'
     },
     'print-configuration': {
         'user': 'User issued the document',
@@ -5551,7 +5554,10 @@
         'complete-add-auan-confirm-dialog-message': 'Are you sure that you are done with the changes for this AUAN?',
         'complete-auan-confirm-dialog-title': 'Complete AUAN',
         'complete-auan-confirm-dialog-ok-btn-label': 'Complete',
-        'cannot-cancel-auan-with-penal-decrees': 'You cannot cancel AUAN with penal decrees'
+        'cannot-cancel-auan-with-penal-decrees': 'You cannot cancel AUAN with penal decrees',
+
+        'cannot-add-inspection-after-hours-error': 'You cannot edit AUAN ',
+        'cannot-add-inspection-after-hours-passed-error': ' hours after it was created. In order to edit AUAN for the locked period, please contact an administrator',
     },
     'cross-check-results': {
         'check-code': 'Code',
@@ -6224,7 +6230,13 @@
         'penal-decree-num-already-exist-error': 'Penal decree number already exists',
         'agreement-num-already-exist-error': 'Agreement number already exists',
         'warning-num-already-exist-error': 'Warning number already exists',
-        'resolution-num-already-exist-error': 'Resolution number already exists'
+        'resolution-num-already-exist-error': 'Resolution number already exists',
+
+        'cannot-add-penal-decree-after-hours-error': 'You cannot edit penal decree ',
+        'cannot-add-agreement-after-hours-error': 'You cannot edit agreement ',
+        'cannot-add-warning-after-hours-error': 'You cannot edit warning ',
+        'cannot-add-resolution-after-hours-error': 'You cannot edit resolution ',
+        'cannot-add-after-hours-passed-error': ' hours after it was created. In order to edit it for the locked period, please contact an administrator',
     },
     'catch-quotas': {
         'ship': 'Ship',

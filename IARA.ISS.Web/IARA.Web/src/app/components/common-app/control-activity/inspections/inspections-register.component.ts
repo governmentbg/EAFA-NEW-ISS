@@ -97,6 +97,7 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
     public readonly canDownloadRecords: boolean;
     public readonly canReadAuanRecords: boolean;
     public readonly canEditLockedInspections: boolean;
+    public readonly canSaveAfterHours: boolean;
 
     public canResolveCrossChecks: boolean = false;
 
@@ -156,6 +157,7 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
         this.canExportRecords = permissions.has(PermissionsEnum.InspectionExport);
         this.canReadAuanRecords = permissions.hasAny(PermissionsEnum.AuanRegisterReadAll, PermissionsEnum.AuanRegisterRead);
         this.canEditLockedInspections = permissions.has(PermissionsEnum.InspectionLockedEdit);
+        this.canSaveAfterHours = permissions.has(PermissionsEnum.InspectionCanSubmitAfterHours);
 
         this.userId = authService.User!.userId!;
 
@@ -572,6 +574,7 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
                 isReportLocked: entry.isReportLocked,
                 userIsSameAsInspector: entry.createdByUserId === this.userId,
                 pageCode: entry.inspectionState === InspectionStatesEnum.Signed ? PageCodeEnum.SignInspections : PageCodeEnum.Inspections,
+                canSaveAfterHours: this.canSaveAfterHours,
                 service: this.service
             });
         }

@@ -99,6 +99,8 @@
                 </tl-input>
                 <tl-date fxFlex="33"
                          formControlName="registrationDateControl"
+                         [max]="today"
+                         [readonly]="!isEditing"
                          tooltipResourceName="qualified-fishers-page.registration-date-helper"
                          label="{{ 'qualified-fishers-page.registration-date' | tlTranslate }}">
                 </tl-date>

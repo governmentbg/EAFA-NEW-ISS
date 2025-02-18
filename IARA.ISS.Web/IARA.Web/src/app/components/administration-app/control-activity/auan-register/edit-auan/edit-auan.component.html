@@ -69,6 +69,12 @@
                                  tooltipResourceName="auan-register.edit-inspection-type-helper">
                 </tl-autocomplete>
             </div>
+
+            <div *ngIf="form.get('draftDateControl')?.errors?.cannotAddAfterHours" fxFlex="100" fxLayout="row">
+                <mat-error>
+                    * {{ 'auan-register.cannot-add-auan-after-hours-error' | tlTranslate }} {{ canAddAuanAfterHours }} {{ 'auan-register.cannot-add-after-hours-passed-error' | tlTranslate }}.
+                </mat-error>
+            </div>
         </div>
     </tl-expansion-panel>
 

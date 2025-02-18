@@ -2988,6 +2988,8 @@
         'edit-inspection-dialog-title': 'Редактиране на инспекция',
         'cannot-edit-inspection-locked-error': 'Докладът от инспекция не може да бъде коригиран, тъй като са минали',
         'hours-have-passed-error': ' часа от създаването му. За редактиране/приключване след този срок се свържете с администратор.',
+        'cannot-add-inspection-after-hours-error': 'Не можете да добавите/редактирате този доклад, тъй като са минали повече от ',
+        'cannot-add-inspection-after-hours-passed-error': ' часа от избраната дата за начало на инспекцията/проверката. За редактиране/приключване след този срок се свържете с администратор',
 
         'delete-inspection-dialog-title': 'Премахване на инспекция',
         'delete-inspection-dialog-message': 'Сигурен ли сте, че искате да премахнете инспекцията?',
@@ -3450,7 +3452,8 @@
         'add-suspension-dialog-title': 'Добавяне на прекратяване',
         'permit-suspension-valid-to-already-exists': 'Вече съществува прекратяване за това разрешително до избраната дата',
         'permit-license-suspension-valid-to-already-exists': 'Вече съществува прекратяване за това удостоверение до избраната дата',
-        'there-is-a-suspension-with-already-existing-valid-to-error': 'Съществуват повече от едно прекратявания с еднаква крайна дата на валидност'
+        'there-is-a-suspension-with-already-existing-valid-to-error': 'Съществуват повече от едно прекратявания с еднаква крайна дата на валидност',
+        'no-suspension-permissions-error': 'Потребителят няма права за добавяне, редакция, изтриване или възстановяване на прекратявания'
     },
     'print-configuration': {
         'user': ' Служител, издал документа',
@@ -5535,6 +5538,9 @@
         'invalid-violated-regulation-fields-error': 'Дължината на стойността на някое от полетата е по-голяма от максималната разрешена',
         'violated-regulation-has-errors': 'Дължината на стойността на някое от полетата от този ред, чиято дължина е по-голяма от максималната',
 
+        'cannot-add-auan-after-hours-error': 'Не можете да добавите/редактирате този АУАН, тъй като са минали повече от ',
+        'cannot-add-after-hours-passed-error': ' часа от избраната дата на съставяне. За редактиране/приключване след този срок се свържете с администратор',
+
         'choose': 'Избери',
         'choose-law-section-dialog-title': 'Добавяне на секция на закон',
         'add-law-section': 'Добавяне на секция на закон',
@@ -6101,7 +6107,7 @@
         'edit-auan-drafter': 'Актосъставител',
         'edit-auan-location-description': 'Място',
         'edit-drafter-name': 'Име на издаващ прокурор',
-        'edit-location-description': 'Прокуратура',
+        'edit-location-description': 'Прокуратура (окръжна, районна, град)',
         'edit-auan-constatation-comments': 'Описание на нарушението',
         'edit-evidence-comments': 'Обстоятелства, при които е извършено и доказвателства, които го потвърждават',
         'edit-auan-offender-comments': 'Обяснения от посочения за нарушител',
@@ -6287,7 +6293,13 @@
         'penal-decree-num-already-exist-error': 'Съществува наказателно постановление с такъв номер',
         'agreement-num-already-exist-error': 'Съществува споразумение с такъв номер',
         'warning-num-already-exist-error': 'Съществува предупреждение с такъв номер',
-        'resolution-num-already-exist-error': 'Съществува резолюция с такъв номер'
+        'resolution-num-already-exist-error': 'Съществува резолюция с такъв номер',
+        
+        'cannot-add-penal-decree-after-hours-error': 'Не можете да добавите/редактирате постановлението, тъй като са минали повече от ',
+        'cannot-add-agreement-after-hours-error': 'Не можете да добавите/редактирате споразумението, тъй като са минали повече от ',
+        'cannot-add-warning-after-hours-error': 'Не можете да добавите/редактирате предупреждението, тъй като са минали повече от ',
+        'cannot-add-resolution-after-hours-error': 'Не можете да добавите/редактирате резолюцията, тъй като са минали повече от ',
+        'cannot-add-after-hours-passed-error': ' часа от датата на издаване. За редактиране/приключване след този срок се свържете с администратор',
     },
     'flux-vms-requests': {
         'common': 'Общи',

@@ -30,6 +30,8 @@
                 </tl-input>
                 <tl-date fxFlex="25"
                          formControlName="issueDateControl"
+                         [readonly]="!isRegisterEntry"
+                         [max]="today"
                          label="{{ 'commercial-fishing.issue-date' | tlTranslate }}"
                          tooltipResourceName="commercial-fishing.issue-date-helper">
                 </tl-date>

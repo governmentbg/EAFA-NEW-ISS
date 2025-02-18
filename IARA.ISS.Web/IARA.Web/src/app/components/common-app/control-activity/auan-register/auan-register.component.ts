@@ -66,6 +66,7 @@ export class AuanRegisterComponent implements OnInit, AfterViewInit {
     public readonly canReadPenalDecreeRecords: boolean;
     public readonly canCancelAuanRecords: boolean;
     public readonly canReturnAuanForCorrections: boolean;
+    public readonly canSaveAfterHours: boolean;
 
     public auanStatusesEnum: typeof AuanStatusEnum = AuanStatusEnum;
     public readonly icIconSize: number = CommonUtils.IC_ICON_SIZE;
@@ -116,6 +117,7 @@ export class AuanRegisterComponent implements OnInit, AfterViewInit {
         this.canReadPenalDecreeRecords = permissions.hasAny(PermissionsEnum.PenalDecreesRead, PermissionsEnum.PenalDecreesReadAll);
         this.canCancelAuanRecords = permissions.has(PermissionsEnum.AuanRegisterCancel);
         this.canReturnAuanForCorrections = permissions.has(PermissionsEnum.AuanRegisterReturnForCorrections);
+        this.canSaveAfterHours = permissions.has(PermissionsEnum.AuanCanSaveAfterHours);
 
         this.currentUser = authService.User!.username;
 
@@ -233,6 +235,7 @@ export class AuanRegisterComponent implements OnInit, AfterViewInit {
             const data: EditAuanDialogParams = new EditAuanDialogParams({
                 id: auan.id,
                 inspectionId: auan.inspectionId,
+                canSaveAfterHours: this.canSaveAfterHours,
                 isReadonly: viewMode
             });
 

@@ -57,6 +57,12 @@
                           tooltipResourceName="penal-decree.edit-issuer-position-helper">
                 </tl-input>
             </div>
+
+            <div *ngIf="form.get('issueDateControl')?.errors?.cannotAddAfterHours" fxFlex="100" fxLayout="row">
+                <mat-error>
+                    * {{ 'penal-decrees.cannot-add-resolution-after-hours-error' | tlTranslate }} {{ canAddAfterHours }} {{ 'penal-decrees.cannot-add-after-hours-passed-error' | tlTranslate }}.
+                </mat-error>
+            </div>
         </div>
     </tl-expansion-panel>
 
@@ -72,7 +78,7 @@
 
             <decree-auan-basic-info formControlName="auanControl"
                                     validityChecker
-                                    [isAdding]="isAdding || isThirdParty"
+                                    [isAdding]="isThirdParty"
                                     [isFromRegister]="!isThirdParty">
             </decree-auan-basic-info>
         </div>

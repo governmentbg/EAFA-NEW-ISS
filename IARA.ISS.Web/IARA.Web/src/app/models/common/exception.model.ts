@@ -91,5 +91,6 @@ export enum ErrorCode {
     ReportGroupNameAlreadyExists = 69,
     CannotEditInspectionAfterLockHours = 70,
     CannotCancelDecreeWithPenalPoints = 71,
-    NoInspectedVesselForShipInspection = 72
+    NoInspectedVesselForShipInspection = 72,
+    NoSuspencionPermissions = 73
 }

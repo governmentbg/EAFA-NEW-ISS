@@ -19,6 +19,8 @@ import { GetControlErrorLabelTextCallback } from '@app/shared/components/input-c
 import { SystemPropertiesDTO } from '@app/models/generated/dtos/SystemPropertiesDTO';
 import { SystemParametersService } from '@app/services/common-app/system-parameters.service';
 import { Moment } from 'moment';
+import { DateUtils } from '@app/shared/utils/date.utils';
+import { DateDifference } from '@app/models/common/date-difference.model';
 
 @Component({
     selector: 'inspection-general-info',
@@ -44,11 +46,15 @@ export class InspectionGeneralInfoComponent extends CustomFormControl<Inspection
     @Input()
     public inspectionType: InspectionTypesEnum | undefined;
 
+    @Input()
+    public canAddAfterHours: boolean = false;
+
     public readonly today: Date = new Date();
 
     public numPrefix?: string;
     public startDateLabel!: string;
     public endDateLabel!: string;
+    public cannotAddAfterHoursError: boolean = false;
 
     public getControlErrorLabelTextMethod: GetControlErrorLabelTextCallback = this.getControlErrorLabelText.bind(this);
 
@@ -56,6 +62,7 @@ export class InspectionGeneralInfoComponent extends CustomFormControl<Inspection
     private skipDisabledCheck: boolean = false;
     private codes: string[] = [];
     private lockInspectionHours: number | undefined;
+    private canAddInspectionAfterHours: number | undefined;
 
     private readonly service: InspectionsService;
     private readonly translate: FuseTranslationLoaderService;
@@ -90,6 +97,7 @@ export class InspectionGeneralInfoComponent extends CustomFormControl<Inspection
 
         const systemParameters: SystemPropertiesDTO = await this.systemParametersService.systemParameters();
         this.lockInspectionHours = systemParameters.lockInspectionAfterHours;
+        this.canAddInspectionAfterHours = systemParameters.addInspectionAfterHours;
 
         if (!this.canEditNumber) {
             this.form.get('reportNumberControl')!.setValidators([Validators.required, this.formatUserNumber()]);
@@ -183,7 +191,7 @@ export class InspectionGeneralInfoComponent extends CustomFormControl<Inspection
     protected buildForm(): AbstractControl {
         const form: FormGroup = new FormGroup({
             reportNumberControl: new FormControl(undefined, [Validators.required, Validators.maxLength(50)]),
-            inspectionStartDateControl: new FormControl(undefined, Validators.required),
+            inspectionStartDateControl: new FormControl(undefined, [Validators.required, this.cannotAddAfterHours()]),
             inspectionEndDateControl: new FormControl(undefined, Validators.required),
             emergencySignalControl: new FormControl(false),
             inspectorsControl: new FormControl(undefined)
@@ -284,6 +292,51 @@ export class InspectionGeneralInfoComponent extends CustomFormControl<Inspection
                 ? num.substring(0, 3)
                 : num.padStart(3, '0'))
             : num;
+    }
+
+    private cannotAddAfterHours(): ValidatorFn {
+        return (control: AbstractControl): ValidationErrors | null => {
+            if (control === undefined || control === null) {
+                return null;
+            }
+
+            if (this.form === undefined || this.form === null) {
+                return null;
+            }
+
+            if (control.value === null || control.value === undefined) {
+                return null;
+            }
+
+            if (this.canAddAfterHours) {
+                return null;
+            }
+
+            if (this.canAddInspectionAfterHours === undefined || this.canAddInspectionAfterHours === null) {
+                return null;
+            }
+
+            const startDate: Date = (control.value as Moment).toDate();
+            const now: Date = new Date();
+
+            const difference: DateDifference | undefined = DateUtils.getDateDifference(startDate, now);
+
+            if (difference === undefined || difference === null) {
+                return null;
+            }
+
+            if (difference.minutes === 0 && difference.hours === 0 && difference.days === 0) {
+                return null;
+            }
+         
+            const differenceHours: number = (difference.days! * 24) + difference.hours! + (difference.minutes! / 60);
+
+            if (differenceHours > this.canAddInspectionAfterHours) {
+                return { cannotAddAfterHours: true };
+            }
+
+            return null;
+        }
     }
 
     private formatUserNumber(): ValidatorFn {
