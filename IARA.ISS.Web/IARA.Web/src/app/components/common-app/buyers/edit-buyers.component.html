@@ -97,6 +97,7 @@
                 <tl-date fxFlex="33"
                          formControlName="registrationDateControl"
                          [max]="today"
+                         [readonly]="!isEditing"
                          tooltipResourceName="buyers-and-sales-centers.registration-date-helper"
                          label="{{ 'buyers-and-sales-centers.registration-date' | tlTranslate }}">
                 </tl-date>

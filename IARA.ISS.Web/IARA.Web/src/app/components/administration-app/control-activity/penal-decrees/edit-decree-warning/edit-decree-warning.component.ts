@@ -28,6 +28,10 @@ import { TLError } from '@app/shared/components/input-controls/models/tl-error.m
 import { GetControlErrorLabelTextCallback } from '@app/shared/components/input-controls/base-tl-control';
 import { AuanStatusEnum } from '@app/enums/auan-status.enum';
 import { PenalDecreeUtils } from '../utils/penal-decree.utils';
+import { SystemPropertiesDTO } from '@app/models/generated/dtos/SystemPropertiesDTO';
+import { SystemParametersService } from '@app/services/common-app/system-parameters.service';
+import { DateUtils } from '@app/shared/utils/date.utils';
+import { DateDifference } from '@app/models/common/date-difference.model';
 
 @Component({
     selector: 'edit-decree-warning',
@@ -48,7 +52,9 @@ export class EditDecreeWarningComponent implements OnInit, AfterViewInit, IDialo
     public isThirdParty: boolean = false;
     public hasTerritoryUnit: boolean = false;
     public violatedRegulationsTouched: boolean = false;
+    public canSaveAfterHours: boolean = false;
     public drafter: InspectorUserNomenclatureDTO | undefined;
+    public canAddAfterHours: number | undefined;
 
     public decreeNumErrorLabelTextMethod: GetControlErrorLabelTextCallback = this.decreeNumErrorLabelText.bind(this);
 
@@ -68,6 +74,7 @@ export class EditDecreeWarningComponent implements OnInit, AfterViewInit, IDialo
 
     private readonly nomenclatures: CommonNomenclatures;
     private readonly translate: FuseTranslationLoaderService;
+    private readonly systemParametersService: SystemParametersService;
     private readonly confirmDialog: TLConfirmDialog;
     private readonly snackbar: TLSnackbar;
 
@@ -75,12 +82,14 @@ export class EditDecreeWarningComponent implements OnInit, AfterViewInit, IDialo
         service: PenalDecreesService,
         nomenclatures: CommonNomenclatures,
         translate: FuseTranslationLoaderService,
+        systemParametersService: SystemParametersService,
         confirmDialog: TLConfirmDialog,
         snackbar: TLSnackbar
     ) {
         this.service = service;
         this.nomenclatures = nomenclatures;
         this.translate = translate;
+        this.systemParametersService = systemParametersService;
         this.confirmDialog = confirmDialog;
         this.snackbar = snackbar;
 
@@ -99,6 +108,9 @@ export class EditDecreeWarningComponent implements OnInit, AfterViewInit, IDialo
         this.territoryUnits = nomenclatures[0];
         this.courts = nomenclatures[1];
         this.users = nomenclatures[2];
+
+        const systemParameters: SystemPropertiesDTO = await this.systemParametersService.systemParameters();
+        this.canAddAfterHours = systemParameters.addAuanAfterHours;
 
         if (this.auanId !== undefined && this.auanId !== null) {
             this.service.getPenalDecreeAuanData(this.auanId).subscribe({
@@ -203,6 +215,7 @@ export class EditDecreeWarningComponent implements OnInit, AfterViewInit, IDialo
             this.auanId = data.auanId;
             this.typeId = data.typeId;
             this.penalDecreeId = data.id;
+            this.canSaveAfterHours = data.canSaveAfterHours;
             this.viewMode = data.isReadonly ?? false;
         }
     }
@@ -351,7 +364,7 @@ export class EditDecreeWarningComponent implements OnInit, AfterViewInit, IDialo
             decreeNumControl: new FormControl(null, Validators.maxLength(20)),
             drafterControl: new FormControl(null, Validators.required),
             issuerPositionControl: new FormControl(null, Validators.maxLength(100)),
-            issueDateControl: new FormControl(null, Validators.required),
+            issueDateControl: new FormControl(null, [Validators.required, this.cannotAddAfterHours()]),
             territoryUnitControl: new FormControl(null),
             effectiveDateControl: new FormControl(null),
             courtControl: new FormControl(null, Validators.required),
@@ -530,6 +543,51 @@ export class EditDecreeWarningComponent implements OnInit, AfterViewInit, IDialo
                 dialogClose(this.model);
             }
         });
+    }
+
+    private cannotAddAfterHours(): ValidatorFn {
+        return (control: AbstractControl): ValidationErrors | null => {
+            if (control === undefined || control === null) {
+                return null;
+            }
+
+            if (this.form === undefined || this.form === null) {
+                return null;
+            }
+
+            if (control.value === null || control.value === undefined) {
+                return null;
+            }
+
+            if (this.canSaveAfterHours) {
+                return null;
+            }
+
+            if (this.canAddAfterHours === undefined || this.canAddAfterHours === null) {
+                return null;
+            }
+
+            const startDate: Date = control.value;
+            const now: Date = new Date();
+
+            const difference: DateDifference | undefined = DateUtils.getDateDifference(startDate, now);
+
+            if (difference === undefined || difference === null) {
+                return null;
+            }
+
+            if (difference.minutes === 0 && difference.hours === 0 && difference.days === 0) {
+                return null;
+            }
+
+            const differenceHours: number = (difference.days! * 24) + difference.hours! + (difference.minutes! / 60);
+
+            if (differenceHours > this.canAddAfterHours) {
+                return { cannotAddAfterHours: true };
+            }
+
+            return null;
+        }
     }
 
     private handleAddEditErrorResponse(response: HttpErrorResponse): void {

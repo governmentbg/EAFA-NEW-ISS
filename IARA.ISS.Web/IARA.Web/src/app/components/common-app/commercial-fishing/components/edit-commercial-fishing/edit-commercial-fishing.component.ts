@@ -125,6 +125,7 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
     public service!: ICommercialFishingService;
     public readonly pageCodes: typeof PageCodeEnum = PageCodeEnum;
     public readonly logBookTypes: typeof LogBookTypesEnum = LogBookTypesEnum;
+    public readonly today: Date = new Date();
 
     public isThirdCountryPermit!: boolean;
     public isApplication!: boolean;

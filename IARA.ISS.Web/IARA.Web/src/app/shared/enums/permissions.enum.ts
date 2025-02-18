@@ -265,6 +265,7 @@
     InspectionExport = 'InspectionExport',
     InspectionResolveCrossCheck = 'InspectionResolveCrossCheck',
     InspectionLockedEdit = 'InspectionLockedEdit',
+    InspectionCanSubmitAfterHours = 'InspectionCanSubmitAfterHours',
 
     // Commercial Fishing
     CommercialFishingPermitRegisterReadAll = 'CommercialFishingPermitRegisterReadAll',
@@ -508,6 +509,7 @@
     AuanRegisterRestoreRecords = 'AuanRegisterRestoreRecords',
     AuanRegisterCancel = 'AuanRegisterCancel',
     AuanRegisterReturnForCorrections = 'AuanRegisterReturnForCorrections',
+    AuanCanSaveAfterHours = 'AuanCanSaveAfterHours',
 
     //Impersonate user
     ImpersonateUser = 'ImpersonateUser',
@@ -577,6 +579,7 @@
     PenalDecreesSubmitRecords = 'PenalDecreesSubmitRecords',
     PenalDecreesCancelRecords = 'PenalDecreesCancelRecords',
     PenalDecreescanReturnForFurtherCorrectionsRecords = 'PenalDecreescanReturnForFurtherCorrectionsRecords',
+    PenalDecreesCanSaveAfterHours = 'PenalDecreesCanSaveAfterHours',
 
     PenalDecreeStatusesRead = 'PenalDecreeStatusesRead',
     PenalDecreeStatusesAddRecords = 'PenalDecreeStatusesAddRecords',

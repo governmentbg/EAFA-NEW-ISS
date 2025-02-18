@@ -34,6 +34,10 @@ import { AuanStatusEnum } from '@app/enums/auan-status.enum';
 import { AuanWitnessDTO } from '@app/models/generated/dtos/AuanWitnessDTO';
 import { AuanDrafterNomenclatureDTO } from '@app/models/generated/dtos/AuanDrafterNomenclatureDTO';
 import { AddressRegistrationDTO } from '@app/models/generated/dtos/AddressRegistrationDTO';
+import { SystemParametersService } from '@app/services/common-app/system-parameters.service';
+import { SystemPropertiesDTO } from '@app/models/generated/dtos/SystemPropertiesDTO';
+import { DateUtils } from '@app/shared/utils/date.utils';
+import { DateDifference } from '@app/models/common/date-difference.model';
 
 @Component({
     selector: 'edit-auan',
@@ -71,6 +75,9 @@ export class EditAuanComponent implements OnInit, AfterViewInit, IDialogComponen
     public showInspectedEntity: boolean = false;
     public canAddInspectedEntity: boolean = false;
     public isFromInspection: boolean = true;
+    public canSaveAfterHours: boolean = false;
+    public canAddAuanAfterHours: number | undefined;
+    public minDate: Date | undefined;
 
     public auanNumErrorLabelTextMethod: GetControlErrorLabelTextCallback = this.auanNumErrorLabelText.bind(this);
 
@@ -82,6 +89,7 @@ export class EditAuanComponent implements OnInit, AfterViewInit, IDialogComponen
 
     private readonly nomenclatures: CommonNomenclatures;
     private readonly translate: FuseTranslationLoaderService;
+    private readonly systemParametersService: SystemParametersService;
     private readonly confirmDialog: TLConfirmDialog;
     private readonly snackbar: TLSnackbar;
 
@@ -89,6 +97,7 @@ export class EditAuanComponent implements OnInit, AfterViewInit, IDialogComponen
         service: AuanRegisterService,
         nomenclatures: CommonNomenclatures,
         translate: FuseTranslationLoaderService,
+        systemParametersService: SystemParametersService,
         confirmDialog: TLConfirmDialog,
         snackbar: TLSnackbar
     ) {
@@ -97,6 +106,7 @@ export class EditAuanComponent implements OnInit, AfterViewInit, IDialogComponen
         this.translate = translate;
         this.confirmDialog = confirmDialog;
         this.snackbar = snackbar;
+        this.systemParametersService = systemParametersService;
 
         this.buildForm();
 
@@ -128,6 +138,9 @@ export class EditAuanComponent implements OnInit, AfterViewInit, IDialogComponen
         this.territoryUnits = nomenclatures[1];
         this.drafters = nomenclatures[2];
         this.allDrafters = nomenclatures[2];
+
+        const systemParameters: SystemPropertiesDTO = await this.systemParametersService.systemParameters();
+        this.canAddAuanAfterHours = systemParameters.addAuanAfterHours;
 
         this.service.getAuanReportData(this.inspectionId).subscribe({
             next: (data: AuanReportDataDTO) => {
@@ -302,6 +315,7 @@ export class EditAuanComponent implements OnInit, AfterViewInit, IDialogComponen
             this.inspectionId = data.inspectionId;
             this.auanId = data.id;
             this.isFromThirdPartyInspection = data.isThirdParty;
+            this.canSaveAfterHours = data.canSaveAfterHours;
             this.viewMode = data.isReadonly ?? false;
 
             if (!this.isFromThirdPartyInspection) {
@@ -456,7 +470,7 @@ export class EditAuanComponent implements OnInit, AfterViewInit, IDialogComponen
             territoryUnitControl: new FormControl(null),
 
             auanNumControl: new FormControl(null, [Validators.required, Validators.maxLength(20)]),
-            draftDateControl: new FormControl(null, Validators.required),
+            draftDateControl: new FormControl(null, [Validators.required, this.cannotAddAfterHours()]),
             locationDescriptionControl: new FormControl(null, [Validators.required, Validators.maxLength(400)]),
 
             inspectedEntityControl: new FormControl(null),
@@ -775,6 +789,51 @@ export class EditAuanComponent implements OnInit, AfterViewInit, IDialogComponen
 
             if (this.violatedRegulations.some(x => x.hasErrors)) {
                 return { 'invalidViolatedRegulation': true };
+            }
+
+            return null;
+        }
+    }
+
+    private cannotAddAfterHours(): ValidatorFn {
+        return (control: AbstractControl): ValidationErrors | null => {
+            if (control === undefined || control === null) {
+                return null;
+            }
+
+            if (this.form === undefined || this.form === null) {
+                return null;
+            }
+
+            if (control.value === null || control.value === undefined) {
+                return null;
+            }
+
+            if (this.canSaveAfterHours) {
+                return null;
+            }
+
+            if (this.canAddAuanAfterHours === undefined || this.canAddAuanAfterHours === null) {
+                return null;
+            }
+
+            const startDate: Date = control.value;
+            const now: Date = new Date();
+
+            const difference: DateDifference | undefined = DateUtils.getDateDifference(startDate, now);
+
+            if (difference === undefined || difference === null) {
+                return null;
+            }
+
+            if (difference.minutes === 0 && difference.hours === 0 && difference.days === 0) {
+                return null;
+            }
+
+            const differenceHours: number = (difference.days! * 24) + difference.hours! + (difference.minutes! / 60);
+
+            if (differenceHours > this.canAddAuanAfterHours) {
+                return { cannotAddAfterHours: true };
             }
 
             return null;

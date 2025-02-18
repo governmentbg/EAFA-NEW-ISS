@@ -34,7 +34,9 @@ export abstract class BaseInspectionsComponent implements IDialogComponent {
     public canEditNumber: boolean = false;
     public reportNumAlreadyExistsError: boolean = false;
     public isInspectionLockedError: boolean = false;
+    public canSaveAfterHours: boolean = false;
     public inspectionTypesEnum: typeof InspectionTypesEnum = InspectionTypesEnum;
+    public minDate: Date | undefined;
 
     @ViewChild(ValidityCheckerGroupDirective)
     public validityCheckerGroup!: ValidityCheckerGroupDirective;
@@ -70,6 +72,7 @@ export abstract class BaseInspectionsComponent implements IDialogComponent {
             this.id = data.id;
             this.viewMode = data.viewMode;
             this.canEditNumber = data.canEditNumber;
+            this.canSaveAfterHours = data.canSaveAfterHours;
             this.pageCode = data.pageCode;
 
             //Съобщението за грешка да се показва само за инспекции, създадени от същия инспектор, които не са подписани

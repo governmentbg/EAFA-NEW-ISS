@@ -1319,7 +1319,12 @@ export class EditBuyersComponent implements OnInit, AfterViewInit, IDialogCompon
                 this.editForm.get('territoryUnitControl')!.setValue(territoryUnit);
             }
 
-            this.editForm.get('registrationDateControl')!.setValue(this.model.registrationDate);
+            if (this.model.registrationDate !== undefined && this.model.registrationDate !== null) {
+                this.editForm.get('registrationDateControl')!.setValue(this.model.registrationDate);
+            }
+            else {
+                this.editForm.get('registrationDateControl')!.setValue(this.today);
+            }
 
             if (this.model.buyerStatus === BuyerStatusesEnum.Canceled) {
                 this.editForm.get('buyerStatusControl')!.disable();

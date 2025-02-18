@@ -381,6 +381,14 @@ export class SuspensionsComponent extends CustomFormControl<SuspensionDataDTO[]>
                 panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
             });
         }
+        else if (errorResponse.error?.code === ErrorCode.NoSuspencionPermissions) {
+            const message: string = this.translationService.getValue('suspensions.no-suspension-permissions-error');
+
+            this.snackbar.open(message, undefined, {
+                duration: RequestProperties.DEFAULT.showExceptionDurationErr,
+                panelClass: RequestProperties.DEFAULT.showExceptionColorClassErr
+            });
+        }
     }
 
     private setSuspensionPermission(): void {

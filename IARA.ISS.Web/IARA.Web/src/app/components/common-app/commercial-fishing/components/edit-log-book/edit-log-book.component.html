@@ -22,6 +22,7 @@
                           [readonly]="true">
                 </tl-input>
                 <tl-date fxFlex="20"
+                         [readonly]="isAdd"
                          formControlName="issueDateControl"
                          label="{{ 'catches-and-sales.log-book-issue-date' | tlTranslate }}"
                          tooltipResourceName="catches-and-sales.log-book-issue-date-helper">

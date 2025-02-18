@@ -49,6 +49,12 @@
         * {{ 'inspections.cannot-edit-inspection-locked-error' | tlTranslate }} {{ lockInspectionHours }} {{ 'inspections.hours-have-passed-error' | tlTranslate }}
     </mat-error>
 
+    <div *ngIf="form.get('inspectionStartDateControl')?.errors?.cannotAddAfterHours" fxFlex="100" fxLayout="row">
+        <mat-error>
+            * {{ 'inspections.cannot-add-inspection-after-hours-error' | tlTranslate }} {{ canAddInspectionAfterHours }} {{ 'inspections.cannot-add-inspection-after-hours-passed-error' | tlTranslate }}.
+        </mat-error>
+    </div>
+
     <inspectors-table formControlName="inspectorsControl"
                       [institutions]="institutions"
                       (headInspectorChanged)="onReportNumChanged($event)">

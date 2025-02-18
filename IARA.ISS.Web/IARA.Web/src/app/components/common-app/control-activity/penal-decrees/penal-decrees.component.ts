@@ -91,6 +91,7 @@ export class PenalDecreesComponent implements OnInit, AfterViewInit {
     public readonly canSubmitRecords: boolean;
     public readonly canCancelRecords: boolean;
     public readonly canReturnForFurtherCorrectionsRecords: boolean;
+    public readonly canSaveAfterHours: boolean;
 
     public readonly penalDecreeTypeEnum: typeof PenalDecreeTypeEnum = PenalDecreeTypeEnum;
 
@@ -160,7 +161,8 @@ export class PenalDecreesComponent implements OnInit, AfterViewInit {
         this.canReadPointsRecords = permissions.hasAny(PermissionsEnum.AwardedPointsRead, PermissionsEnum.AwardedPointsReadAll);
         this.canSubmitRecords = permissions.has(PermissionsEnum.PenalDecreesSubmitRecords);
         this.canCancelRecords = permissions.has(PermissionsEnum.PenalDecreesCancelRecords);
-        this.canReturnForFurtherCorrectionsRecords = permissions.has(PermissionsEnum.PenalDecreescanReturnForFurtherCorrectionsRecords)
+        this.canReturnForFurtherCorrectionsRecords = permissions.has(PermissionsEnum.PenalDecreescanReturnForFurtherCorrectionsRecords);
+        this.canSaveAfterHours = permissions.has(PermissionsEnum.PenalDecreesCanSaveAfterHours);
 
         this.penalDecreeStatuses = [
             new NomenclatureDTO<AuanStatusEnum>({
@@ -293,6 +295,7 @@ export class PenalDecreesComponent implements OnInit, AfterViewInit {
                 auanId: decree.auanId,
                 typeId: decree.typeId,
                 status: decree.penalDecreeStatus,
+                canSaveAfterHours: this.canSaveAfterHours,
                 isReadonly: viewMode
             });
 

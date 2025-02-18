@@ -96,4 +96,16 @@ export class SystemPropertiesDTO {
 
     @StrictlyTyped(Number)
     public notifyInspectionNotSignedAfterHours?: number;
+
+    @StrictlyTyped(String)
+    public blockInspectionsWhenHavingCrossChecks?: string;
+
+    @StrictlyTyped(Number)
+    public addInspectionAfterHours?: number;
+
+    @StrictlyTyped(Number)
+    public addAuanAfterHours?: number;
+
+    @StrictlyTyped(Number)
+    public addPenalDecreeNotSignedAfterHours?: number;
 }
