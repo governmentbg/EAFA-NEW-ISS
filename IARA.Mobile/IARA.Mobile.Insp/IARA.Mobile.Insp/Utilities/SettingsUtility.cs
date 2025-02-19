@@ -70,7 +70,11 @@ namespace IARA.Mobile.Insp.Utilities
             get => Preferences.Get(nameof(LockInspectionAfterHours), 48, SharedName);
             set => Preferences.Set(nameof(LockInspectionAfterHours), value, SharedName);
         }
-
+        public int LatestSubmissionDateForInspection
+        {
+            get => Preferences.Get(nameof(LatestSubmissionDateForInspection), 72, SharedName);
+            set => Preferences.Set(nameof(LatestSubmissionDateForInspection), value, SharedName);
+        }
 
         public void Clear()
         {

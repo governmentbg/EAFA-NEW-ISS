@@ -19,6 +19,7 @@ namespace IARA.Mobile.Insp.Application.Interfaces.Utilities
         string LastVersion { get; set; }
 
         int LockInspectionAfterHours { get; set; }
+        int LatestSubmissionDateForInspection { get; set; }
 
         void Clear();
     }

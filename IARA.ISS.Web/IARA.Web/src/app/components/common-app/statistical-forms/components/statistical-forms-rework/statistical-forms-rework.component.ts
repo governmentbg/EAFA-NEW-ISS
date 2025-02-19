@@ -46,6 +46,7 @@ import { StatisticalFormsPublicService } from '@app/services/public-app/statisti
 import { StatisticalFormTypesEnum } from '@app/enums/statistical-form-types.enum';
 import { ApplicationSubmittedByDTO } from '@app/models/generated/dtos/ApplicationSubmittedByDTO';
 import { PermittedFileTypeDTO } from '@app/models/generated/dtos/PermittedFileTypeDTO';
+import { RecordChangedEventArgs } from '@app/shared/components/data-table/models/record-changed-event.model';
 
 type YesNo = 'yes' | 'no';
 
@@ -359,6 +360,12 @@ export class StatisticalFormsReworkComponent implements OnInit, IDialogComponent
                     this.validateRows();
                 }
             });
+
+            this.productTable.recordChanged.subscribe({
+                next: (event: RecordChangedEventArgs<StatisticalFormReworkProductDTO>) => {
+                    this.form.updateValueAndValidity({ onlySelf: true });
+                }
+            });
         }
     }
 
@@ -467,7 +474,7 @@ export class StatisticalFormsReworkComponent implements OnInit, IDialogComponent
                 employeeStatsArray: new FormArray([]),
                 financialInfoArray: new FormArray([], this.costsValidator()),
                 filesControl: new FormControl()
-            });
+            }, this.productsValidator());
 
             this.rawMaterialGroup = new FormGroup({
                 fishTypeIdControl: new FormControl(null, Validators.required),
@@ -496,7 +503,7 @@ export class StatisticalFormsReworkComponent implements OnInit, IDialogComponent
                 employeeStatsArray: new FormArray([]),
                 financialInfoArray: new FormArray([], this.costsValidator()),
                 filesControl: new FormControl()
-            });
+            }, this.productsValidator());
 
             this.rawMaterialGroup = new FormGroup({
                 fishTypeIdControl: new FormControl(null, Validators.required),
@@ -1068,6 +1075,30 @@ export class StatisticalFormsReworkComponent implements OnInit, IDialogComponent
 
         this.fishTypes = this.fishTypes.filter(x => !excemptFishTypeIds.includes(x.value!));
         this.fishTypes = this.fishTypes.slice();
+    }
+
+    private productsValidator(): ValidatorFn {
+        return (control: AbstractControl): ValidationErrors | null => {
+            if (this.productTable !== undefined && this.productTable !== null) {
+                const rows = this.productTable.rows as StatisticalFormReworkProductDTO[];
+
+                for (const row of rows) {
+                    const product = this.allProductTypes.find(x => x.value === row.productTypeId);
+                    const invalidRows = this.productTable.rows.filter(x =>
+                        x.isActive !== false
+                        && (x.productTypeId === row.productTypeId
+                            || x.productTypeId === row.productTypeName
+                            || x.productTypeId === product?.displayName
+                        ));
+
+                    if (invalidRows.length > 1) {
+                        return { 'productsError': true };
+                    }
+                }
+            }
+
+            return null;
+        }
     }
 
     private payColumnCountValidator(): ValidatorFn {

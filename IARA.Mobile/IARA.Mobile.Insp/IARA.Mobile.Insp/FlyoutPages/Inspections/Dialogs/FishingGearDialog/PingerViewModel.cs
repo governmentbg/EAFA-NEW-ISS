@@ -24,7 +24,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.FishingGearDialog
         public int? Id { get; set; }
 
         [Required]
-        [NoRepeatingPingerNumbers(nameof(AddedByInspector))]
+        [NoRepeatingPingerNumbers(nameof(AddedByInspector), ErrorMessageResourceName = "NoRepeatingPingerNumbers")]
         public ValidState Number { get; set; }
         public SelectNomenclatureDto Status { get; set; }
         public ValidState Model { get; set; }

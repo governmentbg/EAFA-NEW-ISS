@@ -50,7 +50,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
         [Required]
         [UpdateFrom(nameof(EndDate))]
         [LessThanOrEqualTo(nameof(EndDate))]
-        [NoOlderThan(72, ErrorMessageResourceName = "NoOlderThan")]
+        [NoOlderThan(ErrorMessageResourceName = "NoOlderThan")]
         public ValidStateDateTime StartDate { get; set; }
 
         [Required]
