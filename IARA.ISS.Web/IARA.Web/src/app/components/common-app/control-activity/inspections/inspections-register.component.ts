@@ -580,7 +580,8 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
         }
         else {
             data = new InspectionDialogParamsModel({
-                canEditNumber: this.canEditInspectionNumber
+                canEditNumber: this.canEditInspectionNumber,
+                canSaveAfterHours: this.canSaveAfterHours
             });
         }
 

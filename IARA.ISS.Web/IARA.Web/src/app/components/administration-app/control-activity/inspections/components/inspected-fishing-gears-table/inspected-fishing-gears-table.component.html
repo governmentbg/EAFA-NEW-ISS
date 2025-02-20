@@ -9,14 +9,24 @@
                    [showAddButton]="!isDisabled"
                    (addButtonClicked)="addEditEntry()"
                    (activeRecordChanged)="addEditEntry($event)">
-        <div *ngIf="!viewMode && showGenerateBtn"
+        <div *ngIf="!viewMode && (showGenerateBtn || showPermitLicenseBtn)"
              datatable-add-buttons
              fxLayout="row"
              fxLayoutGap="1em">
-            <button mat-raised-button color="accent"
+            <button *ngIf="showGenerateBtn" 
+                    mat-raised-button
+                    color="accent"
                     (click)="generateFishingGears()"
                     style="margin-left:auto;">
                 {{ 'inspections.generate-fishing-gears-from-ship-permit-licenses' | tlTranslate }}
+            </button>
+
+            <button *ngIf="showPermitLicenseBtn"
+                    mat-raised-button
+                    color="accent"
+                    (click)="chooseOldPermitLicense()"
+                    style="margin-left:auto;">
+                {{ 'inspections.choose-old-permit-licenses' | tlTranslate }}
             </button>
         </div>
         <data-column [flexRate]="0.4"

@@ -26,6 +26,11 @@ import { InspectionShipSubjectNomenclatureDTO } from '@app/models/generated/dtos
 import { ShipNomenclatureDTO } from '@app/models/generated/dtos/ShipNomenclatureDTO';
 import { TLConfirmDialog } from '@app/shared/components/confirmation-dialog/tl-confirm-dialog';
 import { FishingGearCheckReasonsEnum } from '@app/enums/fishing-gear-check-reasons.enum';
+import { TLMatDialog } from '@app/shared/components/dialog-wrapper/tl-mat-dialog';
+import { ChooseFromOldPermitLicenseComponent } from './choose-from-old-permit-license/choose-from-old-permit-license.component';
+import { ChooseFromOldPermitLicenseDialogParamsModel } from '../../models/choose-from-old-permit-license.model';
+import { HeaderCloseFunction } from '@app/shared/components/dialog-wrapper/interfaces/header-cancel-button.interface';
+import { InspectedFishingGearEnum } from '@app/enums/inspected-fishing-gear.enum';
 
 enum InspectionPermitTypeEnum {
     Registered,
@@ -42,6 +47,7 @@ export class EditInspectionFishingGearComponent extends BaseInspectionsComponent
     public toggles: InspectionCheckModel[] = [];
 
     public isShip: boolean = true;
+    public showPermitLicenseBtn: boolean = false;
     public otherRemarkReasonSelected: boolean = false;
 
     public readonly inspectedTypes: NomenclatureDTO<InspectionSubjectEnum>[] = [];
@@ -69,15 +75,19 @@ export class EditInspectionFishingGearComponent extends BaseInspectionsComponent
     private shipGears: Map<number, FishingGearDTO[]> = new Map<number, FishingGearDTO[]>();
     private poundNetGears: Map<number, FishingGearDTO[]> = new Map<number, FishingGearDTO[]>();
 
+    private chooseFromPermitLicenseDialog: TLMatDialog<ChooseFromOldPermitLicenseComponent>;
+
     public constructor(
         service: InspectionsService,
         translate: FuseTranslationLoaderService,
         nomenclatures: CommonNomenclatures,
         confirmDialog: TLConfirmDialog,
+        chooseFromPermitLicenseDialog: TLMatDialog<ChooseFromOldPermitLicenseComponent>,
         snackbar: MatSnackBar
     ) {
         super(service, translate, nomenclatures, confirmDialog, snackbar);
         this.inspectionCode = InspectionTypesEnum.IGM;
+        this.chooseFromPermitLicenseDialog = chooseFromPermitLicenseDialog;
 
         this.inspectedTypes = [
             new NomenclatureDTO({
@@ -145,6 +155,53 @@ export class EditInspectionFishingGearComponent extends BaseInspectionsComponent
                 }
             });
         }
+    }
+
+    public chooseOldPermitLicense(): void {
+        const editDialogData: ChooseFromOldPermitLicenseDialogParamsModel = new ChooseFromOldPermitLicenseDialogParamsModel({
+            permitLicenses: this.permits,
+            isShip: this.isShip
+        });
+
+        this.chooseFromPermitLicenseDialog.open({
+            title: this.translate.getValue('inspections.choose-old-permit-license-dialog-title'),
+            TCtor: ChooseFromOldPermitLicenseComponent,
+            headerCancelButton: {
+                cancelBtnClicked: (closeFn: HeaderCloseFunction) => { closeFn(); }
+            },
+            componentData: editDialogData,
+            translteService: this.translate,
+            disableDialogClose: true,
+            saveBtn: {
+                id: 'save',
+                color: 'accent',
+                translateValue: 'inspections.save-choose-old-permit-license-btn'
+            },
+            cancelBtn: {
+                id: 'cancel',
+                color: 'primary',
+                translateValue: 'common.cancel',
+            },
+            viewMode: false
+        }, '900px').subscribe({
+            next: (chosenPermitLicenseId: number | undefined) => {
+                if (chosenPermitLicenseId !== null && chosenPermitLicenseId !== undefined) {
+                    this.selectedPermitIds = [chosenPermitLicenseId];
+
+                    this.service.getPermitLicenseFishingGears(chosenPermitLicenseId).subscribe({
+                        next: (fishingGears: FishingGearDTO[]) => {
+                            if (fishingGears !== null && fishingGears !== undefined) {
+                                const inspectedFishingGears: InspectedFishingGearDTO[] = this.mapFishingGears(fishingGears);
+                                this.form.get('fishingGearsControl')!.setValue(inspectedFishingGears);
+                            }
+                            else {
+                                this.form.get('fishingGearsControl')!.setValue([]);
+                            }
+                        }
+                    });
+                }
+            }
+        });
     }
 
     protected buildForm(): void {
@@ -581,16 +638,25 @@ export class EditInspectionFishingGearComponent extends BaseInspectionsComponent
 
     private onPermitTypeChanged(type: NomenclatureDTO<InspectionPermitTypeEnum>): void {
         if (!this.form.disabled) {
+            this.showPermitLicenseBtn = false;
+
             if (type?.value === InspectionPermitTypeEnum.Registered) {
                 this.form.get('permitControl')!.enable();
                 this.form.get('permitControl')!.setValidators([Validators.required, this.noPermitLicensesValidator()]);
                 this.form.get('permitControl')!.markAsPending();
 
+                this.form.get('unregisteredPermitControl')!.setValue(undefined);
+                this.form.get('unregisteredPermitYearControl')!.setValue(undefined);
+
                 this.form.get('unregisteredPermitControl')!.disable();
                 this.form.get('unregisteredPermitYearControl')!.disable();
             }
-            else {
+            else if (type?.value === InspectionPermitTypeEnum.Unregistered) {
+                this.showPermitLicenseBtn = true;
+
+                this.form.get('permitControl')!.setValue(undefined);
                 this.form.get('permitControl')!.disable();
+
                 this.form.get('unregisteredPermitControl')!.enable();
                 this.form.get('unregisteredPermitYearControl')!.enable();
 
@@ -600,6 +666,39 @@ export class EditInspectionFishingGearComponent extends BaseInspectionsComponent
                 this.form.get('unregisteredPermitYearControl')!.markAsPending();
             }
         }
+    }
+
+    private mapFishingGears(fishingGears: FishingGearDTO[]): InspectedFishingGearDTO[] {
+        //Ако към нерегистрирано удостоверение се добавят уреди от старо УСР, те трябва да се запазят като инспектирани и с проверка от тип "Нерегистриран"
+        const result: InspectedFishingGearDTO[] = fishingGears.map(x => new InspectedFishingGearDTO({
+            inspectedFishingGear: new FishingGearDTO({
+                typeId: x.typeId,
+                type: x.type,
+                netEyeSize: x.netEyeSize,
+                cordThickness: x.cordThickness,
+                description: x.description,
+                count: x.count,
+                length: x.length,
+                height: x.height,
+                hasPingers: x.hasPingers,
+                hookCount: x.hookCount,
+                houseLength: x.houseLength,
+                houseWidth: x.houseWidth,
+                lineCount: x.lineCount,
+                netsInFleetCount: x.netsInFleetCount,
+                netNominalLength: x.netNominalLength,
+                towelLength: x.towelLength,
+                trawlModel: x.trawlModel,
+                marks: x.marks,
+                marksNumbers: x.marksNumbers,
+                pingers: x.pingers,
+                isActive: x.isActive,
+                id: undefined
+            }),
+            checkInspectedMatchingRegisteredGear: InspectedFishingGearEnum.I
+        }));
+
+        return result;
     }
 
     private noPermitLicensesValidator(): ValidatorFn {

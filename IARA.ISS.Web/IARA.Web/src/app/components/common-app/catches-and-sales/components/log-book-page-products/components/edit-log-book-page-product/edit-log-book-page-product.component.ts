@@ -39,10 +39,12 @@ export class EditLogBookPageProductComponent implements AfterViewInit, OnInit, I
     public purposes: NomenclatureDTO<number>[] = [];
     public turbotSizeGroups: NomenclatureDTO<number>[] = [];
     public sizeCategories: NomenclatureDTO<number>[] = [];
+    public quantityCountOptions: NomenclatureDTO<boolean>[] = [];
 
     public readOnly: boolean = false;
     public hasPrice: boolean = true;
     public hasUnitCount: boolean = false;
+    public showUnitCountControl: boolean = false;
     public showTurbotControls: boolean = false;
     public showFishCategoryControl: boolean = false;
     public isAquaculturePage: boolean = false;
@@ -62,6 +64,19 @@ export class EditLogBookPageProductComponent implements AfterViewInit, OnInit, I
     public constructor(translate: FuseTranslationLoaderService, nomenclatures: CommonNomenclatures, currencyPipe: CurrencyPipe) {
         this.nomenclatures = nomenclatures;
         this.currencyPipe = currencyPipe;
+
+        this.quantityCountOptions = [
+            new NomenclatureDTO<boolean>({
+                value: false,
+                displayName: translate.getValue('catches-and-sales.page-product-quantity-kg'),
+                isActive: true
+            }),
+            new NomenclatureDTO<boolean>({
+                value: true,
+                displayName: translate.getValue('catches-and-sales.page-product-count'),
+                isActive: true
+            })
+        ];
     }
 
     public async ngOnInit(): Promise<void> {
@@ -129,7 +144,7 @@ export class EditLogBookPageProductComponent implements AfterViewInit, OnInit, I
                     const unitPrice: number | undefined = Number(this.form.get('unitPriceControl')!.value);
                     const unitCount: number | undefined = Number(this.form.get('unitCountControl')!.value);
 
-                    const formattedTotalPrice: string | null = this.hasUnitCount && !this.showTurbotControls
+                    const formattedTotalPrice: string | null = this.hasUnitCount && this.showUnitCountControl && !this.showTurbotControls
                         ? LogBookPageProductUtils.formatTotalProductPrice(this.currencyPipe, Number(unitCount), unitPrice)
                         : LogBookPageProductUtils.formatTotalProductPrice(this.currencyPipe, Number(quantityKg), unitPrice);
 
@@ -183,7 +198,7 @@ export class EditLogBookPageProductComponent implements AfterViewInit, OnInit, I
                     const quantityKg: number | undefined = Number(this.form.get('quantityKgControl')!.value);
                     const unitCount: number | undefined = Number(this.form.get('unitCountControl')!.value);
 
-                    const formattedTotalPrice: string | null = this.hasUnitCount && !this.showTurbotControls
+                    const formattedTotalPrice: string | null = this.hasUnitCount && this.showUnitCountControl && !this.showTurbotControls
                         ? LogBookPageProductUtils.formatTotalProductPrice(this.currencyPipe, Number(unitCount), unitPrice)
                         : LogBookPageProductUtils.formatTotalProductPrice(this.currencyPipe, Number(quantityKg), unitPrice);
 
@@ -194,10 +209,13 @@ export class EditLogBookPageProductComponent implements AfterViewInit, OnInit, I
 
         this.form.get('purposeControl')!.valueChanges.subscribe({
             next: (purpose: NomenclatureDTO<number> | undefined) => {
+                this.form.get('quantityCountControl')!.clearValidators();
+
                 if (this.logBookType === LogBookTypesEnum.Aquaculture) {
                     if (purpose && typeof purpose !== 'string') {
                         if (this.UNIT_COUNT_PURPOSE_CODES.includes(purpose.code!)) {
                             this.hasUnitCount = true;
+                            this.form.get('quantityCountControl')!.setValidators(Validators.required);
                         }
                         else {
                             this.hasUnitCount = this.hasOrganismUnitCount();
@@ -213,6 +231,8 @@ export class EditLogBookPageProductComponent implements AfterViewInit, OnInit, I
                         this.updateQuantityCountValidators();
                     }
                 }
+
+                this.form.get('quantityCountControl')!.updateValueAndValidity({ emitEvent: false });
             }
         });
 
@@ -223,6 +243,25 @@ export class EditLogBookPageProductComponent implements AfterViewInit, OnInit, I
 
                 if (!this.readOnly) {
                     this.updateQuantityCountValidators();
+                }
+            }
+        });
+
+        this.form.get('quantityCountControl')!.valueChanges.subscribe({
+            next: (value: NomenclatureDTO<boolean> | undefined) => {
+                if (value !== undefined && value !== null) {
+                    this.showUnitCountControl = value.value ?? false;
+
+                    if (this.showUnitCountControl) {
+                        this.form.get('quantityKgControl')!.setValue(undefined);
+                    }
+                    else {
+                        this.form.get('unitCountControl')!.setValue(undefined);
+                    }
+
+                    if (!this.readOnly) {
+                        this.updateQuantityCountValidators();
+                    }
                 }
             }
         });
@@ -247,7 +286,7 @@ export class EditLogBookPageProductComponent implements AfterViewInit, OnInit, I
             this.model = data.model;
             this.model.logBookType = this.logBookType;
 
-            if (CommonUtils.isNullOrEmpty(this.model.catchLocation)) {
+            if (CommonUtils.isNullOrEmpty(this.model.catchLocation) || this.model.catchLocation?.includes(DEFAULT_DUNABE_LOCATION)) {
                 this.isContinentalCatch = true;
             }
         }
@@ -294,7 +333,9 @@ export class EditLogBookPageProductComponent implements AfterViewInit, OnInit, I
             quantityKgControl: new FormControl(undefined, [Validators.required, TLValidators.number(0)]),
 
             turbotSizeGroupControl: new FormControl(),
-            unitCountControl: new FormControl()
+            unitCountControl: new FormControl(),
+
+            quantityCountControl: new FormControl()
         });
 
         if (this.hasPrice) {
@@ -361,7 +402,18 @@ export class EditLogBookPageProductComponent implements AfterViewInit, OnInit, I
         }
 
         if (this.hasUnitCount) {
-            this.form.get('unitCountControl')!.setValue(this.model.unitCount);
+            if (!this.showTurbotControls) {
+                if (this.model.unitCount !== undefined && this.model.unitCount !== null) {
+                    this.form.get('quantityCountControl')!.setValue(this.quantityCountOptions.find(x => x.value === true));
+                }
+                else {
+                    this.form.get('quantityCountControl')!.setValue(this.quantityCountOptions.find(x => x.value === false));
+                }
+            }
+
+            if (this.showTurbotControls || this.showUnitCountControl) {
+                this.form.get('unitCountControl')!.setValue(this.model.unitCount);
+            }
         }
 
         if (this.model.turbotSizeGroupId !== null && this.model.turbotSizeGroupId !== undefined) {
@@ -390,7 +442,7 @@ export class EditLogBookPageProductComponent implements AfterViewInit, OnInit, I
         this.model.averageUnitWeightKg = this.form.get('averageUnitWeightKgControl')!.value;
 
         this.model.quantityKg = this.form.get('quantityKgControl')!.value;
-        this.model.unitCount = this.hasUnitCount ? this.form.get('unitCountControl')!.value : undefined;
+        this.model.unitCount = this.showUnitCountControl || this.showTurbotControls ? this.form.get('unitCountControl')!.value : undefined;
         this.model.turbotSizeGroupId = this.form.get('turbotSizeGroupControl')!.value?.value;
 
     }
@@ -411,6 +463,7 @@ export class EditLogBookPageProductComponent implements AfterViewInit, OnInit, I
             else {
                 this.showTurbotControls = false;
                 this.hasUnitCount = this.hasPurposeUnitCount();
+
                 if (this.logBookType !== LogBookTypesEnum.Aquaculture) {
                     this.showFishCategoryControl = true;
                 }
@@ -444,9 +497,11 @@ export class EditLogBookPageProductComponent implements AfterViewInit, OnInit, I
         const quantityKgValidators: ValidatorFn[] = [];
         const unitCountValidators: ValidatorFn[] = [];
 
-        quantityKgValidators.push(Validators.required, TLValidators.number(0));
+        if (!this.showUnitCountControl || this.showTurbotControls) {
+            quantityKgValidators.push(Validators.required, TLValidators.number(0));
+        }
 
-        if (this.hasUnitCount) {
+        if (this.showUnitCountControl || this.showTurbotControls) {
             unitCountValidators.push(Validators.required, TLValidators.number(0));
         }
 

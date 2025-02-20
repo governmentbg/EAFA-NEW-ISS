@@ -239,6 +239,15 @@ export class InspectionsService extends BaseAuditService {
         });
     }
 
+    public getPermitLicenseFishingGears(permitLicenseId: number): Observable<FishingGearDTO[]> {
+        const params = new HttpParams().append('permitLicenseId', permitLicenseId.toString());
+
+        return this.requestService.get(this.area, this.controller, 'GetPermitLicenseFishingGears', {
+            httpParams: params,
+            responseTypeCtr: FishingGearDTO,
+        });
+    }
+
     public GetInspectedEntityEmail(inspectionId: number): Observable<InspectedEntityEmailDTO[]> {
         const params = new HttpParams().append('inspectionId', inspectionId.toString());
 
