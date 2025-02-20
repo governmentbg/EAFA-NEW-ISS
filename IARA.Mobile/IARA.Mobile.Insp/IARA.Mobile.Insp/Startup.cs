@@ -112,8 +112,11 @@ namespace IARA.Mobile.Insp
                 builder.Call<IStartupTransaction, IInspectionsTransaction>(PostOfflineData);
             }
 
-            // Get system parameter for inspecioton locking
+            // Get system parameter for inspection locking
             builder.Call<ISettings, IRestClient, IProfileTransaction>(LoadInspectionLockHour);
+
+            // Get system parameter for inspection latest submition date
+            builder.Call<ISettings, IRestClient, IProfileTransaction>(LoadInspectionLatestSubmissionDate);
 
             // Set main page
             builder.Call(NavigateToMainPage, onMainThread: true);
@@ -126,6 +129,27 @@ namespace IARA.Mobile.Insp
 
             // Remind for unsigned inspections
             builder.Call<ICurrentUser, IAuthTokenProvider>(ShowReminderForUnsignedInspections);
+        }
+
+        private async Task LoadInspectionLatestSubmissionDate(ISettings settings, IRestClient client, IProfileTransaction profileTransaction)
+        {
+            if (profileTransaction.HasPermission("InspectionCanSubmitAfterHours"))
+            {
+                settings.LatestSubmissionDateForInspection = -1;
+            }
+            else
+            {
+                HttpResult<int> response = await client.GetAsync<int>("InspectionData/GetLatestSubmissionDateForInspection");
+
+                if (response.IsSuccessful)
+                {
+                    settings.LatestSubmissionDateForInspection = response.Content;
+                }
+                else
+                {
+                    settings.LatestSubmissionDateForInspection = 72;
+                }
+            }
         }
 
         private async Task LoadInspectionLockHour(ISettings settings, IRestClient client, IProfileTransaction profileTransaction)

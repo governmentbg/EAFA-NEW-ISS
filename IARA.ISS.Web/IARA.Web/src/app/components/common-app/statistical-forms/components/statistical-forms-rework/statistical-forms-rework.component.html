@@ -217,30 +217,38 @@
                         title="{{ 'statistical-forms.rework-product-title' | tlTranslate }}"
                         tooltipResourceName="statistical-forms.rework-product-title-helper"
                         [validityChecker]="form">
-        <tl-data-table fxFlexFill
-                       #productTable
-                       [rows]="products"
-                       [isRemote]="false"
-                       [isSoftDeletable]="true"
-                       [showInactiveRecords]="false"
-                       [showAddButton]="!viewMode && !isReadonly">
-            <data-column [flexRate]="0.5"
-                         propertyName="productTypeId"
-                         [formGroup]="productGroup"
-                         [options]="productTypes"
-                         [displayOptions]="allProductTypes"
-                         dataType="nomenclature"
-                         [hasSelectedValueFromDropdownValidator]="false"
-                         columnName="{{ 'statistical-forms.rework-product-type' | tlTranslate }}">
-            </data-column>
+        <div fxLayout="column"
+             fxLayoutGap="1em">
+            <tl-data-table fxFlexFill
+                           #productTable
+                           [rows]="products"
+                           [isRemote]="false"
+                           [isSoftDeletable]="true"
+                           [showInactiveRecords]="false"
+                           [showAddButton]="!viewMode && !isReadonly">
+                <data-column [flexRate]="0.5"
+                             propertyName="productTypeId"
+                             [formGroup]="productGroup"
+                             [options]="productTypes"
+                             [displayOptions]="allProductTypes"
+                             dataType="nomenclature"
+                             [hasSelectedValueFromDropdownValidator]="false"
+                             columnName="{{ 'statistical-forms.rework-product-type' | tlTranslate }}">
+                </data-column>
 
-            <data-column [flexRate]="0.5"
-                         propertyName="tons"
-                         [formGroup]="productGroup"
-                         columnName="{{ 'statistical-forms.rework-product-tons' | tlTranslate }}">
-            </data-column>
-            <data-column-inline [flexRate]="0.1" *ngIf="!isReadonly"></data-column-inline>
-        </tl-data-table>
+                <data-column [flexRate]="0.5"
+                             propertyName="tons"
+                             [formGroup]="productGroup"
+                             columnName="{{ 'statistical-forms.rework-product-tons' | tlTranslate }}">
+                </data-column>
+
+                <data-column-inline [flexRate]="0.1" *ngIf="!isReadonly"></data-column-inline>
+            </tl-data-table>
+
+            <mat-error *ngIf="form.errors?.productsError === true">
+                * {{ 'statistical-forms.rework-form-products-error' | tlTranslate }}
+            </mat-error>
+        </div>
     </tl-expansion-panel>
 
     <!-- Файлове -->

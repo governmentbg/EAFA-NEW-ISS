@@ -164,9 +164,16 @@ namespace IARA.Mobile.Insp.Application.Transactions
                 return !isLoginRequest;
             }
 
-            if (isLoginRequest)
+            try
             {
-                await PullUserAuthInfo();
+                if (isLoginRequest)
+                {
+                    await PullUserAuthInfo();
+                }
+            }
+            catch (Exception e)
+            {
+                // silet
             }
 
             Task<Nom>[] nomTasks = await StartupNomenclatureHelper.PullNomenclatureTables(RestClient, nomenclatureDates);

@@ -37,7 +37,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.FishingGearDialog
         public DateTime? CreatedOn { get; set; }
 
         [Required]
-        [NoRepeatingMarkNumbers(nameof(AddedByInspector))]
+        [NoRepeatingMarkNumbers(nameof(AddedByInspector), ErrorMessageResourceName = "NoRepeatingMarkNumbers")]
         public ValidState Number { get; set; }
 
         public string Prefix { get; set; }

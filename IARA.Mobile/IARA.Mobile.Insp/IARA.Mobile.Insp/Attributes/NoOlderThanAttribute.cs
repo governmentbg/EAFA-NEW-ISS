@@ -1,24 +1,26 @@
-﻿using System;
+﻿using IARA.Mobile.Insp.Application.Interfaces.Utilities;
+using System;
 using System.Collections;
 using System.ComponentModel.DataAnnotations;
 using TechnoLogica.Xamarin.ViewModels.Interfaces;
 using TechnoLogica.Xamarin.ViewModels.Models;
+using Xamarin.Forms;
 
 namespace IARA.Mobile.Insp.Attributes
 {
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = true)]
     public class NoOlderThanAttribute : ValidationAttribute, ITLValidatable
     {
-        public NoOlderThanAttribute(int hours)
-        {
-            Hours = hours;
-        }
-        public int Hours { get; set; }
         public ValidationResult IsValid(object value, TLValidationContext validationContext)
         {
             if (value is DateTime date)
             {
-                if (date.AddHours(Hours) > DateTime.Now)
+                ISettings settings = DependencyService.Resolve<ISettings>();
+                if (settings.LatestSubmissionDateForInspection == -1)
+                {
+                    return ValidationResult.Success;
+                }
+                else if (date.AddHours(settings.LatestSubmissionDateForInspection) > DateTime.Now)
                 {
                     return ValidationResult.Success;
                 }

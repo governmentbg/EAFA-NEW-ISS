@@ -5823,6 +5823,7 @@
         'rework-information-employee-stats-helper': 'If the field is not applicable, a 0 (zero) must be entered',
         'rework-count-error': 'The sum of the values by ​columns ​does not match the sum from the previous table',
         'rework-costs-error': 'The value in the field of staff costs cannot be zero when there are men or women with pay.',
+        'rework-form-products-error': 'You cannot add the same product more than once',
 
         //Fish vessels
         'add-stat-form-fish-vessel-dialog-title': 'Add a statistical form for fish vessels',
