@@ -40,6 +40,7 @@ export class EditAuanInspectionPickerComponent implements OnInit, AfterViewInit,
     private model: AuanInspectionDTO | undefined;
     private inspectionId: number | undefined;
     private canCancelAuan: boolean;
+    private canSaveAfterHours: boolean;
 
     private readonly service!: IAuanRegisterService;
     private readonly nomenclatures: CommonNomenclatures;
@@ -60,6 +61,7 @@ export class EditAuanInspectionPickerComponent implements OnInit, AfterViewInit,
         this.model = new AuanInspectionDTO();
 
         this.canCancelAuan = permissions.has(PermissionsEnum.AuanRegisterCancel);
+        this.canSaveAfterHours = permissions.has(PermissionsEnum.AuanCanSaveAfterHours);
 
         this.form = this.buildForm();
     }
@@ -169,6 +171,7 @@ export class EditAuanInspectionPickerComponent implements OnInit, AfterViewInit,
             componentData: new EditAuanDialogParams({
                 inspectionId: this.inspectionId,
                 isThirdParty: this.isThirdParty,
+                canSaveAfterHours: this.canSaveAfterHours,
                 isReadonly: false
             }),
             rightSideActionsCollection: [{

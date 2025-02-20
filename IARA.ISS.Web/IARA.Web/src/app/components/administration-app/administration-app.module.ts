@@ -195,6 +195,7 @@ import { SendInspectionEmailsComponent } from './control-activity/inspections/di
 import { InspectedEntityEmailComponent } from './control-activity/inspections/dialogs/send-inspection-emails/inspected-entity-email/inspected-entity-email.component';
 import { FluxIsrQueryComponent } from './flux-vms-requests/flux-isr-query/flux-isr-query.component';
 import { FishingActivityUploadReportComponent } from './fishing-activity-reports/fishing-activity-upload-report/fishing-activity-upload-report.component';
+import { ChooseFromOldPermitLicenseComponent } from './control-activity/inspections/dialogs/edit-inspection-fishing-gear/choose-from-old-permit-license/choose-from-old-permit-license.component';
 
 @NgModule({
     declarations: [
@@ -379,7 +380,8 @@ import { FishingActivityUploadReportComponent } from './fishing-activity-reports
         FluxIsrQueryComponent,
         SendInspectionEmailsComponent,
         InspectedEntityEmailComponent,
-        FishingActivityUploadReportComponent
+        FishingActivityUploadReportComponent,
+        ChooseFromOldPermitLicenseComponent
     ],
     imports: [
         TLCommonModule,
@@ -570,7 +572,8 @@ import { FishingActivityUploadReportComponent } from './fishing-activity-reports
         FluxIsrQueryComponent,
         SendInspectionEmailsComponent,
         InspectedEntityEmailComponent,
-        FishingActivityUploadReportComponent
+        FishingActivityUploadReportComponent,
+        ChooseFromOldPermitLicenseComponent
     ],
     providers: [
         TLTranslatePipe

@@ -1,0 +1,20 @@
+﻿<div [formGroup]="form" fxLayout="column" fxLayoutGap="1em" fxFlexFill>
+    <div fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="space-between center">
+        <tl-autocomplete fxFlex="100"
+                         [options]="permitLicenses"
+                         formControlName="permitLicenseControl"
+                         label="{{ 'inspections.choose-permit-license-to-copy-from' | tlTranslate }}"
+                         tooltipResourceName="inspections.choose-permit-license-to-copy-from-helper">
+        </tl-autocomplete>
+    </div>
+
+    <div *ngIf="noPermitLicensesError" fxLayout="row">
+        <mat-error *ngIf="isShip">
+            * {{ 'inspections.no-old-permit-licenses-for-this-ship-error' | tlTranslate }}
+        </mat-error>
+
+        <mat-error *ngIf="!isShip">
+            * {{ 'inspections.no-old-permit-licenses-for-this-poundnet-error' | tlTranslate }}
+        </mat-error>
+    </div>
+</div>

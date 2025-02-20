@@ -36,6 +36,9 @@ export class InspectedFishingGearsTableComponent extends CustomFormControl<Inspe
     public showGenerateBtn: boolean = false;
 
     @Input()
+    public showPermitLicenseBtn: boolean = false;
+
+    @Input()
     public filterTypes: boolean = false;
 
     @Input()
@@ -43,6 +46,9 @@ export class InspectedFishingGearsTableComponent extends CustomFormControl<Inspe
 
     @Output()
     public generateFishingGearsFromShipClicked: EventEmitter<void> = new EventEmitter<void>();
+
+    @Output()
+    public chooseOldPermitLicenseClicked: EventEmitter<void> = new EventEmitter<void>();
 
     public readonly inspectedFishingGearEnum: typeof InspectedFishingGearEnum = InspectedFishingGearEnum;
     public pageCode: PageCodeEnum = PageCodeEnum.CommFishLicense;
@@ -267,6 +273,10 @@ export class InspectedFishingGearsTableComponent extends CustomFormControl<Inspe
 
     public generateFishingGears(): void {
         this.generateFishingGearsFromShipClicked.emit();
+    }
+
+    public chooseOldPermitLicense(): void {
+        this.chooseOldPermitLicenseClicked.emit();
     }
 
     protected buildForm(): AbstractControl {

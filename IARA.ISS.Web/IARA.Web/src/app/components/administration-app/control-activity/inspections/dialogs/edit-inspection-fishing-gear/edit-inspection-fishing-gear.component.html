@@ -142,7 +142,9 @@
             <inspected-fishing-gears-table formControlName="fishingGearsControl"
                                            [permitIds]="selectedPermitIds"
                                            [filterTypes]="!isShip"
-                                           [isPoundNet]="!isShip">
+                                           [isPoundNet]="!isShip"
+                                           [showPermitLicenseBtn]="showPermitLicenseBtn"
+                                           (chooseOldPermitLicenseClicked)="chooseOldPermitLicense()">
             </inspected-fishing-gears-table>
 
             <inspection-toggle-list formControlName="togglesControl"

@@ -39,6 +39,7 @@ export class EditPenalDecreeAuanPickerComponent implements OnInit, AfterViewInit
 
     public readonly canSubmitRecords: boolean;
     public readonly canCancelRecords: boolean;
+    public readonly canSaveAfterHours: boolean;
 
     private service: IPenalDecreesService;
     private translate: FuseTranslationLoaderService;
@@ -65,6 +66,7 @@ export class EditPenalDecreeAuanPickerComponent implements OnInit, AfterViewInit
 
         this.canSubmitRecords = permissions.has(PermissionsEnum.PenalDecreesSubmitRecords);
         this.canCancelRecords = permissions.has(PermissionsEnum.PenalDecreesCancelRecords);
+        this.canSaveAfterHours = permissions.has(PermissionsEnum.PenalDecreesCanSaveAfterHours);
 
         this.form = this.buildForm();
     }
@@ -175,6 +177,7 @@ export class EditPenalDecreeAuanPickerComponent implements OnInit, AfterViewInit
             componentData: new EditPenalDecreeDialogParams({
                 auanId: this.auanId,
                 typeId: this.typeId,
+                canSaveAfterHours: this.canSaveAfterHours,
                 isReadonly: false
             }),
             saveBtn: {
@@ -221,6 +224,7 @@ export class EditPenalDecreeAuanPickerComponent implements OnInit, AfterViewInit
             componentData: new EditPenalDecreeDialogParams({
                 auanId: this.form.get('auanControl')!.value?.value,
                 typeId: this.form.get('typeControl')!.value!.value,
+                canSaveAfterHours: this.canSaveAfterHours,
                 isReadonly: false
             }),
             saveBtn: {
@@ -267,6 +271,7 @@ export class EditPenalDecreeAuanPickerComponent implements OnInit, AfterViewInit
             componentData: new EditPenalDecreeDialogParams({
                 auanId: this.form.get('auanControl')!.value?.value,
                 typeId: this.form.get('typeControl')!.value!.value,
+                canSaveAfterHours: this.canSaveAfterHours,
                 isReadonly: false
             }),
             saveBtn: {
@@ -313,6 +318,7 @@ export class EditPenalDecreeAuanPickerComponent implements OnInit, AfterViewInit
             componentData: new EditPenalDecreeDialogParams({
                 auanId: this.form.get('auanControl')!.value?.value,
                 typeId: this.form.get('typeControl')!.value!.value,
+                canSaveAfterHours: this.canSaveAfterHours,
                 isReadonly: false
             }),
             saveBtn: {
