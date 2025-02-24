@@ -2,7 +2,7 @@
 
 namespace IARA.Mobile.Insp.Models
 {
-    public class ViolatedRegulationModel
+    public class ViolatedRegulationModel : BaseAssignableModel<ViolatedRegulationModel>
     {
         public int? Id { get; set; }
 

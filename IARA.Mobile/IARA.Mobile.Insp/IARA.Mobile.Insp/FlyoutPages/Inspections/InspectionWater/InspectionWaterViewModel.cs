@@ -1,4 +1,5 @@
-﻿using IARA.Mobile.Application.DTObjects.Nomenclatures;
+﻿using IARA.Mobile.Application.DTObjects.Common;
+using IARA.Mobile.Application.DTObjects.Nomenclatures;
 using IARA.Mobile.Domain.Enums;
 using IARA.Mobile.Domain.Models;
 using IARA.Mobile.Insp.Application;
@@ -281,7 +282,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.InspectionWater
                 dto.Type = offender.Type;
                 dto.RegisteredAddress = offender.RegisteredAddress;
 
-                Offenders.Value.Replace(dto, offender);
+                Offenders.Value.Replace(dto, dto);
             }
         }
 

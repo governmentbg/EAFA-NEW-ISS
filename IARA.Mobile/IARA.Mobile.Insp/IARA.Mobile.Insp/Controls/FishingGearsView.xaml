@@ -47,7 +47,14 @@
                         LineBreakMode="WordWrap"
                         VerticalOptions="Center"
                         IsEnabled="{Binding BindingContext.Inspection.ActivityType, Converter={StaticResource IsNotReview}, Source={Reference view}}" />
-                <ContentView VerticalOptions="Center" Content="{Binding CheckedValue, Converter={StaticResource FishingGearCheckTypeToView}}" />
+                <Grid>
+                    <ContentView VerticalOptions="Center"
+                            Content="{Binding CheckedValue, Converter={StaticResource FishingGearCheckTypeToView}, ConverterParameter=True}"
+                            IsVisible="{Binding BindingContext.ShowXIconWhenUnregistered, Source={Reference view}}" />
+                    <ContentView VerticalOptions="Center"
+                            Content="{Binding CheckedValue, Converter={StaticResource FishingGearCheckTypeToView}, ConverterParameter=False}"
+                            IsVisible="{Binding BindingContext.ShowXIconWhenUnregistered, Source={Reference view}, Converter={StaticResource OppositeBool}}" />
+                </Grid>
                 <StackLayout Orientation="Horizontal" VerticalOptions="Start">
                     <ImageButton Source="{FontImage FontFamily=FA, Glyph={Static h:IconFont.Eye}, Size=20, Color=White}"
                             Padding="10"
@@ -67,7 +74,7 @@
                                 <Binding Path="BindingContext.Inspection.ActivityType"
                                         Converter="{StaticResource IsNotReview}"
                                         Source="{Reference view}" />
-                                <Binding Path="IsAddedByInspector.Value" />
+                                <Binding Path="IsAddedByInspector" />
                             </MultiBinding>
                         </ImageButton.IsVisible>
                     </ImageButton>

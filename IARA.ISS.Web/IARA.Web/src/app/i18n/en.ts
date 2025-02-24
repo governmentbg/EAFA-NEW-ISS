@@ -2989,6 +2989,10 @@
         'patrol-vehicle-table-delete-message': 'Are you sure you want to delete this patrol vehicle?',
         'patrol-vehicle-table-delete-btn-label': 'Delete',
 
+        'fishing-gears-table-view': 'View fishing gear',
+        'fishing-gears-table-edit': 'Edit fishing gear',
+        'fishing-gears-table-delete': 'Delete fishing gear',
+
         'inspector-table-view': 'Review inspector',
         'inspector-table-edit': 'Edit inspector',
         'inspector-table-delete': 'Delete inspector',

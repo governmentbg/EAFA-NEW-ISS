@@ -199,12 +199,9 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
                     await ChangeReportNumber(result);
                 }
 
-                model.IsInCharge = result.IsInCharge;
-                model.HasIdentified = result.HasIdentified;
-                model.Institution = result.Institution;
-                model.Dto = result.Dto;
+                model.AssignFrom(result);
 
-                Inspectors.Value.Replace(model, result);
+                Inspectors.Value.Replace(model, model);
 
                 if (!Inspectors.Any(f => f.IsInCharge))
                 {

@@ -56,19 +56,19 @@
                     <tl-icon-button icon="visibility"
                                     (buttonClicked)="addEditEntry(row.data, true)"
                                     iconClass="accent-color"
-                                    tooltipText="{{ 'inspections.patrol-vehicle-table-view' | tlTranslate }}">
+                                    tooltipText="{{ 'inspections.fishing-gears-table-view' | tlTranslate }}">
                     </tl-icon-button>
                     <tl-icon-button *ngIf="!isDisabled"
                                     icon="edit"
                                     (buttonClicked)="addEditEntry(row.data)"
                                     iconClass="accent-color"
-                                    tooltipText="{{ 'inspections.patrol-vehicle-table-edit' | tlTranslate }}">
+                                    tooltipText="{{ 'inspections.fishing-gears-table-edit' | tlTranslate }}">
                     </tl-icon-button>
                     <tl-icon-button *ngIf="!isDisabled && row.data.gear.checkInspectedMatchingRegisteredGear === inspectedFishingGearEnum.I"
                                     icon="delete"
                                     (buttonClicked)="deleteEntry(row)"
                                     iconClass="accent-color"
-                                    tooltipText="{{ 'inspections.patrol-vehicle-table-delete' | tlTranslate }}">
+                                    tooltipText="{{ 'inspections.fishing-gears-table-delete' | tlTranslate }}">
                     </tl-icon-button>
                 </div>
             </ng-template>

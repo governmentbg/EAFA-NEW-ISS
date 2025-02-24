@@ -4,7 +4,7 @@ using TechnoLogica.Xamarin.ViewModels.Base.Models;
 
 namespace IARA.Mobile.Insp.Models
 {
-    public class WaterFishingGearModel : BaseModel
+    public class WaterFishingGearModel : BaseAssignableModel<WaterFishingGearModel>
     {
         public SelectNomenclatureDto Type { get; set; }
         public string Marks { get; set; }

@@ -29,7 +29,7 @@ export class YearlyQuotasService extends BaseAuditService implements IYearlyQuot
 
     public add(quota: YearlyQuotaEditDTO): Observable<number> {
         return this.requestService.post(this.area, this.controller, 'Add', quota, {
-            properties: new RequestProperties({ rethrowException: true, showException: true })
+            properties: new RequestProperties({ asFormData: true, rethrowException: true, showException: true })
         });
     }
 

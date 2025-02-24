@@ -242,14 +242,13 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.HarbourInspection
                 Location.AssignFrom(Edit?.ReceivingShipInspection?.InspectedShip?.Location);
                 if (Edit.ReceivingShipInspection != null)
                 {
+                    ShipCatches.OnEdit(Edit.ReceivingShipInspection);
                     ShipFishingGears.FishingGears.OnEdit(Edit.FishingGears,
                         Edit.ReceivingShipInspection.PermitLicenses
-                            .Where(f => f.CheckValue == CheckTypeEnum.Y || f.CheckValue == CheckTypeEnum.N)
                             .Select(f => f.PermitLicenseId.Value)
                             .ToList()
                     );
                     await InspectedShip.OnEdit(Edit.ReceivingShipInspection, Edit.ReceivingShipInspection.LastPortVisit);
-                    ShipCatches.OnEdit(Edit.ReceivingShipInspection);
                     //ShipFishingGears.Toggles.AssignFrom(Edit.ReceivingShipInspection.Checks);
 
                     if (Edit.ReceivingShipInspection.InspectionPortId != null || Edit.ReceivingShipInspection.UnregisteredPortName != null)

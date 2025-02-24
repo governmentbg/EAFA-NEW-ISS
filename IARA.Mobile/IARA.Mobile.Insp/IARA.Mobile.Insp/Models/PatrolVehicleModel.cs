@@ -3,7 +3,7 @@ using TechnoLogica.Xamarin.ViewModels.Base.Models;
 
 namespace IARA.Mobile.Insp.Models
 {
-    public class PatrolVehicleModel : BaseModel
+    public class PatrolVehicleModel : BaseAssignableModel<PatrolVehicleModel>
     {
         private string _institution;
         private string _patrolVehicleType;

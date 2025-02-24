@@ -90,6 +90,7 @@ export class EditPenalDecreeAuanPickerComponent implements OnInit, AfterViewInit
             next: (value: boolean) => {
                 this.isThirdParty = value;
                 this.form.get('auanControl')!.clearValidators();
+                this.form.get('auanControl')!.setValue(undefined);
 
                 if (value === false) {
                     this.form.get('auanControl')!.setValidators(Validators.required);

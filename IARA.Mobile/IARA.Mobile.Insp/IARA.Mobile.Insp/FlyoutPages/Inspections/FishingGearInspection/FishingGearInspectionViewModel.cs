@@ -55,7 +55,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FishingGearInspection
         {
             FishingGearTypeSwitched = CommandBuilder.CreateFrom(OnFishingGearTypeSwitched);
             PoundNetChosen = CommandBuilder.CreateFrom<SelectNomenclatureDto>(OnPoundNetChosen);
-            PermitChosen = CommandBuilder.CreateFrom<SelectNomenclatureDto>(OnPermitChosen);
+            PermitChosen = CommandBuilder.CreateFrom<SelectNomenclatureDto>((permit) => OnPermitChosen(permit));
             CheckReasonChosen = CommandBuilder.CreateFrom<SelectNomenclatureDto>(OnCheckReasonChosen);
             PermitTypeChosen = CommandBuilder.CreateFrom(OnPermitTypeChosen);
             OpenLoadFromOldPermitDialog = CommandBuilder.CreateFrom(OnOpenLoadFromOldPermitDialog);
@@ -71,7 +71,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FishingGearInspection
             {
                 PersonChosen = CommandBuilder.CreateFrom<ShipPersonnelDto>(OnOwnerChosen),
             };
-            FishingGears = new FishingGearsViewModel(this, null, hasPingers: true);
+            FishingGears = new FishingGearsViewModel(this, null, hasPingers: true, showXIconWhenUnregistered: false);
             InspectionGeneralInfo = new InspectionGeneralInfoViewModel(this, false);
             InspectionFiles = new InspectionFilesViewModel(this);
             AdditionalInfo = new AdditionalInfoViewModel(this);
@@ -430,7 +430,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FishingGearInspection
 
             if (permit != null)
             {
-                OnPermitChosen(permit);
+                OnPermitChosen(permit, false);
             }
             else
             {
@@ -546,7 +546,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FishingGearInspection
             Owner.Egn.AssignFrom(Owner.ShipUser.EgnLnc);
         }
 
-        private void OnPermitChosen(SelectNomenclatureDto nom)
+        private void OnPermitChosen(SelectNomenclatureDto nom, bool areFishingRegister = true)
         {
             FishingGears.FishingGears.Value.Clear();
 
@@ -555,7 +555,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FishingGearInspection
                 if (PoundNet.Value != null)
                 {
                     List<FishingGearDto> fishingGears = InspectionsTransaction.GetFishingGearsForPoundNet(PoundNet.Value, nom.Id);
-                    LoadFishingGears(fishingGears);
+                    LoadFishingGears(fishingGears, areFishingRegister);
                 }
             }
             else
@@ -563,12 +563,12 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FishingGearInspection
                 if (ShipData.ShipInRegister.Value && ShipData.Ship.Value != null)
                 {
                     List<FishingGearDto> fishingGears = InspectionsTransaction.GetFishingGearsForShip(ShipData.Ship.Value.Uid, nom.Id);
-                    LoadFishingGears(fishingGears);
+                    LoadFishingGears(fishingGears, areFishingRegister);
                 }
             }
         }
 
-        private void LoadFishingGears(List<FishingGearDto> fishingGears)
+        private void LoadFishingGears(List<FishingGearDto> fishingGears, bool isRegister)
         {
             List<SelectNomenclatureDto> fishingGearTypes = NomenclaturesTransaction.GetFishingGears().Select(x => new SelectNomenclatureDto()
             {
@@ -577,18 +577,39 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FishingGearInspection
                 Name = x.Name
             }).ToList();
 
-            List<FishingGearModel> models = fishingGears.ConvertAll(f => new FishingGearModel
+            List<FishingGearModel> models = new List<FishingGearModel>();
+            if (isRegister)
             {
-                Count = f.Count,
-                NetEyeSize = f.NetEyeSize,
-                Marks = string.Join(", ", f.Marks.Select(s => s.FullNumber?.ToString())),
-                Type = fishingGearTypes.Find(s => s.Id == f.TypeId) ?? fishingGearTypes[0],
-                CheckedValue = InspectedFishingGearEnum.R,
-                Dto = new InspectedFishingGearDto
+                models = fishingGears.ConvertAll(f => new FishingGearModel
                 {
-                    PermittedFishingGear = f
-                },
-            });
+                    Count = f.Count,
+                    NetEyeSize = f.NetEyeSize,
+                    Marks = string.Join(", ", f.Marks.Select(s => s.FullNumber?.ToString())),
+                    Type = fishingGearTypes.Find(s => s.Id == f.TypeId) ?? fishingGearTypes[0],
+                    CheckedValue = InspectedFishingGearEnum.R,
+                    Dto = new InspectedFishingGearDto
+                    {
+                        PermittedFishingGear = f
+                    },
+                });
+            }
+            else
+            {
+                models = fishingGears.ConvertAll(f => new FishingGearModel
+                {
+                    Count = f.Count,
+                    NetEyeSize = f.NetEyeSize,
+                    Marks = string.Join(", ", f.Marks.Select(s => s.FullNumber?.ToString())),
+                    Type = fishingGearTypes.Find(s => s.Id == f.TypeId) ?? fishingGearTypes[0],
+                    CheckedValue = InspectedFishingGearEnum.I,
+                    IsAddedByInspector = true,
+                    Dto = new InspectedFishingGearDto
+                    {
+                        InspectedFishingGear = f
+                    },
+                });
+            }
+
 
             FishingGears.AllFishingGears.Clear();
             FishingGears.AllFishingGears.AddRange(models);

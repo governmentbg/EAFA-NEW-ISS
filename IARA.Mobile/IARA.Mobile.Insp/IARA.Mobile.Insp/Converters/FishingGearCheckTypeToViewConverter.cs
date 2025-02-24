@@ -1,5 +1,7 @@
 ﻿using IARA.Mobile.Domain.Enums;
 using IARA.Mobile.Insp.Domain.Enums;
+using System.Globalization;
+using System;
 using TechnoLogica.Xamarin.Converters.Base;
 using TechnoLogica.Xamarin.Extensions;
 using TechnoLogica.Xamarin.Helpers;
@@ -7,17 +9,23 @@ using Xamarin.Forms;
 
 namespace IARA.Mobile.Insp.Converters
 {
-    public class FishingGearCheckTypeToViewConverter : BaseValueConverter<View, InspectedFishingGearEnum?>
+    public class FishingGearCheckTypeToViewConverter : BindableObject, IValueConverter
     {
-        public FishingGearCheckTypeToViewConverter()
-            : base(false) { }
-
-        public override View ConvertTo(InspectedFishingGearEnum? value)
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return CreateView(value);
+            if (value is InspectedFishingGearEnum gearEnum && parameter is string boolean && bool.TryParse(boolean, out bool ShowRedX))
+            {
+                return CreateView(gearEnum, ShowRedX);
+            }
+            return null;
         }
 
-        private View CreateView(InspectedFishingGearEnum? value)
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+
+        private View CreateView(InspectedFishingGearEnum? value, bool ShowRedX)
         {
             Color iconColor = Color.Default;
             string iconText = null;
@@ -43,8 +51,8 @@ namespace IARA.Mobile.Insp.Converters
                         translateResource = "Unavailable";
                         break;
                     case InspectedFishingGearEnum.I:
-                        iconColor = Color.Red;
-                        iconText = IconFont.Xmark;
+                        iconColor = ShowRedX ? Color.Red : Color.Gray;
+                        iconText = ShowRedX ? IconFont.Xmark : IconFont.Book;
                         translateResource = "Unregistered";
                         break;
                 }

@@ -58,7 +58,17 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
 
             if (result != null)
             {
-                Engines.Value.Replace(engine, result);
+                engine.Id = result.Id;
+                engine.Model = result.Model;
+                engine.Power = result.Power;
+                engine.Type = result.Type;
+                engine.TotalCount = result.TotalCount;
+                engine.IsStored = result.IsStored;
+                engine.IsTaken = result.IsTaken;
+                engine.StorageLocation = result.StorageLocation;
+                engine.EngineDescription = result.EngineDescription;
+
+                Engines.Value.Replace(engine, engine);
             }
         }
 

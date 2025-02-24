@@ -184,7 +184,7 @@ export class EditLogBookPageProductComponent implements AfterViewInit, OnInit, I
                 if (this.hasPrice) {
                     const unitPrice: number | undefined = Number(this.form.get('unitPriceControl')!.value);
 
-                    const formattedTotalPrice: string | null = this.showTurbotControls
+                    const formattedTotalPrice: string | null = this.showTurbotControls || !this.showUnitCountControl
                         ? LogBookPageProductUtils.formatTotalProductPrice(this.currencyPipe, Number(this.form.get('quantityKgControl')!.value), unitPrice)
                         : LogBookPageProductUtils.formatTotalProductPrice(this.currencyPipe, Number(unitCount), unitPrice);
                     this.form.get('totalPriceControl')!.setValue(formattedTotalPrice);

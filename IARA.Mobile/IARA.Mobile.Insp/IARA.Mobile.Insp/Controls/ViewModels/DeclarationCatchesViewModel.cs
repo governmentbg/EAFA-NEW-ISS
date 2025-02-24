@@ -134,7 +134,8 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
 
             if (result != null && result.InspectionLogBookPage != null)
             {
-                Catches.Value.Replace(model, result);
+                model.AssignFrom(result);
+                Catches.Value.Replace(model, model);
             }
         }
 

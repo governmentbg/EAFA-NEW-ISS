@@ -85,7 +85,8 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
 
             if (result != null && result.Dto != null)
             {
-                InspectorVehicles.Value.Replace(model, result);
+                model.AssignFrom(result);
+                InspectorVehicles.Value.Replace(model, model);
             }
         }
 

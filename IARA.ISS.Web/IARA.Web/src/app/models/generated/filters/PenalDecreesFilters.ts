@@ -44,4 +44,5 @@ export class PenalDecreesFilters extends BaseRequestModel {
     public fineAmountTo: number | undefined;
     public year: number | undefined;
     public auanId: number | undefined;
+    public id: number | undefined;
 }
