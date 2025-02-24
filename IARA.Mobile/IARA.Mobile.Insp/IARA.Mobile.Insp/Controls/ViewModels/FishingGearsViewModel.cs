@@ -8,6 +8,7 @@ using IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.FishingGearDialog;
 using IARA.Mobile.Insp.Models;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -21,11 +22,12 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
     public class FishingGearsViewModel : ViewModel
     {
         private PermitLicensesViewModel _permitLicenses;
-        public FishingGearsViewModel(InspectionPageViewModel inspection, PermitLicensesViewModel permitLicenses, bool hasPingers = true, bool hasAttachmentForFishingGear = false)
+        public FishingGearsViewModel(InspectionPageViewModel inspection, PermitLicensesViewModel permitLicenses, bool hasPingers = true, bool hasAttachmentForFishingGear = false, bool showXIconWhenUnregistered = true)
         {
             Inspection = inspection;
             HasPingers = hasPingers;
             HasAttachmentForFishingGear = hasAttachmentForFishingGear;
+            ShowXIconWhenUnregistered = showXIconWhenUnregistered;
             _permitLicenses = permitLicenses;
 
             Review = CommandBuilder.CreateFrom<FishingGearModel>(OnReview);
@@ -36,12 +38,12 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
             ShowRequiredDialog = CommandBuilder.CreateFrom<FishingGearModel>(OnShowRequiredDialog);
 
             AllFishingGears = new List<FishingGearModel>();
-
             this.AddValidation();
         }
 
         public InspectionPageViewModel Inspection { get; }
         public bool HasPingers { get; }
+        public bool ShowXIconWhenUnregistered { get; }
         public bool HasAttachmentForFishingGear { get; }
 
         [FishingGearValidation(ErrorMessageResourceName = "FishingGearValidation")]
@@ -135,25 +137,17 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
 
             if (result != null)
             {
-                result.LogBookId = fishingGear.LogBookId;
-                result.PermitId = fishingGear.PermitId;
-
-                fishingGear.Marks = result.Marks;
-                fishingGear.CheckedValue = result.CheckedValue;
-                fishingGear.Type = result.Type;
-                fishingGear.Count = result.Count;
-                fishingGear.NetEyeSize = result.NetEyeSize;
-
-                fishingGear.Dto.InspectedFishingGear = result.Dto.InspectedFishingGear;
-                fishingGear.Dto.CheckInspectedMatchingRegisteredGear = result.Dto.CheckInspectedMatchingRegisteredGear;
-                fishingGear.Dto.HasAttachedAppliances = result.Dto.HasAttachedAppliances;
-
-                if (fishingGear.Dto.PermittedFishingGear.Id != null && fishingGear.Dto.InspectedFishingGear != null)
+                result.Marks = string.Join(", ",
+                    (result.Dto.InspectedFishingGear ?? result.Dto.PermittedFishingGear).Marks
+                    .Select(f => f.FullNumber.ToString())
+                    .Where(f => !string.IsNullOrWhiteSpace(f))
+                    .ToArray());
+                if (result.Dto.PermittedFishingGear?.Id != null && result.Dto.InspectedFishingGear != null)
                 {
-                    fishingGear.Dto.InspectedFishingGear.Id = null;
+                    result.Dto.InspectedFishingGear.Id = null;
                 }
-
-                FishingGears.Value.Replace(fishingGear, result);
+                fishingGear.AssignFrom(result);
+                FishingGears.Value.Replace(fishingGear, fishingGear);
             }
             this.Validation.Force();
         }

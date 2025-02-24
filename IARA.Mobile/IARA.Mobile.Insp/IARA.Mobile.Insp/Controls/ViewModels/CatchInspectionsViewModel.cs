@@ -186,6 +186,18 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
             }));
             Catches.FirstOrDefault()?.CatchInspections.SetSummary();
             Catches.Validation.Force();
+        }
+
+        public async Task AddCatches(LogBookPageDto selectedPage)
+        {
+            if (_fishingGears != null)
+            {
+                _fishingGears.FishingGears.Value.RemoveRange(_fishingGears.FishingGears.Value.Where(x => x.LogBookId == null).ToList());
+                _fishingGears.FishingGears.Value.RemoveRange(_fishingGears.FishingGears.Value.Where(x => x.LogBookId == selectedPage.LogBookId).ToList());
+            }
+            await TLLoadingHelper.ShowFullLoadingScreen();
+            List<InspectionCatchMeasureDto> catchMeasures = await InspectionsTransaction.GetCatchesFromLogBookPageNumber(selectedPage.LogBookId, selectedPage.PageNum);
+            OnEdit(catchMeasures);
 
             InspectionCatchMeasureDto catchMeasure = catchMeasures.FirstOrDefault();
             if (_fishingGears != null && catchMeasure != null)
@@ -204,17 +216,6 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
 
                 _fishingGears.FishingGears.Value.AddRange(gears);
             }
-        }
-
-        public async Task AddCatches(LogBookPageDto selectedPage)
-        {
-            if (_fishingGears != null)
-            {
-                _fishingGears.FishingGears.Value.RemoveRange(_fishingGears.FishingGears.Value.Where(x => x.LogBookId == null).ToList());
-                _fishingGears.FishingGears.Value.RemoveRange(_fishingGears.FishingGears.Value.Where(x => x.LogBookId == selectedPage.LogBookId).ToList());
-            }
-            await TLLoadingHelper.ShowFullLoadingScreen();
-            OnEdit(await InspectionsTransaction.GetCatchesFromLogBookPageNumber(selectedPage.LogBookId, selectedPage.PageNum));
             await TLLoadingHelper.HideFullLoadingScreen();
         }
 

@@ -3051,6 +3051,10 @@
         'patrol-vehicle-table-delete-message': 'Сигурен ли сте, че искате да премахнете патрулното средство?',
         'patrol-vehicle-table-delete-btn-label': 'Премахни',
 
+        'fishing-gears-table-view': 'Преглед на риболовен уред',
+        'fishing-gears-table-edit': 'Редактиране на риболовен уред',
+        'fishing-gears-table-delete': 'Изтриване на риболовен уред',
+
         'inspector-table-view': 'Преглед на инспектор',
         'inspector-table-edit': 'Редактиране на инспектор',
         'inspector-table-delete': 'Изтриване на инспектор',

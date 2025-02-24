@@ -501,6 +501,7 @@ export class EditDecreeResolutionComponent implements OnInit, AfterViewInit, IDi
         this.model.decreeViolatedRegulations = this.form.get('violatedRegulationsControl')!.value;
         this.model.seizedFishingGear = this.form.get('seizedFishingGearControl')!.value;
         this.model.auanTerritoryUnitId = this.form.get('territoryUnitControl')!.value?.value;
+        this.model.appealCourtId = this.form.get('courtControl')!.value?.value;
 
         this.model.resolutionData = new PenalDecreeResolutionDTO({
             id: this.model.resolutionData?.id,

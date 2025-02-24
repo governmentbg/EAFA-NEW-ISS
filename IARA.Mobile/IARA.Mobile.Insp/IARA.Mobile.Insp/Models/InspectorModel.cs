@@ -3,7 +3,7 @@ using TechnoLogica.Xamarin.ViewModels.Base.Models;
 
 namespace IARA.Mobile.Insp.Models
 {
-    public class InspectorModel : BaseModel
+    public class InspectorModel : BaseAssignableModel<InspectorModel>
     {
         private bool _isInCharge;
         private bool _hasIdentified;

@@ -6,7 +6,7 @@ using TechnoLogica.Xamarin.ViewModels.Base.Models;
 
 namespace IARA.Mobile.Insp.Models
 {
-    public class FishingGearModel : BaseModel
+    public class FishingGearModel : BaseAssignableModel<FishingGearModel>
     {
         public bool IsAddedByInspector { get; set; }
 

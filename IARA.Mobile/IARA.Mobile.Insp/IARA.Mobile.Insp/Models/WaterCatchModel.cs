@@ -3,7 +3,7 @@ using TechnoLogica.Xamarin.ViewModels.Base.Models;
 
 namespace IARA.Mobile.Insp.Models
 {
-    public class WaterCatchModel : BaseModel
+    public class WaterCatchModel : BaseAssignableModel<WaterCatchModel>
     {
         public string FishName { get; set; }
 

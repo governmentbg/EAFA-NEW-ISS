@@ -59,11 +59,9 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
 
             if (result != null)
             {
-                fishingGear.Marks = result.Marks;
-                fishingGear.Type = result.Type;
-                fishingGear.Dto = result.Dto;
+                fishingGear.AssignFrom(result);
 
-                FishingGears.Value.Replace(fishingGear, result);
+                FishingGears.Value.Replace(fishingGear, fishingGear);
             }
         }
 

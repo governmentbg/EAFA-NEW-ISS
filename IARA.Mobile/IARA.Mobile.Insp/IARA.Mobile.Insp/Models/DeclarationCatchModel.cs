@@ -4,7 +4,7 @@ using TechnoLogica.Xamarin.ViewModels.Base.Models;
 
 namespace IARA.Mobile.Insp.Models
 {
-    public class DeclarationCatchModel : BaseModel
+    public class DeclarationCatchModel : BaseAssignableModel<DeclarationCatchModel>
     {
         public string DocumentType { get; set; }
         public string PageNumber { get; set; }

@@ -197,14 +197,15 @@ export class InspectionGeneralInfoComponent extends CustomFormControl<Inspection
             inspectorsControl: new FormControl(undefined)
         });
 
-        form.get('inspectionEndDateControl')!.setValidators([
-            Validators.required,
-            TLValidators.minDate(form.get('inspectionStartDateControl')!)
-        ]);
-
         form.get('inspectionStartDateControl')!.valueChanges.subscribe({
             next: (startDate: Moment | null | undefined) => {
-                form.get('inspectionEndDateControl')!.updateValueAndValidity({ emitEvent: false });
+                this.updateEndDateValidators();
+            }
+        });
+
+        form.get('inspectionEndDateControl')!.valueChanges.subscribe({
+            next: (startDate: Moment | null | undefined) => {
+                form.get('inspectionStartDateControl')!.updateValueAndValidity({ emitEvent: false });
             }
         });
 
@@ -292,6 +293,20 @@ export class InspectionGeneralInfoComponent extends CustomFormControl<Inspection
                 ? num.substring(0, 3)
                 : num.padStart(3, '0'))
             : num;
+    }
+
+    private updateEndDateValidators(): void {
+        const now: Date = new Date();
+
+        const endDateValidators: ValidatorFn[] = [
+            Validators.required,
+            TLValidators.minDate(this.form.get('inspectionStartDateControl')!),
+            TLValidators.maxDate(undefined, now)
+        ];
+
+        this.form.get('inspectionEndDateControl')!.clearValidators();
+        this.form.get('inspectionEndDateControl')!.setValidators(endDateValidators);
+        this.form.get('inspectionEndDateControl')!.updateValueAndValidity({ emitEvent: false });
     }
 
     private cannotAddAfterHours(): ValidatorFn {

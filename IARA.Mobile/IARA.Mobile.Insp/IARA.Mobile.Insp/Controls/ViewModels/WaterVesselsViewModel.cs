@@ -59,7 +59,19 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
 
             if (result != null)
             {
-                Vessels.Value.Replace(vessel, result);
+                vessel.Id = result.Id;
+                vessel.VesselTypeId = result.VesselTypeId;
+                vessel.Number = result.Number;
+                vessel.Length = result.Length;
+                vessel.Width = result.Width;
+                vessel.Color = result.Color;
+                vessel.TotalCount = result.TotalCount;
+                vessel.IsStored = result.IsStored;
+                vessel.IsTaken = result.IsTaken;
+                vessel.StorageLocation = result.StorageLocation;
+                vessel.Description = result.Description;
+
+                Vessels.Value.Replace(vessel, vessel);
             }
         }
 

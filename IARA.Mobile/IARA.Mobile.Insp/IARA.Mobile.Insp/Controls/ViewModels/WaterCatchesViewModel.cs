@@ -59,9 +59,8 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
 
             if (result != null)
             {
-                catchMeasure.FishName = result.FishName;
-                catchMeasure.Dto = result.Dto;
-                CatchMeasures.Value.Replace(catchMeasure, result);
+                catchMeasure.AssignFrom(result);
+                CatchMeasures.Value.Replace(catchMeasure, catchMeasure);
             }
         }
 

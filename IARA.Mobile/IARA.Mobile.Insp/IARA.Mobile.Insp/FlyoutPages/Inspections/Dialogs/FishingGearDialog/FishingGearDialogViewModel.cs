@@ -314,7 +314,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.FishingGearDialog
 
             return HideDialog(new FishingGearModel
             {
-                IsAddedByInspector = Edit == null,
+                IsAddedByInspector = Edit == null ? true : Edit.IsAddedByInspector,
                 Marks = string.Join(", ", fishingGear.Marks
                     .Select(f => f.Number.Value)
                     .Where(f => !string.IsNullOrWhiteSpace(f))

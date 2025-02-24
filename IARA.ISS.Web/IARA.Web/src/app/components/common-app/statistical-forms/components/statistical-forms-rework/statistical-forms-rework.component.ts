@@ -485,7 +485,7 @@ export class StatisticalFormsReworkComponent implements OnInit, IDialogComponent
 
             this.productGroup = new FormGroup({
                 productTypeIdControl: new FormControl(null, Validators.required),
-                tonsControl: new FormControl(null)
+                tonsControl: new FormControl(null, [Validators.required, TLValidators.number(0)])
             });
         }
         else {

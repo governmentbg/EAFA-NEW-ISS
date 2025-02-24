@@ -277,13 +277,25 @@ export class PenalDecreesComponent implements OnInit, AfterViewInit {
             filtersMapper: this.mapFilters.bind(this)
         });
 
-        this.grid.advancedFilters = new PenalDecreesFilters({
-            auanId: this.auanId ?? undefined
-        });
+        const filters: PenalDecreesFilters = new PenalDecreesFilters();
 
-        if (this.auanId !== null || this.auanId !== undefined) {
-            this.grid.refreshData();
+        if (window.history.state) {
+            const tableId: number | undefined = window.history.state.tableId;
+
+            if (tableId !== undefined && tableId !== null) {
+                filters.id = tableId;
+            }
+
+            this.grid.advancedFilters = filters;
         }
+
+        if (this.auanId !== null && this.auanId !== undefined) {
+            this.grid.advancedFilters = new PenalDecreesFilters({
+                auanId: this.auanId 
+            });
+        }
+
+        this.grid.refreshData();
     }
 
     public addEditPenalDecree(decree: PenalDecreeDTO | undefined, viewMode: boolean): void {

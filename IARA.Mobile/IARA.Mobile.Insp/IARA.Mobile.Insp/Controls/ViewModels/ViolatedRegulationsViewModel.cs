@@ -82,14 +82,9 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
             ViolatedRegulationModel violatedRegulation = await TLDialogHelper.ShowDialog(new ViolatedRegulationDialog(ViewActivityType.Add, null));
             if (violatedRegulation != null)
             {
-                model.Article = violatedRegulation.Article;
-                model.Paragraph = violatedRegulation.Paragraph;
-                model.Section = violatedRegulation.Section;
-                model.Letter = violatedRegulation.Letter;
-                model.LawText = violatedRegulation.LawText;
-                model.Comments = violatedRegulation.Comments;
+                model.AssignFrom(violatedRegulation);
 
-                ViolatedRegulations.Value.Replace(model, violatedRegulation);
+                ViolatedRegulations.Value.Replace(model, model);
             }
         }
 

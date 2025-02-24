@@ -689,13 +689,14 @@ export class EditInspectionFishingGearComponent extends BaseInspectionsComponent
                 netNominalLength: x.netNominalLength,
                 towelLength: x.towelLength,
                 trawlModel: x.trawlModel,
-                marks: x.marks,
+                marks: x.marks ?? [],
                 marksNumbers: x.marksNumbers,
-                pingers: x.pingers,
-                isActive: x.isActive,
+                pingers: x.pingers ?? [],
+                isActive: true,
                 id: undefined
             }),
-            checkInspectedMatchingRegisteredGear: InspectedFishingGearEnum.I
+            checkInspectedMatchingRegisteredGear: InspectedFishingGearEnum.I,
+            isActive: true
         }));
 
         return result;

@@ -373,12 +373,27 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.DeclarationCatchDialo
             InspectedDeclarationCatchDto declarationCatchDto = await TLDialogHelper.ShowDialog(new CatchDialog.CatchDialog(ViewActivityType.Add, dto, FishTypes, Presentations));
             if (declarationCatchDto != null)
             {
+                dto.Id = declarationCatchDto.Id;
+                dto.InspectionLogBookPageId = declarationCatchDto.InspectionLogBookPageId;
+                dto.CatchTypeId = declarationCatchDto.CatchTypeId;
                 dto.FishTypeId = declarationCatchDto.FishTypeId;
                 dto.CatchCount = declarationCatchDto.CatchCount;
                 dto.CatchQuantity = declarationCatchDto.CatchQuantity;
+                dto.UnloadedQuantity = declarationCatchDto.UnloadedQuantity;
                 dto.PresentationId = declarationCatchDto.PresentationId;
+                dto.Undersized = declarationCatchDto.Undersized;
+                dto.CatchZoneId = declarationCatchDto.CatchZoneId;
+                dto.TurbotSizeGroupId = declarationCatchDto.TurbotSizeGroupId;
+                dto.OriginShip = declarationCatchDto.OriginShip;
+                dto.AquacultureId = declarationCatchDto.AquacultureId;
+                dto.UnregisteredEntityData = declarationCatchDto.UnregisteredEntityData;
+                dto.LogBookPageId = declarationCatchDto.LogBookPageId;
+                dto.LogBookType = declarationCatchDto.LogBookType;
+                dto.UnregisteredPageNum = declarationCatchDto.UnregisteredPageNum;
+                dto.UnregisteredLogBookNum = declarationCatchDto.UnregisteredLogBookNum;
+                dto.UnregisteredPageDate = declarationCatchDto.UnregisteredPageDate;
 
-                DeclarationCatches.Value.Replace(dto, declarationCatchDto);
+                DeclarationCatches.Value.Replace(dto, dto);
             }
         }
 

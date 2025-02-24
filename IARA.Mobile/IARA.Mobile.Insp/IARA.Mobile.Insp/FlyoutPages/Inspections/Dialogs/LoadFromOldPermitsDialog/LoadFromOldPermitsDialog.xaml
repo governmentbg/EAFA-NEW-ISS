@@ -10,7 +10,7 @@
         xmlns:local="clr-namespace:IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.LoadFromOldPermitsDialog"
         x:Name="dialog"
         x:Class="IARA.Mobile.Insp.FlyoutPages.Inspections.Dialogs.LoadFromOldPermitsDialog.LoadFromOldPermitsDialog"
-        Title="{rt:Translate PingerDialogTitle, Group=FishingGear}"
+        Title="{rt:Translate LoadFromOldPermit, Group=FishingGear}"
         x:DataType="local:LoadFromOldPermitsDialogViewModel"
         x:TypeArguments="local:LoadFromOldPermitsDialogViewModel, nom:PermitNomenclatureDto"
         BackgroundColor="White"
