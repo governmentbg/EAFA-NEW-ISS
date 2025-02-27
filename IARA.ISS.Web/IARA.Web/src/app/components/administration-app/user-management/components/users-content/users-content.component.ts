@@ -24,6 +24,7 @@ import { EditUserDialogParams } from '../models/edit-user-dialog-params';
 import { EditUserComponent } from './edit-users/edit-user.component';
 import { DateRangeData } from '@app/shared/components/input-controls/tl-date-range/tl-date-range.component';
 import { CommonUtils } from '@app/shared/utils/common.utils';
+import { InternalUserManagementService } from '@app/services/administration-app/user-management/internal-user-management.service';
 
 @Component({
     selector: 'users-content',
@@ -318,6 +319,25 @@ export class UsersContentComponent implements OnInit, AfterViewInit {
                 this.gridManager.editRecord(user);
             }
         });
+    }
+
+    public reloadAllMobileDevicesAppDatabase(): void {
+        if (this.isInternalUser && this.canAddMobileDevices) {
+            this.confirmDialog.open({
+                title: this.translationService.getValue('users-page.reload-all-user-mobile-devices-database-confirm-dialog-title'),
+                message: this.translationService.getValue('users-page.all-users-mobile-devices-must-reload-local-database'),
+                okBtnLabel: this.translationService.getValue('users-page.all-users-must-reload-database-ok-btn-label'),
+                cancelBtnLabel: this.translationService.getValue('users-page.all-users-must-reload-database-cancel-btn-label')
+            }).subscribe((yes: boolean) => {
+                if (yes) {
+                    (this.service as InternalUserManagementService).reloadAllMobileDevicesAppDatabase().subscribe({
+                        next: () => {
+                            // nothing to do
+                        }
+                    });
+                }
+            });
+        }
     }
 
     private mapFilters(filters: FilterEventArgs): UserManagementFilters {

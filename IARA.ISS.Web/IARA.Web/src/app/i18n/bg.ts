@@ -169,6 +169,7 @@
         'succ-deleted-user': 'Успешно изтрит потребител',
         'succ-undo-delete-user': 'Успешно възобновен потребител',
         'succ-updated-user-devices': 'Успешно редактирани устройства на потребител',
+        'succ-updated-user-mobile-devices': 'Всички потребители трябва да обновят локалната база на всяко от устройствата си',
         'succ-user-made-internal': 'Потребителят е направен вътрешен',
         'succ-filed-in-application': 'Успешно входирано заявление',
         'succ-updated-appl-draft-content': 'Успешно обновена чернова на заявление',
@@ -711,7 +712,12 @@
         'must-have-one-valid-egn-lnc-error': 'В системата вече има валиден потребител с посоченото ЕГН/ЛНЧ',
         'dates-overlap-with-other-record': 'Датите за валидност се припокриват с друг запис за този потребител',
         'at-least-one-role-needed-error': 'Необходимо е да бъде въведена поне една роля',
-        'passwords-must-match': 'Паролите трябва да съвпадат'
+        'passwords-must-match': 'Паролите трябва да съвпадат',
+        'reload-all-mobile-devices-app-database-btn': 'Презареди базата на всички устройства',
+        'reload-all-user-mobile-devices-database-confirm-dialog-title':'Презареждане на базата на всички устройства',
+        'all-users-mobile-devices-must-reload-local-database': 'Всички потребители ще трябва да обновят локалната база на всяко едно от устройствата си. Сигурни ли сте, че потвърждавате действието?',
+        'all-users-must-reload-database-ok-btn-label': 'Добре',
+        'all-users-must-reload-database-cancel-btn-label': 'Отказ'
     },
     'legal-entities-page': {
         'legal-entity-register-title': 'Достъп на юридически лица',
@@ -2874,6 +2880,7 @@
         'choose-old-permit-license-dialog-title': 'Избор на старо удостоверение, от което да се заредят уредите',
         'no-old-permit-licenses-for-this-ship-error': 'Няма стари удостоверения за избрания кораб',
         'no-old-permit-licenses-for-this-poundnet-error': 'Няма стари удостоверения за този далян',
+        'old-permit-license-register': 'Номер на старо удостоверение, от което са заредени уредите',
 
         'market-catch-data': 'Улов',
         'market-catch-info': 'Основна информация',
@@ -5531,6 +5538,12 @@
         'edit-auan-remove-witness': 'Премахни свидетел',
         'has-bulgarian-address-registration': 'Притежава българска адресна регистрация',
         'permanent-address-same-as-correspondence': 'Постоянният адрес съвпада с адреса за кореспонденция',
+        'inspected-entity-control-activity-for-last-year': 'През последната 1 година на лицето има съставени',
+        'auans': 'АУАН №',
+        'penal-decrees': 'НП №',
+        'agreements': 'споразумения №',
+        'warnings': 'предупреждения №',
+        'resolutions': 'резолюции №',
         'edit-witness-name': 'Имена',
         'edit-witness-date-of-birth': 'Дата на раждане',
 
@@ -6017,6 +6030,7 @@
         'print': 'Отпечатай',
         'save-print': 'Запази и отпечатай',
         'auan-penal-decrees-title': 'Свързани наказателни постановления, споразумения, предупреждения и резолюции',
+        'no-penal-points-for-this-document': 'За този тип постановление няма присъдени точки',
 
         'view-agreement': 'Преглед на споразумение',
         'edit-agreement': 'Редакция на споразумение',

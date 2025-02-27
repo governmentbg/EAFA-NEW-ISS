@@ -44,59 +44,67 @@
                        [showAddButton]="isInternalUser && canAddRecords"
                        [showInactiveRecordsLabel]="showInactiveUsersLabel"
                        (addButtonClicked)="createEditUser()">
-            <data-column columnName="{{ 'users-page.first-name' | tlTranslate }}" 
+            <div *ngIf="canAddMobileDevices" datatable-add-buttons fxLayout="row" fxLayoutGap="1em">
+                <button mat-raised-button
+                        color="primary"
+                        (tlDebounceClick)="reloadAllMobileDevicesAppDatabase()">
+                    <tl-icon icon="autorenew"></tl-icon>
+                    {{ 'users-page.reload-all-mobile-devices-app-database-btn' | tlTranslate }}
+                </button>
+            </div>
+            <data-column columnName="{{ 'users-page.first-name' | tlTranslate }}"
                          propertyName="firstName">
             </data-column>
-            <data-column columnName="{{ 'users-page.last-name' | tlTranslate }}" 
+            <data-column columnName="{{ 'users-page.last-name' | tlTranslate }}"
                          propertyName="lastName">
             </data-column>
-            <data-column columnName="{{ 'users-page.email' | tlTranslate }}" 
+            <data-column columnName="{{ 'users-page.email' | tlTranslate }}"
                          propertyName="email">
             </data-column>
-            <data-column columnName="{{ 'users-page.registration-date' | tlTranslate }}" 
-                         propertyName="registrationDate" 
+            <data-column columnName="{{ 'users-page.registration-date' | tlTranslate }}"
+                         propertyName="registrationDate"
                          dataType="date">
             </data-column>
-            <data-column columnName="{{ 'users-page.role' | tlTranslate }}" 
-                         propertyName="userRoles" 
+            <data-column columnName="{{ 'users-page.role' | tlTranslate }}"
+                         propertyName="userRoles"
                          [isSortable]="false">
             </data-column>
-            <data-column *ngIf="isInternalUser" 
-                         columnName="{{ 'users-page.mobile-devices' | tlTranslate }}" 
-                         propertyName="mobileDevices" 
+            <data-column *ngIf="isInternalUser"
+                         columnName="{{ 'users-page.mobile-devices' | tlTranslate }}"
+                         propertyName="mobileDevices"
                          [isSortable]="false">
             </data-column>
-            <data-template-column [cellClass]="'justify-center min-w-50'" 
-                                  [flexRate]="1.2" 
+            <data-template-column [cellClass]="'justify-center min-w-50'"
+                                  [flexRate]="1.2"
                                   [headerClass]="'multi-line justify-center'">
                 <ng-template let-row="row" ngx-datatable-cell-template>
                     <div fxLayout="row wrap" fxLayoutAlign="end center">
-                        <tl-icon-button *ngIf="row.isActive && isInternalUser && canAddMobileDevices" 
-                                        icon="smartphone" 
+                        <tl-icon-button *ngIf="row.isActive && isInternalUser && canAddMobileDevices"
+                                        icon="smartphone"
                                         (buttonClicked)="accessFromDeviceToMobileForUser(row)"
                                         iconClass="accent-color"
                                         tooltipText="{{ 'users-page.access-tooltip' | tlTranslate }}">
                         </tl-icon-button>
-                        <tl-icon-button icon="visibility" 
-                                        (buttonClicked)="showUserInfo(row.id)" 
+                        <tl-icon-button icon="visibility"
+                                        (buttonClicked)="showUserInfo(row.id)"
                                         iconClass="accent-color"
                                         tooltipText="{{ 'users-page.show-info-tooltip' | tlTranslate }}">
                         </tl-icon-button>
-                        <tl-icon-button *ngIf="row.isActive && canEditRecords" 
-                                        icon="edit" 
-                                        (buttonClicked)="createEditUser(row.id)" 
+                        <tl-icon-button *ngIf="row.isActive && canEditRecords"
+                                        icon="edit"
+                                        (buttonClicked)="createEditUser(row.id)"
                                         iconClass="accent-color"
                                         tooltipText="{{ 'users-page.edit-user-tooltip' | tlTranslate }}">
                         </tl-icon-button>
-                        <tl-icon-button *ngIf="row.isActive && canDeleteRecords" 
+                        <tl-icon-button *ngIf="row.isActive && canDeleteRecords"
                                         icon="delete"
-                                        (buttonClicked)="deactivateUser(row)" 
+                                        (buttonClicked)="deactivateUser(row)"
                                         iconClass="accent-color"
                                         tooltipText="{{ 'users-page.deactivate-user-tooltip' | tlTranslate }}">
                         </tl-icon-button>
-                        <tl-icon-button *ngIf="!row.isActive && canRestoreRecords" 
-                                        icon="restore" 
-                                        (buttonClicked)="restoreUser(row)" 
+                        <tl-icon-button *ngIf="!row.isActive && canRestoreRecords"
+                                        icon="restore"
+                                        (buttonClicked)="restoreUser(row)"
                                         iconClass="accent-color"
                                         tooltipText="{{ 'users-page.restore-user-tooltip' | tlTranslate }}">
                         </tl-icon-button>

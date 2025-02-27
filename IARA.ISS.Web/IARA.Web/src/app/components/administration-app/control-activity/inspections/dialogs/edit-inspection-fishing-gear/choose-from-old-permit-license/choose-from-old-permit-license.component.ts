@@ -5,6 +5,7 @@ import { DialogCloseCallback, IDialogComponent } from '@app/shared/components/di
 import { DialogWrapperData } from '@app/shared/components/dialog-wrapper/models/dialog-action-buttons.model';
 import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
 import { ChooseFromOldPermitLicenseDialogParamsModel } from '../../../models/choose-from-old-permit-license.model';
+import { InspectionPermitLicenseDTO } from '@app/models/generated/dtos/InspectionPermitLicenseDTO';
 
 @Component({
     selector: 'choose-from-old-permit-license',
@@ -16,7 +17,7 @@ export class ChooseFromOldPermitLicenseComponent implements IDialogComponent {
     public noPermitLicensesError: boolean = false;
     public isShip: boolean = false;
 
-    public permitLicenses: NomenclatureDTO<number>[] = [];
+    public permitLicenses: InspectionPermitLicenseDTO[] = [];
 
     public constructor() {
         this.form = this.buildForm();

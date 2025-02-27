@@ -41,6 +41,12 @@ export class InspectionCheckToolMarkDTO extends InspectionEditDTO {
     @StrictlyTyped(Number)
     public permitId?: number;
 
+    @StrictlyTyped(Number)
+    public permitLicenseRegisterId?: number;
+
+    @StrictlyTyped(Number)
+    public permitLicenseYear?: number;
+
     @StrictlyTyped(String)
     public unregisteredPermitNumber?: string;
 
