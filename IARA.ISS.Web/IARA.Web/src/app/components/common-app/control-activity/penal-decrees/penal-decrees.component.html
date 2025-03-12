@@ -212,6 +212,14 @@
                                           [penalDecreeId]="row.data.id"
                                           [recordsPerPage]="10">
                             </penal-points>
+
+                            <div fxFlexFill *ngIf="row.data.decreeType !== penalDecreeTypeEnum.PenalDecree && auanId !== null && auanId !== undefined">
+                                <div fxFlex="100" fxLayout="row">
+                                    <h2>
+                                        {{ 'penal-decrees.no-penal-points-for-this-document' | tlTranslate }}
+                                    </h2>
+                                </div>
+                            </div>
                         </div>
                     </ng-template>
                 </row-detail>

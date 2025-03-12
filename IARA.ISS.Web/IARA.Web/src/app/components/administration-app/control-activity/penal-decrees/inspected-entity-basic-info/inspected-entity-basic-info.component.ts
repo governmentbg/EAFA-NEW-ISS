@@ -13,6 +13,8 @@ import { RegixPersonDataDTO } from '@app/models/generated/dtos/RegixPersonDataDT
 import { AddressRegistrationDTO } from '@app/models/generated/dtos/AddressRegistrationDTO';
 import { CommonUtils } from '@app/shared/utils/common.utils';
 import { EgnUtils } from '@app/shared/utils/egn.utils';
+import { PenalDecreesService } from '@app/services/administration-app/penal-decrees.service';
+import { InspectedEntityControlActivityInfoDTO } from '@app/models/generated/dtos/InspectedEntityControlActivityInfoDTO';
 
 @Component({
     selector: 'inspected-entity-basic-info',
@@ -30,19 +32,25 @@ export class InspectedEntityBasicInfoComponent extends CustomFormControl<AuanIns
 
     public inspectedEntity: AuanInspectedEntityDTO | undefined;
     public inspectedEntityOptions: NomenclatureDTO<boolean>[] = [];
+    public inspectedEntityInfo: InspectedEntityControlActivityInfoDTO | undefined;
+    public hasInspexctedEntityInfo: boolean = false;
+    public inspectedEntityInfoTexts: string | undefined;
 
     public readonly companyHeadquartersType: AddressTypesEnum = AddressTypesEnum.COMPANY_HEADQUARTERS;
 
     private readonly translate: FuseTranslationLoaderService;
+    private readonly service: PenalDecreesService;
 
     public constructor(
         @Self() ngControl: NgControl,
         @Self() @Optional() validityChecker: ValidityCheckerDirective,
-        translate: FuseTranslationLoaderService
+        translate: FuseTranslationLoaderService,
+        service: PenalDecreesService
     ) {
         super(ngControl, true, validityChecker);
 
         this.translate = translate;
+        this.service = service;
 
         this.inspectedEntityOptions = [
             new NomenclatureDTO<boolean>({
@@ -65,6 +73,9 @@ export class InspectedEntityBasicInfoComponent extends CustomFormControl<AuanIns
     public ngAfterViewInit(): void {
         this.form.get('isInspectedEntityPersonControl')!.valueChanges.subscribe({
             next: (isPerson: NomenclatureDTO<boolean> | undefined) => {
+                this.hasInspexctedEntityInfo = false;
+                this.inspectedEntityInfoTexts = undefined;
+
                 if (isPerson !== undefined && isPerson !== null) {
                     this.form.get('personControl')!.clearValidators();
                     this.form.get('personAddressesControl')!.clearValidators();
@@ -135,6 +146,11 @@ export class InspectedEntityBasicInfoComponent extends CustomFormControl<AuanIns
                     this.form.get('legalAddressesControl')!.setValue(this.inspectedEntity.addresses);
                 }
             }
+           
+            if (value.inspectedEntityControlActivityInfo !== undefined && value.inspectedEntityControlActivityInfo !== null) {
+                this.buildInspectedEntityPreviousControlActivityData(value.inspectedEntityControlActivityInfo);
+                this.form.updateValueAndValidity({ emitEvent: false });
+            }
         }
         else {
             if (!this.isFromRegister) {
@@ -178,11 +194,31 @@ export class InspectedEntityBasicInfoComponent extends CustomFormControl<AuanIns
     public downloadedPersonData(person: PersonFullDataDTO): void {
         this.form.get('personControl')!.setValue(person.person);
         this.form.get('personAddressesControl')!.setValue(person.addresses);
+
+        if (!this.isAuan) {
+            if (person !== undefined && person !== null && person.person !== undefined && person.person !== null) {
+                this.service.getInspectedPersonControlActivityInfo(person.person.egnLnc!).subscribe({
+                    next: (data: InspectedEntityControlActivityInfoDTO) => {
+                        this.buildInspectedEntityPreviousControlActivityData(data);
+                    }
+                });
+            }
+        }
     }
 
     public downloadedLegalData(legal: LegalFullDataDTO): void {
         this.form.get('legalControl')!.setValue(legal.legal);
         this.form.get('legalAddressesControl')!.setValue(legal.addresses);
+
+        if (!this.isAuan) {
+            if (legal !== undefined && legal !== null && legal.legal !== undefined && legal.legal !== null) {
+                this.service.getInspectedLegalControlActivityInfo(legal.legal.eik!).subscribe({
+                    next: (data: InspectedEntityControlActivityInfoDTO) => {
+                        this.buildInspectedEntityPreviousControlActivityData(data);
+                    }
+                });
+            }
+        }
     }
 
     protected getValue(): AuanInspectedEntityDTO {
@@ -267,5 +303,50 @@ export class InspectedEntityBasicInfoComponent extends CustomFormControl<AuanIns
         }
 
         return false;
+    }
+
+    private buildInspectedEntityPreviousControlActivityData(inspectedEntityInfo: InspectedEntityControlActivityInfoDTO | undefined): void {
+        this.hasInspexctedEntityInfo = false;
+        this.inspectedEntityInfoTexts = undefined;
+        this.inspectedEntityInfo = inspectedEntityInfo;
+
+        if (inspectedEntityInfo !== undefined && inspectedEntityInfo !== null) {
+            this.hasInspexctedEntityInfo = !CommonUtils.isNullOrEmpty(inspectedEntityInfo.auanNumbers)
+                || !CommonUtils.isNullOrEmpty(inspectedEntityInfo.agreementNumbers)
+                || !CommonUtils.isNullOrEmpty(inspectedEntityInfo.warningNumbers)
+                || !CommonUtils.isNullOrEmpty(inspectedEntityInfo.resolutionNumbers)
+                || !CommonUtils.isNullOrEmpty(inspectedEntityInfo.penalDecreeNumbers);
+
+            if (this.hasInspexctedEntityInfo) {
+                let text: string = this.translate.getValue('auan-register.inspected-entity-control-activity-for-last-year');
+
+                if (!CommonUtils.isNullOrEmpty(inspectedEntityInfo.auanNumbers)) {
+                    const auansText: string = this.translate.getValue('auan-register.auans');
+                    text += ` ${auansText} ${inspectedEntityInfo.auanNumbers};`;
+                }
+
+                if (!CommonUtils.isNullOrEmpty(inspectedEntityInfo.penalDecreeNumbers)) {
+                    const penalDecreesText: string = this.translate.getValue('auan-register.penal-decrees');
+                    text += ` ${penalDecreesText} ${inspectedEntityInfo.penalDecreeNumbers};`;
+                }
+
+                if (!CommonUtils.isNullOrEmpty(inspectedEntityInfo.warningNumbers)) {
+                    const warningsText: string = this.translate.getValue('auan-register.warnings');
+                    text += ` ${warningsText} ${inspectedEntityInfo.warningNumbers};`;
+                }
+
+                if (!CommonUtils.isNullOrEmpty(inspectedEntityInfo.agreementNumbers)) {
+                    const agreementsText: string = this.translate.getValue('auan-register.agreements');
+                    text += ` ${agreementsText} ${inspectedEntityInfo.agreementNumbers};`;
+                }
+
+                if (!CommonUtils.isNullOrEmpty(inspectedEntityInfo.resolutionNumbers)) {
+                    const resolutionsText: string = this.translate.getValue('auan-register.resolutions');
+                    text += ` ${resolutionsText} ${inspectedEntityInfo.resolutionNumbers};`;
+                }
+
+                this.inspectedEntityInfoTexts = text;
+            }
+        }
     }
 }

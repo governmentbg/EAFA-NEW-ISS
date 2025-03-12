@@ -171,6 +171,7 @@
         'succ-deleted-user': 'Successfully deleted user',
         'succ-undo-delete-user': 'Successfull undo delete of user',
         'succ-updated-user-devices': 'Successfully updated user mobile devices',
+        'succ-updated-user-mobile-devices': 'All users must update the local database of every of their mobile devices',
         'succ-user-made-internal': 'The user is made internal',
         'succ-filed-in-application': 'Application filed in successfully',
         'succ-updated-appl-draft-content': 'Application draft contend updated successfully',
@@ -717,7 +718,12 @@
         'change-user-ok-btn-label': '',
         'change-user-cancel-btn-label': 'Cancel',
         'title': 'Title',
-        'at-least-one-role-needed-error': 'At least one role is needed'
+        'at-least-one-role-needed-error': 'At least one role is needed', 
+        'reload-all-mobile-devices-app-database-btn': 'Презареди базата на всички устройства',
+        'reload-all-user-mobile-devices-database-confirm-dialog-title': 'Изискване за презареждане на базата на всички устройства',
+        'all-users-mobile-devices-must-reload-local-database': 'Всички потребители ще трябва да обновят локалната база на всяко едно от устройствата си. Сигурни ли сте, че потвърждавате действието?',
+        'all-users-must-reload-database-ok-btn-label': 'Добре',
+        'all-users-must-reload-database-cancel-btn-label': 'Отказ'
     },
     'legal-entities-page': {
         'legal-entity-register-title': 'legal entity access',
@@ -2812,6 +2818,7 @@
         'choose-old-permit-license-dialog-title': 'Choose old permit license fishing gears',
         'no-old-permit-licenses-for-this-ship-error': 'There are no old permit licenses for this ship',
         'no-old-permit-licenses-for-this-poundnet-error': 'There are no old permit licenses for this poundnet',
+        'old-permit-license-register': 'Old permit license number',
 
         'market-catch-data': 'Catch',
         'market-catch-info': 'General info',
@@ -5468,6 +5475,12 @@
         'edit-auan-remove-witness': 'Remove witness',
         'has-bulgarian-address-registration': 'Has Bulgarian address registration',
         'permanent-address-same-as-correspondence': 'Permanent address is the same as the correspondence address',
+        'inspected-entity-control-activity-for-last-year': 'For last year the inspected entity has ',
+        'auans': 'AUAN #',
+        'penal-decrees': 'Penal decrees #',
+        'agreements': 'agreements #',
+        'warnings': 'warnings #',
+        'resolutions': 'resolutions #',
         'edit-witness-name': 'Name',
         'edit-witness-date-of-birth': 'Date of birth',
 
@@ -5954,6 +5967,7 @@
         'save-print': 'Save and print',
         'auan-penal-decrees-title': 'Penal decrees, agreements and warnings',
         'auan-num-already-exist-error': 'An AUAN with this number already exists',
+        'no-penal-points-for-this-document': 'There are no penal points for this type decree',
 
         'view-agreement': 'View agreement',
         'edit-agreement': 'Edit agreement',

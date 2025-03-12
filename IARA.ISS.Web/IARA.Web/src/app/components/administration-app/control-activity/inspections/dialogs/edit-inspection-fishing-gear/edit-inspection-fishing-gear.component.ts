@@ -31,6 +31,7 @@ import { ChooseFromOldPermitLicenseComponent } from './choose-from-old-permit-li
 import { ChooseFromOldPermitLicenseDialogParamsModel } from '../../models/choose-from-old-permit-license.model';
 import { HeaderCloseFunction } from '@app/shared/components/dialog-wrapper/interfaces/header-cancel-button.interface';
 import { InspectedFishingGearEnum } from '@app/enums/inspected-fishing-gear.enum';
+import { InspectionPermitLicenseDTO } from '@app/models/generated/dtos/InspectionPermitLicenseDTO';
 
 enum InspectionPermitTypeEnum {
     Registered,
@@ -49,6 +50,7 @@ export class EditInspectionFishingGearComponent extends BaseInspectionsComponent
     public isShip: boolean = true;
     public showPermitLicenseBtn: boolean = false;
     public otherRemarkReasonSelected: boolean = false;
+    public oldPermitLicenseSelected: boolean = false;
 
     public readonly inspectedTypes: NomenclatureDTO<InspectionSubjectEnum>[] = [];
     public readonly permitTypeControls: NomenclatureDTO<InspectionPermitTypeEnum>[] = [];
@@ -61,7 +63,7 @@ export class EditInspectionFishingGearComponent extends BaseInspectionsComponent
     public poundNets: NomenclatureDTO<number>[] = [];
     public markReasons: NomenclatureDTO<number>[] = [];
     public remarkReasons: NomenclatureDTO<number>[] = [];
-    public permits: NomenclatureDTO<number>[] = [];
+    public permits: InspectionPermitLicenseDTO[] = [];
     public countries: NomenclatureDTO<number>[] = [];
     public vesselTypes: NomenclatureDTO<number>[] = [];
     public ports: NomenclatureDTO<number>[] = [];
@@ -187,6 +189,8 @@ export class EditInspectionFishingGearComponent extends BaseInspectionsComponent
             next: (chosenPermitLicenseId: number | undefined) => {
                 if (chosenPermitLicenseId !== null && chosenPermitLicenseId !== undefined) {
                     this.selectedPermitIds = [chosenPermitLicenseId];
+                    this.oldPermitLicenseSelected = true;
+                    this.form.get('oldPermitLicenseRegisterControl')!.setValue(this.permits.find(x => x.value === chosenPermitLicenseId));
 
                     this.service.getPermitLicenseFishingGears(chosenPermitLicenseId).subscribe({
                         next: (fishingGears: FishingGearDTO[]) => {
@@ -223,7 +227,8 @@ export class EditInspectionFishingGearComponent extends BaseInspectionsComponent
             permitTypeControl: new FormControl(undefined, Validators.required),
             permitControl: new FormControl(undefined),
             unregisteredPermitControl: new FormControl(undefined, Validators.maxLength(50)),
-            unregisteredPermitYearControl: new FormControl(undefined)
+            unregisteredPermitYearControl: new FormControl(undefined),
+            oldPermitLicenseRegisterControl: new FormControl(undefined)
         });
 
         this.form.get('generalInfoControl')!.valueChanges.subscribe({
@@ -363,12 +368,14 @@ export class EditInspectionFishingGearComponent extends BaseInspectionsComponent
         this.model.inspectorComment = additionalInfo?.inspectorComment;
         this.model.violatedRegulations = additionalInfo?.violatedRegulations;
 
+        const isRegistered: boolean = this.form.controls.permitTypeControl.value?.value === InspectionPermitTypeEnum.Registered;
+
         this.model.port = this.form.get('portControl')!.value;
         this.model.checks = this.form.get('togglesControl')!.value;
         this.model.fishingGears = this.form.get('fishingGearsControl')!.value;
         this.model.checkReasonId = this.form.get('markReasonControl')!.value?.value;
         this.model.recheckReasonId = this.form.get('remarkReasonControl')!.value?.value;
-        this.model.permitId = this.form.controls.permitTypeControl.value?.value === InspectionPermitTypeEnum.Registered ? this.form.get('permitControl')!.value?.value : undefined;
+        this.model.permitId = isRegistered ? this.form.get('permitControl')!.value?.value : undefined;
         this.model.otherRecheckReason = this.form.get('otherRemarkReasonControl')!.value;
         this.model.unregisteredPermitNumber = this.form.get('unregisteredPermitControl')!.value;
         this.model.ownerComment = this.form.get('ownerCommentControl')!.value;
@@ -402,10 +409,22 @@ export class EditInspectionFishingGearComponent extends BaseInspectionsComponent
             this.model.poundNetId = this.form.get('dalyanControl')!.value?.value;
             this.model.inspectedShip = undefined;
         }
+
+        if (!isRegistered) {
+            const oldPermitLicenseId: number | undefined = this.form.get('oldPermitLicenseRegisterControl')!.value?.value;
+            
+            if (oldPermitLicenseId !== undefined && oldPermitLicenseId !== null) {
+                this.model.permitLicenseRegisterId = oldPermitLicenseId;
+                this.model.permitLicenseYear = this.permits.find(x => x.value === oldPermitLicenseId)?.validFrom?.getFullYear();
+            }
+        }
     }
 
     private onInspectedTypeChanged(value: NomenclatureDTO<InspectionSubjectEnum>): void {
         if (!this.isSaving) {
+            this.oldPermitLicenseSelected = false;
+            this.form.get('oldPermitLicenseRegisterControl')!.setValue(undefined);
+
             if (value !== null && value !== undefined) {
                 if (value.value === InspectionSubjectEnum.Ship) {
                     this.isShip = true;
@@ -476,7 +495,7 @@ export class EditInspectionFishingGearComponent extends BaseInspectionsComponent
             if (value !== undefined && value !== null) {
                 if (value.shipId !== undefined && value.shipId !== null && value.isRegistered) {
                     this.service.getShipPermitLicenses(value.shipId, true).subscribe({
-                        next: (permits: NomenclatureDTO<number>[]) => {
+                        next: (permits: InspectionPermitLicenseDTO[]) => {
                             if (permits !== null && permits !== undefined) {
                                 this.permits = permits;
 
@@ -485,6 +504,11 @@ export class EditInspectionFishingGearComponent extends BaseInspectionsComponent
 
                                 if (this.form.get('permitControl')!.value) {
                                     this.selectedPermitIds = [this.form.get('permitControl')!.value.value];
+                                }
+
+                                if (this.model.permitLicenseRegisterId !== undefined && this.model.permitLicenseRegisterId !== null) {
+                                    this.oldPermitLicenseSelected = true;
+                                    this.form.get('oldPermitLicenseRegisterControl')!.setValue(permits.find(x => x.value === this.model.permitLicenseRegisterId));
                                 }
                             }
                             else {
@@ -518,7 +542,7 @@ export class EditInspectionFishingGearComponent extends BaseInspectionsComponent
         if (!this.isSaving) {
             if (value?.value !== null && value?.value !== undefined) {
                 this.service.getPoundNetPermitLicenses(value.value!).subscribe({
-                    next: (permits: NomenclatureDTO<number>[]) => {
+                    next: (permits: InspectionPermitLicenseDTO[]) => {
                         if (permits !== null && permits !== undefined) {
                             this.permits = permits;
                             this.selectedPermitIds = [value.value!];
@@ -528,6 +552,11 @@ export class EditInspectionFishingGearComponent extends BaseInspectionsComponent
 
                             if (this.form.get('permitControl')!.value) {
                                 this.selectedPermitIds = [this.form.get('permitControl')!.value.value];
+                            }
+
+                            if (this.model.permitLicenseRegisterId !== undefined && this.model.permitLicenseRegisterId !== null) {
+                                this.oldPermitLicenseSelected = true;
+                                this.form.get('oldPermitLicenseRegisterControl')!.setValue(permits.find(x => x.value === this.model.permitLicenseRegisterId));
                             }
                         }
                         else {
@@ -639,6 +668,8 @@ export class EditInspectionFishingGearComponent extends BaseInspectionsComponent
     private onPermitTypeChanged(type: NomenclatureDTO<InspectionPermitTypeEnum>): void {
         if (!this.form.disabled) {
             this.showPermitLicenseBtn = false;
+            this.oldPermitLicenseSelected = false;
+            this.form.get('oldPermitLicenseRegisterControl')!.setValue(undefined);
 
             if (type?.value === InspectionPermitTypeEnum.Registered) {
                 this.form.get('permitControl')!.enable();

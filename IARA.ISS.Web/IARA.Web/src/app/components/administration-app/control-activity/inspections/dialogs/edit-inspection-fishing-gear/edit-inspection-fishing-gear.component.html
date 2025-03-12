@@ -139,6 +139,21 @@
                 </tl-date-year>
             </div>
 
+            <div *ngIf="oldPermitLicenseSelected"
+                 fxLayout="row"
+                 fxLayoutGap="1em"
+                 fxLayoutAlign="start center">
+                <tl-autocomplete fxFlex="50"
+                                 formControlName="oldPermitLicenseRegisterControl"
+                                 [options]="permits"
+                                 [readonly]="true"
+                                 label="{{ 'inspections.old-permit-license-register' | tlTranslate }}"
+                                 tooltipResourceName="inspections.old-permit-license-register-helper">
+                </tl-autocomplete>
+
+                <div fxFlex="50"></div>
+            </div>
+
             <inspected-fishing-gears-table formControlName="fishingGearsControl"
                                            [permitIds]="selectedPermitIds"
                                            [filterTypes]="!isShip"
@@ -151,7 +166,7 @@
                                     [toggles]="toggles">
             </inspection-toggle-list>
         </div>
-    </tl-expansion-panel>
+</tl-expansion-panel>
 
     <!-- Допълнителна информация -->
     <inspection-additional-info formControlName="additionalInfoControl"

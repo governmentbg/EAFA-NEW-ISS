@@ -5,7 +5,8 @@ import { NomenclatureDTO } from './GenericNomenclatureDTO';
 import { RegixPersonDataDTO } from './RegixPersonDataDTO';
 import { RegixLegalDataDTO } from './RegixLegalDataDTO';
 import { UnregisteredPersonDTO } from './UnregisteredPersonDTO';
-import { AddressRegistrationDTO } from './AddressRegistrationDTO'; 
+import { AddressRegistrationDTO } from './AddressRegistrationDTO';
+import { InspectedEntityControlActivityInfoDTO } from './InspectedEntityControlActivityInfoDTO'; 
 
 export class AuanInspectedEntityDTO extends NomenclatureDTO<number> {
     public constructor(obj?: Partial<AuanInspectedEntityDTO>) {
@@ -41,4 +42,7 @@ export class AuanInspectedEntityDTO extends NomenclatureDTO<number> {
 
     @StrictlyTyped(AddressRegistrationDTO)
     public addresses?: AddressRegistrationDTO[];
+
+    @StrictlyTyped(InspectedEntityControlActivityInfoDTO)
+    public inspectedEntityControlActivityInfo?: InspectedEntityControlActivityInfoDTO;
 }

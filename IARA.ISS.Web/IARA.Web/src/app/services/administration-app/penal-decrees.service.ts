@@ -28,6 +28,8 @@ import { IInspDeliveryService } from '@app/interfaces/administration-app/insp-de
 import { AuanDeliveryDataDTO } from '@app/models/generated/dtos/AuanDeliveryDataDTO';
 import { InspectorUserNomenclatureDTO } from '@app/models/generated/dtos/InspectorUserNomenclatureDTO';
 import { AuanStatusEnum } from '@app/enums/auan-status.enum';
+import { InspectedEntityControlActivityInfoDTO } from '@app/models/generated/dtos/InspectedEntityControlActivityInfoDTO';
+import { EgnLncDTO } from '@app/models/generated/dtos/EgnLncDTO';
 
 @Injectable({
     providedIn: 'root'
@@ -182,6 +184,26 @@ export class PenalDecreesService extends BaseAuditService implements IPenalDecre
             properties: new RequestProperties({
                 asFormData: true
             })
+        });
+    }
+
+    public getInspectedPersonControlActivityInfo(egnLnc: EgnLncDTO): Observable<InspectedEntityControlActivityInfoDTO> {
+        const params = new HttpParams()
+            .append('egnLnc', egnLnc.egnLnc!.toString())
+            .append('dentifierType', egnLnc.identifierType!.toString());
+
+        return this.requestService.get(this.area, this.controller, 'GetInspectedPersonControlActivityInfo', {
+            httpParams: params,
+            responseTypeCtr: InspectedEntityControlActivityInfoDTO
+        });
+    }
+
+    public getInspectedLegalControlActivityInfo(eik: string): Observable<InspectedEntityControlActivityInfoDTO> {
+        const params = new HttpParams().append('eik', eik.toString());
+
+        return this.requestService.get(this.area, this.controller, 'GetInspectedLegalControlActivityInfo', {
+            httpParams: params,
+            responseTypeCtr: InspectedEntityControlActivityInfoDTO
         });
     }
 

@@ -12,6 +12,12 @@ namespace IARA.Mobile.Insp.Application.DTObjects.Inspections
         public string OtherRecheckReason { get; set; }
         public string OwnerComment { get; set; }
 
+
+        public int? PermitLicenseRegisterId { get; set; }
+
+        public int? PermitLicenseYear { get; set; }
+
+
         public int? PermitId { get; set; }
         public string UnregisteredPermitNumber { get; set; }
         public int? UnregisteredPermitYear { get; set; }

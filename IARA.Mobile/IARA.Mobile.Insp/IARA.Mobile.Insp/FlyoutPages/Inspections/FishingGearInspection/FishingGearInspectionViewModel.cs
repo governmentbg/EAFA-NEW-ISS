@@ -50,6 +50,8 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FishingGearInspection
         private SelectNomenclatureDto _permitType;
         private List<SelectNomenclatureDto> _checkReasons;
         private List<SelectNomenclatureDto> _recheckReasons;
+        private int? chosenOldPermit = null;
+        private int? chosenOldPermitYear = null;
 
         public FishingGearInspectionViewModel()
         {
@@ -290,6 +292,8 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FishingGearInspection
 
             if (Edit != null)
             {
+                chosenOldPermit = Edit.PermitLicenseRegisterId;
+                chosenOldPermitYear = Edit.PermitLicenseYear;
                 List<SelectNomenclatureDto> fileTypes = nomTransaction.GetFileTypes();
 
                 await InspectionGeneralInfo.OnEdit(Edit);
@@ -430,6 +434,8 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FishingGearInspection
 
             if (permit != null)
             {
+                chosenOldPermit = permit.Id;
+                chosenOldPermitYear = permit.From.Year;
                 OnPermitChosen(permit, false);
             }
             else
@@ -456,6 +462,8 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FishingGearInspection
             Permit.Value = null;
             PermitNumber.Value = "";
             PermitYear.Value = "";
+            chosenOldPermit = null;
+            chosenOldPermitYear = null;
         }
 
         private void OnFishingGearTypeSwitched()
@@ -463,6 +471,10 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FishingGearInspection
             Owner.Person.Value = null;
             Owner.People = new List<ShipPersonnelDto>();
             Permit.Value = null;
+            PermitNumber.Value = "";
+            PermitYear.Value = "";
+            chosenOldPermit = null;
+            chosenOldPermitYear = null;
             Permit.ItemsSource.Clear();
             FishingGears.FishingGears.Value.Clear();
         }
@@ -476,7 +488,12 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FishingGearInspection
                 return Task.CompletedTask;
             }
 
+            PermitNumber.Value = "";
+            PermitYear.Value = "";
+            chosenOldPermit = null;
+            chosenOldPermitYear = null;
             Permit.Value = null;
+            FishingGears.FishingGears.Value.Clear();
             Permit.GetMore = (int page, int pageSize, string search) =>
                 NomenclaturesTransaction.GetPermits(nomenclatureDto.Uid, page, pageSize, search);
             Permit.ItemsSource.ReplaceRange(
@@ -507,6 +524,12 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FishingGearInspection
 
         private void OnPoundNetChosen(SelectNomenclatureDto nomenclatureDto)
         {
+            PermitNumber.Value = "";
+            PermitYear.Value = "";
+            chosenOldPermit = null;
+            chosenOldPermitYear = null;
+            Permit.Value = null;
+            FishingGears.FishingGears.Value.Clear();
             Permit.Value = null;
             Permit.GetMore = (int page, int pageSize, string search) =>
                 NomenclaturesTransaction.GetPoundNetPermits(nomenclatureDto.Id, page, pageSize, search);
@@ -595,6 +618,7 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FishingGearInspection
             }
             else
             {
+                fishingGears.ForEach(x => x.Id = null);
                 models = fishingGears.ConvertAll(f => new FishingGearModel
                 {
                     Count = f.Count,
@@ -673,6 +697,8 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FishingGearInspection
                         {
                             AdditionalInfo.ObservationsOrViolations,
                         }.Where(f => !string.IsNullOrWhiteSpace(f.Text)).ToList(),
+                        PermitLicenseRegisterId = chosenOldPermit,
+                        PermitLicenseYear = chosenOldPermitYear,
                         ViolatedRegulations = AdditionalInfo.ViolatedRegulations.ViolatedRegulations.Value.Select(x => (AuanViolatedRegulationDto)x).ToList(),
                         IsActive = true,
                     };

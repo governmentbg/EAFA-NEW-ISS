@@ -72,4 +72,8 @@
             </address-registration>
         </div>
     </div>
+
+    <mat-hint fxFlex="100" fxLayout="column" *ngIf="hasInspexctedEntityInfo && inspectedEntityInfoTexts !== undefined && inspectedEntityInfoTexts !== null" class="warn-orange-color">
+        {{ inspectedEntityInfoTexts }}
+    </mat-hint>
 </div>

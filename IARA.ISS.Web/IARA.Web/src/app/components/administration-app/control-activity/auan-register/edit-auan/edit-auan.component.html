@@ -113,6 +113,7 @@
             <inspected-entity-basic-info *ngIf="showInspectedEntity || isFromThirdPartyInspection"
                                          formControlName="inspectedEntityBasicInfoControl"
                                          validityChecker
+                                         [isAuan]="true"
                                          [isFromRegister]="viewMode"
                                          [isIdReadOnly]="viewMode">
             </inspected-entity-basic-info>

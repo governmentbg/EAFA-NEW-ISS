@@ -39,7 +39,7 @@ namespace IARA.Mobile.Insp.Infrastructure
             builder.AddUrl(Environments.DEVELOPMENT_INTERNAL, "https://172.31.12.168/api/");
             builder.AddExternalUrl(Environments.DEVELOPMENT_INTERNAL, "IARA_IDENTITY", "https://172.31.12.168/identity");
 
-            builder.AddUrl(Environments.DEVELOPMENT_LOCAL, "http://172.31.5.143:5000/api/");
+            builder.AddUrl(Environments.DEVELOPMENT_LOCAL, "http://172.31.5.147:5000/api/");
             builder.AddExternalUrl(Environments.DEVELOPMENT_LOCAL, "IARA_IDENTITY", "https://iara-iss.egov.bg/identity");
 
             builder.AddExtension("Services", "Mobile/Administrative/");

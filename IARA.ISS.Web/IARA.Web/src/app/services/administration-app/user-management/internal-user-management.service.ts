@@ -48,7 +48,7 @@ export class InternalUserManagementService extends BaseUserManagementService imp
         return this.requestService.get(this.area, this.controller, 'GetUserMobileDevices', {
             httpParams: params,
             responseTypeCtr: MobileDeviceDTO
-        })
+        });
     }
 
     public add(user: InternalUserDTO): Observable<void> {
@@ -69,6 +69,12 @@ export class InternalUserManagementService extends BaseUserManagementService imp
     public edit(user: InternalUserDTO): Observable<void> {
         return this.requestService.put(this.area, this.controller, 'EditInternalUser', user, {
             successMessage: 'succ-updated-user'
+        });
+    }
+
+    public reloadAllMobileDevicesAppDatabase(): Observable<void> {
+        return this.requestService.post(this.area, this.controller, 'ReloadAllMobileDevicesAppDatabase', {
+            successMessage: 'succ-updated-user-mobile-devices'
         });
     }
 }
