@@ -2921,6 +2921,9 @@
         'add-catch-ship-dialog-title': 'Add ship',
         'edit-catch-ship-dialog-title': 'Edit ship',
         'view-catch-ship-dialog-title': 'Review ship',
+        'inspected-catch-count': 'count',
+        'inspected-catch-kg': 'kg',
+        'discarded-catch-kg': 'kg discarded',
 
         'inspected-entity-email': 'Email',
         'inspected-entity-send-email': 'Send email',
@@ -3602,6 +3605,7 @@
         'parameters-table-parameter-error-message': 'Error message',
         'parameters-table-parameter-order-number': 'Order number',
         'parameters-table-parameter-is-required': 'Required',
+        'cannot-add-same-report-parameter-error': 'You cannot add the same parameter more than once',
 
         'dialog-parameter-nparameter': 'Parameter',
         'dialog-parameter-is-required': 'Required',
@@ -4508,6 +4512,7 @@
         'ship-log-book-page-water-type': 'Water type',
         'ship-page-catch-record-quantity-sums': 'Quantities: ',
         'ship-page-declaration-kg': 'kg',
+        'ship-page-discarded-kg': 'discarded kg',
         'ship-page-declaration-count': 'count',
         'end-date-should-be-different-from-start-date': 'Trip end date should be different from trip start date',
 
@@ -6198,6 +6203,7 @@
 
         'edit-decree-agreement-fines': 'Fine',
         'edit-agreement-fine': 'Fine',
+        'edit-compensation-amount': 'Compensation amount',
         'edit-agreement-fine-percent': '70% of fine',
         'edit-warning-sanctions': 'Property confiscation',
         'edit-resolution-sanctions': 'Property confiscation',

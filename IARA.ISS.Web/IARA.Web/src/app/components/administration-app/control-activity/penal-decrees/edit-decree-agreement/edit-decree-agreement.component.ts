@@ -32,6 +32,8 @@ import { SystemPropertiesDTO } from '@app/models/generated/dtos/SystemProperties
 import { SystemParametersService } from '@app/services/common-app/system-parameters.service';
 import { DateUtils } from '@app/shared/utils/date.utils';
 import { DateDifference } from '@app/models/common/date-difference.model';
+import { Moment } from 'moment';
+import moment from 'moment';
 
 @Component({
     selector: 'edit-decree-agreement',
@@ -213,9 +215,9 @@ export class EditDecreeAgreementComponent implements OnInit, AfterViewInit, IDia
 
             // Номерата на постановленията се генерират автоматично от 01.01.2025 г., тези на създадените преди това може да се редактират
             this.form.get('issueDateControl')!.valueChanges.subscribe({
-                next: (value: Date | undefined) => {
+                next: (value: Moment | null | undefined) => {
                     if (value !== undefined && value !== null) {
-                        if (value > PenalDecreeUtils.AUTO_GENERATE_NUMBER_AFTER_DATE) {
+                        if (value.toDate() > PenalDecreeUtils.AUTO_GENERATE_NUMBER_AFTER_DATE) {
                             if (this.isAdding) {
                                 this.form.get('decreeNumControl')!.setValue(undefined);
                             }
@@ -542,7 +544,7 @@ export class EditDecreeAgreementComponent implements OnInit, AfterViewInit, IDia
                 return null;
             }
 
-            const startDate: Date = control.value;
+            const startDate: Date = (moment(control.value)).toDate();
             const now: Date = new Date();
 
             const difference: DateDifference | undefined = DateUtils.getDateDifference(startDate, now);

@@ -239,10 +239,13 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
 
         private async Task ChangeReportNumber(InspectorModel inspector)
         {
-            InspectorInfoDto info = InspectionsTransaction.GetInspectorInfo(inspector.Dto.InspectorId.Value);
-            string nextReportNum = await InspectionsTransaction.GetNextReportNumber(inspector.Dto.UserId.Value);
+            if (inspector.Dto != null && inspector.Dto.UserId != null)
+            {
+                InspectorInfoDto info = InspectionsTransaction.GetInspectorInfo(inspector.Dto.InspectorId.Value);
+                string nextReportNum = await InspectionsTransaction.GetNextReportNumber(inspector.Dto.UserId.Value);
 
-            GeneralInfo.ChangeReportNum(info.TerritoryCode, info.CardNum, nextReportNum);
+                GeneralInfo.ChangeReportNum(info.TerritoryCode, info.CardNum, nextReportNum);
+            }
         }
 
         public static implicit operator List<InspectorDuringInspectionDto>(InspectorsViewModel viewModel)

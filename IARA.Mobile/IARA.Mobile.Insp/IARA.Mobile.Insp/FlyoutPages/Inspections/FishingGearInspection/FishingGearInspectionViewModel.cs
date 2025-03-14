@@ -294,6 +294,9 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FishingGearInspection
             {
                 chosenOldPermit = Edit.PermitLicenseRegisterId;
                 chosenOldPermitYear = Edit.PermitLicenseYear;
+                PermitNumber.AssignFrom(Edit.UnregisteredPermitNumber);
+                PermitYear.AssignFrom(Edit.PermitLicenseYear);
+
                 List<SelectNomenclatureDto> fileTypes = nomTransaction.GetFileTypes();
 
                 await InspectionGeneralInfo.OnEdit(Edit);
@@ -618,7 +621,13 @@ namespace IARA.Mobile.Insp.FlyoutPages.Inspections.FishingGearInspection
             }
             else
             {
-                fishingGears.ForEach(x => x.Id = null);
+                if (Edit == null)
+                {
+                    fishingGears.ForEach(x => x.Id = null);
+                }
+
+                fishingGears.ForEach(x => x.Marks.ForEach(m => m.IsActive = true));
+
                 models = fishingGears.ConvertAll(f => new FishingGearModel
                 {
                     Count = f.Count,

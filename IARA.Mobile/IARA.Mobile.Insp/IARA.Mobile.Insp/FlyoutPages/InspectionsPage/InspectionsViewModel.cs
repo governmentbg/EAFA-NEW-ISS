@@ -31,6 +31,7 @@ using IARA.Mobile.Shared.Menu;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -317,13 +318,22 @@ namespace IARA.Mobile.Insp.FlyoutPages.InspectionsPage
             }
             else
             {
-                viewActivity = dto.SubmitType == SubmitType.Finish || !dto.CreatedByCurrentUser
+                viewActivity = dto.SubmitType == SubmitType.Finish || !IsCurrentUserCoInspector(dto)
                 ? ViewActivityType.Review
                 : ViewActivityType.Edit;
             }
 
 
             await ForInspectionType(dto, viewActivity);
+        }
+
+        private bool IsCurrentUserCoInspector(InspectionDto dto)
+        {
+            string[] ids = dto.InspectorsIds.Replace(", ", ",").Split(',');
+
+            string currentInspectorId = InspectionsTransaction.GetInspectorByUserId(CurrentUser.Id).InspectorId.ToString();
+
+            return ids.Contains(currentInspectorId);
         }
 
         private Task ForInspectionType(InspectionDto dto, ViewActivityType viewActivity)

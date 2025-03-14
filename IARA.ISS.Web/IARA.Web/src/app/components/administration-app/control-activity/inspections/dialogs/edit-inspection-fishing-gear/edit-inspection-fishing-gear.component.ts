@@ -48,6 +48,7 @@ export class EditInspectionFishingGearComponent extends BaseInspectionsComponent
     public toggles: InspectionCheckModel[] = [];
 
     public isShip: boolean = true;
+    public isPermitLicenseRegistered: boolean = false;
     public showPermitLicenseBtn: boolean = false;
     public otherRemarkReasonSelected: boolean = false;
     public oldPermitLicenseSelected: boolean = false;
@@ -348,8 +349,11 @@ export class EditInspectionFishingGearComponent extends BaseInspectionsComponent
             this.form.get('markReasonControl')!.setValue(this.markReasons.find(x => x.value === this.model.checkReasonId));
             this.form.get('otherRemarkReasonControl')!.setValue(this.model.otherRecheckReason);
             this.form.get('ownerCommentControl')!.setValue(this.model.ownerComment);
-            this.form.get('fishingGearsControl')!.setValue(this.model.fishingGears);
             this.form.get('filesControl')!.setValue(this.model.files);
+
+            setTimeout(() => {
+                this.form.get('fishingGearsControl')!.setValue(this.model.fishingGears);
+            });
         }
     }
 
@@ -412,7 +416,7 @@ export class EditInspectionFishingGearComponent extends BaseInspectionsComponent
 
         if (!isRegistered) {
             const oldPermitLicenseId: number | undefined = this.form.get('oldPermitLicenseRegisterControl')!.value?.value;
-            
+
             if (oldPermitLicenseId !== undefined && oldPermitLicenseId !== null) {
                 this.model.permitLicenseRegisterId = oldPermitLicenseId;
                 this.model.permitLicenseYear = this.permits.find(x => x.value === oldPermitLicenseId)?.validFrom?.getFullYear();
@@ -486,12 +490,6 @@ export class EditInspectionFishingGearComponent extends BaseInspectionsComponent
 
     private getPermitLicensesByInspectedShip(value: VesselDuringInspectionDTO): void {
         if (!this.isSaving) {
-            this.selectedPermitIds = [];
-            this.owners = [];
-            this.form.get('fishingGearsControl')!.setValue([]);
-            this.form.get('permitControl')!.setValue(null);
-            this.form.get('shipOwnerControl')!.setValue(null);
-
             if (value !== undefined && value !== null) {
                 if (value.shipId !== undefined && value.shipId !== null && value.isRegistered) {
                     this.service.getShipPermitLicenses(value.shipId, true).subscribe({
@@ -500,7 +498,6 @@ export class EditInspectionFishingGearComponent extends BaseInspectionsComponent
                                 this.permits = permits;
 
                                 this.form.get('permitControl')!.setValue(permits.find(x => x.value === this.model.permitId));
-                                this.form.get('fishingGearsControl')!.setValue(this.model.fishingGears);
 
                                 if (this.form.get('permitControl')!.value) {
                                     this.selectedPermitIds = [this.form.get('permitControl')!.value.value];
@@ -535,6 +532,13 @@ export class EditInspectionFishingGearComponent extends BaseInspectionsComponent
                     }
                 }
             }
+            else if (this.isShip) {
+                this.selectedPermitIds = [];
+                this.owners = [];
+                this.form.get('fishingGearsControl')!.setValue([]);
+                this.form.get('permitControl')!.setValue(null);
+                this.form.get('shipOwnerControl')!.setValue(null);
+            }
         }
     }
 
@@ -548,7 +552,6 @@ export class EditInspectionFishingGearComponent extends BaseInspectionsComponent
                             this.selectedPermitIds = [value.value!];
 
                             this.form.get('permitControl')!.setValue(permits.find(x => x.value === this.model.permitId));
-                            this.form.get('fishingGearsControl')!.setValue(this.model.fishingGears);
 
                             if (this.form.get('permitControl')!.value) {
                                 this.selectedPermitIds = [this.form.get('permitControl')!.value.value];
@@ -566,94 +569,95 @@ export class EditInspectionFishingGearComponent extends BaseInspectionsComponent
                     }
                 });
             }
-            else {
+            else if (!this.isShip) {
                 this.permits = [];
                 this.selectedPermitIds = [];
+                this.form.get('fishingGearsControl')!.setValue([]);
+                this.form.get('permitControl')!.setValue(null);
             }
-
-            this.form.get('fishingGearsControl')!.setValue([]);
-            this.form.get('permitControl')!.setValue(null);
         }
     }
 
     private onPermitChanged(value: NomenclatureDTO<number> | undefined): void {
-        if (!this.isSaving) {
+        if (!this.isSaving && this.isPermitLicenseRegistered) {
             if (value !== null && value !== undefined) {
-                if (this.isShip) {
-                    const shipId: number | undefined = this.form.get('shipControl')!.value.shipId;
+                if (value.value !== this.model?.permitId) {
+                    if (this.isShip) {
+                        const shipId: number | undefined = this.form.get('shipControl')!.value.shipId;
 
-                    if (shipId !== null && shipId !== undefined) {
-                        const existingGears: FishingGearDTO[] | undefined = this.shipGears.get(shipId);
+                        if (shipId !== null && shipId !== undefined) {
+                            const existingGears: FishingGearDTO[] | undefined = this.shipGears.get(shipId);
 
-                        if (existingGears !== undefined) {
-                            this.form.get('fishingGearsControl')!.setValue(
-                                existingGears.map(x => new InspectedFishingGearDTO({
-                                    permittedFishingGear: x
-                                }))
-                            );
+                            if (existingGears !== undefined && existingGears !== null && existingGears.length > 0) {
+                                this.form.get('fishingGearsControl')!.setValue(
+                                    existingGears.map(x => new InspectedFishingGearDTO({
+                                        permittedFishingGear: x
+                                    }))
+                                );
 
-                            this.selectedPermitIds = [value.value!];
-                        }
-                        else {
-                            this.shipGears.set(shipId, []);
+                                this.selectedPermitIds = [value.value!];
+                            }
+                            else {
+                                this.shipGears.set(shipId, []);
 
-                            this.service.getShipFishingGears(shipId).subscribe({
-                                next: (fishingGears: FishingGearDTO[]) => {
-                                    this.shipGears.set(shipId, fishingGears ?? []);
+                                this.service.getShipFishingGears(shipId).subscribe({
+                                    next: (fishingGears: FishingGearDTO[]) => {
+                                        this.shipGears.set(shipId, fishingGears ?? []);
+                                        
+                                        if (fishingGears !== null && fishingGears !== undefined && fishingGears.length > 0) {
+                                            this.form.get('fishingGearsControl')!.setValue(
+                                                fishingGears.map(x => new InspectedFishingGearDTO({
+                                                    permittedFishingGear: x
+                                                }))
+                                            );
 
-                                    if (fishingGears !== null && fishingGears !== undefined) {
-                                        this.form.get('fishingGearsControl')!.setValue(
-                                            fishingGears.map(x => new InspectedFishingGearDTO({
-                                                permittedFishingGear: x
-                                            }))
-                                        );
-
-                                        this.selectedPermitIds = [value.value!];
+                                            this.selectedPermitIds = [value.value!];
+                                        }
+                                        else {
+                                            this.form.get('fishingGearsControl')!.setValue([]);
+                                        }
                                     }
-                                    else {
-                                        this.form.get('fishingGearsControl')!.setValue([]);
-                                    }
-                                }
-                            });
+                                });
+                            }
                         }
                     }
-                }
-                else {
-                    const poundNetId: number | undefined = this.form.get('dalyanControl')!.value.value;
+                    else {
+                        const poundNetId: number | undefined = this.form.get('dalyanControl')!.value.value;
 
-                    if (poundNetId !== null && poundNetId !== undefined) {
-                        const existingGears: FishingGearDTO[] | undefined = this.poundNetGears.get(poundNetId);
+                        if (poundNetId !== null && poundNetId !== undefined) {
+                            const existingGears: FishingGearDTO[] | undefined = this.poundNetGears.get(poundNetId);
 
-                        if (existingGears !== undefined) {
-                            this.form.get('fishingGearsControl')!.setValue(
-                                existingGears.map(x => new InspectedFishingGearDTO({
-                                    permittedFishingGear: x
-                                }))
-                            );
+                            if (existingGears !== undefined && existingGears !== undefined && existingGears.length > 0) {
+                                this.form.get('fishingGearsControl')!.setValue(
+                                    existingGears.map(x => new InspectedFishingGearDTO({
+                                        permittedFishingGear: x
+                                    }))
+                                );
 
-                            this.selectedPermitIds = [value.value!];
-                        }
-                        else {
-                            this.poundNetGears.set(poundNetId, []);
+                                this.selectedPermitIds = [value.value!];
+                            }
+                            else {
+                                this.poundNetGears.set(poundNetId, []);
 
-                            this.service.getPoundNetFishingGears(poundNetId).subscribe({
-                                next: (fishingGears: FishingGearDTO[]) => {
-                                    this.poundNetGears.set(poundNetId, fishingGears ?? []);
+                                this.service.getPoundNetFishingGears(poundNetId).subscribe({
+                                    next: (fishingGears: FishingGearDTO[]) => {
+                                        this.poundNetGears.set(poundNetId, fishingGears ?? []);
 
-                                    if (fishingGears !== null && fishingGears !== undefined) {
-                                        this.form.get('fishingGearsControl')!.setValue(
-                                            fishingGears.map(x => new InspectedFishingGearDTO({
-                                                permittedFishingGear: x
-                                            }))
-                                        );
+                                        if (fishingGears !== null && fishingGears !== undefined && fishingGears.length > 0) {
+                                            this.form.get('fishingGearsControl')!.setValue(
+                                                fishingGears.map(x => new InspectedFishingGearDTO({
+                                                    permittedFishingGear: x
+                                                }))
+                                            );
 
-                                        this.selectedPermitIds = [value.value!];
+                                            this.selectedPermitIds = [value.value!];
+                                        }
+                                        else {
+                                            this.form.get('fishingGearsControl')!.setValue([]);
+                                        }
                                     }
-                                    else {
-                                        this.form.get('fishingGearsControl')!.setValue([]);
-                                    }
-                                }
-                            });
+                                });
+                            }
                         }
                     }
                 }
@@ -672,6 +676,8 @@ export class EditInspectionFishingGearComponent extends BaseInspectionsComponent
             this.form.get('oldPermitLicenseRegisterControl')!.setValue(undefined);
 
             if (type?.value === InspectionPermitTypeEnum.Registered) {
+                this.isPermitLicenseRegistered = true;
+
                 this.form.get('permitControl')!.enable();
                 this.form.get('permitControl')!.setValidators([Validators.required, this.noPermitLicensesValidator()]);
                 this.form.get('permitControl')!.markAsPending();
@@ -683,6 +689,7 @@ export class EditInspectionFishingGearComponent extends BaseInspectionsComponent
                 this.form.get('unregisteredPermitYearControl')!.disable();
             }
             else if (type?.value === InspectionPermitTypeEnum.Unregistered) {
+                this.isPermitLicenseRegistered = false;
                 this.showPermitLicenseBtn = true;
 
                 this.form.get('permitControl')!.setValue(undefined);
@@ -691,7 +698,7 @@ export class EditInspectionFishingGearComponent extends BaseInspectionsComponent
                 this.form.get('unregisteredPermitControl')!.enable();
                 this.form.get('unregisteredPermitYearControl')!.enable();
 
-                this.form.get('unregisteredPermitControl')!.setValidators([Validators.required, Validators.maxLength(50)]);
+                this.form.get('unregisteredPermitControl')!.setValidators(Validators.maxLength(50));
                 this.form.get('unregisteredPermitYearControl')!.setValidators(Validators.required);
                 this.form.get('unregisteredPermitControl')!.markAsPending();
                 this.form.get('unregisteredPermitYearControl')!.markAsPending();

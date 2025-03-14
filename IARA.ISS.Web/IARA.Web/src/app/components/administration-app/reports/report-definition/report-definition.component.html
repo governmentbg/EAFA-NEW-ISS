@@ -195,67 +195,73 @@
         <!-- Параметри -->
         <tl-expansion-panel title=" {{ 'report-definition.parameters-title' | tlTranslate }}"
                             tooltipResourceName="report-definition.parameters-title-helper">
-            <tl-data-table #parametersTable
-                           [showAddButton]="!viewMode"
-                           (addButtonClicked)="addOrEditParameter()"
-                           (activeRecordChanged)="addOrEditParameter($event)"
-                           [rows]="parameters"
-                           [isRemote]="false"
-                           [isSoftDeletable]="true">
-                <data-column [flexRate]="0.3"
-                             columnName="{{ 'report-definition.parameters-table-parameter-name' | tlTranslate }}"
-                             propertyName="parameterName">
-                </data-column>
-                <data-column [flexRate]="0.3"
-                             columnName="{{ 'report-definition.parameters-table-parameter-code' | tlTranslate }}"
-                             propertyName="code">
-                </data-column>
-                <data-column [flexRate]="0.2"
-                             columnName="{{ 'report-definition.parameters-table-parameter-default-value' | tlTranslate }}"
-                             propertyName="defaultValue">
-                </data-column>
-                <data-column [flexRate]="0.2"
-                             columnName="{{ 'report-definition.parameters-table-parameter-pattern' | tlTranslate }}"
-                             propertyName="pattern">
-                </data-column>
-                <data-column [flexRate]="0.2"
-                             columnName="{{ 'report-definition.parameters-table-parameter-error-message' | tlTranslate }}"
-                             propertyName="errorMessage">
-                </data-column>
-                <data-column [flexRate]="0.2"
-                             columnName="{{ 'report-definition.parameters-table-parameter-order-number' | tlTranslate }}"
-                             propertyName="orderNumber">
-                </data-column>
-                <data-column [flexRate]="0.2"
-                             columnName="{{ 'report-definition.parameters-table-parameter-is-required' | tlTranslate }}"
-                             propertyName="isMandatory">
-                </data-column>
+            <div fxLayout="column" fxLayoutGap="1em">
+                <tl-data-table #parametersTable
+                               [showAddButton]="!viewMode"
+                               (addButtonClicked)="addOrEditParameter()"
+                               (activeRecordChanged)="addOrEditParameter($event)"
+                               [rows]="parameters"
+                               [isRemote]="false"
+                               [isSoftDeletable]="true">
+                    <data-column [flexRate]="0.3"
+                                 columnName="{{ 'report-definition.parameters-table-parameter-name' | tlTranslate }}"
+                                 propertyName="parameterName">
+                    </data-column>
+                    <data-column [flexRate]="0.3"
+                                 columnName="{{ 'report-definition.parameters-table-parameter-code' | tlTranslate }}"
+                                 propertyName="code">
+                    </data-column>
+                    <data-column [flexRate]="0.2"
+                                 columnName="{{ 'report-definition.parameters-table-parameter-default-value' | tlTranslate }}"
+                                 propertyName="defaultValue">
+                    </data-column>
+                    <data-column [flexRate]="0.2"
+                                 columnName="{{ 'report-definition.parameters-table-parameter-pattern' | tlTranslate }}"
+                                 propertyName="pattern">
+                    </data-column>
+                    <data-column [flexRate]="0.2"
+                                 columnName="{{ 'report-definition.parameters-table-parameter-error-message' | tlTranslate }}"
+                                 propertyName="errorMessage">
+                    </data-column>
+                    <data-column [flexRate]="0.2"
+                                 columnName="{{ 'report-definition.parameters-table-parameter-order-number' | tlTranslate }}"
+                                 propertyName="orderNumber">
+                    </data-column>
+                    <data-column [flexRate]="0.2"
+                                 columnName="{{ 'report-definition.parameters-table-parameter-is-required' | tlTranslate }}"
+                                 propertyName="isMandatory">
+                    </data-column>
 
-                <data-template-column [flexRate]="0.4" [cellClass]="'justify-center'">
-                    <ng-template let-row="row" ngx-datatable-cell-template>
-                        <div fxLayout="row wrap" fxLayoutAlign="end center">
-                            <tl-icon-button icon="visibility"
-                                            (buttonClicked)="addOrEditParameter(row.data, true)"
-                                            iconClass="accent-color">
-                            </tl-icon-button>
-                            <tl-icon-button *ngIf="row.data.isActive && !viewMode"
-                                            icon="edit" (buttonClicked)="addOrEditParameter(row.data)"
-                                            iconClass="accent-color">
-                            </tl-icon-button>
-                            <tl-icon-button *ngIf="row.data.isActive && !viewMode"
-                                            icon="delete"
-                                            (buttonClicked)="deleteParameter(row)"
-                                            iconClass="accent-color">
-                            </tl-icon-button>
-                            <tl-icon-button *ngIf="!row.data.isActive && !viewMode"
-                                            icon="restore"
-                                            (buttonClicked)="undoDeletedParameter(row)"
-                                            iconClass="accent-color">
-                            </tl-icon-button>
-                        </div>
-                    </ng-template>
-                </data-template-column>
-            </tl-data-table>
+                    <data-template-column [flexRate]="0.4" [cellClass]="'justify-center'">
+                        <ng-template let-row="row" ngx-datatable-cell-template>
+                            <div fxLayout="row wrap" fxLayoutAlign="end center">
+                                <tl-icon-button icon="visibility"
+                                                (buttonClicked)="addOrEditParameter(row.data, true)"
+                                                iconClass="accent-color">
+                                </tl-icon-button>
+                                <tl-icon-button *ngIf="row.data.isActive && !viewMode"
+                                                icon="edit" (buttonClicked)="addOrEditParameter(row.data)"
+                                                iconClass="accent-color">
+                                </tl-icon-button>
+                                <tl-icon-button *ngIf="row.data.isActive && !viewMode"
+                                                icon="delete"
+                                                (buttonClicked)="deleteParameter(row)"
+                                                iconClass="accent-color">
+                                </tl-icon-button>
+                                <tl-icon-button *ngIf="!row.data.isActive && !viewMode"
+                                                icon="restore"
+                                                (buttonClicked)="undoDeletedParameter(row)"
+                                                iconClass="accent-color">
+                                </tl-icon-button>
+                            </div>
+                        </ng-template>
+                    </data-template-column>
+                </tl-data-table>
+
+                <mat-error *ngIf="!viewMode && formGroup?.errors?.uniqueReportParameters">
+                    * {{ 'report-definition.cannot-add-same-report-parameter-error' | tlTranslate }}
+                </mat-error>
+            </div>
         </tl-expansion-panel>
     </div>
 </div>

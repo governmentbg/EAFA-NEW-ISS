@@ -113,6 +113,12 @@ export class ApplicationsProcessingService extends BaseAuditService implements I
         });
     }
 
+    public getCentralTerritoryUnitUsersNomenclature(): Observable<PrintUserNomenclatureDTO[]> {
+        return this.requestService.get(this.area, this.controller, 'GetCentralTerritoryUnitUsersNomenclature', {
+            responseTypeCtr: PrintUserNomenclatureDTO
+        });
+    }
+
     public getApplicationHistorySimpleAudit(id: number): Observable<SimpleAuditDTO> {
         const params = new HttpParams().append('id', id.toString());
 

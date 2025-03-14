@@ -185,12 +185,12 @@
         </data-column-inline>
     </tl-data-table>
 
-    <div *ngIf="catchQuantities !== undefined && catchQuantities !== null && catchQuantities.size > 0"
+    <div *ngIf="catchQuantityTexts !== undefined && catchQuantityTexts !== null && catchQuantityTexts.length > 0"
          fxLayout="row"
          fxFlex="100"
          fxLayoutAlign="end center">
-        <mat-hint fxFlex="100">
-            <span *ngIf="hasUnloadedQuantity">
+        <mat-hint fxFlex="100" fxLayoutGap="1em" fxLayout="column">
+            <span *ngIf="hasUnloadedQuantity" fxFlex="100">
                 {{ 'inspections.catch-record-unloaded-quantity-sums' | tlTranslate }}
             </span>
 
@@ -198,8 +198,8 @@
                 {{ 'inspections.catch-record-quantity-sums' | tlTranslate }}
             </span>
 
-            <span *ngFor="let fishQuantity of catchQuantities | keyvalue">
-                {{ fishQuantity.key | nomenclatureDisplay: fishes }}: {{ fishQuantity.value | number: '1.2-2' }} {{ 'inspections.catch-quantity-kg' | tlTranslate }};
+            <span *ngFor="let fishQuantity of catchQuantityTexts" fxFlex="100" fxLayout="row">
+                {{ fishQuantity }};
             </span>
         </mat-hint>
     </div>

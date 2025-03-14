@@ -13,6 +13,7 @@ export interface IApplicationsActionsService {
 
     getUsersNomenclature(): Observable<PrintUserNomenclatureDTO[]>;
     getMyTerritoryUnitUsersNomenclature(): Observable<PrintUserNomenclatureDTO[]>;
+    getCentralTerritoryUnitUsersNomenclature(): Observable<PrintUserNomenclatureDTO[]>;
 
     addApplication(application: IApplicationRegister, pageCode?: PageCodeEnum): Observable<number>;
     editApplication(application: IApplicationRegister, pageCode?: PageCodeEnum, fromSaveAsDraft?: boolean): Observable<number>;

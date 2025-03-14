@@ -1,5 +1,5 @@
 ﻿import { AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 import { NomenclatureDTO } from '@app/models/generated/dtos/GenericNomenclatureDTO';
 import { ReportAdministrationService } from '@app/services/administration-app/report-administration.service';
@@ -284,6 +284,7 @@ export class ReportDefinitionComponent implements OnInit, AfterViewInit {
                     }
 
                     this.parameters = this.parameters?.slice();
+                    this.formGroup.updateValueAndValidity({ onlySelf: true, emitEvent: false });
                 }
             }
         });
@@ -298,6 +299,7 @@ export class ReportDefinitionComponent implements OnInit, AfterViewInit {
             next: (result: boolean) => {
                 if (result) {
                     this.parametersTable.softDelete(parameter);
+                    this.formGroup.updateValueAndValidity({ onlySelf: true, emitEvent: false });
                 }
             }
         });
@@ -312,6 +314,7 @@ export class ReportDefinitionComponent implements OnInit, AfterViewInit {
             next: (result: boolean) => {
                 if (result) {
                     this.parametersTable.softUndoDelete(parameter);
+                    this.formGroup.updateValueAndValidity({ onlySelf: true, emitEvent: false });
                 }
             }
         });
@@ -417,7 +420,7 @@ export class ReportDefinitionComponent implements OnInit, AfterViewInit {
                 selectedUsersControl: new FormControl()
             }),
             queryControl: new FormControl()
-        });
+        }, this.uniqueReportParametersValidator());
     }
 
     private fillForm() {
@@ -455,7 +458,7 @@ export class ReportDefinitionComponent implements OnInit, AfterViewInit {
         this.report.roles = (this.formGroup.get('accessManagementGroup') as FormGroup).get('selectedRolesControl')!.value;
         this.report.users = (this.formGroup.get('accessManagementGroup') as FormGroup).get('selectedUsersControl')!.value;
 
-        this.report.parameters = this.parameters;
+        this.report.parameters = this.parameters.filter(x => x.isActive);
 
         const groupId: number = (this.formGroup.get('generalInformationGroup') as FormGroup).get('reportGroupControl')!.value?.value;
         if (groupId !== null && groupId !== undefined) {
@@ -510,6 +513,36 @@ export class ReportDefinitionComponent implements OnInit, AfterViewInit {
                 (this.formGroup.get('generalInformationGroup') as FormGroup).get('codeControl')!.setErrors({ 'reportCodeAlreadyExists': true });
                 (this.formGroup.get('generalInformationGroup') as FormGroup).get('codeControl')!.markAsTouched();
             }
+        }
+    }
+
+    private uniqueReportParametersValidator(): ValidatorFn {
+        return (control: AbstractControl): ValidationErrors | null => {
+            if (control === null || control === undefined) {
+                return null;
+            }
+
+            if (this.formGroup === null || this.formGroup === undefined) {
+                return null;
+            }
+
+            if (control.value === null || control.value === undefined) {
+                return null;
+            }
+
+            if (this.parameters === null || this.parameters === undefined || this.parameters.length === 0) {
+                return null;
+            }
+           
+            for (const parameter of this.parameters) {
+                const invalidRows = this.parameters.filter(x => x.isActive !== false && x.parameterId === parameter.parameterId);
+
+                if (invalidRows.length > 1) {
+                    return { 'uniqueReportParameters': true };
+                }
+            }
+
+            return null;
         }
     }
 

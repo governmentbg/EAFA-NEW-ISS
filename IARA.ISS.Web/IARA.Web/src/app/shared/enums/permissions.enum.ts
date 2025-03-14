@@ -140,6 +140,7 @@
     ApplicationsReadRegister = 'ApplicationsReadRegister',
     ReAssignApplication = 'ReAssignApplication',
     ApplicationsProcessPaymentData = 'ApplicationsProcessPaymentData',
+    ApplicationsReassingToDifferentTerritoryUnit = 'ApplicationsReassingToDifferentTerritoryUnit',
 
     // Applications register delivery
     ApplicationRegisterDeliveryRead = 'ApplicationRegisterDeliveryRead',

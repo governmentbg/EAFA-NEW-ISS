@@ -137,6 +137,12 @@ export abstract class ApplicationsRegisterAdministrativeBaseService extends Base
         });
     }
 
+    public getCentralTerritoryUnitUsersNomenclature(): Observable<PrintUserNomenclatureDTO[]> {
+        return this.requestService.get(this.area, this.applicationsProcessingController, 'GetCentralTerritoryUnitUsersNomenclature', {
+            responseTypeCtr: PrintUserNomenclatureDTO
+        });
+    }
+
     public getApplicationHistorySimpleAudit(id: number): Observable<SimpleAuditDTO> {
         if (this.applicationsRegisterService) {
             return this.applicationsRegisterService.getApplicationHistorySimpleAudit(id);

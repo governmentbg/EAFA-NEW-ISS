@@ -42,6 +42,8 @@ import { SystemPropertiesDTO } from '@app/models/generated/dtos/SystemProperties
 import { SystemParametersService } from '@app/services/common-app/system-parameters.service';
 import { DateUtils } from '@app/shared/utils/date.utils';
 import { DateDifference } from '@app/models/common/date-difference.model';
+import { Moment } from 'moment';
+import moment from 'moment';
 
 @Component({
     selector: 'edit-penal-decree',
@@ -63,6 +65,7 @@ export class EditPenalDecreeComponent implements OnInit, AfterViewInit, IDialogC
     public viewMode: boolean = false;
     public isThirdParty: boolean = false;
     public hasTerritoryUnit: boolean = false;
+    public hasCompensationAmount: boolean = false;
     public fishCompensationFormTouched: boolean = false;
     public auanViolatedRegulationsTouched: boolean = false;
     public violatedRegulationsTouched: boolean = false;
@@ -258,9 +261,9 @@ export class EditPenalDecreeComponent implements OnInit, AfterViewInit, IDialogC
 
             // Номерата на постановленията се генерират автоматично от 01.01.2025 г., тези на създадените преди това може да се редактират
             this.form.get('issueDateControl')!.valueChanges.subscribe({
-                next: (value: Date | undefined) => {
+                next: (value: Moment | null | undefined) => {
                     if (value !== undefined && value !== null) {
-                        if (value > PenalDecreeUtils.AUTO_GENERATE_NUMBER_AFTER_DATE) {
+                        if (value.toDate() > PenalDecreeUtils.AUTO_GENERATE_NUMBER_AFTER_DATE) {
                             if (this.isAdding) {
                                 this.form.get('decreeNumControl')!.setValue(undefined);
                             }
@@ -381,7 +384,7 @@ export class EditPenalDecreeComponent implements OnInit, AfterViewInit, IDialogC
         else if (action.id === 'save-draft') {
             this.markAllAsTouched();
             this.validityCheckerGroup.validate();
-          
+
             if (this.form.valid) {
                 this.fillModel();
                 CommonUtils.sanitizeModelStrings(this.model);
@@ -449,6 +452,7 @@ export class EditPenalDecreeComponent implements OnInit, AfterViewInit, IDialogC
             isRecurrentViolationControl: new FormControl(false),
             sanctionDescriptionControl: new FormControl(null, Validators.maxLength(4000)),
             fineAmountControl: new FormControl(null, TLValidators.number(0, undefined, 2)),
+            compensationAmountControl: new FormControl(null, TLValidators.number(0, undefined, 2)),
             commentsControl: new FormControl(null, Validators.maxLength(4000)),
             constatationCommentsControl: new FormControl(null, Validators.maxLength(4000)),
             evidenceCommentsControl: new FormControl(null, Validators.maxLength(4000)),
@@ -482,6 +486,19 @@ export class EditPenalDecreeComponent implements OnInit, AfterViewInit, IDialogC
             const controlName: string = sanction.code! + 'Control';
             this.form.addControl(controlName, new FormControl());
         }
+
+        const compensationControlName: string = PenalDecreeSanctionTypesEnum[PenalDecreeSanctionTypesEnum.Compensation] + 'Control';
+        this.form.get(compensationControlName)!.valueChanges.subscribe({
+            next: (value: boolean) => {
+                this.hasCompensationAmount = value;
+
+                if (!this.hasCompensationAmount) {
+                    this.form.get('compensationAmountControl')!.setValue(undefined);
+                }
+
+                this.form.get('compensationAmountControl')!.updateValueAndValidity({ emitEvent: false });
+            }
+        });
     }
 
     private fillForm(): void {
@@ -495,6 +512,7 @@ export class EditPenalDecreeComponent implements OnInit, AfterViewInit, IDialogC
         this.form.get('isRecurrentViolationControl')!.setValue(this.model.isRecurrentViolation);
         this.form.get('sanctionDescriptionControl')!.setValue(this.model.sanctionDescription);
         this.form.get('fineAmountControl')!.setValue(this.model.fineAmount?.toFixed(2));
+        this.form.get('compensationAmountControl')!.setValue(this.model.compensationAmount?.toFixed(2));
         this.form.get('commentsControl')!.setValue(this.model.comments);
 
         this.form.get('auanViolatedRegulationsControl')!.setValue(this.model.auanViolatedRegulations);
@@ -562,6 +580,13 @@ export class EditPenalDecreeComponent implements OnInit, AfterViewInit, IDialogC
         this.model.constatationComments = this.form.get('constatationCommentsControl')!.value;
         this.model.evidenceComments = this.form.get('evidenceCommentsControl')!.value;
         this.model.deliveryData = this.form.get('deliveryControl')!.value;
+
+        if (this.hasCompensationAmount) {
+            this.model.compensationAmount = this.form.get('compensationAmountControl')!.value;
+        }
+        else {
+            this.model.compensationAmount = undefined;
+        }
 
         this.model.files = this.form.get('filesControl')!.value;
 
@@ -682,7 +707,7 @@ export class EditPenalDecreeComponent implements OnInit, AfterViewInit, IDialogC
                 return null;
             }
 
-            const startDate: Date = control.value;
+            const startDate: Date = (moment(control.value)).toDate();
             const now: Date = new Date();
 
             const difference: DateDifference | undefined = DateUtils.getDateDifference(startDate, now);

@@ -121,6 +121,10 @@ export class SubmittedApplicationsProcessingService extends BaseAuditService imp
         throw new Error('This method should not be called from SubmittedApplicationsProcessing service.');
     }
 
+    public getCentralTerritoryUnitUsersNomenclature(): Observable<PrintUserNomenclatureDTO[]> {
+        throw new Error('Method not implemented.');
+    }
+
     public getSimpleAudit(id: number): Observable<SimpleAuditDTO> {
         throw new Error('This method should not be called from SubmittedApplicationsProcessing service.');
     }

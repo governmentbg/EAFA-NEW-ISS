@@ -124,5 +124,6 @@
     InspectionVesselTypes,
     InspectionStates,
     CheckResolutionTypes,
-    LogBookPermitLicenses
+    LogBookPermitLicenses,
+    CentralTerritoryUnitUsers
 }

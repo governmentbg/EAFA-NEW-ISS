@@ -73,7 +73,8 @@ export class BuyersFSCApplicationsComponent {
             checkDataRegularityPermission: PermissionsEnum.BuyersApplicationsCheckDataRegularity,
             addAdministrativeActPermission: PermissionsEnum.BuyersAddRecords,
             readAdministrativeActPermission: PermissionsEnum.BuyersRead,
-            canReAssignApplicationsPermission: PermissionsEnum.ReAssignApplication
+            canReAssignApplicationsPermission: PermissionsEnum.ReAssignApplication,
+            canReassingToDifferentTerritoryUnitPermission: PermissionsEnum.ApplicationsReassingToDifferentTerritoryUnit
         });
 
         this.processingPermissions = new Map<PageCodeEnum, ApplicationProcessingPermissions>([

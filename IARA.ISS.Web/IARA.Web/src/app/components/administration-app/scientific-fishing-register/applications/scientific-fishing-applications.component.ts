@@ -42,7 +42,8 @@ export class ScientificFishingApplicationsComponent {
             checkDataRegularityPermission: PermissionsEnum.ScientificFishingApplicationsCheckDataRegularity,
             addAdministrativeActPermission: PermissionsEnum.ScientificFishingAddRecords,
             readAdministrativeActPermission: PermissionsEnum.ScientificFishingRead,
-            canReAssignApplicationsPermission: PermissionsEnum.ReAssignApplication
+            canReAssignApplicationsPermission: PermissionsEnum.ReAssignApplication,
+            canReassingToDifferentTerritoryUnitPermission: PermissionsEnum.ApplicationsReassingToDifferentTerritoryUnit
         });
 
         this.processingPermissions = new Map<PageCodeEnum, ApplicationProcessingPermissions>([

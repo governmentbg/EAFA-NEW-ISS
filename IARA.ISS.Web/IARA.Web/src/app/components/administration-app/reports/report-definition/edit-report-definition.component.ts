@@ -41,6 +41,7 @@ export class EditReportDefinitionComponent implements IDialogComponent, OnInit, 
 
     public async ngOnInit(): Promise<void> {
         this.availableParameters = await this.reportService.getAvailableNParameters().toPromise();
+
         if (!this.isAddDialog) {
             const wantedParameter: NomenclatureDTO<number> = this.availableParameters.filter(parameter => parameter.value === this.model.parameterId)[0];
             this.parameterPropertiesGroup.controls.parameterNameControl.setValue(wantedParameter);
@@ -52,12 +53,15 @@ export class EditReportDefinitionComponent implements IDialogComponent, OnInit, 
     public ngAfterViewInit(): void {
         this.parameterPropertiesGroup.controls.parameterNameControl.valueChanges.subscribe({
             next: (parameter: NomenclatureDTO<number> | undefined) => {
-                if (parameter !== null && parameter !== undefined) {
+                if (parameter !== null && parameter !== undefined && typeof parameter !== 'string') {
                     this.reportService.getNParameter(parameter.value!).subscribe({
                         next: (result: NReportParameterEditDTO) => {
                             this.fillForm(result);
                         }
                     });
+                }
+                else {
+                    this.parameterPropertiesGroup.get('codeControl')!.setValue(undefined);
                 }
             }
         });

@@ -54,7 +54,8 @@ export class StatisticalFormsApplicationsComponent {
             addAdministrativeActPermission: PermissionsEnum.StatisticalFormsAquaFarmAddRecords,
             readAdministrativeActPermission: PermissionsEnum.StatisticalFormsAquaFarmRead,
             canReAssignApplicationsPermission: PermissionsEnum.ReAssignApplication,
-            canInspectCorrectAndAddAdmActPermission: PermissionsEnum.StatisticalFormsAquaFarmAddRecords
+            canInspectCorrectAndAddAdmActPermission: PermissionsEnum.StatisticalFormsAquaFarmAddRecords,
+            canReassingToDifferentTerritoryUnitPermission: PermissionsEnum.ApplicationsReassingToDifferentTerritoryUnit
         });
 
         const reworkProcessingPermissiosn: ApplicationProcessingPermissions = new ApplicationProcessingPermissions({
@@ -69,7 +70,8 @@ export class StatisticalFormsApplicationsComponent {
             addAdministrativeActPermission: PermissionsEnum.StatisticalFormsReworkAddRecords,
             readAdministrativeActPermission: PermissionsEnum.StatisticalFormsReworkRead,
             canReAssignApplicationsPermission: PermissionsEnum.ReAssignApplication,
-            canInspectCorrectAndAddAdmActPermission: PermissionsEnum.StatisticalFormsReworkAddRecords
+            canInspectCorrectAndAddAdmActPermission: PermissionsEnum.StatisticalFormsReworkAddRecords,
+            canReassingToDifferentTerritoryUnitPermission: PermissionsEnum.ApplicationsReassingToDifferentTerritoryUnit
         });
 
         const fishVesselProcessingPermissions: ApplicationProcessingPermissions = new ApplicationProcessingPermissions({
@@ -84,7 +86,8 @@ export class StatisticalFormsApplicationsComponent {
             addAdministrativeActPermission: PermissionsEnum.StatisticalFormsFishVesselAddRecords,
             readAdministrativeActPermission: PermissionsEnum.StatisticalFormsFishVesselRead,
             canReAssignApplicationsPermission: PermissionsEnum.ReAssignApplication,
-            canInspectCorrectAndAddAdmActPermission: PermissionsEnum.StatisticalFormsFishVesselAddRecords
+            canInspectCorrectAndAddAdmActPermission: PermissionsEnum.StatisticalFormsFishVesselAddRecords,
+            canReassingToDifferentTerritoryUnitPermission: PermissionsEnum.ApplicationsReassingToDifferentTerritoryUnit
         });
 
         this.processingPermissions = new Map<PageCodeEnum, ApplicationProcessingPermissions>([

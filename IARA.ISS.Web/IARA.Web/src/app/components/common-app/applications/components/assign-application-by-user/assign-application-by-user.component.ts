@@ -12,6 +12,7 @@ import { PrintUserNomenclatureDTO } from '@app/models/generated/dtos/PrintUserNo
 import { FormControlDataLoader } from '@app/shared/utils/form-control-data-loader';
 import { NomenclatureStore } from '@app/shared/utils/nomenclatures.store';
 import { NomenclatureTypes } from '@app/enums/nomenclature.types';
+import { AssignApplicationByUserParameters } from '../../models/assign-application-by-user-parameters.model';
 
 @Component({
     selector: 'assign-application-by-user',
@@ -20,6 +21,7 @@ import { NomenclatureTypes } from '@app/enums/nomenclature.types';
 export class AssignApplicationByUserComponent implements OnInit, IDialogComponent {
     public form!: FormGroup;
     public users: PrintUserNomenclatureDTO[] = [];
+    public canReassignToDifferentTerritoryUnit: boolean = false;
 
     private readonly nomenclatureLoader: FormControlDataLoader;
     private service!: IApplicationsRegisterService;
@@ -35,9 +37,10 @@ export class AssignApplicationByUserComponent implements OnInit, IDialogComponen
         this.nomenclatureLoader.load();
     }
 
-    public setData(data: DialogParamsModel, wrapperData: DialogWrapperData): void {
+    public setData(data: AssignApplicationByUserParameters, wrapperData: DialogWrapperData): void {
         this.service = data.service! as IApplicationsRegisterService;
         this.applicationId = data.applicationId!;
+        this.canReassignToDifferentTerritoryUnit = data.hasAllTerritoryUnitsPermission;
     }
 
     public dialogButtonClicked(actionInfo: IActionInfo, dialogClose: DialogCloseCallback): void {
@@ -97,16 +100,30 @@ export class AssignApplicationByUserComponent implements OnInit, IDialogComponen
             });
         }
         else {
-            subscription = NomenclatureStore.instance.getNomenclature(
-                NomenclatureTypes.AllUsers,
-                this.service.getUsersNomenclature.bind(this.service),
-                false
-            ).subscribe({
-                next: (results: PrintUserNomenclatureDTO[]) => {
-                    this.users = results;
-                    this.nomenclatureLoader.complete();
-                }
-            });
+            if (this.canReassignToDifferentTerritoryUnit) {
+                subscription = NomenclatureStore.instance.getNomenclature(
+                    NomenclatureTypes.AllUsers,
+                    this.service.getUsersNomenclature.bind(this.service),
+                    false
+                ).subscribe({
+                    next: (results: PrintUserNomenclatureDTO[]) => {
+                        this.users = results;
+                        this.nomenclatureLoader.complete();
+                    }
+                });
+            }
+            else {
+                subscription = NomenclatureStore.instance.getNomenclature(
+                    NomenclatureTypes.CentralTerritoryUnitUsers,
+                    this.service.getCentralTerritoryUnitUsersNomenclature.bind(this.service),
+                    false
+                ).subscribe({
+                    next: (results: PrintUserNomenclatureDTO[]) => {
+                        this.users = results;
+                        this.nomenclatureLoader.complete();
+                    }
+                });
+            }
         }
 
         return subscription;

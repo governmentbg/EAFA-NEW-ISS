@@ -95,4 +95,10 @@ export class PrintConfigurationsService extends BaseAuditService {
             responseTypeCtr: PrintUserNomenclatureDTO
         });
     }
+
+    public getCentralTerritoryUnitUsersNomenclature(): Observable<PrintUserNomenclatureDTO[]> {
+        return this.requestService.get(this.area, this.controller, 'GetCentralTerritoryUnitUsersNomenclature', {
+            responseTypeCtr: PrintUserNomenclatureDTO
+        });
+    }
 }

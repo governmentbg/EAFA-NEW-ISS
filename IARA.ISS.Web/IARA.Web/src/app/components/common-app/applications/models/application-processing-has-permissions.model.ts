@@ -14,6 +14,7 @@
     public canViewAdministrativeActRecords: boolean = false;
     public canReAssignApplicationRecords: boolean = false;
     public canInspectCorrectAndAddAdmAct: boolean = false;
+    public canReassingToDifferentTerritoryUnit: boolean = false;
 
     constructor(obj?: Partial<ApplicationProcessingHasPermissions>) {
         Object.assign(this, obj);

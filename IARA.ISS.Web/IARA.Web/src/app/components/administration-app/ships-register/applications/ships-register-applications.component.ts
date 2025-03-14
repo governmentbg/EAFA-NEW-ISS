@@ -55,7 +55,8 @@ export class ShipsRegisterApplicationsComponent {
             checkDataRegularityPermission: PermissionsEnum.ShipsRegisterApplicationsCheckDataRegularity,
             addAdministrativeActPermission: PermissionsEnum.ShipsRegisterAddRecords,
             readAdministrativeActPermission: PermissionsEnum.ShipsRegisterRead,
-            canReAssignApplicationsPermission: PermissionsEnum.ReAssignApplication
+            canReAssignApplicationsPermission: PermissionsEnum.ReAssignApplication,
+            canReassingToDifferentTerritoryUnitPermission: PermissionsEnum.ApplicationsReassingToDifferentTerritoryUnit
         });
 
         this.processingPermissions = new Map<PageCodeEnum, ApplicationProcessingPermissions>([

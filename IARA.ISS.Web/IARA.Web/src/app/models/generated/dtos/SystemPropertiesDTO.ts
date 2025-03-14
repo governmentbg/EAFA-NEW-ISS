@@ -108,4 +108,7 @@ export class SystemPropertiesDTO {
 
     @StrictlyTyped(Number)
     public addPenalDecreeNotSignedAfterHours?: number;
+
+    @StrictlyTyped(Boolean)
+    public skipRegixChecks?: boolean;
 }

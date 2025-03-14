@@ -3,6 +3,7 @@
 export class FishGroupedQuantitiesModel {
     public fishId!: number | undefined;
     public quantity: number | undefined;
+    public discardedQuantity: number | undefined;
     public catchQuadrantId: number | undefined;
     public turbotSizeGroupId: number | undefined;
     public turbotCount: number | undefined;

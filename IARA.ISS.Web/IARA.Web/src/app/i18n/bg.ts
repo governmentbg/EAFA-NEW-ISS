@@ -2983,6 +2983,9 @@
         'add-catch-ship-dialog-title': 'Добави кораб',
         'edit-catch-ship-dialog-title': 'Редактирай кораб',
         'view-catch-ship-dialog-title': 'Преглед на кораб',
+        'inspected-catch-count': 'бр.',
+        'inspected-catch-kg': 'кг',
+        'discarded-catch-kg': 'кг изхвърлено',
 
         'inspected-entity-email': 'Електронна поща',
         'inspected-entity-send-email': 'Изпрати имейл',
@@ -3661,6 +3664,7 @@
         'parameters-table-parameter-order-number': 'Пореден номер',
         'parameters-table-parameter-is-required': 'Задължителен',
         'parameters-table-parameter-code': 'Код на параметър',
+        'cannot-add-same-report-parameter-error': 'Не можете да добавите един и същи параметър повече от веднъж',
 
         'dialog-parameter-nparameter': 'Параметър',
         'dialog-parameter-is-required': 'Задължителен',
@@ -4431,7 +4435,6 @@
         'ship-page-catch-has-no-gear-exit': 'Без изтегляне на уред',
         'ship-page-total-time': 'Общо време',
         'ship-page-catch-gear-entry-exit-difference-error': 'Разликата между времената трябва да бъде поне 1 минута',
-        'ship-page-fish-trip-start-date-time-helper': 'Формат на дата и час: MM.DD.YYYY HH:mm',
         'ship-page-catch-fishing-gear-depth': 'Дълбочина (м)',
         'view-ship-page-catch-record': 'Преглед на данни за улов',
         'edit-ship-page-catch-record': 'Редакция на данни за улов',
@@ -4567,6 +4570,7 @@
         'ship-log-book-page-water-type': 'Тип на водите',
         'ship-page-catch-record-quantity-sums': 'Общи количества: ',
         'ship-page-declaration-kg': 'кг',
+        'ship-page-discarded-kg': 'кг изхвърлени',
         'ship-page-declaration-count': 'бр.',
         'end-date-should-be-different-from-start-date': 'Датата и часът на връщане трябва да бъдат различни от тези на тръгване',
 
@@ -6267,6 +6271,7 @@
 
         'edit-decree-agreement-fines': 'Глоба',
         'edit-agreement-fine': 'Размер на наложената глоба',
+        'edit-compensation-amount': 'Размер на обезщетението',
         'edit-agreement-fine-percent': '70% от наложената глоба',
         'edit-warning-sanctions': 'Отнето имущество',
         'edit-resolution-sanctions': 'Отнето имущество',

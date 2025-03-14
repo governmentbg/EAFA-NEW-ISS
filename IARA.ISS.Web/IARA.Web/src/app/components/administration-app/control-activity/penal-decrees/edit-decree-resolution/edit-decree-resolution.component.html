@@ -18,13 +18,16 @@
                           tooltipResourceName="penal-decree.edit-resolution-num-helper">
                 </tl-input>
 
-                <tl-date fxFlex="25"
-                         formControlName="issueDateControl"
-                         [max]="maxIssueDate"
-                         [min]="minIssueDate"
-                         label="{{ 'penal-decrees.edit-decree-issue-date' | tlTranslate }}"
-                         tooltipResourceName="penal-decree.edit-decree-issue-date-helper">
-                </tl-date>
+                <tl-date-time fxFlex="25"
+                              formControlName="issueDateControl"
+                              [showHint]="true"
+                              [disabled]="viewMode"
+                              [max]="maxIssueDate"
+                              [min]="minIssueDate"
+                              hint="{{ 'common.date-time-control-format-hint' | tlTranslate }}"
+                              label="{{ 'penal-decrees.edit-decree-issue-date' | tlTranslate }}"
+                              tooltipResourceName="penal-decree.edit-decree-issue-date-helper">
+                </tl-date-time>
 
                 <tl-autocomplete fxFlex="50"
                                  formControlName="drafterControl"
@@ -270,7 +273,7 @@
 
     <!-- Връчване -->
     <tl-expansion-panel title="{{ 'penal-decrees.edit-decree-delivery-data' | tlTranslate }}"
-                        tooltipResourceName="penal-decree.edit-decree-delivery-data-helper"
+                        tooltipResourceName="penal-decree.edit-decree-delivery-helper"
                         [validityCheckerExtraCondition]="form.controls.deliveryControl.errors?.hasNoEDeliveryRegistrationError !== true"
                         [validityChecker]="form">
         <decree-delivery-data formControlName="deliveryControl"
