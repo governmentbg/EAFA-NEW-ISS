@@ -47,6 +47,7 @@ import { StatisticalFormTypesEnum } from '@app/enums/statistical-form-types.enum
 import { ApplicationSubmittedByDTO } from '@app/models/generated/dtos/ApplicationSubmittedByDTO';
 import { PermittedFileTypeDTO } from '@app/models/generated/dtos/PermittedFileTypeDTO';
 import { RecordChangedEventArgs } from '@app/shared/components/data-table/models/record-changed-event.model';
+import { GridRow } from '@app/shared/components/data-table/models/row.model';
 
 type YesNo = 'yes' | 'no';
 
@@ -363,6 +364,24 @@ export class StatisticalFormsReworkComponent implements OnInit, IDialogComponent
 
             this.productTable.recordChanged.subscribe({
                 next: (event: RecordChangedEventArgs<StatisticalFormReworkProductDTO>) => {
+                    const product: NomenclatureDTO<number> | string | undefined = this.productGroup.get('productTypeIdControl')!.value;
+
+                    if (product !== undefined && product !== null) {
+                        if (typeof product === 'string') {
+                            event.Record.productTypeName = product;
+                            event.Record.isNewProductType = true;
+                        }
+                        else {
+                            event.Record.productTypeId = product.value;
+                            event.Record.productTypeName = product.displayName;
+                            event.Record.isNewProductType = false;
+                        }
+                    }
+                    else {
+                        event.Record.productTypeId = undefined;
+                        event.Record.productTypeName = undefined;
+                    }
+
                     this.form.updateValueAndValidity({ onlySelf: true });
                 }
             });
@@ -450,6 +469,16 @@ export class StatisticalFormsReworkComponent implements OnInit, IDialogComponent
         }
     }
 
+    public reworkProductActiveRecordChanged(record: GridRow<StatisticalFormReworkProductDTO>): void {
+        if (record !== undefined && record !== null) {
+            const productType: NomenclatureDTO<number> | undefined = this.allProductTypes.find(x => x.value === record.data?.productTypeId);
+            this.productGroup.get('productTypeIdControl')!.setValue(productType ?? record.data?.productTypeId ?? record.data?.productTypeName);
+        }
+        else {
+            this.productGroup.get('productTypeIdControl')!.setValue(undefined);
+        }
+    }
+
     private buildForm(): void {
         if (this.showOnlyRegiXData) {
             this.form = new FormGroup({
@@ -529,7 +558,7 @@ export class StatisticalFormsReworkComponent implements OnInit, IDialogComponent
         if (this.model instanceof StatisticalFormReworkRegixDataDTO) {
             this.form.get('submittedByControl')!.setValue(this.model.submittedBy);
             this.form.get('submittedForControl')!.setValue(this.model.submittedFor);
-
+            
             this.fillFormRegiX(this.model);
         }
         else if (this.model instanceof StatisticalFormReworkApplicationEditDTO) {
@@ -658,6 +687,12 @@ export class StatisticalFormsReworkComponent implements OnInit, IDialogComponent
                             }));
                         }
                     }
+                    else {
+                        if (product.productTypeId !== undefined && product.productTypeId !== null && typeof product.productTypeId !== 'string') {
+                            const productType: NomenclatureDTO<number> | undefined = this.allProductTypes.find(x => x.value === product.productTypeId);
+                            product.productTypeName = productType?.displayName;
+                        }
+                    }
                 }
             });
         });
@@ -733,6 +768,12 @@ export class StatisticalFormsReworkComponent implements OnInit, IDialogComponent
                                 displayName: product.productTypeName,
                                 isActive: true
                             }));
+                        }
+                    }
+                    else {
+                        if (product.productTypeId !== undefined && product.productTypeId !== null && typeof product.productTypeId !== 'string') {
+                            const productType: NomenclatureDTO<number> | undefined = this.allProductTypes.find(x => x.value === product.productTypeId);
+                            product.productTypeName = productType?.displayName;
                         }
                     }
                 }
@@ -912,13 +953,13 @@ export class StatisticalFormsReworkComponent implements OnInit, IDialogComponent
     }
 
     private getRawMaterialFromTable(): StatisticalFormReworkRawMaterialDTO[] {
-        const rows = this.rawMaterialTable.rows as StatisticalFormReworkRawMaterialDTO[];
+        const rows = this.rawMaterialTable.rows?.filter(x => x.isActive !== false) as StatisticalFormReworkRawMaterialDTO[];
 
         const materials: StatisticalFormReworkRawMaterialDTO[] = rows.map(x => new StatisticalFormReworkRawMaterialDTO({
             id: x.id,
             fishTypeId: x.fishTypeId,
             origin: x.origin,
-            tons: x.tons,
+            tons: x.tons ?? 0,
             countryZone: x.countryZone,
             isActive: x.isActive ?? true
         }));
@@ -944,7 +985,7 @@ export class StatisticalFormsReworkComponent implements OnInit, IDialogComponent
     private getProductFromTable(): StatisticalFormReworkProductDTO[] {
         const result: StatisticalFormReworkProductDTO[] = [];
 
-        const rows = this.productTable.rows as StatisticalFormReworkProductDTO[];
+        const rows = this.productTable.rows?.filter(x => x.isActive !== false) as StatisticalFormReworkProductDTO[];
         const startIndex: number = -100;
 
         const newProductTypeIds: number[] = rows
@@ -956,19 +997,19 @@ export class StatisticalFormsReworkComponent implements OnInit, IDialogComponent
         for (const product of rows) {
             const entry = new StatisticalFormReworkProductDTO({
                 id: product.id,
-                tons: product.tons,
+                tons: product.tons ?? 0,
                 isActive: product.isActive ?? true
             });
 
-            if (typeof product.productTypeId === 'string') {
+            if (product.productTypeId === undefined || product.productTypeId === null || typeof product.productTypeId === 'string') {
                 entry.productTypeId = newProductIndex--;
-                entry.productTypeName = product.productTypeId;
+                entry.productTypeName = product.productTypeId ?? product.productTypeName;
                 entry.isNewProductType = true;
             }
             else {
                 entry.productTypeId = product.productTypeId;
 
-                if (entry.productTypeId! <= startIndex) {
+                if (entry.productTypeId! <= startIndex || product.isNewProductType) {
                     const nomenclature: NomenclatureDTO<number> | undefined = this.productTypes.find(x => x.value === product.productTypeId);
                     if (nomenclature !== undefined) {
                         entry.productTypeName = nomenclature.displayName;
@@ -1089,6 +1130,8 @@ export class StatisticalFormsReworkComponent implements OnInit, IDialogComponent
                         && (x.productTypeId === row.productTypeId
                             || x.productTypeId === row.productTypeName
                             || x.productTypeId === product?.displayName
+                            || x.productTypeName === row.productTypeName
+                            || x.productTypeName === product?.displayName
                         ));
 
                     if (invalidRows.length > 1) {

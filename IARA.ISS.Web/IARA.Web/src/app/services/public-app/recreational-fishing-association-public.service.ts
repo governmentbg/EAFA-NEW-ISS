@@ -182,6 +182,10 @@ export class RecreationalFishingAssociationPublicService extends BaseAuditServic
         throw new Error('This method should not be called from the public app.');
     }
 
+    public getCentralTerritoryUnitUsersNomenclature(): Observable<PrintUserNomenclatureDTO[]> {
+        throw new Error('Method not implemented.');
+    }
+
     public getFishingAssociationSimpleAudit(id: number): Observable<SimpleAuditDTO> {
         throw new Error('This method should not be called from the public app.');
     }

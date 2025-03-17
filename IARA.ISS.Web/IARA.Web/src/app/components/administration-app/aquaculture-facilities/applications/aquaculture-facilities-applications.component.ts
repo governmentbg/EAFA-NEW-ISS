@@ -64,7 +64,8 @@ export class AquacultureFacilitiesApplicationsComponent {
             checkDataRegularityPermission: PermissionsEnum.AquacultureFacilitiesApplicationsCheckDataRegularity,
             addAdministrativeActPermission: PermissionsEnum.AquacultureFacilitiesAddRecords,
             readAdministrativeActPermission: PermissionsEnum.AquacultureFacilitiesRead,
-            canReAssignApplicationsPermission: PermissionsEnum.ReAssignApplication
+            canReAssignApplicationsPermission: PermissionsEnum.ReAssignApplication,
+            canReassingToDifferentTerritoryUnitPermission: PermissionsEnum.ApplicationsReassingToDifferentTerritoryUnit
         });
 
         this.processingPermissions = new Map<PageCodeEnum, ApplicationProcessingPermissions>([

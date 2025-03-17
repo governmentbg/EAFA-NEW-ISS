@@ -41,7 +41,8 @@ export class ApplicationsProcessingComponent implements OnInit {
             cancelPermssion: PermissionsEnum.ApplicationsCancelRecords,
             inspectAndCorrectPermssion: PermissionsEnum.ApplicationsInspectAndCorrectRegiXData,
             canReAssignApplicationsPermission: PermissionsEnum.ReAssignApplication,
-            processPaymentDataPermission: PermissionsEnum.ApplicationsProcessPaymentData
+            processPaymentDataPermission: PermissionsEnum.ApplicationsProcessPaymentData,
+            canReassingToDifferentTerritoryUnitPermission: PermissionsEnum.ApplicationsReassingToDifferentTerritoryUnit
         });
 
         this.processingPermissions = new Map<PageCodeEnum, ApplicationProcessingPermissions>(

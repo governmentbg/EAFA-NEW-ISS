@@ -220,6 +220,10 @@ export class RecreationalFishingAssociationService extends BaseAuditService impl
         throw new Error('Method not implemented.');
     }
 
+    public getCentralTerritoryUnitUsersNomenclature(): Observable<PrintUserNomenclatureDTO[]> {
+        throw new Error('Method not implemented.');
+    }
+
     public getFishingAssociationSimpleAudit(id: number): Observable<SimpleAuditDTO> {
         const params = new HttpParams().append('id', id.toString());
         return this.requestService.get(this.area, this.controller, 'GetFishingAssociationSimpleAudit', {

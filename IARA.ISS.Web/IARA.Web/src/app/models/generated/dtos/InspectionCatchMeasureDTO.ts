@@ -3,6 +3,7 @@
 import { StrictlyTyped } from '@app/shared/decorators/strictly-typed.decorator';
 import { VesselDuringInspectionDTO } from './VesselDuringInspectionDTO';
 import { CatchActionEnum } from '@app/enums/catch-action.enum';
+import { CatchInspectionTypeCodesEnum } from '@app/enums/catch-inspection-type-codes.enum';
 
 export class InspectionCatchMeasureDTO { 
     public constructor(obj?: Partial<InspectionCatchMeasureDTO>) {
@@ -38,6 +39,9 @@ export class InspectionCatchMeasureDTO {
 
     @StrictlyTyped(Number)
     public action?: CatchActionEnum;
+
+    @StrictlyTyped(Number)
+    public catchInspectionType?: CatchInspectionTypeCodesEnum;
 
     @StrictlyTyped(String)
     public storageLocation?: string;

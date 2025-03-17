@@ -893,9 +893,15 @@ export class EditScientificPermitComponent implements OnInit, IDialogComponent {
         }
         else {
             this.form.get('requestNumberControl')!.setValue(model.eventisNum);
-            this.form.get('requestDateControl')!.setValue(model.registrationDate);
             this.form.get('validFromControl')!.setValue(model.validFrom);
             this.form.get('validToControl')!.setValue(model.validTo);
+
+            if (model.registrationDate !== undefined && model.registrationDate !== null) {
+                this.form.get('requestDateControl')!.setValue(model.registrationDate);
+            }
+            else {
+                this.form.get('requestDateControl')!.setValue(this.currentDate);
+            }
 
             if (model.permitReasonsIds !== undefined && model.permitReasonsIds !== null) {
                 for (const reasonId of model.permitReasonsIds) {

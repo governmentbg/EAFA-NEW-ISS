@@ -535,21 +535,6 @@ export class InspectionsComponent implements OnInit, AfterViewInit, OnChanges {
                 }
             }
 
-            if (this.canExportRecords
-                && (this.shipId === null || this.shipId === undefined)
-                && entry.inspectionState === InspectionStatesEnum.Signed
-                && this.fluxReportInspectionTypes.includes(entry.inspectionType!)
-                && this.isInspector
-            ) {
-                rightSideButtons.push({
-                    id: 'send-to-flux',
-                    color: 'accent',
-                    translateValue: 'inspections.send-inspection-to-flux',
-                    icon: { id: 'send' },
-                    isVisibleInViewMode: true
-                });
-            }
-
             //ако няма правото за връщане за редакция, може да коригира само своите инспекции, ако не са минали 48 часа от създаването им
             if ((this.shipId === null || this.shipId === undefined)
                 && entry.inspectionState !== InspectionStatesEnum.Draft

@@ -14,6 +14,7 @@ namespace IARA.Mobile.Insp.Application.DTObjects.Inspections
         public string Number { get; set; }
         public string Description { get; set; }
         public string Inspectors { get; set; }
+        public string InspectorsIds { get; set; }
         public string InspectionSubjects { get; set; }
         public DateTime StartDate { get; set; }
         public bool CreatedByCurrentUser { get; set; }

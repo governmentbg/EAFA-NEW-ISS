@@ -72,6 +72,9 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
     public isNewInspectedGear: boolean = false;
 
     @Input()
+    public showNetsInFleet: boolean = true;
+
+    @Input()
     private pageCode: PageCodeEnum | undefined;
 
     @Output()
@@ -213,7 +216,7 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
 
             this.marksForm.updateValueAndValidity({ emitEvent: false });
             this.pingersForm.updateValueAndValidity({ emitEvent: false });
-
+       
             if (this.isFormValid()) {
                 this.fillModel(false);
                 CommonUtils.sanitizeModelStrings(this.model);
@@ -270,7 +273,7 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
 
     private addMarksByRange(start: number, end: number): void {
         let status: NomenclatureDTO<number>;
-
+     
         if (this.isInspected) {
             status = this.markStatuses.find(x => x.code === FishingGearMarkStatusesEnum[FishingGearMarkStatusesEnum.MARKED])!;
         }
@@ -722,14 +725,16 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
                 this.form.get('lineCountControl')!.setValidators(TLValidators.number(0, undefined, 0));
                 this.form.get('lineCountControl')!.markAsPending();
             }
-
-            if (FishingGearUtils.fishingGearCodesWithRequiredNumberOfNets.some(x => x === fishingGearCode)) { // трябва да има задължително Nets In Fleet
-                this.form.get('netsInFleetCountControl')!.setValidators([Validators.required, TLValidators.number(0)]);
-                this.form.get('netsInFleetCountControl')!.markAsPending();
-            }
-            else {
-                this.form.get('netsInFleetCountControl')!.setValidators(TLValidators.number(0));
-                this.form.get('netsInFleetCountControl')!.markAsPending();
+      
+            if (this.showNetsInFleet) {
+                if (FishingGearUtils.fishingGearCodesWithRequiredNumberOfNets.some(x => x === fishingGearCode)) { // трябва да има задължително Nets In Fleet
+                    this.form.get('netsInFleetCountControl')!.setValidators([Validators.required, TLValidators.number(0)]);
+                    this.form.get('netsInFleetCountControl')!.markAsPending();
+                }
+                else {
+                    this.form.get('netsInFleetCountControl')!.setValidators(TLValidators.number(0));
+                    this.form.get('netsInFleetCountControl')!.markAsPending();
+                }
             }
 
             if (FishingGearUtils.fishingGearCodesWithRequiredTrawlModel.some(x => x === fishingGearCode)) { // трябва да има задължително Trawl Model
@@ -777,8 +782,10 @@ export class EditFishingGearComponent extends CustomFormControl<FishingGearDTO |
             this.form.get('lineCountControl')!.setValidators(TLValidators.number(0, undefined, 0));
             this.form.get('lineCountControl')!.markAsPending();
 
-            this.form.get('netsInFleetCountControl')!.setValidators(TLValidators.number(0));
-            this.form.get('netsInFleetCountControl')!.markAsPending();
+            if (this.showNetsInFleet) {
+                this.form.get('netsInFleetCountControl')!.setValidators(TLValidators.number(0));
+                this.form.get('netsInFleetCountControl')!.markAsPending();
+            }
 
             this.form.get('trawlModelControl')!.setValidators(Validators.maxLength(5000));
             this.form.get('trawlModelControl')!.markAsPending();

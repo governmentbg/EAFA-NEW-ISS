@@ -164,6 +164,10 @@ export class ScientificFishingPublicService extends BaseAuditService implements 
         throw new Error('This method should not be called from the public app.');
     }
 
+    public getCentralTerritoryUnitUsersNomenclature(): Observable<PrintUserNomenclatureDTO[]> {
+        throw new Error('Method not implemented.');
+    }
+
     public assignApplicationViaAccessCode(accessCode: string): Observable<AssignedApplicationInfoDTO> {
         throw new Error('This method should not be called from the public app.');
     }

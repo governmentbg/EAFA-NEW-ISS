@@ -85,7 +85,7 @@
             <div fxLayout="row" fxFlex="100" fxLayoutAlign="space-between center" fxLayoutGap="1.2em">
                 <tl-date-time fxFlex="25"
                               formControlName="fishTripStartDateTimeControl"
-                              tooltipResourceName="catches-and-sales.ship-page-fish-trip-start-date-time-helper"
+                              tooltipResourceName="catches-and-sales.ship-page-fish-trip-start-date-helper"
                               label="{{ 'catches-and-sales.ship-page-fish-trip-start-date-time' | tlTranslate }}"
                               hint="{{ 'common.date-time-control-format-hint' | tlTranslate }}"
                               [disabled]="viewMode"
@@ -347,8 +347,12 @@
                              fxLayoutAlign="end center">
                             <mat-hint fxFlex="100" fxLayout="column">
                                 {{ 'catches-and-sales.ship-page-catch-record-quantity-sums' | tlTranslate }}
-                                <div *ngFor="let fishQuantity of catchQuadrantQuantityTexts | keyvalue" fxLayout="row" fxFlex="100">
-                                    {{ (fishQuantity.key !== undefined && fishQuantity.key !== null && fishQuantity.key > 0) ? ( fishQuantity.key | nomenclatureDisplay: catchZones ) : ('catches-and-sales.ship-page-catch-record-is-continental-catch' | tlTranslate) }}: {{ fishQuantity.value }};
+                                <div *ngFor="let fishQuantity of catchQuadrantQuantityTexts | keyvalue" fxLayout="column" fxFlex="100">
+                                    {{ (fishQuantity.key !== undefined && fishQuantity.key !== null && fishQuantity.key > 0) ? ( fishQuantity.key | nomenclatureDisplay: catchZones ) : ('catches-and-sales.ship-page-catch-record-is-continental-catch' | tlTranslate) }}: 
+
+                                    <div *ngFor="let value of fishQuantity.value" fxLayout="row" fxFlex="100">
+                                        {{ value }}
+                                    </div>
                                 </div>
                             </mat-hint>
                         </div>
@@ -544,8 +548,12 @@
                                  fxLayoutAlign="end center">
                                 <mat-hint fxFlex="100" fxLayout="column">
                                     {{ 'catches-and-sales.ship-page-catch-record-quantity-sums' | tlTranslate }}
-                                    <div *ngFor="let fishQuantity of declarationOfOriginCatchRecordsQuantityTexts | keyvalue" fxLayout="row" fxFlex="100">
-                                        {{ (fishQuantity.key !== undefined && fishQuantity.key !== null && fishQuantity.key > 0) ? ( fishQuantity.key | nomenclatureDisplay: catchZones ) : ('catches-and-sales.ship-page-catch-record-is-continental-catch' | tlTranslate) }}: {{ fishQuantity.value }};
+                                    <div *ngFor="let fishQuantity of declarationOfOriginCatchRecordsQuantityTexts | keyvalue" fxLayout="column" fxFlex="100">
+                                        {{ (fishQuantity.key !== undefined && fishQuantity.key !== null && fishQuantity.key > 0) ? ( fishQuantity.key | nomenclatureDisplay: catchZones ) : ('catches-and-sales.ship-page-catch-record-is-continental-catch' | tlTranslate) }}:
+
+                                        <div *ngFor="let value of fishQuantity.value" fxLayout="row" fxFlex="100">
+                                            {{ value }}
+                                        </div>
                                     </div>
                                 </mat-hint>
                             </div>

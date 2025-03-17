@@ -20,6 +20,7 @@ import { HeaderCloseFunction } from '@app/shared/components/dialog-wrapper/inter
 import { VesselDuringInspectionDTO } from '@app/models/generated/dtos/VesselDuringInspectionDTO';
 import { CatchSizeCodesEnum } from '@app/enums/catch-size-codes.enum';
 import { ShipNomenclatureDTO } from '@app/models/generated/dtos/ShipNomenclatureDTO';
+import { CatchInspectionTypeCodesEnum } from '@app/enums/catch-inspection-type-codes.enum';
 
 function groupBy(array: any[], f: any): any[][] {
     const groups: any = {};
@@ -106,6 +107,7 @@ export class InspectedCatchesTableComponent extends CustomFormControl<Inspection
 
     public catches: InspectedCatchTableModel[] = [];
     public catchQuantities: Map<number, number> = new Map<number, number>();
+    public catchQuantityTexts: string[] = [];
 
     private temporarySelectedGridSector: NomenclatureDTO<number> | undefined;
 
@@ -180,9 +182,10 @@ export class InspectedCatchesTableComponent extends CustomFormControl<Inspection
                 turbotSizeGroupId: x.turbotSizeGroupId,
                 hasGearExit: x.hasGearExit,
                 fishingGearTypeId: x.fishingGearTypeId,
+                catchInspectionType: x.catchInspectionType,
                 hasMissingProperties: this.checkIfCatchHasMissingProperties(x)
             }));
-
+        
             setTimeout(() => {
                 this.catches = catches;
                 this.recalculateCatchQuantitySums();
@@ -212,6 +215,9 @@ export class InspectedCatchesTableComponent extends CustomFormControl<Inspection
     public catchRecordChanged(event: RecordChangedEventArgs<InspectedCatchTableModel>): void {
         event.Record.catchZoneId = this.catchesFormGroup.get('catchZoneControl')!.value?.value;
         event.Record.catchZone = this.catchesFormGroup.get('catchZoneControl')!.value;
+
+        const catchInspectionTypeId: number = this.catchesFormGroup.get('catchInspectionTypeIdControl')!.value;
+        event.Record.catchInspectionType = this.getCatchInspectionType(catchInspectionTypeId);
         event.Record.hasMissingProperties = false;
 
         this.catches = this.datatable.rows;
@@ -338,7 +344,7 @@ export class InspectedCatchesTableComponent extends CustomFormControl<Inspection
     protected getValue(): InspectionCatchMeasureDTO[] {
         const bms = this.types.find(x => x.code === CatchSizeCodesEnum[CatchSizeCodesEnum.BMS])?.value;
         const lsc = this.types.find(x => x.code === CatchSizeCodesEnum[CatchSizeCodesEnum.LSC])?.value;
-
+    
         return this.catches.map(x => new InspectionCatchMeasureDTO({
             id: x.id,
             action: x.action,
@@ -357,6 +363,7 @@ export class InspectedCatchesTableComponent extends CustomFormControl<Inspection
             turbotSizeGroupId: x.turbotSizeGroupId ?? undefined,
             hasGearExit: x.hasGearExit,
             fishingGearTypeId: x.fishingGearTypeId,
+            catchInspectionType: this.getCatchInspectionType(x.catchInspectionTypeId),
             hasMissingProperties: this.checkIfCatchHasMissingProperties(x)
         }));
     }
@@ -432,13 +439,113 @@ export class InspectedCatchesTableComponent extends CustomFormControl<Inspection
         }
     }
 
-    private recalculateCatchQuantitySums(): void {
-        const recordsGroupedByFish: Record<number, InspectedCatchTableModel[]> = CommonUtils.groupBy(this.catches, x => x.fishId!);
-        this.catchQuantities.clear();
+    private getCatchInspectionType(catchInspectionTypeId: number | undefined): CatchInspectionTypeCodesEnum | undefined {
+        if (catchInspectionTypeId === undefined || catchInspectionTypeId === null) {
+            return undefined;
+        }
 
-        for (const fishGroupId in recordsGroupedByFish) {
-            const quantity: number = recordsGroupedByFish[fishGroupId].reduce((sum, current) => Number(sum) + (this.hasUnloadedQuantity ? Number(current.unloadedQuantity!) : Number(current.catchQuantity!)), 0);
-            this.catchQuantities.set(Number(fishGroupId), quantity);
+        const typeCode: string = this.types.find(x => x.value === catchInspectionTypeId)!.code!;
+        if (typeCode === CatchInspectionTypeCodesEnum[CatchInspectionTypeCodesEnum.LSC]) {
+            return CatchInspectionTypeCodesEnum.LSC;
+        }
+        else if (typeCode === CatchInspectionTypeCodesEnum[CatchInspectionTypeCodesEnum.BMS]) {
+            return CatchInspectionTypeCodesEnum.BMS;
+        }
+        else {
+            return CatchInspectionTypeCodesEnum.DIS;
+        }
+    }
+
+    private recalculateCatchQuantitySums(): void {
+        this.catchQuantityTexts = [];
+
+        const catches: InspectedCatchTableModel[] = this.getCatchesGrouped(this.catches);
+        const count: string = this.translate.getValue('inspections.inspected-catch-count');
+        const quantityKg: string = this.translate.getValue('inspections.inspected-catch-kg');
+        const discarded: string = this.translate.getValue('inspections.discarded-catch-kg');
+
+        for (const fish of catches) {
+            let fishText: string = `${fish.fish?.displayName}`;
+
+            if (fish.turbotSizeGroup !== undefined && fish.turbotSizeGroup !== null) {
+                fishText += ` - ${fish.turbotSizeGroup!.displayName}`;
+            }
+
+            if (this.hasUnloadedQuantity) {
+                fishText += `: ${fish.unloadedQuantity!.toFixed(2)} ${quantityKg}`;
+            }
+            else {
+                fishText += `: ${fish.catchQuantity!.toFixed(2)} ${quantityKg}`;
+            }
+          
+            if (fish.discardedQuantity !== undefined && fish.discardedQuantity !== null && fish.discardedQuantity > 0 && !this.hasUnloadedQuantity) {
+                fishText += ` (${fish.discardedQuantity} ${discarded})`;
+            }
+
+            this.catchQuantityTexts.push(fishText);
+        }
+
+        this.catchQuantityTexts = this.catchQuantityTexts.slice();
+    }
+
+    private getCatchesGrouped(catches: InspectedCatchTableModel[]): InspectedCatchTableModel[] {
+        const result: InspectedCatchTableModel[] = [];
+
+        for (const inspCatch of catches) {
+            const index: number = result.findIndex(x => x.fishId === inspCatch.fishId
+                && (((x.turbotSizeGroupId === undefined || x.turbotSizeGroupId === null)
+                    && (inspCatch.turbotSizeGroupId === undefined || inspCatch.turbotSizeGroupId === null))
+                    || Number(x.turbotSizeGroupId) === Number(inspCatch.turbotSizeGroupId)));
+         
+            const catchInspectionType: CatchInspectionTypeCodesEnum | undefined = this.getCatchInspectionType(inspCatch.catchInspectionTypeId);
+
+            if (index !== -1) {
+                if (catchInspectionType !== CatchInspectionTypeCodesEnum.DIS) {
+                    result[index].catchQuantity! += (Number(inspCatch.catchQuantity) ?? 0);
+
+                    if (this.hasUnloadedQuantity) {
+                        result[index].unloadedQuantity! += (Number(inspCatch.unloadedQuantity) ?? 0);
+                    }
+                }
+                else {
+                    result[index].catchQuantity! -= (Number(inspCatch.catchQuantity) ?? 0);
+                    result[index].discardedQuantity! += (Number(inspCatch.catchQuantity) ?? 0);
+
+                    if (this.hasUnloadedQuantity) {
+                        result[index].unloadedQuantity! -= (Number(inspCatch.unloadedQuantity) ?? 0);
+                    }
+                }
+            }
+            else {
+                const product: InspectedCatchTableModel = new InspectedCatchTableModel({
+                    fishId: inspCatch.fishId,
+                    turbotSizeGroupId: inspCatch.turbotSizeGroupId,
+                    catchQuantity: (inspCatch.catchQuantity ?? 0),
+                    unloadedQuantity: (inspCatch.unloadedQuantity ?? 0),
+                    discardedQuantity: 0,
+                    catchInspectionTypeId: inspCatch.catchInspectionTypeId,
+                    fish: this.fishes.find(x => x.value === inspCatch.fishId),
+                    turbotSizeGroup: this.turbotSizeGroups.find(x => x.value === inspCatch.turbotSizeGroupId)
+                });
+
+                if (catchInspectionType === CatchInspectionTypeCodesEnum.DIS) {
+                    product.catchQuantity = -(Number(inspCatch.catchQuantity) ?? 0);
+                    product.discardedQuantity! += (Number(inspCatch.catchQuantity) ?? 0);
+
+                    if (this.hasUnloadedQuantity) {
+                        product.unloadedQuantity = -(Number(inspCatch.unloadedQuantity) ?? 0);
+                    }
+                }
+
+                result.push(product);
+            }
+        }
+
+        if (this.hasUnloadedQuantity) {
+            return result.filter(x => x.unloadedQuantity !== undefined && x.unloadedQuantity !== null && x.unloadedQuantity > 0);
+        }
+        else {
+            return result.filter(x => x.catchQuantity !== undefined && x.catchQuantity !== null && x.catchQuantity > 0);
         }
     }
 }

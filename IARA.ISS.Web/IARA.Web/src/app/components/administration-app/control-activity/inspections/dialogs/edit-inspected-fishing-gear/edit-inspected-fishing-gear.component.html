@@ -21,6 +21,7 @@
                     <edit-fishing-gear formControlName="permittedGearControl"
                                        [canSelectMarks]="!readOnly"
                                        [filterTypes]="false"
+                                       [showNetsInFleet]="false"
                                        (selectedMark)="onMarkSelected($event)">
                     </edit-fishing-gear>
                 </tl-expansion-panel>
@@ -34,6 +35,7 @@
                                    [isInspected]="true"
                                    [isNewInspectedGear]="isAddInspectedGear"
                                    [filterTypes]="false"
+                                   [showNetsInFleet]="false"
                                    [listenToService]="true">
                 </edit-fishing-gear>
             </tl-expansion-panel>
@@ -63,6 +65,7 @@
                                [filterTypes]="filterTypes"
                                [pageCode]="pageCode"
                                [listenToService]="true"
+                               [showNetsInFleet]="false"
                                (selectedMark)="onMarkSelected($event)">
             </edit-fishing-gear>
         </tl-expansion-panel>

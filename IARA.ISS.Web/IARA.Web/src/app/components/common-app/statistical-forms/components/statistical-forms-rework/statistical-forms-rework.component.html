@@ -225,16 +225,24 @@
                            [isRemote]="false"
                            [isSoftDeletable]="true"
                            [showInactiveRecords]="false"
-                           [showAddButton]="!viewMode && !isReadonly">
-                <data-column [flexRate]="0.5"
-                             propertyName="productTypeId"
-                             [formGroup]="productGroup"
-                             [options]="productTypes"
-                             [displayOptions]="allProductTypes"
-                             dataType="nomenclature"
-                             [hasSelectedValueFromDropdownValidator]="false"
-                             columnName="{{ 'statistical-forms.rework-product-type' | tlTranslate }}">
-                </data-column>
+                           [showAddButton]="!viewMode && !isReadonly"
+                           (activeRecordChanged)="reworkProductActiveRecordChanged($event)">
+                <data-template-column [flexRate]="0.3"
+                                      columnName="{{ 'statistical-forms.rework-product-type' | tlTranslate }}">
+                    <ng-template [formGroup]="productGroup"
+                                 let-row="row"
+                                 ngx-datatable-cell-template>
+                        <tl-autocomplete *ngIf="row.editMode === true"
+                                         formControlName="productTypeIdControl"
+                                         [options]="productTypes"
+                                         [displayOptions]="allProductTypes"
+                                         [hasSelectedValueFromDropdownValidator]="false">
+                        </tl-autocomplete>
+                        <span *ngIf="row.editMode === false">
+                            {{ row.data.productTypeName !== undefined ? row.data.productTypeName : row.data.productTypeId }}
+                        </span>
+                    </ng-template>
+                </data-template-column>
 
                 <data-column [flexRate]="0.5"
                              propertyName="tons"

@@ -6,6 +6,9 @@ export class InspectedCatchTableModel extends InspectionCatchMeasureDTO {
     public type: NomenclatureDTO<number> | undefined;
     public catchZone: NomenclatureDTO<number> | undefined;
     public turbotSizeGroup: NomenclatureDTO<number> | undefined;
+    public discardedQuantity: number | undefined;
+    public fishName: string | undefined;
+    public turbotSizeGroupName: string | undefined;
 
     public constructor(params?: Partial<InspectedCatchTableModel>) {
         super(params);

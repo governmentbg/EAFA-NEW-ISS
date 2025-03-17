@@ -16,6 +16,7 @@ export class ApplicationProcessingPermissions {
     public readAdministrativeActPermission!: PermissionsEnum;
     public canReAssignApplicationsPermission!: PermissionsEnum;
     public canInspectCorrectAndAddAdmActPermission!: PermissionsEnum;
+    public canReassingToDifferentTerritoryUnitPermission!: PermissionsEnum;
 
     constructor(obj?: Partial<ApplicationProcessingPermissions>) {
         Object.assign(this, obj);

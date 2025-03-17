@@ -4,4 +4,5 @@ import { PrintUserNomenclatureDTO } from '@app/models/generated/dtos/PrintUserNo
 export interface IPrintConfigurationsService {
     getUsersNomenclature(): Observable<PrintUserNomenclatureDTO[]>;
     getMyTerritoryUnitUsersNomenclature(): Observable<PrintUserNomenclatureDTO[]>;
+    getCentralTerritoryUnitUsersNomenclature(): Observable<PrintUserNomenclatureDTO[]>;
 }

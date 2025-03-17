@@ -94,6 +94,7 @@ import { WaitExternalChecksToFinishComponent } from '../components/wait-external
 import { ApplicationProcessingHasPermissions } from '../models/application-processing-has-permissions.model';
 import { EditDialogInfo } from '../models/edit-dialog-info.model';
 import { UserAuthDTO } from '@app/models/generated/dtos/UserAuthDTO';
+import { AssignApplicationByUserParameters } from '../models/assign-application-by-user-parameters.model';
 
 
 const DIALOG_WIDTH: string = '1600px';
@@ -462,13 +463,20 @@ export class ApplicationsTableComponent<T extends IDialogComponent> implements O
 
     public assignApplicationViaUserId(application: ApplicationRegisterDTO): void {
         if (this.pageType === 'FileInPage' || this.pageType === 'OnlineApplPage' || this.pageType === 'ApplicationPage') { // Не се позволява присвояване в публичното и в таблото
+            let hasAllTerritoryUnitsPermission: boolean = false;
+
+            if (application.pageCode !== undefined && application.pageCode !== null) {
+                hasAllTerritoryUnitsPermission = this.processingPermissions.get(application.pageCode)?.canReassingToDifferentTerritoryUnit ?? false;
+            }
+
             const dialog = this.assignApplicationByUserIdDialog.openWithTwoButtons({
                 TCtor: AssignApplicationByUserComponent,
                 title: this.translationService.getValue('applications-register.assign-application-by-user-dialog-title'),
                 translteService: this.translationService,
-                componentData: new DialogParamsModel({
+                componentData: new AssignApplicationByUserParameters({
                     applicationId: application.id,
-                    service: this.service
+                    service: this.service,
+                    hasAllTerritoryUnitsPermission: hasAllTerritoryUnitsPermission
                 }),
                 headerCancelButton: {
                     cancelBtnClicked: (closeFn: HeaderCloseFunction) => { closeFn(); }

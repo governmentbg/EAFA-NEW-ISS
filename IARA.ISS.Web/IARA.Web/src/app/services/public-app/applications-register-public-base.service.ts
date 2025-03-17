@@ -32,6 +32,10 @@ export abstract class ApplicationsRegisterPublicBaseService extends BaseAuditSer
         throw new Error('This method should not be called from the public app.');
     }
 
+    public getCentralTerritoryUnitUsersNomenclature(): Observable<PrintUserNomenclatureDTO[]> {
+        throw new Error('This method should not be called from the public app.');
+    }
+
     public getCurrentUserAsSubmittedBy(...params: unknown[]): Observable<ApplicationSubmittedByDTO> {
         return this.requestService.get(this.area, this.applicationPublicController, 'GetCurrentUserAsSubmittedBy', {
             responseTypeCtr: ApplicationSubmittedByDTO

@@ -24,12 +24,15 @@
                           tooltipResourceName="auan-register.edit-auan-num-helper">
                 </tl-input>
 
-                <tl-date fxFlex="20"
-                         formControlName="draftDateControl"
-                         [max]="today"
-                         label="{{ 'auan-register.edit-draft-date' | tlTranslate }}"
-                         tooltipResourceName="auan-register.edit-draft-date-helper">
-                </tl-date>
+                <tl-date-time fxFlex="20"
+                              formControlName="draftDateControl"
+                              [disabled]="viewMode"
+                              [showHint]="true"
+                              [max]="today"
+                              hint="{{ 'common.date-time-control-format-hint' | tlTranslate }}"
+                              label="{{ 'auan-register.edit-draft-date' | tlTranslate }}"
+                              tooltipResourceName="auan-register.edit-draft-date-helper">
+                </tl-date-time>
 
                 <tl-input fxFlex="40"
                           formControlName="locationDescriptionControl"

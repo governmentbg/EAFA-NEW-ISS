@@ -38,6 +38,8 @@ import { SystemParametersService } from '@app/services/common-app/system-paramet
 import { SystemPropertiesDTO } from '@app/models/generated/dtos/SystemPropertiesDTO';
 import { DateUtils } from '@app/shared/utils/date.utils';
 import { DateDifference } from '@app/models/common/date-difference.model';
+import { Moment } from 'moment';
+import moment from 'moment';
 
 @Component({
     selector: 'edit-auan',
@@ -817,10 +819,14 @@ export class EditAuanComponent implements OnInit, AfterViewInit, IDialogComponen
                 return null;
             }
 
-            const startDate: Date = control.value;
+            const startDate: Moment = moment(control.value);
             const now: Date = new Date();
+         
+            if (startDate === undefined || startDate === null) {
+                return null;
+            }
 
-            const difference: DateDifference | undefined = DateUtils.getDateDifference(startDate, now);
+            const difference: DateDifference | undefined = DateUtils.getDateDifference((startDate as Moment).toDate(), now);
 
             if (difference === undefined || difference === null) {
                 return null;
@@ -831,7 +837,7 @@ export class EditAuanComponent implements OnInit, AfterViewInit, IDialogComponen
             }
 
             const differenceHours: number = (difference.days! * 24) + difference.hours! + (difference.minutes! / 60);
-
+           
             if (differenceHours > this.canAddAuanAfterHours) {
                 return { cannotAddAfterHours: true };
             }

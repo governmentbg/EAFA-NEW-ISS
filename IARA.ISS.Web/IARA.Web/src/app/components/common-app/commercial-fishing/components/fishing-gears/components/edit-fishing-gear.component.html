@@ -108,11 +108,13 @@
                               label="{{ 'fishing-gears.net-nominal-length' | tlTranslate }}"
                               tooltipResourceName="fishing-gears.net-nominal-length-helper">
                     </tl-input>
-                    <tl-input fxFlex="33"
+                    <tl-input *ngIf="showNetsInFleet"
+                              fxFlex="33"
                               formControlName="netsInFleetCountControl"
                               label="{{ 'fishing-gears.nets-in-fleet-count' | tlTranslate }}"
                               tooltipResourceName="fishing-gears.nets-in-fleet-count-helper">
                     </tl-input>
+                    <div *ngIf="!showNetsInFleet" fxFlex="33"></div>
                 </div>
                 <div fxLayout="row"
                      fxFlex="100"

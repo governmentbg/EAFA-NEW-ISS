@@ -513,7 +513,7 @@ namespace IARA.Mobile.Insp.Application.Transactions
                                                      && (filters.DateTo == null ? true : (insp.StartDate.Date <= filters.DateTo.Value.Date))
                                                      && (filters.StateIds == null ? true : (insp.InspectionStateId == filters.StateIds.First()))
                                                      && (string.IsNullOrEmpty(filters.ReportNumber) ? true : insp.ReportNr == (filters.ReportNumber))
-                                                     && (filters.InspectorId == null ? true : insp.InspectorsIds.Split(new string[] { ", " }, StringSplitOptions.None).Contains(filters.InspectorId.ToString())))
+                                                     && (filters.InspectorId == null || string.IsNullOrEmpty(insp.InspectorsIds) ? true : insp.InspectorsIds.Split(new string[] { ", " }, StringSplitOptions.None).Contains(filters.InspectorId.ToString())))
                         select insp
                     ).Count();
                 }
@@ -627,9 +627,11 @@ namespace IARA.Mobile.Insp.Application.Transactions
                     {
                         Inspection localInspection = context.Inspections.FirstOrDefault(f => f.Id == dto.Id);
                         List<NInspectionState> inspectionStates = context.NInspectionStates.ToList();
+                        string inspectorsIds = string.Join(", ", dto.Inspectors.Select(x => x.InspectorId));
 
                         if (localInspection != null)
                         {
+
                             localInspection.SubmitType = submitType;
                             localInspection.InspectionState = dto.InspectionState;
                             localInspection.InspectionStateId = inspectionStates.Find(s => s.Code == dto.InspectionState.ToString()).Id;
@@ -644,6 +646,7 @@ namespace IARA.Mobile.Insp.Application.Transactions
                             localInspection.IsLocal = false;
                             localInspection.LastUpdatedDate = DateTime.Now;
                             localInspection.CreatedByCurrentUser = true;
+                            localInspection.InspectorsIds = inspectorsIds;
                             context.Inspections.Update(localInspection);
                         }
                         else
@@ -674,6 +677,7 @@ namespace IARA.Mobile.Insp.Application.Transactions
                                     : string.Empty,
                                 LastUpdatedDate = DateTime.Now,
                                 CreatedByCurrentUser = true,
+                                InspectorsIds = inspectorsIds,
                                 CreatedOn = DateTime.Now
                             });
                         }
@@ -719,6 +723,7 @@ namespace IARA.Mobile.Insp.Application.Transactions
                 {
                     Inspection localInspection = context.Inspections.FirstOrDefault(f => f.Id == dto.Id);
                     List<NInspectionState> inspectionStates = context.NInspectionStates.ToList();
+                    string inspectorsIds = string.Join(", ", dto.Inspectors.Select(x => x.InspectorId));
 
                     if (localInspection != null)
                     {
@@ -734,7 +739,6 @@ namespace IARA.Mobile.Insp.Application.Transactions
                         {
                             localInspection.SubmitType = SubmitType.ReturnForEdit;
                         }
-
                         localInspection.InspectionState = dto.InspectionState;
                         localInspection.InspectionStateId = inspectionStates.Find(s => s.Code == dto.InspectionState.ToString()).Id;
                         localInspection.Inspectors = submitType == SubmitType.Finish
@@ -747,6 +751,7 @@ namespace IARA.Mobile.Insp.Application.Transactions
                         localInspection.HasJsonContent = true;
                         localInspection.LastUpdatedDate = DateTime.Now;
                         localInspection.CreatedByCurrentUser = true;
+                        localInspection.InspectorsIds = inspectorsIds;
                         localInspection.IsLocal = true;
 
                         context.Inspections.Update(localInspection);
@@ -786,6 +791,7 @@ namespace IARA.Mobile.Insp.Application.Transactions
                                 : string.Empty,
                             LastUpdatedDate = DateTime.MinValue,
                             CreatedByCurrentUser = true,
+                            InspectorsIds = inspectorsIds,
                             CreatedOn = DateTime.Now
                         });
                     }
@@ -1386,7 +1392,7 @@ namespace IARA.Mobile.Insp.Application.Transactions
                                                  && (filters.DateTo == null ? true : (insp.StartDate.Date <= filters.DateTo.Value.Date))
                                                  && (filters.StateIds == null ? true : (insp.InspectionStateId == filters.StateIds.First()))
                                                  && (string.IsNullOrEmpty(filters.ReportNumber) ? true : insp.ReportNr == (filters.ReportNumber))
-                                                 && (filters.InspectorId == null ? true : insp.InspectorsIds.Split(new string[] { ", " }, StringSplitOptions.None).Contains(filters.InspectorId.ToString())))
+                                                 && (filters.InspectorId == null || string.IsNullOrEmpty(insp.InspectorsIds) ? true : insp.InspectorsIds.Split(new string[] { ", " }, StringSplitOptions.None).Contains(filters.InspectorId.ToString())))
 
                     orderby insp.StartDate descending
                     select new InspectionDto
@@ -1404,6 +1410,7 @@ namespace IARA.Mobile.Insp.Application.Transactions
                         Inspectors = insp.Inspectors,
                         CreatedByCurrentUser = insp.CreatedByCurrentUser,
                         CreatedOn = insp.CreatedOn,
+                        InspectorsIds = insp.InspectorsIds
                     }
                 ).Skip((page - 1) * pageSize).Take(pageSize).ToList();
             }
