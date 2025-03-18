@@ -239,7 +239,7 @@
                                  fxLayoutAlign="space-between center">
                                 <egn-lnc-input [fxFlex]="isPublicApp ? 100 : 90"
                                                formControlName="qualifiedFisherIdNumberControl"
-                                               [readonly]="isEditing"
+                                               [readonly]="isEditing || viewMode"
                                                [isForeigner]="isThirdCountryPermit"
                                                [getControlErrorLabelText]="getControlErrorLabelTextMethod"
                                                (keydown.enter)="onQualifiedFisherIdNumberEnterDown()">
@@ -249,7 +249,7 @@
                                                 fxFlex="10"
                                                 class="regix-data-search-button"
                                                 icon="fa-search-icon"
-                                                [disabled]="isEditing && !isRegisterEntry"
+                                                [disabled]="(isEditing && !isRegisterEntry) || viewMode"
                                                 (buttonClicked)="qualifiedFisherSearchBtnClicked()"
                                                 iconClass="accent-color"
                                                 tooltipText="{{ 'regix-data.search' | tlTranslate }}">

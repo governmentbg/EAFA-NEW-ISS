@@ -77,4 +77,10 @@ export class InternalUserManagementService extends BaseUserManagementService imp
             successMessage: 'succ-updated-user-mobile-devices'
         });
     }
+
+    public changeUserStatus(userId: number): Observable<void> {
+        return this.requestService.post(this.area, this.controller, 'ChangeUserToExternal', userId, {
+            successMessage: 'succ-user-made-internal'
+        });
+    }
 }
