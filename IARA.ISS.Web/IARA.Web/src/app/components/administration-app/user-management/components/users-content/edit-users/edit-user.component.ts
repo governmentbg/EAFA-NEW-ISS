@@ -219,10 +219,10 @@ export class EditUserComponent implements OnInit, IDialogComponent {
                     }
                 }
             }
-            else if (actionInfo.id === 'change-user-status') {
+            else if (actionInfo.id === 'change-user-status-to-internal') {
                 this.confirmDialog.open({
-                    title: this.translationService.getValue('users-page.change-user-status'),
-                    message: this.translationService.getValue('users-page.change-user-message'),
+                    title: this.translationService.getValue('users-page.change-user-status-to-internal'),
+                    message: this.translationService.getValue('users-page.change-user-internal-message'),
                     okBtnLabel: this.translationService.getValue('users-page.yes'),
                     cancelBtnLabel: this.translationService.getValue('users-page.change-user-cancel-btn-label')
                 }).subscribe({
@@ -230,6 +230,22 @@ export class EditUserComponent implements OnInit, IDialogComponent {
                         if (ok) {
                             (this.service as ExternalUserManagementService).changeUserStatus(this.userId!).subscribe(result => {
                                 dialogClose(this.externalUserModel);
+                            });
+                        }
+                    }
+                });
+            }
+            else if (actionInfo.id === 'change-user-status-to-external') {
+                this.confirmDialog.open({
+                    title: this.translationService.getValue('users-page.change-user-status-to-external'),
+                    message: this.translationService.getValue('users-page.change-user-external-message'),
+                    okBtnLabel: this.translationService.getValue('users-page.yes'),
+                    cancelBtnLabel: this.translationService.getValue('users-page.change-user-cancel-btn-label')
+                }).subscribe({
+                    next: (ok: boolean) => {
+                        if (ok) {
+                            (this.service as InternalUserManagementService).changeUserStatus(this.userId!).subscribe(result => {
+                                dialogClose(this.internalUserModel);
                             });
                         }
                     }
@@ -677,22 +693,24 @@ export class EditUserComponent implements OnInit, IDialogComponent {
         const min = (lhs: Date, rhs: Date) => lhs < rhs ? lhs : rhs;
 
         for (const role of roles) {
-            //Ако една и съща роля с припокриващ се период на валидност съществува в активни и в неактивни записи, взимаме само активния запис и не показваме съобщение за грешка
-            if (result.findIndex(x => x.id === role.id && max(x.accessValidFrom!, role.accessValidFrom!) < min(x.accessValidTo!, role.accessValidTo!)) === -1) {
-                const original = roles.filter(x => x.id === role.id && max(x.accessValidFrom!, role.accessValidFrom!) < min(x.accessValidTo!, role.accessValidTo!));
+            if (this.roles.find(x => x.value === role.id)) {
+                //Ако една и съща роля с припокриващ се период на валидност съществува в активни и в неактивни записи, взимаме само активния запис и не показваме съобщение за грешка
+                if (result.findIndex(x => x.id === role.id && max(x.accessValidFrom!, role.accessValidFrom!) < min(x.accessValidTo!, role.accessValidTo!)) === -1) {
+                    const original = roles.filter(x => x.id === role.id && max(x.accessValidFrom!, role.accessValidFrom!) < min(x.accessValidTo!, role.accessValidTo!));
 
-                if (original.length > 0) {
-                    if (original.length === 1) {
-                        result.push(original[0]);
-                    }
-                    else {
-                        if (original.filter(x => x.userRoleId !== undefined && x.userRoleId !== null).length === 1) {
-                            const userRole: RoleDTO | undefined = original.find(x => x.userRoleId !== undefined && x.userRoleId !== null);
-                            userRole!.isActive = true;
-                            result.push(userRole!);
+                    if (original.length > 0) {
+                        if (original.length === 1) {
+                            result.push(original[0]);
                         }
                         else {
-                            result.push(original.find(x => x.isActive)!);
+                            if (original.filter(x => x.userRoleId !== undefined && x.userRoleId !== null).length === 1) {
+                                const userRole: RoleDTO | undefined = original.find(x => x.userRoleId !== undefined && x.userRoleId !== null);
+                                userRole!.isActive = true;
+                                result.push(userRole!);
+                            }
+                            else {
+                                result.push(original.find(x => x.isActive)!);
+                            }
                         }
                     }
                 }

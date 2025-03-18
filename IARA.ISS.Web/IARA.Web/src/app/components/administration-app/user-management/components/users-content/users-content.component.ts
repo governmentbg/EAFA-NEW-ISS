@@ -193,11 +193,18 @@ export class UsersContentComponent implements OnInit, AfterViewInit {
                 this.translationService.getValue('users-page.edit-internal-user-dialog-title') :
                 this.translationService.getValue('users-page.edit-external-user-dialog-title');
 
-            if (!this.isInternalUser) {
+            if (this.isInternalUser) {
                 rightButtons.push({
-                    id: 'change-user-status',
+                    id: 'change-user-status-to-external',
                     color: 'warn',
-                    translateValue: this.translationService.getValue('users-page.change-user-status')
+                    translateValue: this.translationService.getValue('users-page.change-user-status-to-external')
+                });
+            }
+            else {
+                rightButtons.push({
+                    id: 'change-user-status-to-internal',
+                    color: 'warn',
+                    translateValue: this.translationService.getValue('users-page.change-user-status-to-internal')
                 });
             }
 
