@@ -97,9 +97,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="IdentityModel.OidcClient">
-      <Version>5.2.1</Version>
-    </PackageReference>
     <PackageReference Include="Microsoft.AppCenter">
       <Version>5.0.1</Version>
     </PackageReference>
@@ -125,7 +122,7 @@
       <Version>4.3.4</Version>
     </PackageReference>
     <PackageReference Include="System.Text.Json">
-      <Version>7.0.2</Version>
+      <Version>9.0.3</Version>
     </PackageReference>
     <PackageReference Include="TechnoLogica.Xamarin">
       <Version>3.4.61318</Version>
@@ -151,10 +148,8 @@
   <ItemGroup>
     <Compile Include="Extensions\AndroidDownloader.cs" />
     <Compile Include="Extensions\DroidWebViewRenderer.cs" />
-    <Compile Include="IdentityServer\ChromeCustomTabsBrowser.cs" />
     <Compile Include="Effects\BorderlessEntryEffect.cs" />
     <Compile Include="Extensions\RestClientHandlerCreation.cs" />
-    <Compile Include="IdentityServer\OidcCallbackActivity.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="MainApplication.cs" />
     <Compile Include="PlatformSpecificServices.cs" />

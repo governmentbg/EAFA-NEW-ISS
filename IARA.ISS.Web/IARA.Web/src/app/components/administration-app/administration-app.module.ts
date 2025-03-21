@@ -174,7 +174,6 @@ import { ChooseLawSectionsComponent } from './control-activity/auan-register/cho
 import { PrintConfigurationsComponent } from './print-configurations/print-configurations.component';
 import { EditPrintConfigurationComponent } from './print-configurations/components/edit-print-configuration/edit-print-configuration.component';
 import { LogBookPageEditExceptionsComponent } from './catches-and-sales/log-book-page-edit-exceptions/log-book-page-edit-exceptions.component';
-import { EditLogBookPageEditExceptionComponent } from './catches-and-sales/log-book-page-edit-exceptions/components/edit-log-book-page-edit-exception.component';
 import { FluxSalesQueryComponent } from './flux-vms-requests/flux-sales-query/flux-sales-query.component';
 import { FluxVesselQueryComponent } from './flux-vms-requests/flux-vessel-query/flux-vessel-query.component';
 import { FluxFAQueryComponent } from './flux-vms-requests/flux-fa-query/flux-fa-query.component';
@@ -196,6 +195,9 @@ import { InspectedEntityEmailComponent } from './control-activity/inspections/di
 import { FluxIsrQueryComponent } from './flux-vms-requests/flux-isr-query/flux-isr-query.component';
 import { FishingActivityUploadReportComponent } from './fishing-activity-reports/fishing-activity-upload-report/fishing-activity-upload-report.component';
 import { ChooseFromOldPermitLicenseComponent } from './control-activity/inspections/dialogs/edit-inspection-fishing-gear/choose-from-old-permit-license/choose-from-old-permit-license.component';
+import { EditLogBookPageEditExceptionComponent } from './catches-and-sales/log-book-page-edit-exceptions/components/edit-log-book-page-edit-exception/edit-log-book-page-edit-exception.component';
+import { GroupedLogBookPageExceptionsComponent } from './catches-and-sales/log-book-page-edit-exceptions/components/grouped-log-book-page-exceptions/grouped-log-book-page-exceptions.component';
+import { EditLogBookPageExceptionsGroupedComponent } from './catches-and-sales/log-book-page-edit-exceptions/components/edit-log-book-page-exceptions-grouped/edit-log-book-page-exceptions-grouped.component';
 
 @NgModule({
     declarations: [
@@ -381,7 +383,9 @@ import { ChooseFromOldPermitLicenseComponent } from './control-activity/inspecti
         SendInspectionEmailsComponent,
         InspectedEntityEmailComponent,
         FishingActivityUploadReportComponent,
-        ChooseFromOldPermitLicenseComponent
+        ChooseFromOldPermitLicenseComponent,
+        GroupedLogBookPageExceptionsComponent,
+        EditLogBookPageExceptionsGroupedComponent
     ],
     imports: [
         TLCommonModule,
@@ -573,7 +577,9 @@ import { ChooseFromOldPermitLicenseComponent } from './control-activity/inspecti
         SendInspectionEmailsComponent,
         InspectedEntityEmailComponent,
         FishingActivityUploadReportComponent,
-        ChooseFromOldPermitLicenseComponent
+        ChooseFromOldPermitLicenseComponent,
+        GroupedLogBookPageExceptionsComponent,
+        EditLogBookPageExceptionsGroupedComponent
     ],
     providers: [
         TLTranslatePipe

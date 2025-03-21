@@ -20,13 +20,18 @@ import { NomenclatureStore } from '@app/shared/utils/nomenclatures.store';
 import { NomenclatureTypes } from '@app/enums/nomenclature.types';
 import { SystemUserNomenclatureDTO } from '@app/models/generated/dtos/SystemUserNomenclatureDTO';
 import { TLMatDialog } from '@app/shared/components/dialog-wrapper/tl-mat-dialog';
-import { EditLogBookPageEditExceptionComponent } from './components/edit-log-book-page-edit-exception.component';
 import { HeaderCloseFunction } from '@app/shared/components/dialog-wrapper/interfaces/header-cancel-button.interface';
 import { DialogParamsModel } from '@app/models/common/dialog-params.model';
 import { IHeaderAuditButton } from '@app/shared/components/dialog-wrapper/interfaces/header-audit-button.interface';
 import { TLConfirmDialog } from '@app/shared/components/confirmation-dialog/tl-confirm-dialog';
 import { LogBookPageEditNomenclatureDTO } from '@app/models/generated/dtos/LogBookPageEditNomenclatureDTO';
 import { LogBookPageEditExceptionEditDTO } from '@app/models/generated/dtos/LogBookPageEditExceptionEditDTO';
+import { EditLogBookPageEditExceptionComponent } from './components/edit-log-book-page-edit-exception/edit-log-book-page-edit-exception.component';
+import { CommonUtils } from '@app/shared/utils/common.utils';
+import { EditLogBookPageExceptionParameters } from './models/edit-log-book-page-exception.model';
+import { MatTabChangeEvent } from '@angular/material/tabs';
+
+const GROUPED_TAB_INDEX: number = 1;
 
 @Component({
     selector: 'log-book-page-edit-exceptions',
@@ -40,10 +45,14 @@ export class LogBookPageEditExceptionsComponent implements OnInit, AfterViewInit
     public logBookTypes: NomenclatureDTO<number>[] = [];
     public logBooks: LogBookPageEditNomenclatureDTO[] = [];
 
+    public groupedExceptionsLoaded: boolean = false;
+
     public readonly canAddExceptionRecords: boolean;
     public readonly canEditExceptionRecords: boolean;
     public readonly canDeleteExceptionRecords: boolean;
     public readonly canRestoreExceptionRecords: boolean;
+
+    public readonly icIconSize: number = CommonUtils.IC_ICON_SIZE;
 
     @ViewChild(SearchPanelComponent)
     private searchpanel!: SearchPanelComponent;
@@ -126,7 +135,7 @@ export class LogBookPageEditExceptionsComponent implements OnInit, AfterViewInit
 
     public addRecord(): void {
         const title: string = this.translationService.getValue('log-book-page-edit-exceptions.add-exception-dialog-title');
-        const dialogData: DialogParamsModel = new DialogParamsModel({
+        const dialogData: EditLogBookPageExceptionParameters = new EditLogBookPageExceptionParameters({
             viewMode: false
         });
 
@@ -135,7 +144,7 @@ export class LogBookPageEditExceptionsComponent implements OnInit, AfterViewInit
 
     public editRecord(model: LogBookPageEditExceptionRegisterDTO, viewMode: boolean): void {
         let title: string = '';
-        const dialogData: DialogParamsModel = new DialogParamsModel({
+        const dialogData: EditLogBookPageExceptionParameters = new EditLogBookPageExceptionParameters({
             id: model.id,
             viewMode: viewMode
         });
@@ -153,6 +162,17 @@ export class LogBookPageEditExceptionsComponent implements OnInit, AfterViewInit
         }
 
         this.openEditDialog(title, dialogData, viewMode, headerButton);
+    }
+
+    public copyRecord(model: LogBookPageEditExceptionRegisterDTO): void {
+        const title: string = this.translationService.getValue('log-book-page-edit-exceptions.add-exception-dialog-title');
+        const dialogData: EditLogBookPageExceptionParameters = new EditLogBookPageExceptionParameters({
+            id: model.id!,
+            viewMode: false,
+            isCopy: true
+        });
+
+        this.openEditDialog(title, dialogData, false, undefined);
     }
 
     public deleteRecord(model: LogBookPageEditExceptionRegisterDTO): void {
@@ -189,6 +209,12 @@ export class LogBookPageEditExceptionsComponent implements OnInit, AfterViewInit
         });
     }
 
+    public tabChanged(event: MatTabChangeEvent): void {
+        if (event.index === GROUPED_TAB_INDEX) {
+            this.groupedExceptionsLoaded = true;
+        }
+    }
+
     private buildForm(): void {
         this.formGroup = new FormGroup({
             userControl: new FormControl(),
@@ -201,7 +227,7 @@ export class LogBookPageEditExceptionsComponent implements OnInit, AfterViewInit
         });
     }
 
-    private openEditDialog(title: string, dialogData: DialogParamsModel, viewMode: boolean, auditButton: IHeaderAuditButton | undefined): void {
+    private openEditDialog(title: string, dialogData: EditLogBookPageExceptionParameters, viewMode: boolean, auditButton: IHeaderAuditButton | undefined): void {
         this.editDialog.openWithTwoButtons({
             TCtor: EditLogBookPageEditExceptionComponent,
             translteService: this.translationService,

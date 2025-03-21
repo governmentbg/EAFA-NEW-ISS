@@ -3,11 +3,7 @@
                [isSoftDeletable]="isSoftDeletable"
                [showInactiveRecords]="showInactiveRecords"
                [showAddButton]="showAddButton"
-               [recordsPerPage]="recordsPerPage"
-               (activeRecordChanged)="editAquacultureLogBookPage($event, !$event.isActive
-                                                                         || $event.status === logBookPageStatusesEnum.Canceled
-                                                                         || $event.isLogBookFinished
-                                                                         || !canEditAquacultureLogBookRecords)">
+               [recordsPerPage]="recordsPerPage">
     <row-detail *ngIf="canReadInspections">
         <ng-template let-row="row" ngx-datatable-row-detail-template>
             <div fxFlexFill fxLayout="column" fxLayoutGap="1em">

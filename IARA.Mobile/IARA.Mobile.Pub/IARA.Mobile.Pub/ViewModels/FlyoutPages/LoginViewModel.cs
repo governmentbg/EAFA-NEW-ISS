@@ -43,6 +43,7 @@ namespace IARA.Mobile.Pub.ViewModels.FlyoutPages
 
             Retry = CommandBuilder.CreateFrom(OnRetry);
             LogIn = CommandBuilder.CreateFrom(OnLogIn);
+            GoToSignUp = CommandBuilder.CreateFrom(OnGoToSignUp);
             Retry.Execute(null);
         }
         public bool ShowLogInForm => !(NoInternet || NoServerConnection);
@@ -68,6 +69,7 @@ namespace IARA.Mobile.Pub.ViewModels.FlyoutPages
 
         public ICommand Retry { get; }
         public ICommand LogIn { get; }
+        public ICommand GoToSignUp { get; }
 
         [Required]
         public ValidState Username { get; set; }
@@ -151,6 +153,10 @@ namespace IARA.Mobile.Pub.ViewModels.FlyoutPages
                 NoInternet = false;
                 NoServerConnection = true;
             }
+        }
+        private async Task OnGoToSignUp()
+        {
+            await Device.InvokeOnMainThreadAsync(() => App.Current.SetMainPage(new RegisterPage()));
         }
 
         private async Task ReturnToMain()

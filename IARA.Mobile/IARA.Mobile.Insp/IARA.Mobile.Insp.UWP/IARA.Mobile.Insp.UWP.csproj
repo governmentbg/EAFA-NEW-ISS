@@ -147,7 +147,6 @@
     </Compile>
     <Compile Include="Extensions\WindowsDownloader.cs" />
     <Compile Include="Extensions\RestClientHandlerCreation.cs" />
-    <Compile Include="IdentityServerWebBrowser.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
@@ -245,9 +244,6 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="IdentityModel.OidcClient">
-      <Version>5.2.1</Version>
-    </PackageReference>
     <PackageReference Include="MediaTypeMap">
       <Version>2.1.0</Version>
     </PackageReference>

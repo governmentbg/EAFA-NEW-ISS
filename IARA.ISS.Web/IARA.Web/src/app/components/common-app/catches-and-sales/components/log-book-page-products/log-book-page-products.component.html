@@ -6,8 +6,7 @@
                    [isSoftDeletable]="true"
                    [showAddButton]="showAddButton && !isReadonly"
                    [showInactiveRecords]="true"
-                   (addButtonClicked)="addEditProduct()"
-                   (activeRecordChanged)="addEditProduct($event, !$event.isActive, logBookType === logBookTypesEnum.Aquaculture)">
+                   (addButtonClicked)="addEditProduct()">
         <div *ngIf="!showAddButton && !isReadonly" datatable-add-buttons fxLayout="row" fxLayoutGap="1em">
             <button mat-raised-button
                     color="accent"
@@ -24,8 +23,7 @@
                                        [isSoftDeletable]="true"
                                        [showInactiveRecords]="true"
                                        [showAddButton]="false"
-                                       [rows]="row.data.products"
-                                       (activeRecordChanged)="addEditProduct($event, !$event.isActive)">
+                                       [rows]="row.data.products">
                             <data-column [flexRate]="0.2"
                                          propertyName="fishId"
                                          dataType="nomenclature"

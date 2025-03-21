@@ -23,8 +23,6 @@ namespace IARA.Mobile.Insp
             services.AddTransient<INomenclatureDatesClear, NomenclatureDatesUtility>();
             services.AddSingleton<IPopUp, PopUpUtility>();
             services.AddSingleton<IConnectivity, ConnectivityUtility>();
-            services.AddTransient<IIdentityServerConfiguration, IdentityServerConfiguration>
-                ((_) => new IdentityServerConfiguration("inspectors-mobile-client", "xamarinformsclients://inspectors-callback"));
             services.AddSingleton<ITranslator, TranslatorUtility>();
             services.AddTransient<ISystemInformationProvider, SystemInformationUtility>();
 

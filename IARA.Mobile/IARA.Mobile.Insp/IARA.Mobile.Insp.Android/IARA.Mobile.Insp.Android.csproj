@@ -88,9 +88,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="IdentityModel.OidcClient">
-      <Version>5.2.1</Version>
-    </PackageReference>
     <PackageReference Include="Microsoft.AppCenter">
       <Version>5.0.1</Version>
     </PackageReference>
@@ -137,7 +134,6 @@
     <Compile Include="Effects\BorderlessEntryEffect.cs" />
     <Compile Include="Extensions\AndroidDownloader.cs" />
     <Compile Include="Extensions\RestClientHandlerCreation.cs" />
-    <Compile Include="IdentityServer\WebAuthenticationCallbackActivity.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="PlatformSpecificServices.cs" />
     <Compile Include="Renderers\CustomEditorRenderer.cs" />

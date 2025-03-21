@@ -15,6 +15,7 @@ import { LogBookPageEditExceptionFilters } from '@app/models/generated/filters/L
 import { RequestProperties } from '@app/shared/services/request-properties';
 import { SystemUserNomenclatureDTO } from '@app/models/generated/dtos/SystemUserNomenclatureDTO';
 import { LogBookPageEditNomenclatureDTO } from '@app/models/generated/dtos/LogBookPageEditNomenclatureDTO';
+import { LogBookPageExceptionGroupedDTO } from '@app/models/generated/dtos/LogBookPageExceptionGroupedDTO';
 
 @Injectable({
     providedIn: 'root'
@@ -76,6 +77,47 @@ export class LogBookPageEditExceptionsService extends BaseAuditService implement
     public downloadFile(fileId: number): Observable<boolean> {
         const params = new HttpParams().append('id', fileId.toString());
         return this.requestService.download(this.area, this.controller, 'DownloadFile', '', { httpParams: params });
+    }
+
+    //LogBookPageExceptionsGrouped
+
+    public getAllGroupedLogBookPageExceptions(request: GridRequestModel<LogBookPageEditExceptionFilters>): Observable<GridResultModel<LogBookPageExceptionGroupedDTO>> {
+        return this.requestService.post(this.area, this.controller, 'GetAllGroupedLogBookPageExceptions', request, {
+            properties: RequestProperties.NO_SPINNER,
+            responseTypeCtr: LogBookPageExceptionGroupedDTO
+        });
+    }
+
+    public getLogBookPagesExceptionsGrouped(logBookPageExceptionIds: number[]): Observable<LogBookPageEditExceptionEditDTO> {
+        return this.requestService.post(this.area, this.controller, 'GetLogBookPageExceptionsGrouped', logBookPageExceptionIds, {
+            responseTypeCtr: LogBookPageEditExceptionEditDTO
+        });
+    }
+
+    public addLogBookPageExceptionsGrouped(model: LogBookPageEditExceptionEditDTO): Observable<void> {
+        return this.requestService.post(this.area, this.controller, 'AddLogBookPageExceptionsGrouped', model, {
+            properties: new RequestProperties({ asFormData: true }),
+            successMessage: 'succ-add-log-book-page-exceptions'
+        });
+    }
+
+    public editLogBookPageExceptionsGrouped(model: LogBookPageEditExceptionEditDTO): Observable<void> {
+        return this.requestService.post(this.area, this.controller, 'EditLogBookPageExceptionsGrouped', model, {
+            properties: new RequestProperties({ asFormData: true }),
+            successMessage: 'succ-edit-log-book-page-exceptions'
+        });
+    }
+
+    public removeLogBookPageExceptionsGrouped(logBookPageExceptionIds: number[]): Observable<void> {
+        return this.requestService.post(this.area, this.controller, 'RemoveLogBookPageExceptionsGrouped', logBookPageExceptionIds, {
+            successMessage: 'succ-delete-log-book-page-edit-exception'
+        });
+    }
+
+    public restoreLogBookPageExceptionsGrouped(logBookPageExceptionIds: number[]): Observable<void> {
+        return this.requestService.patch(this.area, this.controller, 'RestoreLogBookPageExceptionsGrouped', logBookPageExceptionIds, {
+            successMessage: 'succ-restore-log-book-page-edit-exception'
+        })
     }
 
     // Nomenclatures

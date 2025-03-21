@@ -153,4 +153,7 @@
   <data name="Username" xml:space="preserve">
     <value>Username</value>
   </data>
+  <data name="NevigateToSignUp" xml:space="preserve">
+    <value>Sign up</value>
+  </data>
 </root>

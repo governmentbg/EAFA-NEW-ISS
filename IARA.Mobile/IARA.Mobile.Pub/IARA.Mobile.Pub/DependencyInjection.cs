@@ -23,8 +23,6 @@ namespace IARA.Mobile.Pub
             services.AddTransient<INomenclatureDatesClear, NomenclatureDatesUtility>();
             services.AddTransient<IFishingTicketsSettings, FishingTicketsUtility>();
             services.AddSingleton<IConnectivity, ConnectivityUtility>();
-            services.AddTransient<IIdentityServerConfiguration, IdentityServerConfiguration>
-                ((_) => new IdentityServerConfiguration("fishermen-mobile-client", "xamarinformsclients://fishermen-callback"));
             services.AddSingleton<ITranslator, TranslatorUtility>();
             services.AddTransient<ISystemInformationProvider, SystemInformationUtility>();
             foreach (Type type in Assembly.GetExecutingAssembly().GetExportedTypes())
