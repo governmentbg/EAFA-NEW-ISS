@@ -68,7 +68,7 @@ namespace IARA.Mobile.Pub
                 builder.Call<IAuthTokenProvider, IAuthenticationProvider>(CheckEAuthLogin);
 
                 // Checks if user is logged in
-                builder.EndWhen<IAuthTokenProvider, ICurrentUser>(UserLoggedIn);
+                builder.EndWhen<IAuthTokenProvider, ICurrentUser, ISettings>(UserLoggedIn);
 
                 // Checks if user has to change password
                 builder.EndWhen<ICurrentUser>(UserChangePassword);
@@ -164,10 +164,12 @@ namespace IARA.Mobile.Pub
             }
         }
 
-        private bool UserLoggedIn(IAuthTokenProvider authTokenProvider, ICurrentUser currentUser)
+        private bool UserLoggedIn(IAuthTokenProvider authTokenProvider, ICurrentUser currentUser, ISettings settings)
         {
             if (string.IsNullOrEmpty(authTokenProvider.Token) || currentUser.Id == default)
             {
+                CultureInfo.CurrentUICulture = CultureInfo.GetCultureInfoByIetfLanguageTag(
+                settings.CurrentResourceLanguage.ToString().ToLower());
                 Translator.Current.LoadOfflineResources();
                 App.Current.SetMainPage(new PublicHomePage());
 

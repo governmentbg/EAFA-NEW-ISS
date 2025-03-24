@@ -177,12 +177,6 @@ export class ReportsContentComponent implements OnInit, AfterViewInit {
                 requestServiceMethod: this.service.getAllLegalEntitiesReport.bind(this.service),
                 filtersMapper: this.mapLegalEntitiesReportFilters
             });
-
-            this.datatable.activeRecordChanged.subscribe({
-                next: (result: LegalEntityReportDTO) => {
-                    this.showReportInfo(result.id);
-                }
-            });
         }
         else if (this.reportType === this.reportTypeEnum.PERSONS) {
             this.gridManager = new DataTableManager<PersonReportDTO, PersonsReportFilters>({
@@ -190,12 +184,6 @@ export class ReportsContentComponent implements OnInit, AfterViewInit {
                 searchPanel: this.searchpanel,
                 requestServiceMethod: this.service.getAllPersonsReport.bind(this.service),
                 filtersMapper: this.mapPersonsReportFilters
-            });
-
-            this.datatable.activeRecordChanged.subscribe({
-                next: (result: PersonReportDTO) => {
-                    this.showReportInfo(result.id);
-                }
             });
         }
 

@@ -131,7 +131,6 @@
     <Compile Include="Effects\BorderlessEntryEffect.cs" />
     <Compile Include="Extensions\IosDownloader.cs" />
     <Compile Include="Extensions\RestClientHandlerCreation.cs" />
-    <Compile Include="IdentityServer\ASWebAuthenticationSessionBrowser.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="AppDelegate.cs" />
     <Compile Include="Renderers\MenuTextButtonRenderer.cs" />
@@ -202,9 +201,6 @@
     <Reference Include="System.Numerics.Vectors" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="IdentityModel.OidcClient">
-      <Version>5.2.1</Version>
-    </PackageReference>
     <PackageReference Include="Microsoft.AppCenter">
       <Version>5.0.1</Version>
     </PackageReference>
@@ -236,7 +232,7 @@
       <Version>4.3.4</Version>
     </PackageReference>
     <PackageReference Include="System.Text.Json">
-      <Version>7.0.2</Version>
+      <Version>9.0.3</Version>
     </PackageReference>
     <PackageReference Include="TechnoLogica.Xamarin">
       <Version>3.4.61318</Version>

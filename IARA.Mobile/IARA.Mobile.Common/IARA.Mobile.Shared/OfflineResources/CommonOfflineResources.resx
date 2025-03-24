@@ -153,4 +153,7 @@
   <data name="Username" xml:space="preserve">
     <value>Потребителско име</value>
   </data>
+  <data name="NevigateToSignUp" xml:space="preserve">
+    <value>Нямате регистрация?</value>
+  </data>
 </root>

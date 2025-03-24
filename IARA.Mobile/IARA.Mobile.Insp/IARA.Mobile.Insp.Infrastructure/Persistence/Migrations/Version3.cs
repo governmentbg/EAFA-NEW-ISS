@@ -17,7 +17,7 @@ namespace IARA.Mobile.Insp.Infrastructure.Persistence.Migrations
         {
             context.DropTable<NFishingGear>();
             context.CreateTable<NFishingGear>();
-            nomenclatureDates.Remove(NomenclatureEnum.FishingGear);
+            nomenclatureDates.Remove(nameof(NomenclatureEnum.FishingGear));
         }
     }
 }

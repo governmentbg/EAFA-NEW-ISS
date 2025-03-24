@@ -3,7 +3,6 @@ using IARA.Mobile.Domain.Models;
 using IARA.Mobile.Pub.Domain.Models;
 using IARA.Mobile.Shared.Helpers;
 using IARA.Mobile.Shared.ResourceTranslator;
-using IdentityModel.OidcClient;
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
@@ -15,33 +14,15 @@ namespace IARA.Mobile.Shared.Utilities
     {
         public const string LoginType = nameof(LoginType);
 
-        private readonly IIdentityServer _identityServer;
         private readonly IAuthTokenProvider _authTokenProvider;
         private readonly ITranslator _translator;
         private readonly ICommonNavigator _commonNavigator;
 
-        public AuthenticationProvider(IIdentityServer identityServer, IAuthTokenProvider authTokenProvider, ITranslator translator, ICommonNavigator commonNavigator)
+        public AuthenticationProvider(IAuthTokenProvider authTokenProvider, ITranslator translator, ICommonNavigator commonNavigator)
         {
-            _identityServer = identityServer ?? throw new ArgumentNullException(nameof(identityServer));
             _authTokenProvider = authTokenProvider ?? throw new ArgumentNullException(nameof(authTokenProvider));
             _translator = translator ?? throw new ArgumentNullException(nameof(translator));
             _commonNavigator = commonNavigator ?? throw new ArgumentNullException(nameof(commonNavigator));
-        }
-
-        public async Task<bool> Login()
-        {
-            LoginResult result = await _identityServer.Login();
-            bool successLogin = !string.IsNullOrEmpty(result?.AccessToken);
-            if (successLogin)
-            {
-                Debug.WriteLine($"Access TOKEN: {result.AccessToken}");
-                _authTokenProvider.Clear();
-                _authTokenProvider.Token = result.AccessToken;
-                _authTokenProvider.RefreshToken = result.RefreshToken;
-                _authTokenProvider.AccessTokenExpiration = result.AccessTokenExpiration.UtcDateTime;
-            }
-
-            return successLogin;
         }
 
         public bool CheckTokenValidity()
@@ -68,14 +49,11 @@ namespace IARA.Mobile.Shared.Utilities
 
         public async Task Logout()
         {
-            //await _identityServer.Logout(_authTokenProvider.Token);
-            await Task.Delay(400);
             Dispose();
         }
 
         public async Task SoftLogout()
         {
-            //await _identityServer.Logout(_authTokenProvider.Token);
             _authTokenProvider.Clear();
             await Task.Delay(400);
         }

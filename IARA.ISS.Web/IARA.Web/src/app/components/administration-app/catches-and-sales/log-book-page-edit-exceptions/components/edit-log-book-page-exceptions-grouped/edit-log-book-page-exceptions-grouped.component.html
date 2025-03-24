@@ -1,0 +1,122 @@
+﻿<div class="dialog-padding">
+    <div fxLayout="column"
+         fxLayoutGap="1em"
+         fxFlexFill
+         fxLayoutAlign="space-between stretch"
+         validityCheckerGroup
+         [formGroup]="form">
+        <!-- Основна информация -->
+        <tl-expansion-panel title="{{ 'log-book-page-edit-exceptions.edit-page-exception-basic-info' | tlTranslate }}"
+                            tooltipResourceName="log-book-page-edit-exceptions.edit-page-exception-basic-info-helper"
+                            [validityChecker]="form">
+            <div fxLayout="column" fxLayoutGap="1em" fxFlexFill fxLayoutAlign="space-between stretch">
+                <div fxFlex="100" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                    <tl-date-time fxFlex="50"
+                                  formControlName="exceptionActiveFromControl"
+                                  label="{{ 'log-book-page-edit-exceptions.exception-active-from' | tlTranslate }}"
+                                  tooltipResourceName="log-book-page-edit-exceptions.exception-active-from-helper"
+                                  [disabled]="viewMode">
+                    </tl-date-time>
+
+                    <tl-date-time fxFlex="50"
+                                  formControlName="exceptionActiveToControl"
+                                  label="{{ 'log-book-page-edit-exceptions.exception-active-to' | tlTranslate }}"
+                                  tooltipResourceName="log-book-page-edit-exceptions.exception-active-to-helper"
+                                  [disabled]="viewMode">
+                    </tl-date-time>
+                </div>
+
+                <div fxFlex="100" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                    <tl-select fxFlex="100"
+                               formControlName="logBookTypesControl"
+                               label="{{ 'log-book-page-edit-exceptions.log-book-types-grouped' | tlTranslate }}"
+                               tooltipResourceName="log-book-page-edit-exceptions.log-book-types-grouped-helper"
+                               [options]="logBookTypes"
+                               [isMultiple]="true">
+                    </tl-select>
+                </div>
+
+                <div fxFlex="100" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                    <tl-autocomplete fxFlex="100"
+                                     formControlName="logBookControl"
+                                     label="{{ 'log-book-page-edit-exceptions.log-book' | tlTranslate }}"
+                                     tooltipResourceName="log-book-page-edit-exceptions.log-book-helper"
+                                     [options]="logBooks">
+                    </tl-autocomplete>
+                </div>
+
+                <div fxFlex="100" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                    <tl-slide-toggle fxFlex="100"
+                                     formControlName="showFinshedOrSuspendedControl"
+                                     label="{{ 'log-book-page-edit-exceptions.show-finished-or-suspended' | tlTranslate }}">
+                    </tl-slide-toggle>
+                </div>
+
+                <div fxFlex="100" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                    <tl-date fxFlex="50"
+                             formControlName="editPageFromControl"
+                             label="{{ 'log-book-page-edit-exceptions.edit-page-from' | tlTranslate }}"
+                             tooltipResourceName="log-book-page-edit-exceptions.edit-page-from-helper">
+                    </tl-date>
+
+                    <tl-date fxFlex="50"
+                             formControlName="editPageToControl"
+                             label="{{ 'log-book-page-edit-exceptions.edit-page-to' | tlTranslate }}"
+                             tooltipResourceName="log-book-page-edit-exceptions.edit-page-to-helper">
+                    </tl-date>
+                </div>
+
+                <div fxFlex="100" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                    <div fxFlex="100" fxLayout="column">
+                        <div fxFlex="100" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                            <tl-autocomplete fxFlex="100"
+                                             formControlName="usersControl"
+                                             label="{{ 'log-book-page-edit-exceptions.user' | tlTranslate }}"
+                                             tooltipResourceName="log-book-page-edit-exceptions.user-helper"
+                                             [groupedOptions]="users">
+                            </tl-autocomplete>
+                        </div>
+
+                        <div fxFlex="100" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                            <tl-data-table fxFlexFill
+                                           [rows]="selectedUsers"
+                                           [isRemote]="false"
+                                           [isSoftDeletable]="false"
+                                           [showAddButton]="false"
+                                           [showInactiveRecords]="false"
+                                           [recordsPerPage]="usersPerPage">
+                                <data-column [flexRate]="1"
+                                             propertyName="displayName"
+                                             columnName="{{ 'log-book-page-edit-exceptions.exception-usernames' | tlTranslate }}">
+                                </data-column>
+                                <data-template-column [flexRate]="0.1">
+                                    <ng-template let-row="row" ngx-datatable-cell-template>
+                                        <div fxLayout="row" fxLayoutAlign="end center">
+                                            <tl-icon-button *ngIf="!viewMode"
+                                                            icon="delete"
+                                                            iconClass="accent-color"
+                                                            tooltipText="{{ 'log-book-page-edit-exceptions.remove-user' | tlTranslate }}"
+                                                            (buttonClicked)="removeUser(row)">
+                                            </tl-icon-button>
+                                        </div>
+                                    </ng-template>
+                                </data-template-column>
+                            </tl-data-table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </tl-expansion-panel>
+
+        <!-- Файлове -->
+        <tl-expansion-panel title="{{ 'log-book-page-edit-exceptions.edit-page-exception-files' | tlTranslate }}"
+                            tooltipResourceName="log-book-page-edit-exceptions.edit-page-exception-files-helper"
+                            [validityChecker]="form">
+            <file-uploader-form-array formControlName="filesControl"
+                                      [pageCode]="pageCode"
+                                      validityChecker
+                                      [downloadFileMethod]="service.downloadFile.bind(this.service)">
+            </file-uploader-form-array>
+        </tl-expansion-panel>
+    </div>
+</div>

@@ -241,8 +241,7 @@
                                        [isSoftDeletable]="true"
                                        [showAddButton]="!viewMode"
                                        [showInactiveRecords]="!viewMode"
-                                       (addButtonClicked)="addEditCatchRecord()"
-                                       (activeRecordChanged)="addEditCatchRecord($event, !$event.isActive || viewMode)">
+                                       (addButtonClicked)="addEditCatchRecord()">
                             <row-detail>
                                 <ng-template let-row="row" ngx-datatable-row-detail-template>
                                     <tl-card>
@@ -391,8 +390,7 @@
                                            [isSoftDeletable]="true"
                                            [showInactiveRecords]="false"
                                            [showAddButton]="!viewMode"
-                                           addButtonLabel="{{ 'catches-and-sales.ship-page-declaration-of-origin-generate-catch-data' | tlTranslate }}"
-                                           (addButtonClicked)="generateOriginDeclarationFromCatchRecordFishes()">
+                                           addButtonLabel="{{ 'catches-and-sales.ship-page-declaration-of-origin-generate-catch-data' | tlTranslate }}">
                                 <div *ngIf="!viewMode" datatable-add-buttons fxLayout="row" fxLayoutGap="1em">
                                     <button mat-raised-button
                                             color="primary"
@@ -410,8 +408,7 @@
                                                                [isSoftDeletable]="true"
                                                                [showInactiveRecords]="false"
                                                                [showAddButton]="false"
-                                                               [rows]="row.data.declarationFishes"
-                                                               (activeRecordChanged)="editDeclarationOfOriginCatchRecord($event, !$event.isActive || viewMode)">
+                                                               [rows]="row.data.declarationFishes">
                                                     <data-column propertyName="catchZone"
                                                                  columnName="{{ 'catches-and-sales.ship-page-declaration-of-origin-catch-record-catch-zone' | tlTranslate }}"
                                                                  [flexRate]="0.2">

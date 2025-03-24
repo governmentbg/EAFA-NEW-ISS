@@ -8,8 +8,7 @@
                    [addButtonTooltipText]="disableAddButtons ? disabledAddBtnTooltipText : undefined"
                    [showInactiveRecords]="showInactivePagesAndDocuments"
                    [recordsPerPage]="logBooksPerPages"
-                   (addButtonClicked)="addEditLogBook()"
-                   (activeRecordChanged)="addEditLogBook($event)">
+                   (addButtonClicked)="addEditLogBook()">
         <div *ngIf="logBookGroup === logBookGroupsEnum.Ship
                     && !isReadonly"
              datatable-add-buttons

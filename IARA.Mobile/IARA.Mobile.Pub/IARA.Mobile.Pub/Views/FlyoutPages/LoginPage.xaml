@@ -34,6 +34,16 @@
                 <tl:TLEntry Title="{rt:Translate Password, Group=CommonOffline}" ValidState="{Binding Password}" IsPassword="True"/>
                 <tl:TLCheckView Text="{rt:Translate RememberMe, Group=CommonOffline}" ValidState="{Binding RememberMe}" />
                 <Button Text="{rt:Translate Login, Group=CommonOffline}" Command="{Binding LogIn}" />
+                <Label Text="{rt:Translate NevigateToSignUp, Group=CommonOffline}"
+                           HorizontalOptions="Center"
+                           VerticalOptions="Center"
+                           TextDecorations="Underline"
+                           TextColor="{StaticResource Primary}"
+                           Margin="40,0">
+                    <Label.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding GoToSignUp}" />
+                    </Label.GestureRecognizers>
+                </Label>
             </StackLayout>
         </sv:HomeFrameView>
 

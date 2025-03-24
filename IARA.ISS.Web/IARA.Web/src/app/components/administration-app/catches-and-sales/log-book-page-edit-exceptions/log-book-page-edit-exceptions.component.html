@@ -1,131 +1,148 @@
-﻿<div fxLayout="column" fxLayoutGap="1em" fxLayoutAlign="start stretch" fxFlexFill>
-    <search-panel [translateService]="translationService">
-        <div [formGroup]="formGroup" fxFlexFill fxLayout="column" fxLayoutGap="1em" fxLayoutAlign="start start">
-            <div fxLayout="row" fxFlexFill fxFlex="100" fxLayoutAlign="space-between center" fxLayoutGap="1em">
-                <tl-autocomplete fxFlex="33"
-                                 formControlName="userControl"
-                                 label="{{ 'log-book-page-edit-exceptions.user-name-filter' | tlTranslate }}"
-                                 tooltipResourceName="log-book-page-edit-exceptions.user-name-filter-helper"
-                                 [groupedOptions]="users">
-                </tl-autocomplete>
-                <tl-select fxFlex="33"
-                           formControlName="logBookTypesControl"
-                           label="{{ 'log-book-page-edit-exceptions.log-book-types-filter' | tlTranslate }}"
-                           tooltipResourceName="log-book-page-edit-exceptions.log-book-types-filter-helper"
-                           [options]="logBookTypes"
-                           [isMultiple]="true">
-                </tl-select>
-                <tl-autocomplete fxFlex="33"
-                                 formControlName="logBookControl"
-                                 label="{{ 'log-book-page-edit-exceptions.log-book-filter' | tlTranslate }}"
-                                 tooltipResourceName="log-book-page-edit-exceptions.log-book-filter-helper"
-                                 [options]="logBooks">
-                </tl-autocomplete>
-            </div>
-            <div fxLayout="row" fxFlexFill fxFlex="100" fxLayoutAlign="space-between center" fxLayoutGap="1em">
-                <tl-date fxFlex="25"
-                         formControlName="exceptionActiveDateFromControl"
-                         label="{{ 'log-book-page-edit-exceptions.exception-active-from-filter' | tlTranslate }}"
-                         tooltipResourceName="log-book-page-edit-exceptions.exception-active-from-filter-helper">
-                </tl-date>
-                <tl-date fxFlex="25"
-                         formControlName="exceptionActiveDateToControl"
-                         label="{{ 'log-book-page-edit-exceptions.exception-active-to-filter' | tlTranslate }}"
-                         tooltipResourceName="log-book-page-edit-exceptions.exception-active-to-filter-helper">
-                </tl-date>
-                <tl-date fxFlex="25"
-                         formControlName="editPageDateFromControl"
-                         label="{{ 'log-book-page-edit-exceptions.edit-page-date-from-filter' | tlTranslate }}"
-                         tooltipResourceName="log-book-page-edit-exceptions.edit-page-date-from-filter-helper">
-                </tl-date>
-                <tl-date fxFlex="25"
-                         formControlName="editPageDateToControl"
-                         label="{{ 'log-book-page-edit-exceptions.edit-page-date-to-filter' | tlTranslate }}"
-                         tooltipResourceName="log-book-page-edit-exceptions.edit-page-date-to-filter-helper">
-                </tl-date>
-            </div>
-        </div>
-    </search-panel>
+﻿<mat-tab-group mat-align-tabs="start" fxFlexFill (selectedTabChange)="tabChanged($event)">
 
-    <tl-card tooltipResourceName="log-book-page-edit-exceptions.register-table-card-helper">
-        <tl-card-content>
-            <tl-data-table [showAddButton]="canAddExceptionRecords"
-                           [showInactiveRecords]="canRestoreExceptionRecords"
-                           (addButtonClicked)="addRecord()">
-                <data-column propertyName="userNames"
-                             [flexRate]="0.4"
-                             columnName="{{ 'log-book-page-edit-exceptions.user-names' | tlTranslate }}">
-                </data-column>
-                <data-column propertyName="logBookTypeName"
-                             [flexRate]="0.3"
-                             columnName="{{ 'log-book-page-edit-exceptions.log-book-type' | tlTranslate }}">
-                </data-column>
-                <data-column propertyName="logBookNumber"
-                             [flexRate]="0.3"
-                             columnName="{{ 'log-book-page-edit-exceptions.log-book-number' | tlTranslate }}">
-                </data-column>
-                <data-template-column [flexRate]="0.2" columnName="{{ 'log-book-page-edit-exceptions.is-valid' | tlTranslate }}">
-                    <ng-template let-row="row" ngx-datatable-cell-template>
-                        <div fxLayout="row" fxFlex="100" fxLayoutAlign="start center" fxLayoutGap="1em">
-                            <div *ngIf="row.data.isValidNow" fxLayoutAlign="center center" fxFlex="nogrow">
-                                <tl-icon icon="done_outline" iconClass="accent-color"></tl-icon>
-                            </div>
-                            <div *ngIf="!row.data.isValidNow">
-                                <tl-icon icon="highlight_off" iconClass="error-color"></tl-icon>
-                            </div>
-                        </div>
-                    </ng-template>
-                </data-template-column>
-                <data-column propertyName="exceptionActiveFrom"
-                             [flexRate]="0.3"
-                             dataType="datetime"
-                             columnName="{{ 'log-book-page-edit-exceptions.exception-active-from' | tlTranslate }}">
-                </data-column>
-                <data-column propertyName="exceptionActiveTo"
-                             [flexRate]="0.3"
-                             dataType="datetime"
-                             columnName="{{ 'log-book-page-edit-exceptions.exception-active-to' | tlTranslate }}">
-                </data-column>
-                <data-column propertyName="editPageFrom"
-                             [flexRate]="0.3"
-                             dataType="date"
-                             columnName="{{ 'log-book-page-edit-exceptions.edit-page-from' | tlTranslate }}">
-                </data-column>
-                <data-column propertyName="editPageTo"
-                             [flexRate]="0.3"
-                             dataType="date"
-                             columnName="{{ 'log-book-page-edit-exceptions.edit-page-to' | tlTranslate }}">
-                </data-column>
-                <data-template-column [flexRate]="0.3" [cellClass]="'justify-center'">
-                    <ng-template let-row="row" ngx-datatable-cell-template>
-                        <div fxLayout="row wrap" fxLayoutAlign="end center">
-                            <tl-icon-button icon="visibility"
-                                            (buttonClicked)="editRecord(row.data, true)"
-                                            iconClass="accent-color"
-                                            tooltipText="{{ 'log-book-page-edit-exceptions.view-exception' | tlTranslate }}">
-                            </tl-icon-button>
-                            <tl-icon-button *ngIf="row.data.isActive && canEditExceptionRecords"
-                                            icon="edit"
-                                            (buttonClicked)="editRecord(row.data, false)"
-                                            iconClass="accent-color"
-                                            tooltipText="{{ 'log-book-page-edit-exceptions.edit-exception' | tlTranslate }}">
-                            </tl-icon-button>
-                            <tl-icon-button *ngIf="row.data.isActive && canDeleteExceptionRecords"
-                                            icon="delete"
-                                            (buttonClicked)="deleteRecord(row.data)"
-                                            iconClass="accent-color"
-                                            tooltipText="{{ 'log-book-page-edit-exceptions.delete-exception' | tlTranslate }}">
-                            </tl-icon-button>
-                            <tl-icon-button *ngIf="!row.data.isActive && canRestoreExceptionRecords"
-                                            icon="restore"
-                                            (buttonClicked)="restoreRecord(row.data)"
-                                            iconClass="accent-color"
-                                            tooltipText="{{ 'log-book-page-edit-exceptions.restore-exception' | tlTranslate }}">
-                            </tl-icon-button>
-                        </div>
-                    </ng-template>
-                </data-template-column>
-            </tl-data-table>
-        </tl-card-content>
-    </tl-card>
-</div>
+    <mat-tab label="{{ 'log-book-page-edit-exceptions.all-log-book-page-exceptions' | tlTranslate }}">
+        <div fxLayout="column" fxLayoutGap="1em" fxLayoutAlign="start stretch" fxFlexFill>
+            <search-panel [translateService]="translationService">
+                <div [formGroup]="formGroup" fxFlexFill fxLayout="column" fxLayoutGap="1em" fxLayoutAlign="start start">
+                    <div fxLayout="row" fxFlexFill fxFlex="100" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                        <tl-autocomplete fxFlex="33"
+                                         formControlName="userControl"
+                                         label="{{ 'log-book-page-edit-exceptions.user-name-filter' | tlTranslate }}"
+                                         tooltipResourceName="log-book-page-edit-exceptions.user-name-filter-helper"
+                                         [groupedOptions]="users">
+                        </tl-autocomplete>
+                        <tl-select fxFlex="33"
+                                   formControlName="logBookTypesControl"
+                                   label="{{ 'log-book-page-edit-exceptions.log-book-types-filter' | tlTranslate }}"
+                                   tooltipResourceName="log-book-page-edit-exceptions.log-book-types-filter-helper"
+                                   [options]="logBookTypes"
+                                   [isMultiple]="true">
+                        </tl-select>
+                        <tl-autocomplete fxFlex="33"
+                                         formControlName="logBookControl"
+                                         label="{{ 'log-book-page-edit-exceptions.log-book-filter' | tlTranslate }}"
+                                         tooltipResourceName="log-book-page-edit-exceptions.log-book-filter-helper"
+                                         [options]="logBooks">
+                        </tl-autocomplete>
+                    </div>
+                    <div fxLayout="row" fxFlexFill fxFlex="100" fxLayoutAlign="space-between center" fxLayoutGap="1em">
+                        <tl-date fxFlex="25"
+                                 formControlName="exceptionActiveDateFromControl"
+                                 label="{{ 'log-book-page-edit-exceptions.exception-active-from-filter' | tlTranslate }}"
+                                 tooltipResourceName="log-book-page-edit-exceptions.exception-active-from-filter-helper">
+                        </tl-date>
+                        <tl-date fxFlex="25"
+                                 formControlName="exceptionActiveDateToControl"
+                                 label="{{ 'log-book-page-edit-exceptions.exception-active-to-filter' | tlTranslate }}"
+                                 tooltipResourceName="log-book-page-edit-exceptions.exception-active-to-filter-helper">
+                        </tl-date>
+                        <tl-date fxFlex="25"
+                                 formControlName="editPageDateFromControl"
+                                 label="{{ 'log-book-page-edit-exceptions.edit-page-date-from-filter' | tlTranslate }}"
+                                 tooltipResourceName="log-book-page-edit-exceptions.edit-page-date-from-filter-helper">
+                        </tl-date>
+                        <tl-date fxFlex="25"
+                                 formControlName="editPageDateToControl"
+                                 label="{{ 'log-book-page-edit-exceptions.edit-page-date-to-filter' | tlTranslate }}"
+                                 tooltipResourceName="log-book-page-edit-exceptions.edit-page-date-to-filter-helper">
+                        </tl-date>
+                    </div>
+                </div>
+            </search-panel>
+
+            <tl-card tooltipResourceName="log-book-page-edit-exceptions.register-table-card-helper">
+                <tl-card-content>
+                    <tl-data-table [showAddButton]="canAddExceptionRecords"
+                                   [showInactiveRecords]="canRestoreExceptionRecords"
+                                   (addButtonClicked)="addRecord()">
+                        <data-column propertyName="userNames"
+                                     [flexRate]="0.4"
+                                     columnName="{{ 'log-book-page-edit-exceptions.user-names' | tlTranslate }}">
+                        </data-column>
+                        <data-column propertyName="logBookTypeName"
+                                     [flexRate]="0.3"
+                                     columnName="{{ 'log-book-page-edit-exceptions.log-book-type' | tlTranslate }}">
+                        </data-column>
+                        <data-column propertyName="logBookNumber"
+                                     [flexRate]="0.3"
+                                     columnName="{{ 'log-book-page-edit-exceptions.log-book-number' | tlTranslate }}">
+                        </data-column>
+                        <data-template-column [flexRate]="0.2" columnName="{{ 'log-book-page-edit-exceptions.is-valid' | tlTranslate }}">
+                            <ng-template let-row="row" ngx-datatable-cell-template>
+                                <div fxLayout="row" fxFlex="100" fxLayoutAlign="start center" fxLayoutGap="1em">
+                                    <div *ngIf="row.data.isValidNow" fxLayoutAlign="center center" fxFlex="nogrow">
+                                        <tl-icon icon="done_outline" iconClass="accent-color"></tl-icon>
+                                    </div>
+                                    <div *ngIf="!row.data.isValidNow">
+                                        <tl-icon icon="highlight_off" iconClass="error-color"></tl-icon>
+                                    </div>
+                                </div>
+                            </ng-template>
+                        </data-template-column>
+                        <data-column propertyName="exceptionActiveFrom"
+                                     [flexRate]="0.3"
+                                     dataType="datetime"
+                                     columnName="{{ 'log-book-page-edit-exceptions.exception-active-from' | tlTranslate }}">
+                        </data-column>
+                        <data-column propertyName="exceptionActiveTo"
+                                     [flexRate]="0.3"
+                                     dataType="datetime"
+                                     columnName="{{ 'log-book-page-edit-exceptions.exception-active-to' | tlTranslate }}">
+                        </data-column>
+                        <data-column propertyName="editPageFrom"
+                                     [flexRate]="0.3"
+                                     dataType="date"
+                                     columnName="{{ 'log-book-page-edit-exceptions.edit-page-from' | tlTranslate }}">
+                        </data-column>
+                        <data-column propertyName="editPageTo"
+                                     [flexRate]="0.3"
+                                     dataType="date"
+                                     columnName="{{ 'log-book-page-edit-exceptions.edit-page-to' | tlTranslate }}">
+                        </data-column>
+                        <data-template-column [flexRate]="0.3" [cellClass]="'justify-center'">
+                            <ng-template let-row="row" ngx-datatable-cell-template>
+                                <div fxLayout="row wrap" fxLayoutAlign="end center">
+                                    <tl-icon-button icon="visibility"
+                                                    (buttonClicked)="editRecord(row.data, true)"
+                                                    iconClass="accent-color"
+                                                    tooltipText="{{ 'log-book-page-edit-exceptions.view-exception' | tlTranslate }}">
+                                    </tl-icon-button>
+                                    <tl-icon-button *ngIf="row.data.isActive && canEditExceptionRecords"
+                                                    icon="edit"
+                                                    (buttonClicked)="editRecord(row.data, false)"
+                                                    iconClass="accent-color"
+                                                    tooltipText="{{ 'log-book-page-edit-exceptions.edit-exception' | tlTranslate }}">
+                                    </tl-icon-button>
+                                    <tl-icon-button *ngIf="row.data.isActive && canEditExceptionRecords"
+                                                    icon="ic-copy"
+                                                    [size]="icIconSize"
+                                                    (buttonClicked)="copyRecord(row.data)"
+                                                    iconClass="accent-color"
+                                                    tooltipText="{{ 'log-book-page-edit-exceptions.copy-exception' | tlTranslate }}">
+                                    </tl-icon-button>
+                                    <tl-icon-button *ngIf="row.data.isActive && canDeleteExceptionRecords"
+                                                    icon="delete"
+                                                    (buttonClicked)="deleteRecord(row.data)"
+                                                    iconClass="accent-color"
+                                                    tooltipText="{{ 'log-book-page-edit-exceptions.delete-exception' | tlTranslate }}">
+                                    </tl-icon-button>
+                                    <tl-icon-button *ngIf="!row.data.isActive && canRestoreExceptionRecords"
+                                                    icon="restore"
+                                                    (buttonClicked)="restoreRecord(row.data)"
+                                                    iconClass="accent-color"
+                                                    tooltipText="{{ 'log-book-page-edit-exceptions.restore-exception' | tlTranslate }}">
+                                    </tl-icon-button>
+                                </div>
+                            </ng-template>
+                        </data-template-column>
+                    </tl-data-table>
+                </tl-card-content>
+            </tl-card>
+        </div>
+    </mat-tab>
+
+    <mat-tab label="{{ 'log-book-page-edit-exceptions.grouped-log-book-page-exceptions' | tlTranslate }}">
+        <grouped-log-book-page-exceptions *ngIf="groupedExceptionsLoaded">
+        </grouped-log-book-page-exceptions>
+    </mat-tab>
+</mat-tab-group>

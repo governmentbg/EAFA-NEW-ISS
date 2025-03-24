@@ -21,9 +21,9 @@ namespace IARA.Mobile.Pub.Utilities
             Preferences.Clear(SharedName);
         }
 
-        public void Remove(Insp.Domain.Enums.NomenclatureEnum nomenclatureEnum)
+        public void Remove(string nomenclatureEnumString)
         {
-            throw new NotImplementedException();
+            Preferences.Remove(nomenclatureEnumString, SharedName);
         }
     }
 }
