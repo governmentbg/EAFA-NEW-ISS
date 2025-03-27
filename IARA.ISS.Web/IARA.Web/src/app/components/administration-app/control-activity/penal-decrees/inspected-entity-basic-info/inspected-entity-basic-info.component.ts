@@ -34,7 +34,7 @@ export class InspectedEntityBasicInfoComponent extends CustomFormControl<AuanIns
     public inspectedEntityOptions: NomenclatureDTO<boolean>[] = [];
     public inspectedEntityInfo: InspectedEntityControlActivityInfoDTO | undefined;
     public hasInspexctedEntityInfo: boolean = false;
-    public inspectedEntityInfoTexts: string | undefined;
+    public inspectedInfoTexts: string[] = [];
 
     public readonly companyHeadquartersType: AddressTypesEnum = AddressTypesEnum.COMPANY_HEADQUARTERS;
 
@@ -74,7 +74,7 @@ export class InspectedEntityBasicInfoComponent extends CustomFormControl<AuanIns
         this.form.get('isInspectedEntityPersonControl')!.valueChanges.subscribe({
             next: (isPerson: NomenclatureDTO<boolean> | undefined) => {
                 this.hasInspexctedEntityInfo = false;
-                this.inspectedEntityInfoTexts = undefined;
+                this.inspectedInfoTexts = [];
 
                 if (isPerson !== undefined && isPerson !== null) {
                     this.form.get('personControl')!.clearValidators();
@@ -146,7 +146,7 @@ export class InspectedEntityBasicInfoComponent extends CustomFormControl<AuanIns
                     this.form.get('legalAddressesControl')!.setValue(this.inspectedEntity.addresses);
                 }
             }
-           
+
             if (value.inspectedEntityControlActivityInfo !== undefined && value.inspectedEntityControlActivityInfo !== null) {
                 this.buildInspectedEntityPreviousControlActivityData(value.inspectedEntityControlActivityInfo);
                 this.form.updateValueAndValidity({ emitEvent: false });
@@ -307,7 +307,7 @@ export class InspectedEntityBasicInfoComponent extends CustomFormControl<AuanIns
 
     private buildInspectedEntityPreviousControlActivityData(inspectedEntityInfo: InspectedEntityControlActivityInfoDTO | undefined): void {
         this.hasInspexctedEntityInfo = false;
-        this.inspectedEntityInfoTexts = undefined;
+        this.inspectedInfoTexts = [];
         this.inspectedEntityInfo = inspectedEntityInfo;
 
         if (inspectedEntityInfo !== undefined && inspectedEntityInfo !== null) {
@@ -318,34 +318,37 @@ export class InspectedEntityBasicInfoComponent extends CustomFormControl<AuanIns
                 || !CommonUtils.isNullOrEmpty(inspectedEntityInfo.penalDecreeNumbers);
 
             if (this.hasInspexctedEntityInfo) {
-                let text: string = this.translate.getValue('auan-register.inspected-entity-control-activity-for-last-year');
-
                 if (!CommonUtils.isNullOrEmpty(inspectedEntityInfo.auanNumbers)) {
                     const auansText: string = this.translate.getValue('auan-register.auans');
-                    text += ` ${auansText} ${inspectedEntityInfo.auanNumbers};`;
+                    const auanText: string = ` ${auansText} ${inspectedEntityInfo.auanNumbers};`;
+                    this.inspectedInfoTexts.push(auanText);
                 }
 
                 if (!CommonUtils.isNullOrEmpty(inspectedEntityInfo.penalDecreeNumbers)) {
                     const penalDecreesText: string = this.translate.getValue('auan-register.penal-decrees');
-                    text += ` ${penalDecreesText} ${inspectedEntityInfo.penalDecreeNumbers};`;
+                    const penalDecreeText: string = ` ${penalDecreesText} ${inspectedEntityInfo.penalDecreeNumbers};`;
+                    this.inspectedInfoTexts.push(penalDecreeText);
                 }
 
                 if (!CommonUtils.isNullOrEmpty(inspectedEntityInfo.warningNumbers)) {
                     const warningsText: string = this.translate.getValue('auan-register.warnings');
-                    text += ` ${warningsText} ${inspectedEntityInfo.warningNumbers};`;
+                    const warningText: string = ` ${warningsText} ${inspectedEntityInfo.warningNumbers};`;
+                    this.inspectedInfoTexts.push(warningText);
                 }
 
                 if (!CommonUtils.isNullOrEmpty(inspectedEntityInfo.agreementNumbers)) {
                     const agreementsText: string = this.translate.getValue('auan-register.agreements');
-                    text += ` ${agreementsText} ${inspectedEntityInfo.agreementNumbers};`;
+                    const agreementText: string = ` ${agreementsText} ${inspectedEntityInfo.agreementNumbers};`;
+                    this.inspectedInfoTexts.push(agreementText);
                 }
 
                 if (!CommonUtils.isNullOrEmpty(inspectedEntityInfo.resolutionNumbers)) {
                     const resolutionsText: string = this.translate.getValue('auan-register.resolutions');
-                    text += ` ${resolutionsText} ${inspectedEntityInfo.resolutionNumbers};`;
+                    const resolutionText: string = ` ${resolutionsText} ${inspectedEntityInfo.resolutionNumbers};`;
+                    this.inspectedInfoTexts.push(resolutionText);
                 }
 
-                this.inspectedEntityInfoTexts = text;
+                this.inspectedInfoTexts = this.inspectedInfoTexts.slice();
             }
         }
     }

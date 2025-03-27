@@ -322,7 +322,9 @@ export class PenalDecreesComponent implements OnInit, AfterViewInit {
                 : this.translate.getValue('penal-decrees.save-print');
 
             if (decree.isActive) {
-                if (!viewMode && decree.penalDecreeStatus === AuanStatusEnum.Draft) {
+                if (!viewMode
+                    && decree.penalDecreeStatus === AuanStatusEnum.Draft
+                    && (this.auanId === undefined || this.auanId === null)) {
                     rightButtons.push({
                         id: 'save-draft',
                         color: 'primary',
@@ -330,7 +332,9 @@ export class PenalDecreesComponent implements OnInit, AfterViewInit {
                         isVisibleInViewMode: true
                     });
                 }
-                else if (decree.penalDecreeStatus === AuanStatusEnum.Submitted && this.canReturnForFurtherCorrectionsRecords) {
+                else if (decree.penalDecreeStatus === AuanStatusEnum.Submitted
+                    && this.canReturnForFurtherCorrectionsRecords
+                    && (this.auanId === undefined || this.auanId === null)) {
                     rightButtons.push({
                         id: 'more-corrections-needed',
                         color: 'accent',
@@ -741,7 +745,7 @@ export class PenalDecreesComponent implements OnInit, AfterViewInit {
         };
 
         const leftButtons: IActionInfo[] = [];
-        if (this.canCancelRecords && isActive) {
+        if (this.canCancelRecords && isActive && (this.auanId === undefined || this.auanId === null)) {
             if (data.status === AuanStatusEnum.Canceled) {
                 leftButtons.push({
                     id: 'activate-decree',

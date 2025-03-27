@@ -56,6 +56,8 @@ export class EditDecreeAgreementComponent implements OnInit, AfterViewInit, IDia
     public auanViolatedRegulationsTouched: boolean = false;
     public violatedRegulationsTouched: boolean = false;
     public canSaveAfterHours: boolean = false;
+    public noConstatationComments: boolean = true;
+    public noEvidenceComments: boolean = true;
     public inspectedEnityName: string | undefined;
     public violatedRegulationsTitle: string | undefined;
     public canAddAfterHours: number | undefined;
@@ -213,11 +215,41 @@ export class EditDecreeAgreementComponent implements OnInit, AfterViewInit, IDia
                 }
             });
 
+            this.form.get('noConstatationCommentsControl')!.valueChanges.subscribe({
+                next: (result: boolean) => {
+                    this.noConstatationComments = result;
+                    if (result) {
+                        this.form.get('constatationCommentsControl')!.setValue(undefined);
+                        this.form.get('constatationCommentsControl')!.clearValidators();
+                    }
+                    else {
+                        this.form.get('constatationCommentsControl')!.setValidators(Validators.required);
+                    }
+
+                    this.form.get('constatationCommentsControl')!.updateValueAndValidity({ emitEvent: false });
+                }
+            });
+
+            this.form.get('noEvidenceCommentsControl')!.valueChanges.subscribe({
+                next: (result: boolean) => {
+                    this.noEvidenceComments = result;
+                    if (result) {
+                        this.form.get('evidenceCommentsControl')!.setValue(undefined);
+                        this.form.get('evidenceCommentsControl')!.clearValidators();
+                    }
+                    else {
+                        this.form.get('evidenceCommentsControl')!.setValidators(Validators.required);
+                    }
+
+                    this.form.get('evidenceCommentsControl')!.updateValueAndValidity({ emitEvent: false });
+                }
+            });
+
             // Номерата на постановленията се генерират автоматично от 01.01.2025 г., тези на създадените преди това може да се редактират
             this.form.get('issueDateControl')!.valueChanges.subscribe({
                 next: (value: Moment | null | undefined) => {
                     if (value !== undefined && value !== null) {
-                        if (value.toDate() > PenalDecreeUtils.AUTO_GENERATE_NUMBER_AFTER_DATE) {
+                        if ((moment(value)).toDate() > PenalDecreeUtils.AUTO_GENERATE_NUMBER_AFTER_DATE) {
                             if (this.isAdding) {
                                 this.form.get('decreeNumControl')!.setValue(undefined);
                             }
@@ -402,7 +434,8 @@ export class EditDecreeAgreementComponent implements OnInit, AfterViewInit, IDia
             seizedFishingGearControl: new FormControl(null),
             seizedFishControl: new FormControl(null),
             seizedApplianceControl: new FormControl(null),
-
+            noConstatationCommentsControl: new FormControl(true),
+            noEvidenceCommentsControl: new FormControl(true),
             filesControl: new FormControl(null)
         }, [
             this.auanViolatedRegulationsValidator(),
@@ -424,8 +457,20 @@ export class EditDecreeAgreementComponent implements OnInit, AfterViewInit, IDia
 
         this.form.get('auanViolatedRegulationsControl')!.setValue(this.model.auanViolatedRegulations);
         this.form.get('violatedRegulationsControl')!.setValue(this.model.decreeViolatedRegulations);
-
         this.form.get('filesControl')!.setValue(this.model.files);
+
+        this.noConstatationComments = CommonUtils.isNullOrWhiteSpace(this.model.constatationComments);
+        this.noEvidenceComments = CommonUtils.isNullOrWhiteSpace(this.model.evidenceComments);
+        this.form.get('noConstatationCommentsControl')!.setValue(this.noConstatationComments);
+        this.form.get('noEvidenceCommentsControl')!.setValue(this.noEvidenceComments);
+
+        if (!this.noConstatationComments) {
+            this.form.get('constatationCommentsControl')!.setValue(this.model.constatationComments);
+        }
+
+        if (!this.noEvidenceComments) {
+            this.form.get('evidenceCommentsControl')!.setValue(this.model.evidenceComments);
+        }
 
         if (this.model.seizedFish !== undefined && this.model.seizedFish !== null) {
             this.form.get('seizedFishControl')!.setValue(this.model.seizedFish);
@@ -471,6 +516,20 @@ export class EditDecreeAgreementComponent implements OnInit, AfterViewInit, IDia
         this.model.auanViolatedRegulations = this.form.get('auanViolatedRegulationsControl')!.value;
         this.model.decreeViolatedRegulations = this.form.get('violatedRegulationsControl')!.value;
 
+        if (this.noConstatationComments) {
+            this.model.constatationComments = undefined;
+        }
+        else {
+            this.model.constatationComments = this.form.get('constatationCommentsControl')!.value;
+        }
+
+        if (this.noEvidenceComments) {
+            this.model.evidenceComments = undefined;
+        }
+        else {
+            this.model.evidenceComments = this.form.get('evidenceCommentsControl')!.value;
+        }
+
         if (this.isThirdParty) {
             this.model.auanData = this.form.get('auanControl')!.value;
             this.model.auanData!.userId = this.form.get('drafterControl')!.value?.value;
@@ -490,11 +549,18 @@ export class EditDecreeAgreementComponent implements OnInit, AfterViewInit, IDia
         }
 
         this.form.get('auanControl')!.setValue(data);
-        this.form.get('constatationCommentsControl')!.setValue(data.constatationComments);
+
         this.inspectedEnityName = PenalDecreeUtils.getInspectedEntityName(data.inspectedEntity);
         this.violatedRegulationsTitle = PenalDecreeUtils.getViolatedRegulationsTitle(this.inspectedEnityName, this.translate);
 
         if (this.isAdding) {
+            this.noConstatationComments = CommonUtils.isNullOrWhiteSpace(data.constatationComments);
+            this.form.get('noConstatationCommentsControl')!.setValue(this.noConstatationComments);
+
+            if (!this.noConstatationComments) {
+                this.form.get('constatationCommentsControl')!.setValue(data.constatationComments);
+            }
+
             setTimeout(() => {
                 this.form.get('seizedFishControl')!.setValue(data.confiscatedFish);
                 this.form.get('seizedApplianceControl')!.setValue(data.confiscatedAppliance);

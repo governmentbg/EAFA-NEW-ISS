@@ -142,7 +142,9 @@
     </mat-tab>
 
     <mat-tab label="{{ 'log-book-page-edit-exceptions.grouped-log-book-page-exceptions' | tlTranslate }}">
-        <grouped-log-book-page-exceptions *ngIf="groupedExceptionsLoaded">
+        <grouped-log-book-page-exceptions *ngIf="groupedExceptionsLoaded"
+                                          [reloadData]="mustRefreshGroupedExceptions"
+                                          (dataChanged)="groupedExceptionsDataChanged($event)">
         </grouped-log-book-page-exceptions>
     </mat-tab>
 </mat-tab-group>

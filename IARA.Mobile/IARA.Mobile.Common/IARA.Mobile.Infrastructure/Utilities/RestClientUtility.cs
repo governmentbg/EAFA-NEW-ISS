@@ -176,7 +176,7 @@ namespace IARA.Mobile.Infrastructure.Utilities
         {
             try
             {
-                if (!needsAuthentication)
+                if (needsAuthentication)
                 {
                     if (await BeforeSendChecks())
                     {
@@ -330,7 +330,7 @@ namespace IARA.Mobile.Infrastructure.Utilities
             catch (UnauthorizedAccessException)
             {
                 Debug.WriteLine("RestClient - UnauthorizedAccessException");
-                _authentication.Dispose(navigateToLogin: true);
+                _authentication.Dispose(navigateToLogin: true, disposeDataBase: true);
                 return new HttpResult<TResult>(HttpStatusCode.Unauthorized);
             }
             catch (WebException ex)

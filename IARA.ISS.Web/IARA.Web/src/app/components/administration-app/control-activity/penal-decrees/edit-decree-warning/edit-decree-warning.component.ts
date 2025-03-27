@@ -55,6 +55,9 @@ export class EditDecreeWarningComponent implements OnInit, AfterViewInit, IDialo
     public hasTerritoryUnit: boolean = false;
     public violatedRegulationsTouched: boolean = false;
     public canSaveAfterHours: boolean = false;
+    public noConstatationComments: boolean = true;
+    public noEvidenceComments: boolean = true;
+    public noMinorCircumstancesDescription: boolean = true;
     public drafter: InspectorUserNomenclatureDTO | undefined;
     public canAddAfterHours: number | undefined;
 
@@ -185,12 +188,56 @@ export class EditDecreeWarningComponent implements OnInit, AfterViewInit, IDialo
                 }
             });
 
+            this.form.get('noConstatationCommentsControl')!.valueChanges.subscribe({
+                next: (result: boolean) => {
+                    this.noConstatationComments = result;
+                    if (result) {
+                        this.form.get('constatationCommentsControl')!.setValue(undefined);
+                        this.form.get('constatationCommentsControl')!.clearValidators();
+                    }
+                    else {
+                        this.form.get('constatationCommentsControl')!.setValidators(Validators.required);
+                    }
+
+                    this.form.get('constatationCommentsControl')!.updateValueAndValidity({ emitEvent: false });
+                }
+            });
+
+            this.form.get('noEvidenceCommentsControl')!.valueChanges.subscribe({
+                next: (result: boolean) => {
+                    this.noEvidenceComments = result;
+                    if (result) {
+                        this.form.get('evidenceCommentsControl')!.setValue(undefined);
+                        this.form.get('evidenceCommentsControl')!.clearValidators();
+                    }
+                    else {
+                        this.form.get('evidenceCommentsControl')!.setValidators(Validators.required);
+                    }
+
+                    this.form.get('evidenceCommentsControl')!.updateValueAndValidity({ emitEvent: false });
+                }
+            });
+
+            this.form.get('noMinorCircumstancesDescriptionControl')!.valueChanges.subscribe({
+                next: (result: boolean) => {
+                    this.noMinorCircumstancesDescription = result;
+                    if (result) {
+                        this.form.get('minorCircumstancesDescriptionControl')!.setValue(undefined);
+                        this.form.get('minorCircumstancesDescriptionControl')!.clearValidators();
+                    }
+                    else {
+                        this.form.get('minorCircumstancesDescriptionControl')!.setValidators(Validators.required);
+                    }
+
+                    this.form.get('minorCircumstancesDescriptionControl')!.updateValueAndValidity({ emitEvent: false });
+                }
+            });
 
             // Номерата на постановленията се генерират автоматично от 01.01.2025 г., тези на създадените преди това може да се редактират
             this.form.get('issueDateControl')!.valueChanges.subscribe({
                 next: (value: Moment | null | undefined) => {
                     if (value !== undefined && value !== null) {
-                        if (value.toDate() > PenalDecreeUtils.AUTO_GENERATE_NUMBER_AFTER_DATE) {
+                        if ((moment(value)).toDate() > PenalDecreeUtils.AUTO_GENERATE_NUMBER_AFTER_DATE) {
                             if (this.isAdding) {
                                 this.form.get('decreeNumControl')!.setValue(undefined);
                             }
@@ -378,6 +425,10 @@ export class EditDecreeWarningComponent implements OnInit, AfterViewInit, IDialo
             constatationCommentsControl: new FormControl(null, Validators.maxLength(4000)),
             evidenceCommentsControl: new FormControl(null, Validators.maxLength(4000)),
 
+            noMinorCircumstancesDescriptionControl: new FormControl(true),
+            noConstatationCommentsControl: new FormControl(true),
+            noEvidenceCommentsControl: new FormControl(true),
+
             seizedFishingGearControl: new FormControl(null),
             seizedFishControl: new FormControl(null),
             seizedApplianceControl: new FormControl(null),
@@ -401,14 +452,30 @@ export class EditDecreeWarningComponent implements OnInit, AfterViewInit, IDialo
 
         this.form.get('isRecurrentViolationControl')!.setValue(this.model.isRecurrentViolation);
         this.form.get('commentsControl')!.setValue(this.model.comments);
-        this.form.get('minorCircumstancesDescriptionControl')!.setValue(this.model.minorCircumstancesDescription);
-        this.form.get('constatationCommentsControl')!.setValue(this.model.constatationComments);
-        this.form.get('evidenceCommentsControl')!.setValue(this.model.evidenceComments);
 
         this.form.get('auanViolatedRegulationsControl')!.setValue(this.model.auanViolatedRegulations);
         this.form.get('violatedRegulationsControl')!.setValue(this.model.decreeViolatedRegulations);
 
         this.form.get('filesControl')!.setValue(this.model.files);
+
+        this.noConstatationComments = CommonUtils.isNullOrWhiteSpace(this.model.constatationComments);
+        this.noEvidenceComments = CommonUtils.isNullOrWhiteSpace(this.model.evidenceComments);
+        this.noMinorCircumstancesDescription = CommonUtils.isNullOrWhiteSpace(this.model.minorCircumstancesDescription);
+        this.form.get('noConstatationCommentsControl')!.setValue(this.noConstatationComments);
+        this.form.get('noEvidenceCommentsControl')!.setValue(this.noEvidenceComments);
+        this.form.get('noMinorCircumstancesDescriptionControl')!.setValue(this.noMinorCircumstancesDescription);
+
+        if (!this.noConstatationComments) {
+            this.form.get('constatationCommentsControl')!.setValue(this.model.constatationComments);
+        }
+
+        if (!this.noEvidenceComments) {
+            this.form.get('evidenceCommentsControl')!.setValue(this.model.evidenceComments);
+        }
+
+        if (!this.noMinorCircumstancesDescription) {
+            this.form.get('minorCircumstancesDescriptionControl')!.setValue(this.model.minorCircumstancesDescription);
+        }
 
         if (this.model.seizedFish !== undefined && this.model.seizedFish !== null) {
             this.form.get('seizedFishControl')!.setValue(this.model.seizedFish);
@@ -444,9 +511,6 @@ export class EditDecreeWarningComponent implements OnInit, AfterViewInit, IDialo
 
         this.model.isRecurrentViolation = this.form.get('isRecurrentViolationControl')!.value;
         this.model.comments = this.form.get('commentsControl')!.value;
-        this.model.constatationComments = this.form.get('constatationCommentsControl')!.value;
-        this.model.evidenceComments = this.form.get('evidenceCommentsControl')!.value;
-        this.model.minorCircumstancesDescription = this.form.get('minorCircumstancesDescriptionControl')!.value;
 
         this.model.seizedFish = this.form.get('seizedFishControl')!.value;
         this.model.seizedFishingGear = this.form.get('seizedFishingGearControl')!.value;
@@ -456,6 +520,27 @@ export class EditDecreeWarningComponent implements OnInit, AfterViewInit, IDialo
 
         this.model.auanViolatedRegulations = this.form.get('auanViolatedRegulationsControl')!.value;
         this.model.decreeViolatedRegulations = this.form.get('violatedRegulationsControl')!.value;
+
+        if (this.noConstatationComments) {
+            this.model.constatationComments = undefined;
+        }
+        else {
+            this.model.constatationComments = this.form.get('constatationCommentsControl')!.value;
+        }
+
+        if (this.noEvidenceComments) {
+            this.model.evidenceComments = undefined;
+        }
+        else {
+            this.model.evidenceComments = this.form.get('evidenceCommentsControl')!.value;
+        }
+
+        if (this.noMinorCircumstancesDescription) {
+            this.model.minorCircumstancesDescription = undefined;
+        }
+        else {
+            this.model.minorCircumstancesDescription = this.form.get('minorCircumstancesDescriptionControl')!.value;
+        }
 
         if (this.isThirdParty) {
             this.model.auanData = this.form.get('auanControl')!.value;
@@ -476,9 +561,15 @@ export class EditDecreeWarningComponent implements OnInit, AfterViewInit, IDialo
         }
 
         this.form.get('auanControl')!.setValue(data);
-        this.form.get('constatationCommentsControl')!.setValue(data.constatationComments);
 
         if (this.isAdding) {
+            this.noConstatationComments = CommonUtils.isNullOrWhiteSpace(data.constatationComments);
+            this.form.get('noConstatationCommentsControl')!.setValue(this.noConstatationComments);
+
+            if (!this.noConstatationComments) {
+                this.form.get('constatationCommentsControl')!.setValue(data.constatationComments);
+            }
+
             setTimeout(() => {
                 this.form.get('seizedFishControl')!.setValue(data.confiscatedFish);
                 this.form.get('seizedApplianceControl')!.setValue(data.confiscatedAppliance);

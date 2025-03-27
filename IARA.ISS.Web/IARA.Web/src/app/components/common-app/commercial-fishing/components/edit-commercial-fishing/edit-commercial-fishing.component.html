@@ -249,7 +249,7 @@
                                                 fxFlex="10"
                                                 class="regix-data-search-button"
                                                 icon="fa-search-icon"
-                                                [disabled]="(isEditing && !isRegisterEntry) || viewMode"
+                                                [disabled]="(isEditing && !isRegisterEntry) || viewMode || isReadonly"
                                                 (buttonClicked)="qualifiedFisherSearchBtnClicked()"
                                                 iconClass="accent-color"
                                                 tooltipText="{{ 'regix-data.search' | tlTranslate }}">

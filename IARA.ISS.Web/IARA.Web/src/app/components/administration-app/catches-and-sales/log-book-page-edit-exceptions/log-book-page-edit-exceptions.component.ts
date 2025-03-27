@@ -46,6 +46,7 @@ export class LogBookPageEditExceptionsComponent implements OnInit, AfterViewInit
     public logBooks: LogBookPageEditNomenclatureDTO[] = [];
 
     public groupedExceptionsLoaded: boolean = false;
+    public mustRefreshGroupedExceptions: boolean = false;
 
     public readonly canAddExceptionRecords: boolean;
     public readonly canEditExceptionRecords: boolean;
@@ -186,6 +187,7 @@ export class LogBookPageEditExceptionsComponent implements OnInit, AfterViewInit
                     this.service.deleteLogBookPageEditException(model.id!).subscribe({
                         next: () => {
                             this.gridManager.refreshData();
+                            this.mustRefreshGroupedExceptions = true;
                         }
                     });
                 }
@@ -202,6 +204,7 @@ export class LogBookPageEditExceptionsComponent implements OnInit, AfterViewInit
                     this.service.restoreLogBookPageEditException(model.id!).subscribe({
                         next: () => {
                             this.gridManager.refreshData();
+                            this.mustRefreshGroupedExceptions = true;
                         }
                     });
                 }
@@ -212,6 +215,13 @@ export class LogBookPageEditExceptionsComponent implements OnInit, AfterViewInit
     public tabChanged(event: MatTabChangeEvent): void {
         if (event.index === GROUPED_TAB_INDEX) {
             this.groupedExceptionsLoaded = true;
+            this.mustRefreshGroupedExceptions = false;
+        }
+    }
+
+    public groupedExceptionsDataChanged(dataChanged: boolean): void {
+        if (dataChanged) {
+            this.gridManager.refreshData();
         }
     }
 
@@ -242,6 +252,7 @@ export class LogBookPageEditExceptionsComponent implements OnInit, AfterViewInit
             next: (result: LogBookPageEditExceptionEditDTO | undefined) => {
                 if (result !== null && result !== undefined) {
                     this.gridManager.refreshData();
+                    this.mustRefreshGroupedExceptions = true;
                 }
             }
         });

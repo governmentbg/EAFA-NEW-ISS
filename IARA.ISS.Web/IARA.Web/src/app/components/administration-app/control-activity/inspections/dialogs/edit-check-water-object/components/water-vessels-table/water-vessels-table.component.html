@@ -7,8 +7,7 @@
                        [isSoftDeletable]="false"
                        [showInactiveRecords]="false"
                        [showAddButton]="!isDisabled"
-                       (addButtonClicked)="addEditEntry()"
-                       (activeRecordChanged)="addEditEntry($event)">
+                       (addButtonClicked)="addEditEntry()">
             <data-column [flexRate]="0.3"
                          propertyName="number"
                          columnName="{{ 'inspections.water-vessel-number' | tlTranslate }}">

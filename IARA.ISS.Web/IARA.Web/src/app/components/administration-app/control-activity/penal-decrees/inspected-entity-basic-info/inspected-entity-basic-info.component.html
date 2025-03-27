@@ -73,7 +73,10 @@
         </div>
     </div>
 
-    <mat-hint fxFlex="100" fxLayout="column" *ngIf="hasInspexctedEntityInfo && inspectedEntityInfoTexts !== undefined && inspectedEntityInfoTexts !== null" class="warn-orange-color">
-        {{ inspectedEntityInfoTexts }}
+    <mat-hint fxFlex="100" fxLayout="column" *ngIf="hasInspexctedEntityInfo" class="warn-orange-color">
+        {{ 'auan-register.inspected-entity-control-activity-for-last-year' | tlTranslate }}:
+        <div *ngFor="let value of inspectedInfoTexts" fxLayout="column" fxFlex="100">
+            {{ value }}
+        </div>
     </mat-hint>
 </div>

@@ -70,6 +70,10 @@ export class EditPenalDecreeComponent implements OnInit, AfterViewInit, IDialogC
     public auanViolatedRegulationsTouched: boolean = false;
     public violatedRegulationsTouched: boolean = false;
     public canSaveAfterHours: boolean = false;
+    public noConstatationComments: boolean = true;
+    public noComments: boolean = true;
+    public noSanctionDescription: boolean = true;
+    public noEvidenceComments: boolean = true;
 
     public inspectedEnityName: string | undefined;
     public violatedRegulationsTitle: string | undefined;
@@ -243,6 +247,66 @@ export class EditPenalDecreeComponent implements OnInit, AfterViewInit, IDialogC
                 }
             });
 
+            this.form.get('noSanctionDescriptionControl')!.valueChanges.subscribe({
+                next: (result: boolean) => {
+                    this.noSanctionDescription = result;
+                    if (result) {
+                        this.form.get('sanctionDescriptionControl')!.setValue(undefined);
+                        this.form.get('sanctionDescriptionControl')!.clearValidators();
+                    }
+                    else {
+                        this.form.get('sanctionDescriptionControl')!.setValidators(Validators.required);
+                    }
+
+                    this.form.get('sanctionDescriptionControl')!.updateValueAndValidity({ emitEvent: false });
+                }
+            });
+
+            this.form.get('noCommentsControl')!.valueChanges.subscribe({
+                next: (result: boolean) => {
+                    this.noComments = result;
+                    if (result) {
+                        this.form.get('commentsControl')!.setValue(undefined);
+                        this.form.get('commentsControl')!.clearValidators();
+                    }
+                    else {
+                        this.form.get('commentsControl')!.setValidators(Validators.required);
+                    }
+
+                    this.form.get('commentsControl')!.updateValueAndValidity({ emitEvent: false });
+                }
+            });
+
+            this.form.get('noConstatationCommentsControl')!.valueChanges.subscribe({
+                next: (result: boolean) => {
+                    this.noConstatationComments = result;
+                    if (result) {
+                        this.form.get('constatationCommentsControl')!.setValue(undefined);
+                        this.form.get('constatationCommentsControl')!.clearValidators();
+                    }
+                    else {
+                        this.form.get('constatationCommentsControl')!.setValidators(Validators.required);
+                    }
+
+                    this.form.get('constatationCommentsControl')!.updateValueAndValidity({ emitEvent: false });
+                }
+            });
+
+            this.form.get('noEvidenceCommentsControl')!.valueChanges.subscribe({
+                next: (result: boolean) => {
+                    this.noEvidenceComments = result;
+                    if (result) {
+                        this.form.get('evidenceCommentsControl')!.setValue(undefined);
+                        this.form.get('evidenceCommentsControl')!.clearValidators();
+                    }
+                    else {
+                        this.form.get('evidenceCommentsControl')!.setValidators(Validators.required);
+                    }
+
+                    this.form.get('evidenceCommentsControl')!.updateValueAndValidity({ emitEvent: false });
+                }
+            });
+
             this.fishCompensationForm.get('countControl')!.valueChanges.subscribe({
                 next: (event: RecordChangedEventArgs<PenalDecreeFishCompensationDTO>) => {
                     this.fishCompensationFormTouched = true;
@@ -263,7 +327,7 @@ export class EditPenalDecreeComponent implements OnInit, AfterViewInit, IDialogC
             this.form.get('issueDateControl')!.valueChanges.subscribe({
                 next: (value: Moment | null | undefined) => {
                     if (value !== undefined && value !== null) {
-                        if (value.toDate() > PenalDecreeUtils.AUTO_GENERATE_NUMBER_AFTER_DATE) {
+                        if ((moment(value)).toDate() > PenalDecreeUtils.AUTO_GENERATE_NUMBER_AFTER_DATE) {
                             if (this.isAdding) {
                                 this.form.get('decreeNumControl')!.setValue(undefined);
                             }
@@ -457,6 +521,11 @@ export class EditPenalDecreeComponent implements OnInit, AfterViewInit, IDialogC
             constatationCommentsControl: new FormControl(null, Validators.maxLength(4000)),
             evidenceCommentsControl: new FormControl(null, Validators.maxLength(4000)),
 
+            noSanctionDescriptionControl: new FormControl(true),
+            noCommentsControl: new FormControl(true),
+            noConstatationCommentsControl: new FormControl(true),
+            noEvidenceCommentsControl: new FormControl(true),
+
             seizedFishingGearControl: new FormControl(null),
             seizedFishControl: new FormControl(null),
             seizedApplianceControl: new FormControl(null),
@@ -508,18 +577,37 @@ export class EditPenalDecreeComponent implements OnInit, AfterViewInit, IDialogC
         this.form.get('drafterControl')!.setValue(this.users.find(x => x.value === this.model.issuerUserId));
         this.form.get('courtControl')!.setValue(this.courts.find(x => x.value === this.model.appealCourtId));
         this.form.get('issuerPositionControl')!.setValue(this.model.issuerPosition);
-
         this.form.get('isRecurrentViolationControl')!.setValue(this.model.isRecurrentViolation);
-        this.form.get('sanctionDescriptionControl')!.setValue(this.model.sanctionDescription);
         this.form.get('fineAmountControl')!.setValue(this.model.fineAmount?.toFixed(2));
         this.form.get('compensationAmountControl')!.setValue(this.model.compensationAmount?.toFixed(2));
-        this.form.get('commentsControl')!.setValue(this.model.comments);
-
         this.form.get('auanViolatedRegulationsControl')!.setValue(this.model.auanViolatedRegulations);
         this.form.get('violatedRegulationsControl')!.setValue(this.model.decreeViolatedRegulations);
         this.form.get('fishCompensationViolatedRegulationsControl')!.setValue(this.model.fishCompensationViolatedRegulations);
-        this.form.get('constatationCommentsControl')!.setValue(this.model.constatationComments);
-        this.form.get('evidenceCommentsControl')!.setValue(this.model.evidenceComments);
+
+        this.noConstatationComments = CommonUtils.isNullOrWhiteSpace(this.model.constatationComments);
+        this.noEvidenceComments = CommonUtils.isNullOrWhiteSpace(this.model.evidenceComments);
+        this.noSanctionDescription = CommonUtils.isNullOrWhiteSpace(this.model.sanctionDescription);
+        this.noComments = CommonUtils.isNullOrWhiteSpace(this.model.comments);
+        this.form.get('noConstatationCommentsControl')!.setValue(this.noConstatationComments);
+        this.form.get('noEvidenceCommentsControl')!.setValue(this.noEvidenceComments);
+        this.form.get('noSanctionDescriptionControl')!.setValue(this.noSanctionDescription);
+        this.form.get('noCommentsControl')!.setValue(this.noComments);
+
+        if (!this.noConstatationComments) {
+            this.form.get('constatationCommentsControl')!.setValue(this.model.constatationComments);
+        }
+
+        if (!this.noEvidenceComments) {
+            this.form.get('evidenceCommentsControl')!.setValue(this.model.evidenceComments);
+        }
+
+        if (!CommonUtils.isNullOrWhiteSpace(this.model.sanctionDescription)) {
+            this.form.get('sanctionDescriptionControl')!.setValue(this.model.sanctionDescription);
+        }
+
+        if (!CommonUtils.isNullOrWhiteSpace(this.model.comments)) {
+            this.form.get('commentsControl')!.setValue(this.model.comments);
+        }
 
         if (this.model.seizedFish !== undefined && this.model.seizedFish !== null) {
             this.form.get('seizedFishControl')!.setValue(this.model.seizedFish);
@@ -572,33 +660,18 @@ export class EditPenalDecreeComponent implements OnInit, AfterViewInit, IDialogC
         this.model.issuerUserId = this.form.get('drafterControl')!.value?.value;
         this.model.appealCourtId = this.form.get('courtControl')!.value?.value;
         this.model.auanTerritoryUnitId = this.form.get('territoryUnitControl')!.value?.value;
-
         this.model.isRecurrentViolation = this.form.get('isRecurrentViolationControl')!.value;
-        this.model.sanctionDescription = this.form.get('sanctionDescriptionControl')!.value;
         this.model.fineAmount = this.form.get('fineAmountControl')!.value;
-        this.model.comments = this.form.get('commentsControl')!.value;
-        this.model.constatationComments = this.form.get('constatationCommentsControl')!.value;
-        this.model.evidenceComments = this.form.get('evidenceCommentsControl')!.value;
         this.model.deliveryData = this.form.get('deliveryControl')!.value;
-
-        if (this.hasCompensationAmount) {
-            this.model.compensationAmount = this.form.get('compensationAmountControl')!.value;
-        }
-        else {
-            this.model.compensationAmount = undefined;
-        }
-
-        this.model.files = this.form.get('filesControl')!.value;
-
         this.model.seizedFish = this.form.get('seizedFishControl')!.value;
         this.model.seizedAppliance = this.form.get('seizedApplianceControl')!.value;
         this.model.seizedFishingGear = this.form.get('seizedFishingGearControl')!.value;
         this.model.auanViolatedRegulations = this.form.get('auanViolatedRegulationsControl')!.value;
         this.model.decreeViolatedRegulations = this.form.get('violatedRegulationsControl')!.value;
         this.model.fishCompensationViolatedRegulations = this.form.get('fishCompensationViolatedRegulationsControl')!.value;
+        this.model.files = this.form.get('filesControl')!.value;
 
         this.model.fishCompensations = this.getFishCompensationsFromTable();
-
         this.model.sanctionTypeIds = [];
 
         for (const sanction of this.sanctionTypes) {
@@ -606,6 +679,41 @@ export class EditPenalDecreeComponent implements OnInit, AfterViewInit, IDialogC
             if (this.form.get(controlName)!.value === true) {
                 this.model.sanctionTypeIds!.push(sanction.value!);
             }
+        }
+
+        if (this.hasCompensationAmount) {
+            this.model.compensationAmount = undefined;
+        }
+        else {
+            this.model.compensationAmount = this.form.get('compensationAmountControl')!.value;
+        }
+
+        if (this.noSanctionDescription) {
+            this.model.sanctionDescription = undefined;
+        }
+        else {
+            this.model.sanctionDescription = this.form.get('sanctionDescriptionControl')!.value;
+        }
+
+        if (this.noComments) {
+            this.model.comments = undefined;
+        }
+        else {
+            this.model.comments = this.form.get('commentsControl')!.value;
+        }
+
+        if (this.noConstatationComments) {
+            this.model.constatationComments = undefined;
+        }
+        else {
+            this.model.constatationComments = this.form.get('constatationCommentsControl')!.value;
+        }
+
+        if (this.noEvidenceComments) {
+            this.model.evidenceComments = undefined;
+        }
+        else {
+            this.model.evidenceComments = this.form.get('evidenceCommentsControl')!.value;
         }
 
         if (this.isThirdParty) {
@@ -625,11 +733,18 @@ export class EditPenalDecreeComponent implements OnInit, AfterViewInit, IDialogC
         }
 
         this.form.get('auanControl')!.setValue(data);
-        this.form.get('constatationCommentsControl')!.setValue(data.constatationComments);
+
         this.inspectedEnityName = PenalDecreeUtils.getInspectedEntityName(data.inspectedEntity);
         this.violatedRegulationsTitle = PenalDecreeUtils.getViolatedRegulationsTitle(this.inspectedEnityName, this.translate);
 
         if (this.isAdding) {
+            this.noConstatationComments = CommonUtils.isNullOrWhiteSpace(data.constatationComments);
+            this.form.get('noConstatationCommentsControl')!.setValue(this.noConstatationComments);
+
+            if (!this.noConstatationComments) {
+                this.form.get('constatationCommentsControl')!.setValue(data.constatationComments);
+            }
+
             setTimeout(() => {
                 this.form.get('seizedFishControl')!.setValue(data.confiscatedFish);
                 this.form.get('seizedApplianceControl')!.setValue(data.confiscatedAppliance);

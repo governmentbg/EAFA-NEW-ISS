@@ -51,6 +51,10 @@ export class DateRangeIndefiniteComponent extends CustomFormControl<DateRangeInd
                     this.form.get('dateControl')!.setValidators(Validators.required);
                     this.form.get('dateControl')!.markAsPending({ emitEvent: false });
                     this.form.get('dateControl')!.updateValueAndValidity({ emitEvent: false });
+
+                    if (this.isDisabled) {
+                        this.form.get('dateControl')!.disable();
+                    }
                 }
                 else {
                     this.form.get('dateControl')!.setValue(undefined);
@@ -59,6 +63,10 @@ export class DateRangeIndefiniteComponent extends CustomFormControl<DateRangeInd
 
                     this.form.get('rangeControl')!.setValidators(Validators.required);
                     this.form.get('rangeControl')!.updateValueAndValidity({ emitEvent: false });
+
+                    if (this.isDisabled) {
+                        this.form.get('rangeControl')!.disable();
+                    }
                 }
             }
         });

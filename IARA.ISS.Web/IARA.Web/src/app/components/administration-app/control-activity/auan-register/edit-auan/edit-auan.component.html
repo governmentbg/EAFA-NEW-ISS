@@ -128,7 +128,15 @@
                         [validityChecker]="form"
                         tooltipResourceName="auan-register.edit-auan-comments-helper">
         <div fxLayout="column" fxLayoutGap="1em">
-            <tl-textarea formControlName="constatationCommentsControl"
+            <div fxLayout="row" fxLayoutGap="1em">
+                <tl-slide-toggle formControlName="noConstatationCommentsControl"
+                                 label="{{ 'auan-register.edit-no-constatation-comments' | tlTranslate }}"
+                                 tooltipResourceName="auan-register.edit-no-constatation-comments-helper">
+                </tl-slide-toggle>
+            </div>
+
+            <tl-textarea *ngIf="!noConstatationComments"
+                         formControlName="constatationCommentsControl"
                          label="{{ 'auan-register.edit-constatation-comments' | tlTranslate }}"
                          tooltipResourceName="auan-register.edit-constatation-comments-helper">
             </tl-textarea>
@@ -193,7 +201,15 @@
                         [validityChecker]="form"
                         tooltipResourceName="auan-register.edit-auan-comments-offender-helper">
         <div fxLayout="column" fxLayoutGap="1em">
-            <tl-textarea formControlName="offenderCommentsControl"
+            <div fxLayout="row" fxLayoutGap="1em">
+                <tl-slide-toggle formControlName="noOffenderCommentsControl"
+                                 label="{{ 'auan-register.edit-no-offender-comments' | tlTranslate }}"
+                                 tooltipResourceName="auan-register.edit-no-offender-comments-helper">
+                </tl-slide-toggle>
+            </div>
+
+            <tl-textarea *ngIf="!noOffenderComments"
+                         formControlName="offenderCommentsControl"
                          label="{{ 'auan-register.edit-offender-comments' | tlTranslate }}"
                          tooltipResourceName="auan-register.edit-offender-comments-helper">
             </tl-textarea>
@@ -225,7 +241,7 @@
                              label="{{ 'auan-register.edit-auan-has-objection' | tlTranslate }}">
             </tl-slide-toggle>
 
-            <div *ngIf="form.controls.hasObjectionControl.value === true" fxLayout="column" fxLayoutGap="1em">
+            <div *ngIf="hasObjection" fxLayout="column" fxLayoutGap="1em">
                 <div fxLayout="row">
                     <tl-date fxFlex="25"
                              formControlName="objectionDateControl"
@@ -239,7 +255,7 @@
                                        [options]="objectionResolutionTypes">
                 </tl-radio-button-group>
 
-                <div *ngIf="form.controls.objectionResolutionTypeControl.value"
+                <div *ngIf="hasObjectionType"
                      fxLayout="row"
                      fxLayoutGap="1em"
                      fxLayoutAlign="start center">

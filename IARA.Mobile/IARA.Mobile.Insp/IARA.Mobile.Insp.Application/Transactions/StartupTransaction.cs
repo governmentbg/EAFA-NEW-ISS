@@ -361,6 +361,10 @@ namespace IARA.Mobile.Insp.Application.Transactions
                 {
                     using (IAppDbContext context = ContextBuilder.CreateContext())
                     {
+                        context.NPermissions.Delete(x => true);
+                    }
+                    using (IAppDbContext context = ContextBuilder.CreateContext())
+                    {
                         context.NPermissions.AddRange(result.Content.Permissions.ConvertAll(f => new NPermission
                         {
                             Permission = f

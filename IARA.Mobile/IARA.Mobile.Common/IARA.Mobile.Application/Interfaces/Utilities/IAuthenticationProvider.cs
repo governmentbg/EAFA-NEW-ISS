@@ -9,7 +9,7 @@ namespace IARA.Mobile.Application.Interfaces.Utilities
         Task SoftLogout();
         Task<bool> RefreshToken();
         bool ShouldRefreshToken();
-        void Dispose(bool navigateToLogin = false);
+        void Dispose(bool navigateToLogin = false, bool disposeDataBase = false);
         void SetAuthenticationProvider(JwtToken token);
         bool CheckTokenValidity();
     }

@@ -74,10 +74,14 @@ export class EditAuanComponent implements OnInit, AfterViewInit, IDialogComponen
     public isInspector: boolean = false;
     public isFromThirdPartyInspection: boolean = false;
     public violatedRegulationsTouched: boolean = false;
+    public hasObjection: boolean = false;
+    public hasObjectionType: boolean = false;
     public showInspectedEntity: boolean = false;
     public canAddInspectedEntity: boolean = false;
-    public isFromInspection: boolean = true;
     public canSaveAfterHours: boolean = false;
+    public noConstatationComments: boolean = true;
+    public noOffenderComments: boolean = true;
+    public isFromInspection: boolean = true;
     public canAddAuanAfterHours: number | undefined;
     public minDate: Date | undefined;
 
@@ -233,7 +237,7 @@ export class EditAuanComponent implements OnInit, AfterViewInit, IDialogComponen
                 this.form.get('isInspectedEntityFromInspectionControl')!.valueChanges.subscribe({
                     next: (value: boolean | undefined) => {
                         this.isFromInspection = false;
-                    
+
                         if (value === true) {
                             this.isFromInspection = true;
                             this.form.get('inspectedEntityControl')!.setValidators(Validators.required);
@@ -253,6 +257,75 @@ export class EditAuanComponent implements OnInit, AfterViewInit, IDialogComponen
                     }
                 });
             }
+
+            this.form.get('hasObjectionControl')!.valueChanges.subscribe({
+                next: (yes: boolean) => {
+                    this.hasObjection = yes;
+
+                    this.form.get('objectionDateControl')!.clearValidators();
+                    this.form.get('objectionResolutionTypeControl')!.clearValidators();
+                    this.form.get('objectionResolutionDateControl')!.clearValidators();
+                    this.form.get('objectionResolutionNumControl')!.clearValidators();
+                    this.form.get('objectionResolutionTypeControl')!.setValue(undefined);
+
+                    if (yes) {
+                        this.form.get('objectionDateControl')!.setValidators(Validators.required);
+                        this.form.get('objectionResolutionTypeControl')!.setValidators(Validators.required);
+                    }
+
+                    this.form.get('objectionDateControl')!.updateValueAndValidity({ emitEvent: false });
+                    this.form.get('objectionResolutionTypeControl')!.updateValueAndValidity({ emitEvent: false });
+                    this.form.get('objectionResolutionDateControl')!.updateValueAndValidity({ emitEvent: false });
+                    this.form.get('objectionResolutionNumControl')!.updateValueAndValidity({ emitEvent: false });
+                }
+            });
+
+            this.form.get('objectionResolutionTypeControl')!.valueChanges.subscribe({
+                next: (type: NomenclatureDTO<AuanObjectionResolutionTypesEnum> | undefined) => {
+                    this.hasObjectionType = true;
+
+                    this.form.get('objectionResolutionDateControl')!.clearValidators();
+                    this.form.get('objectionResolutionNumControl')!.clearValidators();
+
+                    if (type !== null && type !== undefined) {
+                        this.form.get('objectionResolutionDateControl')!.setValidators(Validators.required);
+                        this.form.get('objectionResolutionNumControl')!.setValidators([Validators.required, Validators.maxLength(50)]);
+                    }
+
+                    this.form.get('objectionResolutionDateControl')!.updateValueAndValidity({ emitEvent: false });
+                    this.form.get('objectionResolutionNumControl')!.updateValueAndValidity({ emitEvent: false });
+                }
+            });
+
+            this.form.get('noConstatationCommentsControl')!.valueChanges.subscribe({
+                next: (result: boolean) => {
+                    this.noConstatationComments = result;
+                    if (result) {
+                        this.form.get('constatationCommentsControl')!.setValue(undefined);
+                        this.form.get('constatationCommentsControl')!.clearValidators();
+                    }
+                    else {
+                        this.form.get('constatationCommentsControl')!.setValidators(Validators.required);
+                    }
+
+                    this.form.get('constatationCommentsControl')!.updateValueAndValidity({ emitEvent: false });
+                }
+            });
+
+            this.form.get('noOffenderCommentsControl')!.valueChanges.subscribe({
+                next: (result: boolean) => {
+                    this.noOffenderComments = result;
+                    if (result) {
+                        this.form.get('offenderCommentsControl')!.setValue(undefined);
+                        this.form.get('offenderCommentsControl')!.clearValidators();
+                    }
+                    else {
+                        this.form.get('offenderCommentsControl')!.setValidators(Validators.required);
+                    }
+
+                    this.form.get('offenderCommentsControl')!.updateValueAndValidity({ emitEvent: false });
+                }
+            });
         }
 
         this.form.get('auanDeliveryDataControl')!.valueChanges.subscribe({
@@ -261,43 +334,10 @@ export class EditAuanComponent implements OnInit, AfterViewInit, IDialogComponen
                     this.deliveryType = delivery.deliveryType;
                 }
 
-                this.form.get('hasObjectionControl')!.setValue(false);
-                this.form.get('hasObjectionControl')!.updateValueAndValidity({ emitEvent: false });
-            }
-        });
-
-        this.form.get('hasObjectionControl')!.valueChanges.subscribe({
-            next: (yes: boolean) => {
-                this.form.get('objectionDateControl')!.clearValidators();
-                this.form.get('objectionResolutionTypeControl')!.clearValidators();
-                this.form.get('objectionResolutionDateControl')!.clearValidators();
-                this.form.get('objectionResolutionNumControl')!.clearValidators();
-                this.form.get('objectionResolutionTypeControl')!.setValue(undefined);
-
-                if (yes) {
-                    this.form.get('objectionDateControl')!.setValidators(Validators.required);
-                    this.form.get('objectionResolutionTypeControl')!.setValidators(Validators.required);
+                if (!this.viewMode) {
+                    this.form.get('hasObjectionControl')!.setValue(false);
+                    this.form.get('hasObjectionControl')!.updateValueAndValidity({ emitEvent: false });
                 }
-
-                this.form.get('objectionDateControl')!.updateValueAndValidity({ emitEvent: false });
-                this.form.get('objectionResolutionTypeControl')!.updateValueAndValidity({ emitEvent: false });
-                this.form.get('objectionResolutionDateControl')!.updateValueAndValidity({ emitEvent: false });
-                this.form.get('objectionResolutionNumControl')!.updateValueAndValidity({ emitEvent: false });
-            }
-        });
-
-        this.form.get('objectionResolutionTypeControl')!.valueChanges.subscribe({
-            next: (type: NomenclatureDTO<AuanObjectionResolutionTypesEnum> | undefined) => {
-                this.form.get('objectionResolutionDateControl')!.clearValidators();
-                this.form.get('objectionResolutionNumControl')!.clearValidators();
-
-                if (type !== null && type !== undefined) {
-                    this.form.get('objectionResolutionDateControl')!.setValidators(Validators.required);
-                    this.form.get('objectionResolutionNumControl')!.setValidators([Validators.required, Validators.maxLength(50)]);
-                }
-
-                this.form.get('objectionResolutionDateControl')!.updateValueAndValidity({ emitEvent: false });
-                this.form.get('objectionResolutionNumControl')!.updateValueAndValidity({ emitEvent: false });
             }
         });
 
@@ -484,6 +524,9 @@ export class EditAuanComponent implements OnInit, AfterViewInit, IDialogComponen
             constatationCommentsControl: new FormControl(null, Validators.maxLength(4000)),
             offenderCommentsControl: new FormControl(null, Validators.maxLength(4000)),
 
+            noConstatationCommentsControl: new FormControl(true),
+            noOffenderCommentsControl: new FormControl(true),
+
             auanDeliveryDataControl: new FormControl(null),
 
             hasObjectionControl: new FormControl(false),
@@ -521,11 +564,23 @@ export class EditAuanComponent implements OnInit, AfterViewInit, IDialogComponen
             this.form.get('drafterNameControl')!.setValue(this.model.inspectorName);
         }
 
-        this.form.get('constatationCommentsControl')!.setValue(this.model.constatationComments);
-        this.form.get('offenderCommentsControl')!.setValue(this.model.offenderComments);
+        this.noConstatationComments = CommonUtils.isNullOrWhiteSpace(this.model.constatationComments);
+        this.noOffenderComments = CommonUtils.isNullOrWhiteSpace(this.model.offenderComments);
+
+        if (!this.noConstatationComments) {
+            this.form.get('constatationCommentsControl')!.setValue(this.model.constatationComments);
+        }
+
+        if (!this.noOffenderComments) {
+            this.form.get('offenderCommentsControl')!.setValue(this.model.offenderComments);
+        }
+
+        this.form.get('noOffenderCommentsControl')!.setValue(this.noOffenderComments);
+        this.form.get('noConstatationCommentsControl')!.setValue(this.noConstatationComments);
 
         const delivery: AuanDeliveryDataDTO | undefined = this.model.deliveryData;
         this.form.get('auanDeliveryDataControl')!.setValue(delivery);
+        this.hasObjection = this.model.hasObjection ?? false;
 
         if (delivery !== undefined && delivery !== null) {
             const type: InspDeliveryTypesEnum | undefined = delivery.deliveryType;
@@ -536,6 +591,8 @@ export class EditAuanComponent implements OnInit, AfterViewInit, IDialogComponen
                     this.form.get('objectionDateControl')!.setValue(this.model.objectionDate);
 
                     if (this.model.resolutionType !== undefined && this.model.resolutionType !== null) {
+                        this.hasObjectionType = true;
+
                         this.form.get('objectionResolutionTypeControl')!.setValue(this.objectionResolutionTypes.find(x => {
                             return x.value === this.model.resolutionType;
                         }));
@@ -582,8 +639,19 @@ export class EditAuanComponent implements OnInit, AfterViewInit, IDialogComponen
             this.model.inspectedEntity = undefined;
         }
 
-        this.model.constatationComments = this.form.get('constatationCommentsControl')!.value;
-        this.model.offenderComments = this.form.get('offenderCommentsControl')!.value;
+        if (this.noConstatationComments) {
+            this.model.constatationComments = undefined;
+        }
+        else {
+            this.model.constatationComments = this.form.get('constatationCommentsControl')!.value;
+        }
+
+        if (this.noOffenderComments) {
+            this.model.offenderComments = undefined;
+        }
+        else {
+            this.model.offenderComments = this.form.get('offenderCommentsControl')!.value;
+        }
 
         if (this.isInspector) {
             this.model.inspectorId = this.form.get('drafterControl')!.value?.value;
@@ -821,7 +889,7 @@ export class EditAuanComponent implements OnInit, AfterViewInit, IDialogComponen
 
             const startDate: Moment = moment(control.value);
             const now: Date = new Date();
-         
+
             if (startDate === undefined || startDate === null) {
                 return null;
             }
@@ -837,7 +905,7 @@ export class EditAuanComponent implements OnInit, AfterViewInit, IDialogComponen
             }
 
             const differenceHours: number = (difference.days! * 24) + difference.hours! + (difference.minutes! / 60);
-           
+
             if (differenceHours > this.canAddAuanAfterHours) {
                 return { cannotAddAfterHours: true };
             }

@@ -93,12 +93,28 @@
                         [validityChecker]="form">
         <div fxLayout="row" fxLayoutGap="1em">
             <div fxLayout="column" fxLayoutGap="1em" fxFlex="100">
-                <tl-textarea formControlName="constatationCommentsControl"
+                <div fxLayout="row" fxLayoutGap="1em">
+                    <tl-slide-toggle formControlName="noConstatationCommentsControl"
+                                     label="{{ 'penal-decrees.edit-decree-no-constatation-comments' | tlTranslate }}"
+                                     tooltipResourceName="penal-decree.edit-decree-no-constatation-comments-helper">
+                    </tl-slide-toggle>
+                </div>
+
+                <tl-textarea *ngIf="!noConstatationComments"
+                             formControlName="constatationCommentsControl"
                              tooltipResourceName="penal-decree.edit-auan-constatation-comments-helper"
                              label="{{ 'penal-decrees.edit-auan-constatation-comments' | tlTranslate }}">
                 </tl-textarea>
 
-                <tl-textarea formControlName="evidenceCommentsControl"
+                <div fxLayout="row" fxLayoutGap="1em">
+                    <tl-slide-toggle formControlName="noEvidenceCommentsControl"
+                                     label="{{ 'penal-decrees.edit-decree-no-evidence-comments' | tlTranslate }}"
+                                     tooltipResourceName="penal-decree.edit-decree-no-evidence-comments-helper">
+                    </tl-slide-toggle>
+                </div>
+
+                <tl-textarea *ngIf="!noEvidenceComments"
+                             formControlName="evidenceCommentsControl"
                              tooltipResourceName="penal-decree.edit-evidence-comments-helper"
                              label="{{ 'penal-decrees.edit-evidence-comments' | tlTranslate }}">
                 </tl-textarea>
@@ -127,7 +143,15 @@
                         tooltipResourceName="penal-decrees.edit-minor-circumstances-helper"
                         [validityChecker]="form">
         <div fxLayout="column" fxLayoutGap="1em">
-            <tl-textarea formControlName="minorCircumstancesDescriptionControl"
+            <div fxLayout="row" fxLayoutGap="1em">
+                <tl-slide-toggle formControlName="noMinorCircumstancesDescriptionControl"
+                                 label="{{ 'penal-decrees.edit-decree-no-minor-circumstances-description' | tlTranslate }}"
+                                 tooltipResourceName="penal-decree.edit-decree-no-minor-circumstances-description-helper">
+                </tl-slide-toggle>
+            </div>
+
+            <tl-textarea *ngIf="!noMinorCircumstancesDescription"
+                         formControlName="minorCircumstancesDescriptionControl"
                          label="{{ 'penal-decrees.edit-minor-circumstances-description' | tlTranslate }}"
                          tooltipResourceName="penal-decrees.edit-minor-circumstances-description-helper">
             </tl-textarea>
