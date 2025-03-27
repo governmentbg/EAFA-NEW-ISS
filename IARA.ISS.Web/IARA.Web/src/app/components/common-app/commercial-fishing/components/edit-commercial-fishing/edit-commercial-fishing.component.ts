@@ -1089,6 +1089,7 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
             // извличане на исторически данни за заявление
             if (this.isApplicationHistoryMode && this.applicationId !== undefined) {
                 this.form.disable();
+                this.aquaticOrganismTypesControl.disable();
 
                 if (this.applicationsService) {
                     this.applicationsService.getApplicationChangeHistoryContent(this.applicationId).subscribe({
@@ -1127,6 +1128,7 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
                 if (this.loadRegisterFromApplication === true) {  // извличане на данни за регистър по id на заявление
                     if (this.isReadonly || this.viewMode) {
                         this.form.disable();
+                        this.aquaticOrganismTypesControl.disable();
                     }
                     this.isEditing = true;
                     this.isEditingSubmittedBy = true;
@@ -1187,6 +1189,7 @@ export class EditCommercialFishingComponent implements OnInit, IDialogComponent 
             else {
                 if (this.isReadonly || this.viewMode) {
                     this.form.disable();
+                    this.aquaticOrganismTypesControl.disable();
                 }
 
                 if (this.isApplication && this.applicationId !== null && this.applicationId !== undefined) {

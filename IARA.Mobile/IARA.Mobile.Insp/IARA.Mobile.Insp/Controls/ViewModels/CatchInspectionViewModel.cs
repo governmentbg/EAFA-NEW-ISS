@@ -47,16 +47,14 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
             }
 
             UnloadedQuantity.PropertyChanged += OnValueChanged;
+            TurbotSizeGroup.PropertyChanged += OnValueChanged;
             CatchQuantity.PropertyChanged += OnValueChanged;
         }
         public void Unsubscribe()
         {
             UnloadedQuantity.PropertyChanged -= OnValueChanged;
+            TurbotSizeGroup.PropertyChanged -= OnValueChanged;
             CatchQuantity.PropertyChanged -= OnValueChanged;
-        }
-        ~CatchInspectionViewModel()
-        {
-            Dispose();
         }
         public void Dispose()
         {

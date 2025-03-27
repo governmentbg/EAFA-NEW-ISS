@@ -86,11 +86,16 @@ namespace IARA.Mobile.Shared.Utilities
                             !string.IsNullOrEmpty(_authTokenProvider.RefreshToken);
         }
 
-        public void Dispose(bool navigateToLogin = false)
+        public void Dispose(bool navigateToLogin = false, bool disposeDataBase = true)
         {
             _translator.ClearResources();
             _authTokenProvider.Clear();
             Translator.Current.LoadOfflineResources();
+
+            if (disposeDataBase)
+            {
+                DependencyService.Resolve<ICommonLogout>().DeleteLocalInfo();
+            }
 
             if (navigateToLogin)
             {

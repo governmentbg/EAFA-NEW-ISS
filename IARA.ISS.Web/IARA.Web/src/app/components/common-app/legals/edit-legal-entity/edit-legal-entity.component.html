@@ -73,8 +73,7 @@
                                [showInactiveRecords]="!showOnlyRegixData"
                                [showAddButton]="!viewMode && !isReadonly && !showOnlyRegixData"
                                [rows]="authorizedPeople"
-                               (addButtonClicked)="addEditAuthorizedPerson()"
-                               (activeRecordChanged)="addEditAuthorizedPerson($event)">
+                               (addButtonClicked)="addEditAuthorizedPerson()">
                     <div *ngIf="isPublicApp && !showOnlyRegixData && isApplication && !viewMode && !isReadonly"
                          datatable-add-buttons
                          fxLayout="row"

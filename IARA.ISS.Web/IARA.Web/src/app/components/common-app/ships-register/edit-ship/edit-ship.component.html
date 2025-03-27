@@ -239,8 +239,7 @@
                            [isSoftDeletable]="true"
                            [showAddButton]="(!isReadonly || allowOwnersEdit) && !showOnlyRegiXData"
                            [showInactiveRecords]="canRestoreRecords && !showOnlyRegiXData"
-                           (addButtonClicked)="addEditShipOwner()"
-                           (activeRecordChanged)="addEditShipOwner($event)">
+                           (addButtonClicked)="addEditShipOwner()">
                 <data-column [flexRate]="0.4"
                              propertyName="names"
                              columnName="{{ 'ships-register.owner-names' | tlTranslate }}">

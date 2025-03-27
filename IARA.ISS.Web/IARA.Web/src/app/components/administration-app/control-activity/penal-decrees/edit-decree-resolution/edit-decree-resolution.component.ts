@@ -57,6 +57,13 @@ export class EditDecreeResolutionComponent implements OnInit, AfterViewInit, IDi
     public auanViolatedRegulationsTouched: boolean = false;
     public violatedRegulationsTouched: boolean = false;
     public canSaveAfterHours: boolean = false;
+    public noConstatationComments: boolean = true;
+    public noEvidenceComments: boolean = true;
+    public noMaterialEvidence: boolean = true;
+    public noReasons: boolean = true;
+    public noMotives: boolean = true;
+    public noZann: boolean = true;
+    public noZra: boolean = true;
 
     public inspectedEnityName: string | undefined;
     public violatedRegulationsTitle: string | undefined;
@@ -216,11 +223,116 @@ export class EditDecreeResolutionComponent implements OnInit, AfterViewInit, IDi
                 }
             });
 
+            this.form.get('noConstatationCommentsControl')!.valueChanges.subscribe({
+                next: (result: boolean) => {
+                    this.noConstatationComments = result;
+                    if (result) {
+                        this.form.get('constatationCommentsControl')!.setValue(undefined);
+                        this.form.get('constatationCommentsControl')!.clearValidators();
+                    }
+                    else {
+                        this.form.get('constatationCommentsControl')!.setValidators(Validators.required);
+                    }
+
+                    this.form.get('constatationCommentsControl')!.updateValueAndValidity({ emitEvent: false });
+                }
+            });
+
+            this.form.get('noEvidenceCommentsControl')!.valueChanges.subscribe({
+                next: (result: boolean) => {
+                    this.noEvidenceComments = result;
+                    if (result) {
+                        this.form.get('evidenceCommentsControl')!.setValue(undefined);
+                        this.form.get('evidenceCommentsControl')!.clearValidators();
+                    }
+                    else {
+                        this.form.get('evidenceCommentsControl')!.setValidators(Validators.required);
+                    }
+
+                    this.form.get('evidenceCommentsControl')!.updateValueAndValidity({ emitEvent: false });
+                }
+            });
+
+            this.form.get('noMaterialEvidenceControl')!.valueChanges.subscribe({
+                next: (result: boolean) => {
+                    this.noMaterialEvidence = result;
+                    if (result) {
+                        this.form.get('materialEvidenceControl')!.setValue(undefined);
+                        this.form.get('materialEvidenceControl')!.clearValidators();
+                    }
+                    else {
+                        this.form.get('materialEvidenceControl')!.setValidators(Validators.required);
+                    }
+
+                    this.form.get('materialEvidenceControl')!.updateValueAndValidity({ emitEvent: false });
+                }
+            });
+
+            this.form.get('noReasonsControl')!.valueChanges.subscribe({
+                next: (result: boolean) => {
+                    this.noReasons = result;
+                    if (result) {
+                        this.form.get('reasonsControl')!.setValue(undefined);
+                        this.form.get('reasonsControl')!.clearValidators();
+                    }
+                    else {
+                        this.form.get('reasonsControl')!.setValidators(Validators.required);
+                    }
+
+                    this.form.get('reasonsControl')!.updateValueAndValidity({ emitEvent: false });
+                }
+            });
+
+            this.form.get('noMotivesControl')!.valueChanges.subscribe({
+                next: (result: boolean) => {
+                    this.noMotives = result;
+                    if (result) {
+                        this.form.get('motivesControl')!.setValue(undefined);
+                        this.form.get('motivesControl')!.clearValidators();
+                    }
+                    else {
+                        this.form.get('motivesControl')!.setValidators(Validators.required);
+                    }
+
+                    this.form.get('motivesControl')!.updateValueAndValidity({ emitEvent: false });
+                }
+            });
+
+            this.form.get('noZannControl')!.valueChanges.subscribe({
+                next: (result: boolean) => {
+                    this.noZann = result;
+                    if (result) {
+                        this.form.get('zannControl')!.setValue(undefined);
+                        this.form.get('zannControl')!.clearValidators();
+                    }
+                    else {
+                        this.form.get('zannControl')!.setValidators(Validators.required);
+                    }
+
+                    this.form.get('zannControl')!.updateValueAndValidity({ emitEvent: false });
+                }
+            });
+
+            this.form.get('noZraControl')!.valueChanges.subscribe({
+                next: (result: boolean) => {
+                    this.noZra = result;
+                    if (result) {
+                        this.form.get('zraControl')!.setValue(undefined);
+                        this.form.get('zraControl')!.clearValidators();
+                    }
+                    else {
+                        this.form.get('zraControl')!.setValidators(Validators.required);
+                    }
+
+                    this.form.get('zraControl')!.updateValueAndValidity({ emitEvent: false });
+                }
+            });
+
             // Номерата на постановленията се генерират автоматично от 01.01.2025 г., тези на създадените преди това може да се редактират
             this.form.get('issueDateControl')!.valueChanges.subscribe({
                 next: (value: Moment | null | undefined) => {
                     if (value !== undefined && value !== null) {
-                        if (value.toDate() > PenalDecreeUtils.AUTO_GENERATE_NUMBER_AFTER_DATE) {
+                        if ((moment(value)).toDate() > PenalDecreeUtils.AUTO_GENERATE_NUMBER_AFTER_DATE) {
                             if (this.isAdding) {
                                 this.form.get('decreeNumControl')!.setValue(undefined);
                             }
@@ -409,6 +521,14 @@ export class EditDecreeResolutionComponent implements OnInit, AfterViewInit, IDi
             zraControl: new FormControl(null, Validators.maxLength(500)),
             materialEvidenceControl: new FormControl(null, Validators.maxLength(4000)),
 
+            noReasonsControl: new FormControl(true),
+            noMotivesControl: new FormControl(true),
+            noZannControl: new FormControl(true),
+            noZraControl: new FormControl(true),
+            noConstatationCommentsControl: new FormControl(true),
+            noMaterialEvidenceControl: new FormControl(true),
+            noEvidenceCommentsControl: new FormControl(true),
+
             auanControl: new FormControl(null),
             constatationCommentsControl: new FormControl(null, Validators.maxLength(4000)),
             evidenceCommentsControl: new FormControl(null, Validators.maxLength(4000)),
@@ -441,10 +561,21 @@ export class EditDecreeResolutionComponent implements OnInit, AfterViewInit, IDi
 
         this.form.get('isRecurrentViolationControl')!.setValue(this.model.isRecurrentViolation);
         this.form.get('commentsControl')!.setValue(this.model.comments);
-        this.form.get('constatationCommentsControl')!.setValue(this.model.constatationComments);
-        this.form.get('evidenceCommentsControl')!.setValue(this.model.evidenceComments);
         this.form.get('auanViolatedRegulationsControl')!.setValue(this.model.auanViolatedRegulations);
         this.form.get('violatedRegulationsControl')!.setValue(this.model.decreeViolatedRegulations);
+
+        this.noConstatationComments = CommonUtils.isNullOrWhiteSpace(this.model.constatationComments);
+        this.noEvidenceComments = CommonUtils.isNullOrWhiteSpace(this.model.evidenceComments);
+        this.form.get('noConstatationCommentsControl')!.setValue(this.noConstatationComments);
+        this.form.get('noEvidenceCommentsControl')!.setValue(this.noEvidenceComments);
+
+        if (!this.noConstatationComments) {
+            this.form.get('constatationCommentsControl')!.setValue(this.model.constatationComments);
+        }
+
+        if (!this.noEvidenceComments) {
+            this.form.get('evidenceCommentsControl')!.setValue(this.model.evidenceComments);
+        }
 
         if (this.model.seizedAppliance !== undefined && this.model.seizedAppliance !== null) {
             this.form.get('seizedFishControl')!.setValue(this.model.seizedFish);
@@ -463,11 +594,37 @@ export class EditDecreeResolutionComponent implements OnInit, AfterViewInit, IDi
         }
 
         if (this.model.resolutionData !== undefined && this.model.resolutionData !== null) {
-            this.form.get('reasonsControl')!.setValue(this.model.resolutionData.reasons);
-            this.form.get('motivesControl')!.setValue(this.model.resolutionData.motives);
-            this.form.get('zannControl')!.setValue(this.model.resolutionData.zann);
-            this.form.get('zraControl')!.setValue(this.model.resolutionData.zra);
-            this.form.get('materialEvidenceControl')!.setValue(this.model.resolutionData.materialEvidence);
+            this.noMaterialEvidence = CommonUtils.isNullOrWhiteSpace(this.model.resolutionData.materialEvidence);
+            this.noReasons = CommonUtils.isNullOrWhiteSpace(this.model.resolutionData.reasons);
+            this.noMotives = CommonUtils.isNullOrWhiteSpace(this.model.resolutionData.motives);
+            this.noZra = CommonUtils.isNullOrWhiteSpace(this.model.resolutionData.zra);
+            this.noZann = CommonUtils.isNullOrWhiteSpace(this.model.resolutionData.zann);
+
+            this.form.get('noMaterialEvidenceControl')!.setValue(this.noMaterialEvidence);
+            this.form.get('noReasonsControl')!.setValue(this.noReasons);
+            this.form.get('noMotivesControl')!.setValue(this.noMotives);
+            this.form.get('noZraControl')!.setValue(this.noZra);
+            this.form.get('noZannControl')!.setValue(this.noZann);
+
+            if (!this.noMaterialEvidence) {
+                this.form.get('materialEvidenceControl')!.setValue(this.model.resolutionData.materialEvidence);
+            }
+
+            if (!this.noReasons) {
+                this.form.get('reasonsControl')!.setValue(this.model.resolutionData.reasons);
+            }
+
+            if (!this.noMotives) {
+                this.form.get('motivesControl')!.setValue(this.model.resolutionData.motives);
+            }
+
+            if (!this.noZann) {
+                this.form.get('zannControl')!.setValue(this.model.resolutionData.zann);
+            }
+
+            if (!this.noZra) {
+                this.form.get('zraControl')!.setValue(this.model.resolutionData.zra);
+            }
         }
 
         this.form.get('filesControl')!.setValue(this.model.files);
@@ -492,8 +649,6 @@ export class EditDecreeResolutionComponent implements OnInit, AfterViewInit, IDi
         this.model.issuerUserId = this.form.get('drafterControl')!.value?.value;
         this.model.isRecurrentViolation = this.form.get('isRecurrentViolationControl')!.value;
         this.model.comments = this.form.get('commentsControl')!.value;
-        this.model.constatationComments = this.form.get('constatationCommentsControl')!.value;
-        this.model.evidenceComments = this.form.get('evidenceCommentsControl')!.value;
         this.model.deliveryData = this.form.get('deliveryControl')!.value;
         this.model.files = this.form.get('filesControl')!.value;
         this.model.seizedFish = this.form.get('seizedFishControl')!.value;
@@ -510,11 +665,54 @@ export class EditDecreeResolutionComponent implements OnInit, AfterViewInit, IDi
             isActive: true
         });
 
-        this.model.resolutionData.reasons = this.form.get('reasonsControl')!.value;
-        this.model.resolutionData.motives = this.form.get('motivesControl')!.value;
-        this.model.resolutionData.zann = this.form.get('zannControl')!.value;
-        this.model.resolutionData.zra = this.form.get('zraControl')!.value;
-        this.model.resolutionData.materialEvidence = this.form.get('materialEvidenceControl')!.value;
+        if (this.noConstatationComments) {
+            this.model.constatationComments = undefined;
+        }
+        else {
+            this.model.constatationComments = this.form.get('constatationCommentsControl')!.value;
+        }
+
+        if (this.noEvidenceComments) {
+            this.model.evidenceComments = undefined;
+        }
+        else {
+            this.model.evidenceComments = this.form.get('evidenceCommentsControl')!.value;
+        }
+
+        if (this.noReasons) {
+            this.model.resolutionData.reasons = undefined;
+        }
+        else {
+            this.model.resolutionData.reasons = this.form.get('reasonsControl')!.value;
+        }
+
+        if (this.noMotives) {
+            this.model.resolutionData.motives = undefined;
+        }
+        else {
+            this.model.resolutionData.motives = this.form.get('motivesControl')!.value;
+        }
+
+        if (this.noZann) {
+            this.model.resolutionData.zann = undefined;
+        }
+        else {
+            this.model.resolutionData.zann = this.form.get('zannControl')!.value;
+        }
+
+        if (this.noZra) {
+            this.model.resolutionData.zra = undefined;
+        }
+        else {
+            this.model.resolutionData.zra = this.form.get('zraControl')!.value;
+        }
+
+        if (this.noMaterialEvidence) {
+            this.model.resolutionData.materialEvidence = undefined;
+        }
+        else {
+            this.model.resolutionData.materialEvidence = this.form.get('materialEvidenceControl')!.value;
+        }
 
         if (this.isThirdParty) {
             this.model.auanData = this.form.get('auanControl')!.value;
@@ -533,11 +731,18 @@ export class EditDecreeResolutionComponent implements OnInit, AfterViewInit, IDi
         }
 
         this.form.get('auanControl')!.setValue(data);
-        this.form.get('constatationCommentsControl')!.setValue(data.constatationComments);
+
         this.inspectedEnityName = PenalDecreeUtils.getInspectedEntityName(data.inspectedEntity);
         this.violatedRegulationsTitle = PenalDecreeUtils.getViolatedRegulationsTitle(this.inspectedEnityName, this.translate);
 
         if (this.isAdding) {
+            this.noConstatationComments = CommonUtils.isNullOrWhiteSpace(data.constatationComments);
+            this.form.get('noConstatationCommentsControl')!.setValue(this.noConstatationComments);
+
+            if (!this.noConstatationComments) {
+                this.form.get('constatationCommentsControl')!.setValue(data.constatationComments);
+            }
+
             setTimeout(() => {
                 this.form.get('seizedFishControl')!.setValue(data.confiscatedFish);
                 this.form.get('seizedApplianceControl')!.setValue(data.confiscatedAppliance);

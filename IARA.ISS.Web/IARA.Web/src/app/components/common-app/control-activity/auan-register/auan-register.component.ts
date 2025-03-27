@@ -257,7 +257,7 @@ export class AuanRegisterComponent implements OnInit, AfterViewInit {
             const leftButtons: IActionInfo[] = [];
 
             if (auan.isActive) {
-                if (auan.status === AuanStatusEnum.Draft) {
+                if (auan.status === AuanStatusEnum.Draft && (this.inspectionId === undefined || this.inspectionId === null)) {
                     rightButtons.push({
                         id: 'save-draft',
                         color: 'primary',
@@ -268,6 +268,7 @@ export class AuanRegisterComponent implements OnInit, AfterViewInit {
                 //ако няма правото за връщане за корекции, може да връща в статус "Чернова" само своите АУАНи, ако не са минали 48 часа от добавянето им
                 if (auan.status === AuanStatusEnum.Submitted
                     && (this.canReturnAuanForCorrections || (!auan.lockedForCorrections && auan.createdByUser === this.currentUser))
+                    && (this.inspectionId === undefined || this.inspectionId === null)
                 ) {
                     rightButtons.push({
                         id: 'more-corrections-needed',
@@ -284,7 +285,7 @@ export class AuanRegisterComponent implements OnInit, AfterViewInit {
                     isVisibleInViewMode: true
                 });
 
-                if (this.canCancelAuanRecords) {
+                if (this.canCancelAuanRecords && (this.inspectionId === undefined || this.inspectionId === null)) {
                     if (auan.status === AuanStatusEnum.Canceled) {
                         leftButtons.push({
                             id: 'activate-auan',

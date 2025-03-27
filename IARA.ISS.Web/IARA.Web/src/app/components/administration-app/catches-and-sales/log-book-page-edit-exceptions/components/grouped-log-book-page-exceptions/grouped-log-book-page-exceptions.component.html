@@ -58,19 +58,19 @@
             <tl-data-table [showAddButton]="canAddExceptionRecords"
                            [showInactiveRecords]="canRestoreExceptionRecords"
                            (addButtonClicked)="addExceptionRecords()">
-                <data-column propertyName="userNames"
-                             [flexRate]="0.4"
-                             columnName="{{ 'log-book-page-edit-exceptions.grouped-exception-user-names' | tlTranslate }}">
-                </data-column>
-
                 <data-column propertyName="logBookTypeNames"
-                             [flexRate]="0.3"
+                             [flexRate]="0.4"
                              columnName="{{ 'log-book-page-edit-exceptions.grouped-exception-log-book-type-names' | tlTranslate }}">
                 </data-column>
 
                 <data-column propertyName="logBookNumber"
                              [flexRate]="0.3"
                              columnName="{{ 'log-book-page-edit-exceptions.log-book-number' | tlTranslate }}">
+                </data-column>
+
+                <data-column propertyName="usersCount"
+                             [flexRate]="0.2"
+                             columnName="{{ 'log-book-page-edit-exceptions.grouped-exception-users-count' | tlTranslate }}">
                 </data-column>
 
                 <data-template-column [flexRate]="0.2" columnName="{{ 'log-book-page-edit-exceptions.is-valid' | tlTranslate }}">

@@ -199,7 +199,6 @@
                 <tl-data-table #parametersTable
                                [showAddButton]="!viewMode"
                                (addButtonClicked)="addOrEditParameter()"
-                               (activeRecordChanged)="addOrEditParameter($event)"
                                [rows]="parameters"
                                [isRemote]="false"
                                [isSoftDeletable]="true">

@@ -390,7 +390,8 @@
                                            [isSoftDeletable]="true"
                                            [showInactiveRecords]="false"
                                            [showAddButton]="!viewMode"
-                                           addButtonLabel="{{ 'catches-and-sales.ship-page-declaration-of-origin-generate-catch-data' | tlTranslate }}">
+                                           addButtonLabel="{{ 'catches-and-sales.ship-page-declaration-of-origin-generate-catch-data' | tlTranslate }}"
+                                           (addButtonClicked)="generateOriginDeclarationFromCatchRecordFishes()">
                                 <div *ngIf="!viewMode" datatable-add-buttons fxLayout="row" fxLayoutGap="1em">
                                     <button mat-raised-button
                                             color="primary"

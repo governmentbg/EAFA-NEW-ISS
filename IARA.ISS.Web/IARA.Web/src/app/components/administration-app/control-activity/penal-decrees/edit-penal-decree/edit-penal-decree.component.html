@@ -94,12 +94,28 @@
                         [validityChecker]="form">
         <div fxLayout="row" fxLayoutGap="1em">
             <div fxLayout="column" fxLayoutGap="1em" fxFlex="100">
-                <tl-textarea formControlName="constatationCommentsControl"
+                <div fxLayout="row" fxLayoutGap="1em">
+                    <tl-slide-toggle formControlName="noConstatationCommentsControl"
+                                     label="{{ 'penal-decrees.edit-decree-no-constatation-comments' | tlTranslate }}"
+                                     tooltipResourceName="penal-decree.edit-decree-no-constatation-comments-helper">
+                    </tl-slide-toggle>
+                </div>
+
+                <tl-textarea *ngIf="!noConstatationComments"
+                             formControlName="constatationCommentsControl"
                              tooltipResourceName="penal-decree.edit-auan-constatation-comments-helper"
                              label="{{ 'penal-decrees.edit-auan-constatation-comments' | tlTranslate }}">
                 </tl-textarea>
 
-                <tl-textarea formControlName="evidenceCommentsControl"
+                <div fxLayout="row" fxLayoutGap="1em">
+                    <tl-slide-toggle formControlName="noEvidenceCommentsControl"
+                                     label="{{ 'penal-decrees.edit-decree-no-evidence-comments' | tlTranslate }}"
+                                     tooltipResourceName="penal-decree.edit-decree-no-evidence-comments-helper">
+                    </tl-slide-toggle>
+                </div>
+
+                <tl-textarea *ngIf="!noEvidenceComments"
+                             formControlName="evidenceCommentsControl"
                              tooltipResourceName="penal-decree.edit-evidence-comments-helper"
                              label="{{ 'penal-decrees.edit-evidence-comments' | tlTranslate }}">
                 </tl-textarea>
@@ -143,19 +159,28 @@
     <tl-expansion-panel title="{{ 'penal-decrees.edit-decree-sanction-description-panel' | tlTranslate }}"
                         tooltipResourceName="penal-decree.edit-decree-sanction-description-panel-helper"
                         [validityChecker]="form">
-        <div fxLayout="row" fxLayoutGap="1em">
-            <tl-textarea fxFlex="100"
-                         formControlName="sanctionDescriptionControl"
-                         label="{{ 'penal-decrees.edit-sanction-description' | tlTranslate }}"
-                         tooltipResourceName="penal-decree.edit-sanction-description-helper">
-            </tl-textarea>
-        </div>
+        <div fxLayout="column" fxLayoutGap="1em">
+            <div fxLayout="row" fxLayoutGap="1em">
+                <tl-slide-toggle formControlName="noSanctionDescriptionControl"
+                                 label="{{ 'penal-decrees.edit-decree-no-sanction-description' | tlTranslate }}"
+                                 tooltipResourceName="penal-decree.edit-decree-no-sanction-description-helper">
+                </tl-slide-toggle>
+            </div>
 
-        <div fxLayout="row" fxLayoutGap="1em">
-            <tl-slide-toggle formControlName="isRecurrentViolationControl"
-                             label="{{ 'penal-decrees.edit-decree-is-recurent-violation' | tlTranslate }}"
-                             tooltipResourceName="penal-decree.edit-decree-is-recurent-violation-helper">
-            </tl-slide-toggle>
+            <div fxLayout="row" fxLayoutGap="1em" *ngIf="!noSanctionDescription">
+                <tl-textarea fxFlex="100"
+                             formControlName="sanctionDescriptionControl"
+                             label="{{ 'penal-decrees.edit-sanction-description' | tlTranslate }}"
+                             tooltipResourceName="penal-decree.edit-sanction-description-helper">
+                </tl-textarea>
+            </div>
+
+            <div fxLayout="row" fxLayoutGap="1em">
+                <tl-slide-toggle formControlName="isRecurrentViolationControl"
+                                 label="{{ 'penal-decrees.edit-decree-is-recurent-violation' | tlTranslate }}"
+                                 tooltipResourceName="penal-decree.edit-decree-is-recurent-violation-helper">
+                </tl-slide-toggle>
+            </div>
         </div>
     </tl-expansion-panel>
 
@@ -236,6 +261,13 @@
                         tooltipResourceName="penal-decree.edit-decree-comments-panel-helper"
                         [validityChecker]="form">
         <div fxLayout="row" fxLayoutGap="1em">
+            <tl-slide-toggle formControlName="noCommentsControl"
+                             label="{{ 'penal-decrees.edit-decree-no-comments' | tlTranslate }}"
+                             tooltipResourceName="penal-decree.edit-decree-no-comments-helper">
+            </tl-slide-toggle>
+        </div>
+
+        <div fxLayout="row" fxLayoutGap="1em" *ngIf="!noComments">
             <tl-textarea fxFlex="100"
                          formControlName="commentsControl"
                          label="{{ 'penal-decrees.edit-penal-decree-comments' | tlTranslate }}"

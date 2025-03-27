@@ -19,6 +19,9 @@ export class LogBookPageExceptionGroupedDTO {
     @StrictlyTyped(String)
     public logBookNumber?: string;
 
+    @StrictlyTyped(Number)
+    public usersCount?: number;
+
     @StrictlyTyped(Boolean)
     public isValidNow?: boolean;
 

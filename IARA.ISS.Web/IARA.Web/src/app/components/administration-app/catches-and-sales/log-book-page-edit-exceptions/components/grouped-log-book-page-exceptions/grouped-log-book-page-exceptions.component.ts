@@ -1,4 +1,4 @@
-﻿import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+﻿import { AfterViewInit, Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 import { SearchPanelComponent } from '@app/shared/components/search-panel/search-panel.component';
@@ -31,7 +31,13 @@ import { SystemUserNomenclatureDTO } from '@app/models/generated/dtos/SystemUser
     selector: 'grouped-log-book-page-exceptions',
     templateUrl: './grouped-log-book-page-exceptions.component.html'
 })
-export class GroupedLogBookPageExceptionsComponent implements OnInit, AfterViewInit {
+export class GroupedLogBookPageExceptionsComponent implements OnInit, AfterViewInit, OnChanges {
+    @Input()
+    public reloadData: boolean = false;
+
+    @Output()
+    public dataChanged: EventEmitter<boolean> = new EventEmitter<boolean>();
+
     public translate: FuseTranslationLoaderService;
     public form: FormGroup;
 
@@ -125,6 +131,14 @@ export class GroupedLogBookPageExceptionsComponent implements OnInit, AfterViewI
         this.gridManager.refreshData();
     }
 
+    public ngOnChanges(changes: SimpleChanges): void {
+        const reloadData: boolean | undefined = changes['reloadData']?.currentValue;
+ 
+        if (this.reloadData) {
+            this.gridManager?.refreshData();
+        }
+    }
+
     public addExceptionRecords(): void {
         const title: string = this.translate.getValue('log-book-page-edit-exceptions.add-grouped-exceptions-dialog-title');
         const dialogData: EditLogBookPageExceptionsGroupedParameters = new EditLogBookPageExceptionsGroupedParameters({
@@ -175,6 +189,7 @@ export class GroupedLogBookPageExceptionsComponent implements OnInit, AfterViewI
                     if (ids !== undefined && ids !== null && ids.length > 0) {
                         this.service.removeLogBookPageExceptionsGrouped(ids).subscribe({
                             next: () => {
+                                this.dataChanged.emit(true);
                                 this.gridManager.refreshData();
                             }
                         });
@@ -195,6 +210,7 @@ export class GroupedLogBookPageExceptionsComponent implements OnInit, AfterViewI
                     if (ids !== undefined && ids !== null && ids.length > 0) {
                         this.service.restoreLogBookPageExceptionsGrouped(ids).subscribe({
                             next: () => {
+                                this.dataChanged.emit(true);
                                 this.gridManager.refreshData();
                             }
                         });
@@ -230,6 +246,7 @@ export class GroupedLogBookPageExceptionsComponent implements OnInit, AfterViewI
         }, '1200px').subscribe({
             next: (result: LogBookPageExceptionGroupedDTO | undefined) => {
                 if (result !== null && result !== undefined) {
+                    this.dataChanged.emit(true);
                     this.gridManager.refreshData();
                 }
             }

@@ -20,6 +20,15 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
 {
     public class CatchInspectionsViewModel : ViewModel
     {
+        private SelectNomenclatureDto turbotFishType;
+        private SelectNomenclatureDto turbotSmallGroup;
+        private SelectNomenclatureDto turbotMediumGroup;
+        private SelectNomenclatureDto turbotBigGroup;
+        private SelectNomenclatureDto turbotEnormousGroup;
+        private SelectNomenclatureDto turbotUnknownGroup;
+        private SelectNomenclatureDto disposeCatchType;
+
+
         private List<SelectNomenclatureDto> _fishTypes;
         private List<SelectNomenclatureDto> _catchTypes;
         private List<CatchZoneNomenclatureDto> _catchAreas;
@@ -151,6 +160,15 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
             CatchAreas = catchAreas;
             FishSexTypes = fishSexTypes;
             TurbotSizeGroups = turbotSizeGroups;
+
+            turbotFishType = fishTypes.Where(x => x.Code.ToUpper() == "TUR").First();
+            turbotUnknownGroup = turbotSizeGroups.Where(x => x.Code == "0").First();
+            turbotSmallGroup = turbotSizeGroups.Where(x => x.Code == "1").First();
+            turbotMediumGroup = turbotSizeGroups.Where(x => x.Code == "2").First();
+            turbotBigGroup = turbotSizeGroups.Where(x => x.Code == "3").First();
+            turbotEnormousGroup = turbotSizeGroups.Where(x => x.Code == "4").First();
+
+            disposeCatchType = catchTypes.Where(x => x.Code == "DIS").First();
         }
 
         public void OnEdit(List<InspectionCatchMeasureDto> catchMeasures)
@@ -257,7 +275,7 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
         {
             Summary = Catches.Value.Count == 0 ?
                 "" :
-                string.Join("; ", Catches.Value.GroupBy(
+                string.Join("; \n", Catches.Value.GroupBy(
                     c => c.FishType.Value,
                     c => c,
                     (fishType, catches) =>
@@ -268,9 +286,204 @@ namespace IARA.Mobile.Insp.Controls.ViewModels
                         }
                         IEnumerable<ValidState> quantity = null;
 
+                        if (fishType.Id == turbotFishType.Id)
+                        {
+                            List<CatchInspectionViewModel> smallGroup = catches
+                                .Where(ci => ci.TurbotSizeGroup.Value?.Id == turbotSmallGroup.Id)
+                                .Where(ci => ci.CatchType.Value?.Id != disposeCatchType.Id)
+                                .ToList();
+                            List<CatchInspectionViewModel> mediumGroup = catches
+                                .Where(ci => ci.TurbotSizeGroup.Value?.Id == turbotMediumGroup.Id)
+                                .Where(ci => ci.CatchType.Value?.Id != disposeCatchType.Id)
+                                .ToList();
+                            List<CatchInspectionViewModel> bigGroup = catches
+                                .Where(ci => ci.TurbotSizeGroup.Value?.Id == turbotBigGroup.Id)
+                                .Where(ci => ci.CatchType.Value?.Id != disposeCatchType.Id)
+                                .ToList();
+                            List<CatchInspectionViewModel> enourmousGroup = catches
+                                .Where(ci => ci.TurbotSizeGroup.Value?.Id == turbotEnormousGroup.Id)
+                                .Where(ci => ci.CatchType.Value?.Id != disposeCatchType.Id)
+                                .ToList();
+                            List<CatchInspectionViewModel> unknownGroup = catches
+                                .Where(ci => ci.TurbotSizeGroup.Value?.Id == turbotUnknownGroup.Id)
+                                .Where(ci => ci.CatchType.Value?.Id != disposeCatchType.Id)
+                                .ToList();
+
+                            List<CatchInspectionViewModel> disposedSmallTurbots = catches
+                                .Where(ci => ci.TurbotSizeGroup.Value?.Id == turbotSmallGroup.Id)
+                                .Where(ci => ci.CatchType.Value?.Id == disposeCatchType.Id)
+                                .ToList();
+
+                            List<CatchInspectionViewModel> disposedMediumTurbots = catches
+                                .Where(ci => ci.TurbotSizeGroup.Value?.Id == turbotMediumGroup.Id)
+                                .Where(ci => ci.CatchType.Value?.Id == disposeCatchType.Id)
+                                .ToList();
+
+                            List<CatchInspectionViewModel> disposedBigTurbots = catches
+                                .Where(ci => ci.TurbotSizeGroup.Value?.Id == turbotBigGroup.Id)
+                                .Where(ci => ci.CatchType.Value?.Id == disposeCatchType.Id)
+                                .ToList();
+
+                            List<CatchInspectionViewModel> disposedEnormousTurbots = catches
+                                .Where(ci => ci.TurbotSizeGroup.Value?.Id == turbotEnormousGroup.Id)
+                                .Where(ci => ci.CatchType.Value?.Id == disposeCatchType.Id)
+                                .ToList();
+
+                            List<CatchInspectionViewModel> disposedUnknownTurbots = catches
+                                .Where(ci => ci.TurbotSizeGroup.Value?.Id == turbotUnknownGroup.Id)
+                                .Where(ci => ci.CatchType.Value?.Id == disposeCatchType.Id)
+                                .ToList();
+
+                            double smallTurbotsQuantity;
+                            double mediumTurbotsQuantity;
+                            double bigTurbotsQuantity;
+                            double enormousTurbotsQuantity;
+                            double unknownTurbotsQuantity;
+
+                            double smallTurbotsDisposedQuantity;
+                            double mediumTurbotsDisposedQuantity;
+                            double bigTurbotsDisposedQuantity;
+                            double enormousTurbotsDisposedQuantity;
+                            double unknownTurbotsDisposedQuantity;
+
+                            if (IsUnloadedQuantityRequired)
+                            {
+                                smallTurbotsQuantity = smallGroup.Select(ci => ci.UnloadedQuantity)
+                                    .Where(ci => !string.IsNullOrEmpty(ci.Value))
+                                    .Where(ci => double.TryParse(ci.Value, out double tmp))
+                                    .Sum(x => double.Parse(x.Value));
+
+                                mediumTurbotsQuantity = mediumGroup.Select(ci => ci.UnloadedQuantity)
+                                    .Where(ci => !string.IsNullOrEmpty(ci.Value))
+                                    .Where(ci => double.TryParse(ci.Value, out double tmp))
+                                    .Sum(x => double.Parse(x.Value));
+
+                                bigTurbotsQuantity = bigGroup.Select(ci => ci.UnloadedQuantity)
+                                    .Where(ci => !string.IsNullOrEmpty(ci.Value))
+                                    .Where(ci => double.TryParse(ci.Value, out double tmp))
+                                    .Sum(x => double.Parse(x.Value));
+
+                                enormousTurbotsQuantity = enourmousGroup.Select(ci => ci.UnloadedQuantity)
+                                    .Where(ci => !string.IsNullOrEmpty(ci.Value))
+                                    .Where(ci => double.TryParse(ci.Value, out double tmp))
+                                    .Sum(x => double.Parse(x.Value));
+
+                                unknownTurbotsQuantity = unknownGroup.Select(ci => ci.UnloadedQuantity)
+                                    .Where(ci => !string.IsNullOrEmpty(ci.Value))
+                                    .Where(ci => double.TryParse(ci.Value, out double tmp))
+                                    .Sum(x => double.Parse(x.Value));
+
+                                smallTurbotsDisposedQuantity = disposedSmallTurbots.Select(ci => ci.UnloadedQuantity)
+                                    .Where(ci => !string.IsNullOrEmpty(ci.Value))
+                                    .Where(ci => double.TryParse(ci.Value, out double tmp))
+                                    .Sum(x => double.Parse(x.Value));
+
+                                mediumTurbotsDisposedQuantity = disposedMediumTurbots.Select(ci => ci.UnloadedQuantity)
+                                    .Where(ci => !string.IsNullOrEmpty(ci.Value))
+                                    .Where(ci => double.TryParse(ci.Value, out double tmp))
+                                    .Sum(x => double.Parse(x.Value));
+
+                                bigTurbotsDisposedQuantity = disposedBigTurbots.Select(ci => ci.UnloadedQuantity)
+                                    .Where(ci => !string.IsNullOrEmpty(ci.Value))
+                                    .Where(ci => double.TryParse(ci.Value, out double tmp))
+                                    .Sum(x => double.Parse(x.Value));
+
+                                enormousTurbotsDisposedQuantity = disposedEnormousTurbots.Select(ci => ci.UnloadedQuantity)
+                                    .Where(ci => !string.IsNullOrEmpty(ci.Value))
+                                    .Where(ci => double.TryParse(ci.Value, out double tmp))
+                                    .Sum(x => double.Parse(x.Value));
+
+                                unknownTurbotsDisposedQuantity = disposedUnknownTurbots.Select(ci => ci.UnloadedQuantity)
+                                    .Where(ci => !string.IsNullOrEmpty(ci.Value))
+                                    .Where(ci => double.TryParse(ci.Value, out double tmp))
+                                    .Sum(x => double.Parse(x.Value));
+                            }
+                            else
+                            {
+                                smallTurbotsQuantity = smallGroup.Select(ci => ci.CatchQuantity)
+                                    .Where(ci => !string.IsNullOrEmpty(ci.Value))
+                                    .Where(ci => double.TryParse(ci.Value, out double tmp))
+                                    .Sum(x => double.Parse(x.Value));
+
+                                mediumTurbotsQuantity = mediumGroup.Select(ci => ci.CatchQuantity)
+                                    .Where(ci => !string.IsNullOrEmpty(ci.Value))
+                                    .Where(ci => double.TryParse(ci.Value, out double tmp))
+                                    .Sum(x => double.Parse(x.Value));
+
+                                bigTurbotsQuantity = bigGroup.Select(ci => ci.CatchQuantity)
+                                    .Where(ci => !string.IsNullOrEmpty(ci.Value))
+                                    .Where(ci => double.TryParse(ci.Value, out double tmp))
+                                    .Sum(x => double.Parse(x.Value));
+
+                                enormousTurbotsQuantity = enourmousGroup.Select(ci => ci.CatchQuantity)
+                                    .Where(ci => !string.IsNullOrEmpty(ci.Value))
+                                    .Where(ci => double.TryParse(ci.Value, out double tmp))
+                                    .Sum(x => double.Parse(x.Value));
+
+                                unknownTurbotsQuantity = unknownGroup.Select(ci => ci.CatchQuantity)
+                                    .Where(ci => !string.IsNullOrEmpty(ci.Value))
+                                    .Where(ci => double.TryParse(ci.Value, out double tmp))
+                                    .Sum(x => double.Parse(x.Value));
+
+                                smallTurbotsDisposedQuantity = disposedSmallTurbots.Select(ci => ci.CatchQuantity)
+                                    .Where(ci => !string.IsNullOrEmpty(ci.Value))
+                                    .Where(ci => double.TryParse(ci.Value, out double tmp))
+                                    .Sum(x => double.Parse(x.Value));
+
+                                mediumTurbotsDisposedQuantity = disposedMediumTurbots.Select(ci => ci.CatchQuantity)
+                                    .Where(ci => !string.IsNullOrEmpty(ci.Value))
+                                    .Where(ci => double.TryParse(ci.Value, out double tmp))
+                                    .Sum(x => double.Parse(x.Value));
+
+                                bigTurbotsDisposedQuantity = disposedBigTurbots.Select(ci => ci.CatchQuantity)
+                                    .Where(ci => !string.IsNullOrEmpty(ci.Value))
+                                    .Where(ci => double.TryParse(ci.Value, out double tmp))
+                                    .Sum(x => double.Parse(x.Value));
+
+                                enormousTurbotsDisposedQuantity = disposedEnormousTurbots.Select(ci => ci.CatchQuantity)
+                                    .Where(ci => !string.IsNullOrEmpty(ci.Value))
+                                    .Where(ci => double.TryParse(ci.Value, out double tmp))
+                                    .Sum(x => double.Parse(x.Value));
+
+                                unknownTurbotsDisposedQuantity = disposedUnknownTurbots.Select(ci => ci.CatchQuantity)
+                                    .Where(ci => !string.IsNullOrEmpty(ci.Value))
+                                    .Where(ci => double.TryParse(ci.Value, out double tmp))
+                                    .Sum(x => double.Parse(x.Value));
+                            }
+
+                            smallTurbotsQuantity -= smallTurbotsDisposedQuantity;
+                            mediumTurbotsQuantity -= mediumTurbotsDisposedQuantity;
+                            bigTurbotsQuantity -= bigTurbotsDisposedQuantity;
+                            enormousTurbotsQuantity -= enormousTurbotsDisposedQuantity;
+                            unknownTurbotsQuantity -= unknownTurbotsDisposedQuantity;
+
+                            List<string> messages = new List<string>();
+                            if (smallTurbotsQuantity > 0)
+                            {
+                                messages.Add($"{fishType.DisplayValue} - {turbotSmallGroup.DisplayValue}: {smallTurbotsQuantity:f2} кг");
+                            }
+                            if (mediumTurbotsQuantity > 0)
+                            {
+                                messages.Add($"{fishType.DisplayValue} - {turbotMediumGroup.DisplayValue}: {mediumTurbotsQuantity:f2} кг");
+                            }
+                            if (bigTurbotsQuantity > 0)
+                            {
+                                messages.Add($"{fishType.DisplayValue} - {turbotBigGroup.DisplayValue}: {bigTurbotsQuantity:f2} кг");
+                            }
+                            if (enormousTurbotsQuantity > 0)
+                            {
+                                messages.Add($"{fishType.DisplayValue} - {turbotEnormousGroup.DisplayValue}: {enormousTurbotsQuantity:f2} кг");
+                            }
+                            if (unknownTurbotsQuantity > 0)
+                            {
+                                messages.Add($"{fishType.DisplayValue} - {turbotUnknownGroup.DisplayValue}: {unknownTurbotsQuantity:f2} кг");
+                            }
+
+                            return string.Join("; \n", messages);
+                        }
+
                         if (IsUnloadedQuantityRequired)
                         {
-
                             quantity = catches.Select(ci => ci.UnloadedQuantity)
                                 .Where(ci => !string.IsNullOrEmpty(ci.Value))
                                 .Where(ci => double.TryParse(ci.Value, out double tmp));

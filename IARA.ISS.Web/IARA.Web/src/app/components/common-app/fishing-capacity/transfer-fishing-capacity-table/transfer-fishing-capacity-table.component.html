@@ -5,8 +5,7 @@
                    [isSoftDeletable]="true"
                    [showAddButton]="!isDisabled && !showOnlyRegiXData"
                    [showInactiveRecords]="!showOnlyRegiXData"
-                   (addButtonClicked)="addEditEntry()"
-                   (activeRecordChanged)="addEditEntry($event)">
+                   (addButtonClicked)="addEditEntry()">
         <data-column [flexRate]="0.4"
                      propertyName="name"
                      columnName="{{ 'fishing-capacity.holder-table-name' | tlTranslate }}">
